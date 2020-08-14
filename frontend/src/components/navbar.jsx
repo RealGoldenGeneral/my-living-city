@@ -19,16 +19,26 @@ class Navbar extends Component {
   componentDidMount(){
     const loginButtons = document.getElementById('loginButtons');
     const loggedIn = document.getElementById('loggedIn');
+    const adminLink = document.getElementById('adminLink');
     let userLoggedIn = sessionStorage.getItem('loggedin');
     let user = sessionStorage.getItem('user');
+    let userRole = sessionStorage.getItem('userRole');
     this.setState({user: user});
     if(userLoggedIn){
       loginButtons.hidden = true;
       loggedIn.hidden = false;
+      //(role_id == admin) => 15.... can't foind other solution for now.
+      if(userRole === "Administrator") {
+        adminLink.hidden = false;
+      } 
+      else {
+        adminLink.hidden = true;
+      }
     }
     else{
       loginButtons.hidden = false;
       loggedIn.hidden = true;
+      adminLink.hidden = true;
     }
   }
 
@@ -36,9 +46,11 @@ class Navbar extends Component {
     try{
         fetch(API_URL+"/user/logout", {
           method: "POST",
+          credentials: 'include'
       }).then((response) => {
         if(response.ok){
             console.log('Logged Out User');
+            sessionStorage.setItem('loggedIn', false);
             sessionStorage.clear();
           //sessionStorage.setItem('loggedIn', false);
           //sessionStorage.setItem('user', null);
@@ -73,10 +85,12 @@ class Navbar extends Component {
           </div>
           <div id="loggedIn">
             <div className="btn-group" role="group">
+              <a className="btn btn-primary mr-2" id="adminLink" href="/admin" role="button">Admin</a>
               <button id="btnGroupDrop1" type="button" className="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {this.state.user}
               </button>
               <div className="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <a className="dropdown-item" id="profileLink" href="/user/me" role="button">Profile</a>
                 <div style={{"cursor": "pointer"}}className="dropdown-item" onClick={() => this.logout()}>Logout</div>
               </div>
             </div>

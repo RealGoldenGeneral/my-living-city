@@ -1,15 +1,19 @@
 .Home .convoList{
     text-decoration: none;
 }
+
 .Home .convoList .list-group-item {
     cursor: pointer
 }
+
 .Home .carousel-inner img{
     max-height: 400px;
 }
+
 .Home .carousel-caption{
     bottom: 30px;
 }
+
 .Home .likeText{
     color: green;
 }
@@ -19,9 +23,11 @@
     max-width: 400px;
     margin: 0 auto;
 }
+
 .Home .newTrendingCard:hover{
     background-color: #eceaea8c;
 }
+
 .Home .newTrendingCard a{
     text-decoration: none;
     color: black;
@@ -30,3 +36,24 @@
 .Home .dislikeText{
     color: red;
 }
+
+.Home .category img{
+    height: 280px;
+    width: 100%;
+}
+
+.Home .category:hover{
+    background-color: #eceaea8c;
+}
+
+
+.Home .category a{
+    text-decoration: none;
+    color: black;
+}
+
+.Home .category{
+    box-shadow: 0px 2px 12px 1px #888888;
+}
+
+  

@@ -10,8 +10,16 @@ module.exports = (sequelize, DataTypes) => {
     down: DataTypes.BOOLEAN
   }, {});
   Vote.associate = function(models) {
+    // Belongs-To associations
     Vote.belongsTo(models.User);
     Vote.belongsTo(models.Idea);
+    Vote.belongsTo(models.Comment);
+
+    // Belongs-To-Many associations
+
+    // Has-One associations
+
+    // Has-Many associations
   };
   return Vote;
 };

@@ -5,18 +5,28 @@ var Sequelize = require('sequelize');
 /**
  * Actions summary:
  *
- * createTable "Votes", deps: [Users, Ideas]
+ * dropTable: Votes Table
  *
  **/
 
 var info = {
-    "revision": 4,
-    "name": "vote",
-    "created": "2019-05-30T19:02:12.812Z",
+    "revision": 20,
+    "name": "removeVotes",
+    "created": "2020-06-16T16:11:30Z",
     "comment": ""
 };
 
-var migrationCommands = [{
+
+var migrationCommands = [
+    {
+        fn: "dropTable",
+        params: [
+            "Vote"
+        ]
+    },
+];
+
+var undoMigrationCommands = [{
     fn: "createTable",
     params: [
         "Votes",
@@ -92,5 +102,22 @@ module.exports = {
             next();
         });
     },
-    info: info
+    down: function(queryInterface, Sequelize)
+    {
+        var index = this.pos;
+        return new Promise(function(resolve, reject) {
+            function next() {
+                if (index < undoMigrationCommands.length)
+                {
+                    let command = undoMigrationCommands[index];
+                    console.log("[#"+index+"] execute: " + command.fn);
+                    index++;
+                    queryInterface[command.fn].apply(queryInterface, command.params).then(next, reject);
+                }
+                else
+                    resolve();
+            }
+            next();
+        });
+    }
 };

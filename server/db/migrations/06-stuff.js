@@ -67,6 +67,45 @@ var migrationCommands = [{
     }
 ];
 
+var undoMigrationCommands = [
+    {
+        fn: "changeColumn",
+        params: [
+            "Comments",
+            "active",
+            {
+                "type": Sequelize.BOOLEAN,
+                "field": "active"
+            }
+        ]
+    },
+    {
+        fn: "changeColumn",
+        params: [
+            "Blogs",
+            "active",
+            {
+                "type": Sequelize.BOOLEAN,
+                "field": "active"
+            }
+        ]
+    },
+    {
+        fn: "removeColumn",
+        params: [
+            "Blogs",
+            "slug"
+        ]
+    },
+    {
+        fn: "removeColumn",
+        params: [
+            "Blogs",
+            "short_desc"
+        ]
+    },
+];
+
 module.exports = {
     pos: 0,
     up: function(queryInterface, Sequelize)
@@ -77,6 +116,24 @@ module.exports = {
                 if (index < migrationCommands.length)
                 {
                     let command = migrationCommands[index];
+                    console.log("[#"+index+"] execute: " + command.fn);
+                    index++;
+                    queryInterface[command.fn].apply(queryInterface, command.params).then(next, reject);
+                }
+                else
+                    resolve();
+            }
+            next();
+        });
+    },
+    down: function(queryInterface, Sequelize)
+    {
+        var index = this.pos;
+        return new Promise(function(resolve, reject) {
+            function next() {
+                if (index < undoMigrationCommands.length)
+                {
+                    let command = undoMigrationCommands[index];
                     console.log("[#"+index+"] execute: " + command.fn);
                     index++;
                     queryInterface[command.fn].apply(queryInterface, command.params).then(next, reject);

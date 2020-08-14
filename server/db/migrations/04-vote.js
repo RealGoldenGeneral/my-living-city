@@ -5,21 +5,21 @@ var Sequelize = require('sequelize');
 /**
  * Actions summary:
  *
- * createTable "Images", deps: [Users, Blogs, Ideas]
+ * createTable "Votes", deps: [Users, Ideas]
  *
  **/
 
 var info = {
-    "revision": 9,
-    "name": "add-image-table",
-    "created": "2019-06-05T04:05:39.849Z",
+    "revision": 4,
+    "name": "vote",
+    "created": "2019-05-30T19:02:12.812Z",
     "comment": ""
 };
 
 var migrationCommands = [{
     fn: "createTable",
     params: [
-        "Images",
+        "Votes",
         {
             "id": {
                 "type": Sequelize.INTEGER,
@@ -27,9 +27,13 @@ var migrationCommands = [{
                 "autoIncrement": true,
                 "primaryKey": true
             },
-            "filename": {
-                "type": Sequelize.STRING,
-                "field": "filename"
+            "up": {
+                "type": Sequelize.BOOLEAN,
+                "field": "up"
+            },
+            "down": {
+                "type": Sequelize.BOOLEAN,
+                "field": "down"
             },
             "createdAt": {
                 "type": Sequelize.DATE,
@@ -52,17 +56,6 @@ var migrationCommands = [{
                 },
                 "allowNull": true
             },
-            "BlogId": {
-                "type": Sequelize.INTEGER,
-                "field": "BlogId",
-                "onUpdate": "CASCADE",
-                "onDelete": "SET NULL",
-                "references": {
-                    "model": "Blogs",
-                    "key": "id"
-                },
-                "allowNull": true
-            },
             "IdeaId": {
                 "type": Sequelize.INTEGER,
                 "field": "IdeaId",
@@ -79,6 +72,15 @@ var migrationCommands = [{
     ]
 }];
 
+var undoMigrationCommands = [
+    {
+        fn: "dropTable",
+        params: [
+            "Votes"
+        ]
+    },
+];
+
 module.exports = {
     pos: 0,
     up: function(queryInterface, Sequelize)
@@ -89,6 +91,24 @@ module.exports = {
                 if (index < migrationCommands.length)
                 {
                     let command = migrationCommands[index];
+                    console.log("[#"+index+"] execute: " + command.fn);
+                    index++;
+                    queryInterface[command.fn].apply(queryInterface, command.params).then(next, reject);
+                }
+                else
+                    resolve();
+            }
+            next();
+        });
+    },
+    down: function(queryInterface, Sequelize)
+    {
+        var index = this.pos;
+        return new Promise(function(resolve, reject) {
+            function next() {
+                if (index < undoMigrationCommands.length)
+                {
+                    let command = undoMigrationCommands[index];
                     console.log("[#"+index+"] execute: " + command.fn);
                     index++;
                     queryInterface[command.fn].apply(queryInterface, command.params).then(next, reject);

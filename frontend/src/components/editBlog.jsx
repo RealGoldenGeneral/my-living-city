@@ -58,6 +58,7 @@ class EditBlog extends Component {
       let response = await fetch(API_URL + "/blog", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
+        credentials: 'include',
         body: data
       })
       if(response.ok){
@@ -67,7 +68,8 @@ class EditBlog extends Component {
         response.json().then(async (data) => {
         let imageResponse = await fetch(API_URL+"/blog/" + data.id + "/images", {
             method: "POST",
-            body: formData
+            body: formData,
+            credentials: 'include'
         });
         if(imageResponse.ok){
             console.log('Image Uploaded')

@@ -3,6 +3,7 @@ import '../stylesheets/conversations.css';
 
 import Navbar from './navbar';
 import ConvoCard from './convoCard.jsx';
+import Footer from './footer.jsx';
 
 const API_URL = require('../config.js');
 
@@ -33,7 +34,8 @@ class Conversations extends Component {
     try{
       await fetch(API_URL + "/ideas/new/0", {
           method: "GET",
-          headers: {"Content-Type": "application/json"}
+          headers: {"Content-Type": "application/json"},
+          credentials: 'include'
       }).then((response) => {
           response.json().then((data) => {
             console.log('Fetched Ideas: ', data);
@@ -56,7 +58,8 @@ class Conversations extends Component {
     try{
       await fetch(API_URL + "/ideas/" + type + "/0", {
           method: "GET",
-          headers: {"Content-Type": "application/json"}
+          headers: {"Content-Type": "application/json"},
+          credentials: 'include'
       }).then((response) => {
           response.json().then((data) => {
             console.log('Fetched Ideas: ', data);
@@ -132,20 +135,20 @@ class Conversations extends Component {
               </div>
             </div>
           </div>
-  
+
           <div className="row ml-3 mr-3">
             <div className="col-12 text-center">
               <br/>
-              <h2>Active Collaborations</h2>
+              <h2>Project</h2>
               <div className="convoRow">
                 {this.state.ideas.map((value, index) => {
-                  if (value.idea.state === "collaboration") { 
+                  if (value.idea.state === "project") { 
                     return <ConvoCard key={index} model={value}/>
                   } 
-                  else if(value.idea.state !== "collaboration" && index === this.state.ideas.length - 1){
+                  else if(value.idea.state !== "project" && index === this.state.ideas.length - 1){
                     return <div key={index}>
                         <br/>
-                        <p className="lead">No Active Collaborations</p>
+                        <p className="lead">No Active Project</p>
                       </div>;
                   }
                   else{
@@ -155,6 +158,7 @@ class Conversations extends Component {
               </div>
             </div>
           </div>
+          <Footer />
         </div>
       );
     }
@@ -162,6 +166,7 @@ class Conversations extends Component {
       return(
         <div>
           <Navbar/>
+          <Footer />
         </div>
       );
     }

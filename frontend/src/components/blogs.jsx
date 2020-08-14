@@ -22,7 +22,9 @@ class Blogs extends Component {
     }
     navLink.style = "font-weight: bold; color: #007bff;"
     
-    fetch(API_URL + "/blogs/")
+    fetch(API_URL + "/blogs/", {
+      credentials: 'include'
+    })
       .then(res => {
         return res.json();
       })

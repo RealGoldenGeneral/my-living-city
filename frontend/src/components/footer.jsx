@@ -8,7 +8,7 @@ class Footer extends Component {
       <div className="Footer">
         <div className="row" style={{"borderTop": "solid black 1px"}}>
             <div className="col-12 text-center mt-3">
-                <p>My Living City &#9400; 2019</p>
+                <p>My Living City &#9400; 2020</p>
             </div>
         </div>
       </div>

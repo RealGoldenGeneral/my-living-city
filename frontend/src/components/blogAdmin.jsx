@@ -16,7 +16,9 @@ class BlogAdmin extends Component {
   }
 
   componentDidMount(){
-    fetch(API_URL + "/blogs/")
+    fetch(API_URL + "/blogs/", {
+      credentials: 'include'
+    })
       .then(res => {
         return res.json();
       })
@@ -30,7 +32,8 @@ class BlogAdmin extends Component {
 
   deleteBlog(id){
     fetch(API_URL + "/blog/" + id, {
-      method: "DELETE"
+      method: "DELETE",
+      credentials: 'include'
     })
     .then(res => {
       return res;

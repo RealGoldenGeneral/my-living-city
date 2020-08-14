@@ -15,7 +15,9 @@ class ViewBlog extends Component {
     }
     
     async componentDidMount() {
-        await fetch(API_URL + "/blog/" + this.props.match.params.id)
+        await fetch(API_URL + "/blog/" + this.props.match.params.id, {
+          credentials: 'include'
+        })
           .then(response => {
             return response.json();
           })

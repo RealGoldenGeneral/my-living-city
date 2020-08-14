@@ -20,40 +20,45 @@ class LoginModal extends Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
-  async login(e){
-    e.preventDefault();
-    try{
-        let data = JSON.stringify({
-          user: {
-            email: this.state.email,
-            password: this.state.password,
-          }
-        });
-        await fetch(API_URL+"/user/login", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: data
-      }).then((response) => {
-        if(response.ok){
-          response.json().then((data) => {
-            console.log('Got User: ', data);
-            sessionStorage.setItem('loggedin', true);
-            sessionStorage.setItem('user', data.user.email);
-            this.acceptLogin();
-          }).catch(e => {
-            console.log(e.stack);
-            sessionStorage.setItem('loggedin', false);
-            sessionStorage.setItem('user', data.user.email);
-            this.rejectLogin();
-          });
+async login(e){
+  e.preventDefault();
+  try{
+      let data = JSON.stringify({
+        user: {
+          email: this.state.email,
+          password: this.state.password,
         }
       });
-    }
-    catch(e){
-        console.log(e.stack);
-        this.rejectLogin();
-    }
+      await fetch(API_URL+"/user/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: data,
+        credentials: 'include'
+    }).then((response) => {
+      if(response.ok){
+        response.json().then((data) => {
+          console.log('Got User: ', data);
+          sessionStorage.setItem('loggedin', true);
+          sessionStorage.setItem('user', data.user.email);
+          sessionStorage.setItem('userId', data.user.id);
+          sessionStorage.setItem('userRole', data.user.Role.role_name);
+          this.acceptLogin();
+        }).catch(e => {
+          console.log(e.stack);
+          sessionStorage.setItem('loggedin', false);
+          sessionStorage.setItem('user', data.user.email);
+          sessionStorage.setItem('userId', data.user.id);
+          sessionStorage.setItem('userRole', data.user.Role.role_name);
+          this.rejectLogin();
+        });
+      }
+    });
   }
+  catch(e){
+      console.log(e.stack);
+      this.rejectLogin();
+  }
+}
 
   rejectLogin(){
     document.getElementById('submitBtn').hidden = false;
@@ -95,7 +100,7 @@ class LoginModal extends Component {
                     <button id="submitBtn" type="submit" className="btn btn-primary">Login</button>
                     <div>
                       <i id="confirmIcon" hidden className="fas fa-check fa-2x"></i>
-                      <i id="denyIcon" hidden className="far fa-times-circle fa-2x"></i>
+                      <i id="denyIcon" hidden className="far fa-times-circle fa-2x">Wrong password.</i>
                     </div>
                   </div>
                 </form>

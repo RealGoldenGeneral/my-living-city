@@ -6,15 +6,14 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true,
     },
+    category: DataTypes.STRING,
     title: DataTypes.STRING,
     description: DataTypes.STRING(5000),
-    place_petal: DataTypes.STRING,
-    water_petal: DataTypes.STRING,
-    energy_petal: DataTypes.STRING,
-    health_petal: DataTypes.STRING,
-    materials_petal: DataTypes.STRING,
-    equity_petal: DataTypes.STRING,
-    beauty_petal: DataTypes.STRING,
+    community_impact: DataTypes.STRING,
+    nature_impact: DataTypes.STRING,
+    arts_impact: DataTypes.STRING,
+    energy_impact: DataTypes.STRING,
+    manufacturing_impact: DataTypes.STRING,
     state: {
       type: DataTypes.STRING,
       defaultValue: 'idea'
@@ -22,14 +21,29 @@ module.exports = (sequelize, DataTypes) => {
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
-    }
+    },
+    ratio: DataTypes.FLOAT,
+    status: DataTypes.STRING
   }, {});
+
   Idea.associate = function(models) {
+    // Belongs-To associations
     Idea.belongsTo(models.User);
     Idea.belongsTo(models.User, {
       as: 'developer',
       foreignKey: 'developerId'
     });
+
+    // Belongs-To-Many associations
+
+    // Has-One associations
+
+    // Has-Many associations
+    Idea.hasMany(models.Comment);
+    Idea.hasMany(models.Image);
+    Idea.hasMany(models.Rating);
+    Idea.hasMany(models.Vote);
   };
+  
   return Idea;
 };

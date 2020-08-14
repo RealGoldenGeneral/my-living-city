@@ -183,3 +183,47 @@ background-color: #FF6600
   background-color: #3a80c1;
   border-color: #3a80c1;
 }
+
+.time{
+  color: rgb(174, 188, 201);
+  font-size: 8pt;
+}
+
+/*Making the rating text center with the stars */
+#ratingText {
+  padding-left: 100px;
+}
+
+.test {
+  padding-left: 5px;
+}
+
+/* making the button center with the sponsor button */
+#button {
+  padding-top: 10px;
+  margin-left: -6px;
+}
+
+.impactAreas {
+  padding-left: 8px;
+  color: black;
+}
+
+#rateVotes {
+  padding-right: 55px;
+}
+
+#rateVote {
+  padding-left: 30px;
+  padding-right: 63px;
+
+}
+
+#rateMoreVotes {
+  padding-right: 118px;
+}
+
+#firstRateVote {
+  padding-left: 70px;
+  padding-right: 50px;
+}

@@ -4,6 +4,7 @@ import chelsea from '../media/chelsea.jpg'
 import paul from '../media/paul.jpg'
 
 import Navbar from './navbar';
+import Footer from './footer.jsx';
 
 class About extends Component {
 
@@ -123,6 +124,7 @@ class About extends Component {
           </p>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }

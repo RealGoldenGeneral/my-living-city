@@ -13,7 +13,9 @@ class BlogCard extends Component {
 }
 
   async componentDidMount(){
-    await fetch(API_URL + "/blog/" + this.props.model.id + "/images")
+    await fetch(API_URL + "/blog/" + this.props.model.id + "/images", {
+      credentials: 'include'
+    })
     .then(res => {
       return res.json();
     })
