@@ -9,6 +9,9 @@ WORKDIR /usr/src/app/server
 # Install Dependencies (Allows cacheing if dependencies installed first)
 COPY package*.json ./
 
+# Install dependencies
+RUN npm install
+
 # Copies rest of source code into container
 COPY . ./
 
