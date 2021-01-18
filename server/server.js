@@ -7,11 +7,11 @@ const cookieParser = require('cookie-parser');
 var multer = require('multer');
 multer = multer({storage: multer.memoryStorage()});
 app.use(cookieParser());
-const port = 3001;
-const frontendPort = 3000;
+const port = process.env.PORT;
 app.use(cors({
   credentials: true,
-  origin: `http://localhost:${frontendPort}`
+  // Origin point url specifying frontend port
+  origin: process.env.CORS_ORIGIN,
 }));
 
 
@@ -23,12 +23,15 @@ require('./config/passport');
 const passport = require('passport');
 const auth = require ('./controllers/auth');
 var session = require("express-session");
+app.set("proxy", 1);
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   cookie: {
     maxAge: 30 * 60 * 60 * 24 * 1000, // 30 days in milliseconds
-    secure: process.env.NODE_ENV === "production"
+    secure: process.env.NODE_ENV === "production",
+    // Replace line below with custom domain URL to get cookies to work
+    domain: process.env.NODE_ENV === "production" ? ".mylivingcity.com" : undefined,
   } 
 }));
 app.use(passport.initialize());
@@ -109,4 +112,4 @@ app.post('/:type/:id/images', validateLogin, multer.array('file'), imageControll
 app.post('/report', bodyParser.json(), reportController.postReport);
 app.get('/reports', bodyParser.json(), reportController.getReport);
 
-app.listen(port, () => console.log(`My Living City listening on port ${port}!`));
+app.listen(port, () => console.log(`My Living City API is listening on port ${port}!`));

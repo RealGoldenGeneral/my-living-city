@@ -3,15 +3,23 @@
 # Stage 1
 FROM node:12
 
-# Create frontend directory
-RUN mkdir -p /usr/src/app/server/
-WORKDIR /usr/src/app/server/
+# Create Directory to store backend API
+WORKDIR /usr/src/app/server
 
-# Install dependencies
-COPY package*.json /usr/src/app/server/
-RUN npm install
-COPY . /usr/src/app/server/
+# Install Dependencies (Allows cacheing if dependencies installed first)
+COPY package*.json ./
 
-# Open port 3001 for connections
+# Copies rest of source code into container
+COPY . ./
+
+# MUST HAVE .env.production which contains environment variables
+# for application to run see "UserManual" documentation
+COPY .env.production .env
+
+# Ensures that environment is run in production
+ENV NODE_ENV production
+
+# Opens port 3001 and starts application
 EXPOSE 3001
-CMD ["npm", "run", "dev"]
+CMD ["node", "server.js"]
+USER node
