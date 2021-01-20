@@ -31,7 +31,7 @@ app.use(session({
     maxAge: 30 * 60 * 60 * 24 * 1000, // 30 days in milliseconds
     secure: process.env.NODE_ENV === "production",
     // Replace line below with custom domain URL to get cookies to work
-    domain: process.env.NODE_ENV === "production" ? ".mylivingcity.com" : undefined,
+    domain: process.env.NODE_ENV === "production" ? ".mylivingcity.org" : undefined,
   } 
 }));
 app.use(passport.initialize());
