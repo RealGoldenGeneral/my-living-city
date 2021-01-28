@@ -17,7 +17,8 @@ COPY . ./
 
 # MUST HAVE .env.production which contains environment variables
 # for application to run see "UserManual" documentation
-COPY .env.production .env
+# Environment Vars are now set in Dokku manually to prevent leaking secrets
+# COPY .env.production .env
 
 # Ensures that environment is run in production
 ENV NODE_ENV production
