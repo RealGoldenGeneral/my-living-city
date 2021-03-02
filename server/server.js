@@ -2,13 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 // TODO: May be reason why logout not working
-const cookieParser = require('cookie-parser');
-const expressSession = require('express-session');
-const expressJWT = require('express-jwt'); // TODO: Also not used?
 const { sequelize } = require('./db/models/index');
-require('./config/passport');
-const passport = require('passport');
-const { validateLogin, auth: { optional, required }} = require('./middlewares/auth');
 
 // Constants
 const { __prod__ } = require('./constants');
@@ -32,15 +26,11 @@ const main = async () => {
 	const app = express();
 
 	// Apply middleware
-  // app.use(passport.initialize());
-  // app.use(passport.session());
-	// app.use(cookieParser());
 	app.use(express.json());
   app.use(cors({
     credentials: true,
     origin: CORS_ORIGIN,
   }))
-  // Apply Passport middleware
   require('./auth/auth');
 
 

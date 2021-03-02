@@ -1,8 +1,6 @@
 'use strict';
 
-const bcrypt = require('bcryptjs');
 const argon2 = require('argon2');
-const jwt = require('jsonwebtoken');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
