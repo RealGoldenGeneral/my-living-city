@@ -7,6 +7,8 @@ const express = require('express');
 const userRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRY } = require('../constants');
+const argon2 = require('argon2');
+
 
 userRouter.get(
 	'/test-secure',
@@ -32,16 +34,17 @@ userRouter.get(
 					model: Role,
 					attributes: [ [ 'role_name', 'role_name' ] ]
 				},
+				attributes: {
+					exclude: [ 'password' ]
+				},
 				where: {
 					id
 				}
 			})
 
-			const parsedUser = foundUser.toAuthJSON();
-
 			res.status(200);
 			res.json({
-				user: parsedUser,
+				user: foundUser,
 			})
 		} catch (error) {
 			res.status(500);
@@ -75,7 +78,16 @@ userRouter.post(
 				return;
 			}
 
-			res.json(user);
+			// Give valid token upon signup
+			const tokenBody = { id: user.id, email: user.email };
+			const token = jwt.sign({ user: tokenBody }, JWT_SECRET, {
+				expiresIn: JWT_EXPIRY 
+			});
+
+			res.status(201).json({
+				user,
+				token,
+			});
 		})(req, res, next);
 	}
 )
@@ -146,60 +158,72 @@ userRouter.get(
 		}
 	}
 )
-const getRoles = async function(req, res) {
-	try {
-		var dbRoles = await Role.findAll().catch((err) => {
-			throw err;
-		});
-		var roles = await Promise.all(
-			dbRoles.map((role) => {
-				return { role: role };
-			})
-		);
-		res.send(roles);
-	} catch (e) {
-		return res.status(400).json({
-			errors: {
-				error: e.stack
-			}
-		});
-	}
-};
 
-// TODO: Rewrite error and response payloads
-//GET all users (required, only admin users have access)
-const getUsers = async function(req, res) {
-	try {
-		var dbUsers = await User.findAll({
-			include: [
-				{
+userRouter.get(
+	'/getall',
+	async (req, res, next) => {
+		try {
+			const allUsers = await User.findAll({
+				include: {
 					model: Role,
 					attributes: [ [ 'role_name', 'role_name' ] ]
+				},
+				attributes: {
+					exclude: [ 'password' ]
 				}
-			]
-		})
-			/*
-    .then((users) => {
-      res.send(users)
-    })
-    */
-			.catch((err) => {
-				throw err;
 			});
-		var users = await Promise.all(
-			dbUsers.map((user) => {
-				return { user: user };
+
+			res.json(allUsers);
+		} catch (error) {
+			res.status(400).json({
+				message: error.message,
+				stack: error.stack,
 			})
-		);
-		res.send(users);
-	} catch (e) {
-		return res.status(400).json({
-			errors: {
-				error: e.stack
-			}
-		});
+		}
 	}
-};
+)
+
+userRouter.post(
+	'/password',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+		try {
+			const { id, email } = req.user;
+			const { originalPassword, newPassword } = req.body;
+			const foundUser = await User.findByPk(id);
+
+			const validPassword = await argon2.verify(foundUser.password, originalPassword);
+
+			if (!validPassword) {
+				throw new Error('The provided password is not correct');
+			}
+
+			await User.update(
+				{ password: newPassword },
+				{
+					where: {
+						id
+					},
+					individualHooks: true
+				}
+			);
+
+			const reQueriedUser = await User.findByPk(id);
+
+			res.json({
+				message: "User succesfully updated",
+				user: reQueriedUser.toAuthJSON(),
+				validPassword
+			});
+		} catch (error) {
+			res.status(400).json({
+				message: error.message,
+				stack: error.stack,
+			})
+		}
+	}
+)
+
 
 // TODO: Rewrite error and response payloads try it in browser
 // PUT change password route

@@ -38,7 +38,9 @@ passport.use(
         }
 
         // Create user
-        const createdUser = await User.create(userCredentials);
+        const createdUser = await User.create(
+          userCredentials,
+        );
 
         return done(null, createdUser.toAuthJSON());
       } catch (error) {

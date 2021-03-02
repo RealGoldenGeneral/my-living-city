@@ -92,14 +92,13 @@ module.exports = (sequelize, DataTypes) => {
     });
   });
 
-  User.beforeUpdate((user, options) => {
-    return cryptPassword(user.password)
-    .then(success => {
-        user.password = success;
-    })
-    .catch(err => {
-        if (err) console.log(err);
-    });
+  User.beforeUpdate(async (user, options) => {
+    try {
+      const hashedPassword = await cryptPassword(user.password);
+      user.password = hashedPassword
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   async function cryptPassword(password) {
@@ -109,12 +108,6 @@ module.exports = (sequelize, DataTypes) => {
     } catch (error) {
       console.error("Error occured in User.cryptPassword: ", error);
     }
-    // return new Promise(function(resolve, reject) {
-    //     bcrypt.hash(password, 10, function(err, hash) {
-    //         if (err) return reject(err);
-    //         return resolve(hash);
-    //     });
-    // });  
   };
 
   return User;
