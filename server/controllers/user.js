@@ -145,21 +145,6 @@ userRouter.post(
 )
 
 userRouter.get(
-	'/roles',
-	async (req, res, next) => {
-		try {
-			const roles = await Role.findAll();
-			res.json(roles);
-		} catch (error) {
-			res.status(400).json({
-				message: error.message,
-				stack: error.stack,
-			})
-		}
-	}
-)
-
-userRouter.get(
 	'/getall',
 	async (req, res, next) => {
 		try {
@@ -223,54 +208,5 @@ userRouter.post(
 		}
 	}
 )
-
-
-// TODO: Rewrite error and response payloads try it in browser
-// PUT change password route
-const changePassword = async function(req, res) {
-	console.log('changing password....');
-	console.log(req.session.user.id);
-	console.log(req.body);
-	const id = req.session.user.id;
-	const currentPassword = req.body.currentPassword;
-	const newPassword = req.body.newPassword;
-
-	try {
-		const valid = await User.findByPk(id).then((user) => {
-			console.log('found user');
-			return user.validatePassword(currentPassword);
-		});
-		if (valid) {
-			console.log('updating');
-			await User.update(
-				{
-					password: newPassword
-				},
-				{
-					where: {
-						id: id
-					},
-					individualHooks: true
-				}
-			).catch((err) => {
-				throw err;
-			});
-
-			console.log('updated');
-			const user = await User.findByPk(id);
-			console.log(user);
-			req.session.user = user;
-			res.status(200).end();
-		} else {
-			return res.status(500).send({ error: 'Incorrect password' });
-		}
-	} catch (e) {
-		return res.status(400).json({
-			errors: {
-				error: e.stack
-			}
-		});
-	}
-};
 
 module.exports = userRouter;

@@ -7,24 +7,19 @@ const roleRouter = express.Router();
 const Role = db.Role;
 const User = db.User;
 
-roleRouter.get('/get-all', async (req, res) => {
-	try {
-		const hashedPassword = await User.cryptPassword('password');
-		console.log(hashedPassword);
-
-    const dbRoles = await Role.findAll();
-    res.json(dbRoles);
-	} catch (e) {
-		res.status(400).json({
-			errors: [
-				{
-					type: 'Request',
-					message: `${error}`,
-          stack: e.stack,
-				}
-			]
-		});
+roleRouter.get(
+	'/getall',
+	async (req, res, next) => {
+		try {
+			const roles = await Role.findAll();
+			res.json(roles);
+		} catch (error) {
+			res.status(400).json({
+				message: error.message,
+				stack: error.stack,
+			})
+		}
 	}
-});
+)
 
 module.exports = roleRouter;

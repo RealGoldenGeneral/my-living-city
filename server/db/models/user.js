@@ -72,24 +72,22 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Vote);
   };
 
-  User.beforeCreate((user, options) => {
-    return cryptPassword(user.password)
-    .then(success => {
-        user.password = success;
-    })
-    .catch(err => {
-        if (err) console.log(err);
-    });
+  User.beforeCreate(async (user, options) => {
+    try {
+      const hashedPassword = await cryptPassword(user.password);
+      user.password = hashedPassword
+    } catch (error) {
+      console.log(error);
+    }
   });    
 
-  User.beforeBulkUpdate((user, options) => {
-    return cryptPassword(user.password)
-    .then(success => {
-        user.password = success;
-    })
-    .catch(err => {
-        if (err) console.log(err);
-    });
+  User.beforeBulkUpdate(async (user, options) => {
+    try {
+      const hashedPassword = await cryptPassword(user.password);
+      user.password = hashedPassword
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   User.beforeUpdate(async (user, options) => {
