@@ -22,6 +22,7 @@ userRouter.post(
 			}
 
 			if (!user) {
+				console.log(info);
 				res.status(401);
 				res.json({
 					message: info.message

@@ -15,6 +15,14 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
+        if (!email) {
+          return done({ message: "You must supply an email." })
+        }
+
+        if (!password) {
+          return done({ message: "You must supply a password."})
+        }
+
         const userCredentials = req.body;
 
         // Check if user exists
@@ -33,6 +41,7 @@ passport.use(
 
         return done(null, createdUser.toAuthJSON());
       } catch (error) {
+        console.log("ERROR")
         done(error);
       }
     }

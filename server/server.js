@@ -14,7 +14,7 @@ const { validateLogin, auth: { optional, required }} = require('./middlewares/au
 const { __prod__ } = require('./constants');
 const PORT = 3001;
 const SESSION_SECRET = process.env.SESSION_SECRET;
-const COOKIE_DOMAIN = __prod__ ? process.env.COOKIE_DOMAIN : `http://localhost:3001${PORT}`;
+const COOKIE_DOMAIN = __prod__ ? process.env.COOKIE_DOMAIN : `http://localhost:${PORT}`;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 
 const main = async () => {
