@@ -8,6 +8,19 @@ const userRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRY } = require('../constants');
 
+userRouter.get(
+	'/test-secure',
+	passport.authenticate('jwt', { session: false }),
+	(req, res, next) => {
+		res.json({
+			message: "You made it to the secure route",
+			user: req.user,
+			tokenQuery: req.query?.secret_token,
+			tokenHeader: req.headers?.secret_token,
+		})
+	}
+)
+
 userRouter.post(
 	'/signup',
 	async (req, res, next) => {
@@ -65,7 +78,7 @@ userRouter.post(
 
 							const tokenBody = { id: user.id, email: user.email };
 							const token = jwt.sign({ user: tokenBody }, JWT_SECRET, {
-								expiresIn: JWT_EXPIRY // Make this secret
+								expiresIn: JWT_EXPIRY 
 							});
 
 							res.status(200);
@@ -87,67 +100,6 @@ userRouter.post(
 	}
 )
 
-
-// TODO: Rewrite error and response payloads
-//POST login route (optional, everyone has access)
-const login = (req, res, next) => {
-	const { body: { user } } = req;
-
-	if (!user.email) {
-		return res.status(422).json({
-			errors: {
-				email: 'is required'
-			}
-		});
-	}
-
-	if (!user.password) {
-		return res.status(422).json({
-			errors: {
-				password: 'is required'
-			}
-		});
-	}
-
-	return passport.authenticate('local', { session: true }, (err, passportUser, info) => {
-		/*******DEBUG*********/
-		console.log('Authenticating...');
-		/********************/
-
-		if (err) {
-			return next(err);
-		}
-
-		if (passportUser) {
-			/*******DEBUG*********/
-			console.log('Valid user found');
-			/********************/
-
-			const user = passportUser;
-			req.session.user = passportUser;
-			console.log(req.session);
-			//user.token = passportUser.generateJWT();
-			req.session.user = user;
-			return res.send({ user: user });
-			/*
-      res.cookie('authToken', user.token, { 
-        maxAge: 30 * 60 * 60 * 24 * 1000  // 30 days in ms
-      });
-      */
-			//return res.json({ user: user.toAuthJSON() });
-		}
-
-		return res.status(400).info;
-	})(req, res, next);
-};
-
-// TODO: Rewrite error and response payloads
-const logout = (req, res, next) => {
-	req.session.destroy();
-	res.clearCookie('authToken');
-	res.clearCookie('connect.sid');
-	res.status(200).end();
-};
 
 // TODO: Rewrite error and response payloads
 //GET current route (required, only authenticated users have access)
@@ -274,12 +226,12 @@ const changePassword = async function(req, res) {
 	}
 };
 
-userRouter.get('/me', getCurrentUser);
-userRouter.get('/get-all', getUsers);
+// userRouter.get('/me', getCurrentUser);
+// userRouter.get('/get-all', getUsers);
 // userRouter.post('/register', register);
 // userRouter.post('/login', login);
-userRouter.post('/logout', logout);
-userRouter.post('/logout', logout);
-userRouter.put('/password', changePassword);
+// userRouter.post('/logout', logout);
+// userRouter.post('/logout', logout);
+// userRouter.put('/password', changePassword);
 
 module.exports = userRouter;

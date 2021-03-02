@@ -1,5 +1,6 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
+const { JWT_SECRET } = require('../constants');
 
 const db = require('../db/models/index');
 const User = db.User;
@@ -82,5 +83,28 @@ passport.use(
       }
     }
 
+  )
+)
+
+const JWTStrategy = require('passport-jwt').Strategy;
+const ExtractJWT = require('passport-jwt').ExtractJwt;
+
+passport.use(
+  new JWTStrategy(
+    {
+      secretOrKey: JWT_SECRET,
+      jwtFromRequest: ExtractJWT.fromExtractors([
+        ExtractJWT.fromUrlQueryParameter('secret_token'),
+        ExtractJWT.fromHeader('secret_token'),
+        ExtractJWT.fromAuthHeaderAsBearerToken(),
+      ])
+    },
+    async (token, done) => {
+      try {
+        return done(null, token.user);
+      } catch (error) {
+        done(error);
+      }
+    }
   )
 )
