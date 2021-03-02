@@ -132,29 +132,20 @@ userRouter.post(
 	}
 )
 
-
-// TODO: Rewrite error and response payloads
-//GET current route (required, only authenticated users have access)
-const getCurrentUser = (req, res, next) => {
-	const id = req.session.user.id;
-
-	return User.findOne({
-		include: [
-			{
-				model: Role,
-				attributes: [ [ 'role_name', 'role_name' ] ]
-			}
-		],
-		where: { id: id }
-	}).then((user) => {
-		if (!user) {
-			return res.sendStatus(400);
+userRouter.get(
+	'/roles',
+	async (req, res, next) => {
+		try {
+			const roles = await Role.findAll();
+			res.json(roles);
+		} catch (error) {
+			res.status(400).json({
+				message: error.message,
+				stack: error.stack,
+			})
 		}
-
-		return res.json({ user: user });
-	});
-};
-
+	}
+)
 const getRoles = async function(req, res) {
 	try {
 		var dbRoles = await Role.findAll().catch((err) => {
@@ -257,13 +248,5 @@ const changePassword = async function(req, res) {
 		});
 	}
 };
-
-// userRouter.get('/me', getCurrentUser);
-// userRouter.get('/get-all', getUsers);
-// userRouter.post('/register', register);
-// userRouter.post('/login', login);
-// userRouter.post('/logout', logout);
-// userRouter.post('/logout', logout);
-// userRouter.put('/password', changePassword);
 
 module.exports = userRouter;
