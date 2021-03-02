@@ -42,6 +42,12 @@ userRouter.get(
 				}
 			})
 
+			if (!foundUser) {
+				return res.status(400).json({
+					message: "User could not be found or does not exist in the database."
+				})
+			}
+
 			res.status(200);
 			res.json({
 				user: foundUser,
