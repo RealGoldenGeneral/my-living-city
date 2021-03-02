@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "migrate": "pushd db && npx sequelize-cli db:migrate && popd",
-    "db:populate": "npx sequelize-cli db:seed:all",
+    "migrate": "npx sequelize-cli db:migrate && popd",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:seed:undo": "npx sequelize-cli db:seed:undo:all",
     "dev": "nodemon server.js"
   },
   "repository": {
