@@ -21,6 +21,38 @@ userRouter.get(
 	}
 )
 
+userRouter.get(
+	'/me',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+		try {
+			const { id, email } = req.user;
+			const foundUser = await User.findOne({
+				include: {
+					model: Role,
+					attributes: [ [ 'role_name', 'role_name' ] ]
+				},
+				where: {
+					id
+				}
+			})
+
+			const parsedUser = foundUser.toAuthJSON();
+
+			res.status(200);
+			res.json({
+				user: parsedUser,
+			})
+		} catch (error) {
+			res.status(500);
+			res.json({
+				message: error.message,
+				stack: error.stack,
+			})
+		}
+	}
+)
+
 userRouter.post(
 	'/signup',
 	async (req, res, next) => {
