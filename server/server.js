@@ -1,115 +1,62 @@
 require('dotenv').config();
 const express = require('express');
-var cors = require('cors');
-const bodyParser = require('body-parser');
-const app = express();
+const cors = require('cors');
+// TODO: May be reason why logout not working
 const cookieParser = require('cookie-parser');
-var multer = require('multer');
-multer = multer({storage: multer.memoryStorage()});
-app.use(cookieParser());
-const port = process.env.PORT;
-app.use(cors({
-  credentials: true,
-  // Origin point url specifying frontend port
-  origin: process.env.CORS_ORIGIN,
-}));
-
-
-const db = require('./db/models/index');
-const sequelize = db.sequelize;
-sequelize.sync();
-
+const expressSession = require('express-session');
+const expressJWT = require('express-jwt'); // TODO: Also not used?
+const { sequelize } = require('./db/models/index');
 require('./config/passport');
 const passport = require('passport');
-const auth = require ('./controllers/auth');
-var session = require("express-session");
-app.set("proxy", 1);
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  cookie: {
-    maxAge: 30 * 60 * 60 * 24 * 1000, // 30 days in milliseconds
-    secure: process.env.NODE_ENV === "production",
-    // Replace line below with custom domain URL to get cookies to work
-    domain: process.env.NODE_ENV === "production" ? ".mylivingcity.org" : undefined,
-  } 
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+const { validateLogin, auth: { optional, required }} = require('./middlewares/auth');
 
+// Constants
+const { __prod__ } = require('./constants');
+const PORT = 3001;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+const COOKIE_DOMAIN = __prod__ ? process.env.COOKIE_DOMAIN : `http://localhost:3001${PORT}`;
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  db.User.findByPk(id, function(err, user) {
-    done(err, user);
-  });
-});
-
-const validateLogin = function(req, res, next) {
-  var session = req.session;
-  console.log(session);
-  if (session.user) {
-    next();
-  } else {
-    res.status(401).send("Not logged in");
+const main = async () => {
+	// Establish DB connection
+  try {
+    console.log('\nChecking connections...');
+    await sequelize.authenticate();
+    console.log("Database Connection has been established succesfully");
+    sequelize.sync();
+  } catch (error) {
+    console.log("!!UNABLE TO CONNECT TO THE DATABASE!!\n", error);
   }
-}
 
-const ideaController = require('./controllers/idea');
-const userController = require('./controllers/user');
-const blogController = require('./controllers/blog');
-const commentController = require('./controllers/comment');
-const imageController = require('./controllers/image');
-const reportController = require('./controllers/report');
+	// Initialize dependencies
+	const app = express();
 
-app.get('/', auth.optional, (req, res) => res.send('Welcome to My Living City!'));
+	// Apply middleware
+  // app.use(passport.initialize());
+  // app.use(passport.session());
+	// app.use(cookieParser());
+	app.use(express.json());
+  app.use(cors({
+    credentials: true,
+    origin: CORS_ORIGIN,
+  }))
+  // Apply Passport middleware
+  require('./auth/auth');
 
-app.get('/ideas/:sort/:offset', ideaController.getIdeas);
-app.get('/idea/:id', ideaController.getSingleIdea);
-app.delete('/idea/:id', validateLogin, ideaController.deleteIdea);
-app.put('/idea/:id', validateLogin, bodyParser.json(), ideaController.editIdea);
-app.put('/idea/ratio/:id', validateLogin, bodyParser.json(), ideaController.updateRatio);
-app.post('/idea', validateLogin, bodyParser.json(), ideaController.postIdea);
 
-app.put('/proposal/:id', bodyParser.json(), ideaController.updateIdea);
+	// Routing
+  const userRouter = require('./controllers/user');
+  const roleRouter = require('./controllers/role');
 
-app.get('/:category/ideas/:sort/:offset', auth.optional, ideaController.getIdeasByCategory);
+  const apiRouter = express.Router();
+  app.use("/", apiRouter);
+  apiRouter.use("/user", userRouter);
+  apiRouter.use('/role', roleRouter);
 
-app.post('/idea/:id/upvote', validateLogin, ideaController.upvote);
-app.post('/idea/:id/downvote', validateLogin, ideaController.downvote);
-app.post('/idea/:id/rate', validateLogin, bodyParser.json(), ideaController.rate);
-app.put('/idea/:id/developer', validateLogin, bodyParser.json(), ideaController.assignDeveloper);
+	// Listen to server
+	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
+};
 
-app.get('/:type/:id/comments', commentController.getComments);
-app.post('/:type/:id/comment', validateLogin, bodyParser.json(), commentController.addComment);
-app.post('/comment/:id/upvote', validateLogin, bodyParser.json(), commentController.upvote);
-app.post('/comment/:id/downvote', validateLogin, bodyParser.json(), commentController.downvote);
-app.post('/comment/:id/rate', validateLogin, bodyParser.json(), commentController.rate);
-app.put('/comment/:id', validateLogin, bodyParser.json(), commentController.editComment);
-app.delete('/comment/:id', validateLogin, commentController.deleteComment);
-
-app.post('/user/register', bodyParser.json(), userController.register);
-app.post('/user/login', bodyParser.json(), userController.login);
-app.post('/user/logout', validateLogin, userController.logout);
-app.get('/user/me', validateLogin, userController.getCurrentUser);
-app.get('/roles', userController.getRoles);
-app.get('/users', userController.getUsers);
-app.put('/user/password', validateLogin, bodyParser.json(), userController.changePassword);
-
-app.get('/blogs', blogController.getBlogs);
-app.get('/blog/:id', blogController.getBlog);
-app.post('/blog', validateLogin, bodyParser.json(), blogController.postBlog);
-app.put('/blog/:id', validateLogin, bodyParser.json(), blogController.editBlog);
-app.delete('/blog/:id', validateLogin, blogController.deleteBlog);
-
-app.get('/image/:filename', imageController.getImage);
-app.get('/:type/:id/images', imageController.getImageUrls);
-app.post('/:type/:id/images', validateLogin, multer.array('file'), imageController.postImage);
-
-app.post('/report', bodyParser.json(), reportController.postReport);
-app.get('/reports', bodyParser.json(), reportController.getReport);
-
-app.listen(port, () => console.log(`My Living City API is listening on port ${port}!`));
+main().catch((error) => {
+	console.log(error);
+});

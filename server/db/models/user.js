@@ -1,6 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcryptjs');
+const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 
 module.exports = (sequelize, DataTypes) => {
@@ -22,10 +23,21 @@ module.exports = (sequelize, DataTypes) => {
     RoleId: DataTypes.INTEGER
   });
 
-  User.prototype.validatePassword = function (password) {
-    console.log(password)
-    console.log(this.password)
-    return bcrypt.compareSync(password, this.password);
+  User.prototype.validatePassword = async function (password) {
+    try {
+      const validPassword = await argon2.verify(this.password, password);
+      if (validPassword) {
+        return true;
+      } else {
+        return false
+      }
+    } catch (error) {
+      console.error("Error occured in User.validatePassword: ", error);
+    }
+
+    // console.log(password)
+    // console.log(this.password)
+    // return bcrypt.compareSync(password, this.password);
   };
 
   User.prototype.toAuthJSON = function() {
@@ -90,13 +102,19 @@ module.exports = (sequelize, DataTypes) => {
     });
   });
 
-  function cryptPassword(password) {
-    return new Promise(function(resolve, reject) {
-        bcrypt.hash(password, 10, function(err, hash) {
-            if (err) return reject(err);
-            return resolve(hash);
-        });
-    });  
+  async function cryptPassword(password) {
+    try {
+      const hash = await argon2.hash(password);
+      return hash;
+    } catch (error) {
+      console.error("Error occured in User.cryptPassword: ", error);
+    }
+    // return new Promise(function(resolve, reject) {
+    //     bcrypt.hash(password, 10, function(err, hash) {
+    //         if (err) return reject(err);
+    //         return resolve(hash);
+    //     });
+    // });  
   };
 
   return User;
