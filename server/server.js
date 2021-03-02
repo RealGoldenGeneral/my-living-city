@@ -37,11 +37,21 @@ const main = async () => {
 	// Routing
   const userRouter = require('./controllers/user');
   const roleRouter = require('./controllers/role');
+  const reportRouter = require('./controllers/report');
+  const commentRouter = require('./controllers/comment');
+  const blogRouter = require('./controllers/blog');
+  const ideaRouter = require('./controllers/idea');
+  const imageRouter = require('./controllers/image');
 
   const apiRouter = express.Router();
   app.use("/", apiRouter);
   apiRouter.use("/user", userRouter);
   apiRouter.use('/role', roleRouter);
+  apiRouter.use('/report', reportRouter);
+  apiRouter.use('/comment', commentRouter);
+  apiRouter.use('/blog', blogRouter);
+  apiRouter.use('/idea', ideaRouter);
+  apiRouter.use('/image', imageRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
