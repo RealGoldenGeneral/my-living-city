@@ -10,6 +10,12 @@ const { JWT_SECRET, JWT_EXPIRY } = require('../constants');
 const argon2 = require('argon2');
 
 
+/**
+ * Test route to ensure JWT tokens are being parsed correctly
+ * 
+ * @route			GET /user/test-secure
+ * @access		Private (Signued up User with JWT)
+ */
 userRouter.get(
 	'/test-secure',
 	passport.authenticate('jwt', { session: false }),
@@ -23,6 +29,13 @@ userRouter.get(
 	}
 )
 
+/**
+ * Based on user JWT checks if it is valid and returns who
+ * the JWT is referencing or "logged in" as.
+ * 
+ * @route			GET /user/me
+ * @access		Private (Signued up User with JWT)
+ */
 userRouter.get(
 	'/me',
 	passport.authenticate('jwt', { session: false }),
@@ -62,6 +75,14 @@ userRouter.get(
 	}
 )
 
+/**
+ * Signs up a user with fields referenced in the User DB model.
+ * At a minimum must have email and password to succeed.
+ * 
+ * @route			POST /user/signup
+ * @access		Public (No credentials required)
+ * @returns		{{ User, JWT }}
+ */
 userRouter.post(
 	'/signup',
 	async (req, res, next) => {
@@ -98,6 +119,13 @@ userRouter.post(
 	}
 )
 
+/**
+ * Logs in user with email and password and issues a JWT.
+ * 
+ * @route			POST /user/login
+ * @access		Public (No credentials required)
+ * @returns		{{ User, JWT }}
+ */
 userRouter.post(
 	'/login',
 	async (req, res, next) => {
@@ -150,6 +178,14 @@ userRouter.post(
 	}
 )
 
+// TODO: Limit return payload so that only id is returned?
+/**
+ * Grabs all users and their respective roles without User password
+ * 
+ * @route			GET /user/getall
+ * @access		Public (No credentials required)
+ * @returns 	{ [User] }
+ */
 userRouter.get(
 	'/getall',
 	async (req, res, next) => {
@@ -174,6 +210,14 @@ userRouter.get(
 	}
 )
 
+/**
+ * Based on user JWT checks if it is valid and returns who
+ * the JWT is referencing or "logged in" as.
+ * 
+ * @route			GET /user/me
+ * @access		Private (Signued up User with JWT)
+ * @returns 	{ message, User, validPassword }
+ */
 userRouter.post(
 	'/password',
 	passport.authenticate('jwt', { session: false }),

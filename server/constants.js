@@ -6,5 +6,4 @@ module.exports = {
   __prod__,
   JWT_SECRET,
   JWT_EXPIRY,
-
 }
