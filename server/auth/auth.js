@@ -68,11 +68,10 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
+      const prisma = new PrismaClient({ log: ['query'] })
       try {
-        const foundUser = await User.findOne({
-          where: {
-            email
-          }
+        const foundUser = await prisma.user.findUnique({
+          where: { email }
         });
 
         if (!foundUser) {
@@ -80,19 +79,26 @@ passport.use(
           return done(null, false, { message: `User with email ${email} could not be found!` });
         }
 
-        const validPassword = await foundUser.validatePassword(password);
-        console.log(validPassword);
+        // const validPassword = await foundUser.validatePassword(password);
+        // console.log(validPassword);
+        const validPassword = await argon2ConfirmHash(password, foundUser.password);
         if (!validPassword) {
           return done(null, false, { message: "Invalid password. Please try again."})
         }
 
-        return done(null, foundUser, { message: "Logged in succesfully" });
+        const parsedUser = {
+          ...foundUser,
+          password: null,
+        }
+
+        return done(null, parsedUser, { message: "Logged in succesfully" });
       } catch (error) {
         console.log("Error is thrown", error)
         return done(error);
+      } finally {
+        await prisma.$disconnect();
       }
     }
-
   )
 )
 

@@ -160,9 +160,14 @@ userRouter.post(
 								expiresIn: JWT_EXPIRY 
 							});
 
+							const parsedUser = {
+								...user,
+								password: null,
+							}
+
 							res.status(200);
 							return res.json({
-								user: user.toAuthJSON(),
+								user: parsedUser,
 								token,
 							})
 						}
@@ -185,7 +190,7 @@ userRouter.post(
  * 
  * @route			GET /user/getall
  * @access		Public (No credentials required)
- * @returns 	{ [User] }
+ * @returns 	{ User[] }
  */
 userRouter.get(
 	'/getall',
