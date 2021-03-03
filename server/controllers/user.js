@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRY } = require('../constants');
 const argon2 = require('argon2');
 const { PrismaClient } = require('@prisma/client')
+const { argon2ConfirmHash, argon2Hash } = require('../utilityFunctions');
 
 
 /**
@@ -222,32 +223,32 @@ userRouter.post(
 	'/password',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
+		const prisma = new PrismaClient({ log: ['query'] });
 		try {
 			const { id, email } = req.user;
 			const { originalPassword, newPassword } = req.body;
-			const foundUser = await User.findByPk(id);
+			const foundUser = await prisma.user.findUnique({
+				where: { id }
+			});
 
-			const validPassword = await argon2.verify(foundUser.password, originalPassword);
+			const validPassword = await argon2ConfirmHash(originalPassword, foundUser.password);
 
 			if (!validPassword) {
 				throw new Error('The provided password is not correct');
 			}
 
-			await User.update(
-				{ password: newPassword },
-				{
-					where: {
-						id
-					},
-					individualHooks: true
+			const updatedUser = await prisma.user.update({
+				where: { id },
+				data: {
+					password: await argon2Hash(newPassword)
 				}
-			);
+			});
 
-			const reQueriedUser = await User.findByPk(id);
+			const parsedUser = { ...updatedUser, password: null };
 
 			res.json({
 				message: "User succesfully updated",
-				user: reQueriedUser.toAuthJSON(),
+				user: parsedUser,
 				validPassword
 			});
 		} catch (error) {
@@ -255,6 +256,8 @@ userRouter.post(
 				message: error.message,
 				stack: error.stack,
 			})
+		} finally {
+			await prisma.$disconnect();
 		}
 	}
 )
