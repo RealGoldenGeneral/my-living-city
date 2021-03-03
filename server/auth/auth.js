@@ -4,10 +4,6 @@ const { JWT_SECRET } = require('../constants');
 const { PrismaClient } = require('@prisma/client')
 const { argon2Hash, argon2ConfirmHash } = require('../utilityFunctions');
 
-const db = require('../db/models/index');
-const User = db.User;
-const Role = db.Role;
-
 passport.use(
   'signup',
   new localStrategy.Strategy(

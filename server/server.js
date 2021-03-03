@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 // TODO: May be reason why logout not working
-// const { sequelize } = require('./db/models/index');
 
 // Constants
 // const { __prod__ } = require('./constants');
@@ -12,16 +11,6 @@ const PORT = 3001;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 
 const main = async () => {
-	// Establish DB connection
-  // try {
-  //   console.log('\nChecking connections...');
-  //   await sequelize.authenticate();
-  //   console.log("Database Connection has been established succesfully");
-  //   sequelize.sync();
-  // } catch (error) {
-  //   console.log("!!UNABLE TO CONNECT TO THE DATABASE!!\n", error);
-  // }
-
 	// Initialize dependencies
 	const app = express();
 

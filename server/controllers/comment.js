@@ -1,6 +1,4 @@
 const passport = require('passport');
-const db = require('../db/models/index');
-const Comment = db.Comment;
 
 const express = require('express');
 const commentRouter = express.Router();

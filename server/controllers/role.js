@@ -1,11 +1,6 @@
 
-const db = require('../db/models/index');
 const express = require('express');
 const roleRouter = express.Router();
-
-// Models
-const Role = db.Role;
-const User = db.User;
 
 roleRouter.get(
 	'/getall',

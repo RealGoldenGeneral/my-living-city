@@ -1,6 +1,4 @@
 const passport = require('passport');
-const db = require('../db/models/index');
-const Idea = db.Idea;
 
 const express = require('express');
 const ideaRouter = express.Router();
