@@ -2,6 +2,7 @@ const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const { JWT_SECRET } = require('../constants');
 const { PrismaClient } = require('@prisma/client')
+const { argon2Hash, argon2ConfirmHash } = require('../utilityFunctions');
 
 const db = require('../db/models/index');
 const User = db.User;
@@ -16,7 +17,9 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
+      const prisma = new PrismaClient({ log: ['query'] })
       try {
+        const { password } = req.body;
         if (!email) {
           return done({ message: "You must supply an email." })
         }
@@ -25,28 +28,32 @@ passport.use(
           return done({ message: "You must supply a password."})
         }
 
-        const userCredentials = req.body;
+        // hash password
+        const hashedPassword = await argon2Hash(password);
 
         // Check if user exists
-        const userExists = await User.findOne({
-          where: {
-            email: email
-          }
-        });
+        const userExists = await prisma.user.findUnique({
+          where: { email }
+        })
         if (userExists) {
           return done({ message: "User with that email already exists" })
           // return done(null, false, { message: "User with that email already exists" })
         }
 
         // Create user
-        const createdUser = await User.create(
-          userCredentials,
-        );
+        const createdUser = await prisma.user.create({
+          data: {
+            ...req.body,
+            password: hashedPassword
+          },
+        });
 
-        return done(null, createdUser.toAuthJSON());
+        return done(null, createdUser);
       } catch (error) {
         console.log("ERROR")
         done(error);
+      } finally {
+        await prisma.$disconnect();
       }
     }
   )

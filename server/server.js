@@ -31,7 +31,7 @@ const main = async () => {
     credentials: true,
     origin: CORS_ORIGIN,
   }))
-  // require('./auth/auth');
+  require('./auth/auth');
 
 
 	// Routing
