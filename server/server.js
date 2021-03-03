@@ -2,25 +2,25 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 // TODO: May be reason why logout not working
-const { sequelize } = require('./db/models/index');
+// const { sequelize } = require('./db/models/index');
 
 // Constants
-const { __prod__ } = require('./constants');
+// const { __prod__ } = require('./constants');
 const PORT = 3001;
-const SESSION_SECRET = process.env.SESSION_SECRET;
-const COOKIE_DOMAIN = __prod__ ? process.env.COOKIE_DOMAIN : `http://localhost:${PORT}`;
+// const SESSION_SECRET = process.env.SESSION_SECRET;
+// const COOKIE_DOMAIN = __prod__ ? process.env.COOKIE_DOMAIN : `http://localhost:${PORT}`;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 
 const main = async () => {
 	// Establish DB connection
-  try {
-    console.log('\nChecking connections...');
-    await sequelize.authenticate();
-    console.log("Database Connection has been established succesfully");
-    sequelize.sync();
-  } catch (error) {
-    console.log("!!UNABLE TO CONNECT TO THE DATABASE!!\n", error);
-  }
+  // try {
+  //   console.log('\nChecking connections...');
+  //   await sequelize.authenticate();
+  //   console.log("Database Connection has been established succesfully");
+  //   sequelize.sync();
+  // } catch (error) {
+  //   console.log("!!UNABLE TO CONNECT TO THE DATABASE!!\n", error);
+  // }
 
 	// Initialize dependencies
 	const app = express();
@@ -31,7 +31,7 @@ const main = async () => {
     credentials: true,
     origin: CORS_ORIGIN,
   }))
-  require('./auth/auth');
+  // require('./auth/auth');
 
 
 	// Routing

@@ -1,6 +1,7 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const { JWT_SECRET } = require('../constants');
+const { PrismaClient } = require('@prisma/client')
 
 const db = require('../db/models/index');
 const User = db.User;

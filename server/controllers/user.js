@@ -8,6 +8,7 @@ const userRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRY } = require('../constants');
 const argon2 = require('argon2');
+const { PrismaClient } = require('@prisma/client')
 
 
 /**
@@ -189,16 +190,9 @@ userRouter.post(
 userRouter.get(
 	'/getall',
 	async (req, res, next) => {
+		const prisma = new PrismaClient({ log: ['query'] })
 		try {
-			const allUsers = await User.findAll({
-				include: {
-					model: Role,
-					attributes: [ [ 'role_name', 'role_name' ] ]
-				},
-				attributes: {
-					exclude: [ 'password' ]
-				}
-			});
+			const allUsers = await prisma.user.findMany({});
 
 			res.json(allUsers);
 		} catch (error) {
@@ -206,6 +200,8 @@ userRouter.get(
 				message: error.message,
 				stack: error.stack,
 			})
+		} finally {
+			await prisma.$disconnect();
 		}
 	}
 )
