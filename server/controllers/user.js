@@ -41,20 +41,12 @@ userRouter.get(
 	'/me',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
+		const prisma = new PrismaClient({ log: ['query'] })
 		try {
 			const { id, email } = req.user;
-			const foundUser = await User.findOne({
-				include: {
-					model: Role,
-					attributes: [ [ 'role_name', 'role_name' ] ]
-				},
-				attributes: {
-					exclude: [ 'password' ]
-				},
-				where: {
-					id
-				}
-			})
+			const foundUser = await prisma.user.findUnique({
+				where: { id }
+			});
 
 			if (!foundUser) {
 				return res.status(400).json({
@@ -62,9 +54,14 @@ userRouter.get(
 				})
 			}
 
+			const parsedUser = {
+				...foundUser,
+				password: null,
+			}
+
 			res.status(200);
 			res.json({
-				user: foundUser,
+				user: parsedUser,
 			})
 		} catch (error) {
 			res.status(500);
@@ -72,6 +69,8 @@ userRouter.get(
 				message: error.message,
 				stack: error.stack,
 			})
+		} finally {
+			await prisma.$disconnect();
 		}
 	}
 )
