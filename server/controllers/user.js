@@ -193,7 +193,16 @@ userRouter.get(
 	async (req, res, next) => {
 		const prisma = new PrismaClient({ log: ['query'] })
 		try {
-			const allUsers = await prisma.user.findMany({});
+			const allUsers = await prisma.user.findMany({
+				select: {
+					id: true,
+					email: true,
+					fname: true,
+					lname: true,
+					createdAt: true,
+					updatedAt: true,
+				}
+			});
 
 			res.json(allUsers);
 		} catch (error) {
