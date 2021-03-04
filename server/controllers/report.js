@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
 const reportRouter = express.Router();
+const prisma = require('../prismaClient');
 
 reportRouter.get(
   '/',
@@ -23,7 +24,6 @@ reportRouter.get(
 reportRouter.get(
   '/getall',
   async (req, res, next) => {
-    const prisma = new PrismaClient({ log: [ 'query' ]})
     try {
       const allReports = await prisma.report.findMany();
 

@@ -1,7 +1,7 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const { JWT_SECRET } = require('../constants');
-const { PrismaClient } = require('@prisma/client')
+const prisma = require('../prismaClient');
 const { argon2Hash, argon2ConfirmHash } = require('../utilityFunctions');
 
 passport.use(
@@ -13,7 +13,6 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
-      const prisma = new PrismaClient({ log: ['query'] })
       try {
         const { password } = req.body;
         if (!email) {
@@ -64,7 +63,6 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
-      const prisma = new PrismaClient({ log: ['query'] })
       try {
         const foundUser = await prisma.user.findUnique({
           where: { email }

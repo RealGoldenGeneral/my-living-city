@@ -1,8 +1,8 @@
 const passport = require('passport');
-const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
 const categoryRouter = express.Router();
+const prisma = require('../prismaClient');
 
 categoryRouter.get(
   '/',
@@ -23,7 +23,6 @@ categoryRouter.get(
 categoryRouter.get(
   '/getall',
   async (req, res, next) => {
-    const prisma = new PrismaClient({ log: [ 'query' ]})
     try {
       const allIdeas = await prisma.idea.findMany();
 

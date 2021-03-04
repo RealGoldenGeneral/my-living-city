@@ -3,10 +3,8 @@ const express = require('express');
 const userRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRY } = require('../constants');
-const argon2 = require('argon2');
-const { PrismaClient } = require('@prisma/client')
 const { argon2ConfirmHash, argon2Hash } = require('../utilityFunctions');
-
+const prisma = require('../prismaClient');
 
 /**
  * Test route to ensure JWT tokens are being parsed correctly
@@ -38,7 +36,6 @@ userRouter.get(
 	'/me',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
-		const prisma = new PrismaClient({ log: ['query'] })
 		try {
 			const { id, email } = req.user;
 			const foundUser = await prisma.user.findUnique({
@@ -169,11 +166,13 @@ userRouter.post(
 						}
 					)
 				} catch (error) {
-					res.status(500);
-					res.json({
-						message: "An error occured",
-						stack: error,
-					})
+					res.status(400).json({
+						message: "An error occured while trying to login a user.",
+						details: {
+							errorMessage: error.message,
+							errorStack: error.stack,
+						}
+					});
 				}
 			}
 		)(req, res, next);
@@ -191,7 +190,6 @@ userRouter.post(
 userRouter.get(
 	'/getall',
 	async (req, res, next) => {
-		const prisma = new PrismaClient({ log: ['query'] })
 		try {
 			const allUsers = await prisma.user.findMany({
 				select: {
@@ -207,9 +205,12 @@ userRouter.get(
 			res.json(allUsers);
 		} catch (error) {
 			res.status(400).json({
-				message: error.message,
-				stack: error.stack,
-			})
+        message: "An error occured while trying to fetch all the users.",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
 		} finally {
 			await prisma.$disconnect();
 		}
@@ -228,7 +229,6 @@ userRouter.post(
 	'/password',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
-		const prisma = new PrismaClient({ log: ['query'] });
 		try {
 			const { id, email } = req.user;
 			const { originalPassword, newPassword } = req.body;
@@ -258,9 +258,12 @@ userRouter.post(
 			});
 		} catch (error) {
 			res.status(400).json({
-				message: error.message,
-				stack: error.stack,
-			})
+        message: `An Error occured while trying to change the password for the email ${email}.`,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
 		} finally {
 			await prisma.$disconnect();
 		}

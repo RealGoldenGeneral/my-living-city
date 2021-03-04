@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
 const commentRouter = express.Router();
+const prisma = require('../prismaClient');
 
 commentRouter.get(
   '/',

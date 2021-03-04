@@ -3,6 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
 const ideaRatingRouter = express.Router();
+const prisma = require('../prismaClient');
 
 ideaRatingRouter.get(
   '/',
@@ -23,7 +24,6 @@ ideaRatingRouter.get(
 ideaRatingRouter.get(
   '/getall',
   async (req, res, next) => {
-    const prisma = new PrismaClient({ log: [ 'query' ]})
     try {
       const allIdeaRating = await prisma.ideaRating.findMany();
 

@@ -1,8 +1,8 @@
 const passport = require('passport');
-const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
 const ideaRouter = express.Router();
+const prisma = require('../prismaClient');
 
 ideaRouter.get(
   '/',
@@ -23,7 +23,6 @@ ideaRouter.get(
 ideaRouter.get(
   '/getall',
   async (req, res, next) => {
-    const prisma = new PrismaClient({ log: [ 'query' ]})
     try {
       const allCategories = await prisma.category.findMany();
 
@@ -42,11 +41,24 @@ ideaRouter.get(
   }
 )
 
+ideaRouter.put(
+  '/update/:ideaId',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res, next) => {
+    try {
+      
+    } catch (error) {
+      
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
 ideaRouter.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
-    const prisma = new PrismaClient({ log: [ 'query' ]})
     try {
       // passport middleware provides this based on JWT
       const { email, id } = req.user;
