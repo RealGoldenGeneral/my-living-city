@@ -56,15 +56,6 @@ commentRouter.get(
         });
       }
 
-      // TODO: might not be necessary?
-      // // Check if idea exists
-      // const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
-      // if (!foundIdea) {
-      //   return res.status(400).json({
-      //     message: `The idea with that listed ID (${ideaId}) does not exist.`,
-      //   });
-      // }
-
       const comments = await prisma.ideaComment.findMany({ where: { ideaId: parsedIdeaId }});
 
       res.status(200).json(comments);
