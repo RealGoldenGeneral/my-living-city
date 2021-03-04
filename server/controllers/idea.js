@@ -41,6 +41,41 @@ ideaRouter.get(
   }
 )
 
+ideaRouter.get(
+  '/get/:ideaId',
+  async (req, res, next) => {
+    try {
+      const parsedIdeaId = parseInt(req.params.ideaId);
+
+      // check if id is valid
+      if (!parsedIdeaId) {
+        return res.status(400).json({
+          message: `A valid ideaId must be specified in the route paramater.`,
+        });
+      }
+
+      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
+      if (!foundIdea) {
+        return res.status(400).json({
+          message: `The idea with that listed ID (${ideaId}) does not exist.`,
+        });
+      }
+
+      res.status(200).json(foundIdea);
+    } catch (error) {
+      res.status(400).json({
+        message: `An Error occured while trying to fetch idea with id ${req.params.ideaId}.`,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
 ideaRouter.put(
   '/update/:ideaId',
   passport.authenticate('jwt', { session: false }),
