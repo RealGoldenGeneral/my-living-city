@@ -416,12 +416,12 @@ userRouter.get(
  * 			400:
  *        description: The user's password failed to update
 */
-userRouter.post(
+userRouter.put(
 	'/password',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
 		try {
-			const { id, email } = req.user;
+			const { id } = req.user;
 			const { originalPassword, newPassword } = req.body;
 			const foundUser = await prisma.user.findUnique({
 				where: { id }
@@ -449,7 +449,7 @@ userRouter.post(
 			});
 		} catch (error) {
 			res.status(400).json({
-        message: `An Error occured while trying to change the password for the email ${email}.`,
+        message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
