@@ -367,16 +367,6 @@ userRouter.get(
 )
 
 /**
- * Based on user JWT checks if it is valid and returns who
- * the JWT is referencing or "logged in" as.
- * 
- * @route			GET /user/me
- * @access		Private (Signued up User with JWT)
- * @returns 	{ message, User, validPassword }
- */
-
-
-/**
  * @swagger
  * /user/password:
  *  put:
@@ -416,8 +406,6 @@ userRouter.get(
  * 			400:
  *        description: The user's password failed to update
 */
-
-
 userRouter.put(
 	'/password',
 	passport.authenticate('jwt', { session: false }),
@@ -444,7 +432,7 @@ userRouter.put(
 
 			const parsedUser = { ...updatedUser, password: null };
 
-			res.json({
+			res.status(200).json({
 				message: "User succesfully updated",
 				user: parsedUser,
 				validPassword
@@ -499,7 +487,7 @@ userRouter.put(
 
 			const parsedUser = { ...updatedUser, password: null };
 
-			res.json({
+			res.status(200).json({
 				message: "User succesfully updated",
 				user: parsedUser,
 			});
