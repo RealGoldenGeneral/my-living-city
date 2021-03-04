@@ -164,4 +164,55 @@ ideaRouter.post(
   }
 )
 
+ideaRouter.delete(
+  '/delete/:ideaId',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res, next) => {
+    try {
+      const { id: loggedInUserId, email } = req.user;
+      const parsedIdeaId = parseInt(req.params.ideaId);
+
+      // check if id is valid
+      if (!parsedIdeaId) {
+        return res.status(400).json({
+          message: `A valid ideaId must be specified in the route paramater.`,
+        });
+      }
+
+      // Check to see if idea exists
+      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
+      if (!foundIdea) {
+        return res.status(400).json({
+          message: `The idea with that listed ID (${ideaId}) does not exist.`,
+        });
+      }
+
+      // Check to see if idea is owned by user
+      const ideaOwnedByUser = foundIdea.authorId === loggedInUserId;
+      if (!ideaOwnedByUser) {
+        return res.status(401).json({
+          message: `The user ${email} is not the author or an admin and therefore cannot delete this idea.`
+        });
+      }
+
+      const deletedIdea = await prisma.idea.delete({ where: { id: parsedIdeaId }});
+
+      res.status(200).json({
+        message: "Idea succesfully deleted",
+        deletedIdea: deletedIdea,
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: "An error occured while to delete an Idea",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
 module.exports = ideaRouter;
