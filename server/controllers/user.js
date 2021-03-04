@@ -416,6 +416,8 @@ userRouter.get(
  * 			400:
  *        description: The user's password failed to update
 */
+
+
 userRouter.put(
 	'/password',
 	passport.authenticate('jwt', { session: false }),
@@ -446,6 +448,60 @@ userRouter.put(
 				message: "User succesfully updated",
 				user: parsedUser,
 				validPassword
+			});
+		} catch (error) {
+			res.status(400).json({
+        message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+		} finally {
+			await prisma.$disconnect();
+		}
+	}
+)
+
+
+userRouter.put(
+	'/update-profile',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+		try {
+			const { id, email } = req.user;
+			const {
+        fname,
+        lname,
+        streetAddress,
+        postalCode,
+        city,
+        latitude,
+        longitude,
+      } = req.body;
+
+      // Conditional add params to update only fields passed in 
+      // https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
+      const updateData = {
+					...fname && { fname },
+					...lname && { lname },
+					...streetAddress && { streetAddress },
+					...postalCode && { postalCode },
+					...city && { city },
+					...latitude && { latitude },
+					...longitude && { longitude },
+      }
+
+			const updatedUser = await prisma.user.update({
+				where: { id },
+				data: updateData
+			});
+
+			const parsedUser = { ...updatedUser, password: null };
+
+			res.json({
+				message: "User succesfully updated",
+				user: parsedUser,
 			});
 		} catch (error) {
 			res.status(400).json({
