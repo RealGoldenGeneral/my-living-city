@@ -31,6 +31,8 @@ const main = async () => {
   const blogRouter = require('./controllers/blog');
   const ideaRouter = require('./controllers/idea');
   const imageRouter = require('./controllers/image');
+  const categoryRouter = require('./controllers/category');
+  const ideaRatingRouter = require('./controllers/rating');
 
   const apiRouter = express.Router();
   app.use("/", apiRouter);
@@ -41,6 +43,8 @@ const main = async () => {
   apiRouter.use('/blog', blogRouter);
   apiRouter.use('/idea', ideaRouter);
   apiRouter.use('/image', imageRouter);
+  apiRouter.use('/category', categoryRouter);
+  apiRouter.use('/rating', ideaRatingRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

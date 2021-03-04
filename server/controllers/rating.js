@@ -1,15 +1,15 @@
 const passport = require('passport');
-const { PrismaClient, Prisma } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
-const ideaRouter = express.Router();
+const ideaRatingRouter = express.Router();
 
-ideaRouter.get(
+ideaRatingRouter.get(
   '/',
   async (req, res, next) => {
     try {
       res.json({
-        route: 'welcome to Idea Router'
+        route: 'welcome to the Idea Rating Router'
       })
     } catch (error) {
 			res.status(400).json({
@@ -20,17 +20,17 @@ ideaRouter.get(
   }
 )
 
-ideaRouter.get(
+ideaRatingRouter.get(
   '/getall',
   async (req, res, next) => {
     const prisma = new PrismaClient({ log: [ 'query' ]})
     try {
-      const allCategories = await prisma.category.findMany();
+      const allIdeaRating = await prisma.ideaRating.findMany();
 
-      res.status(200).json(allCategories);
+      res.status(200).json(allIdeaRating);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all categories",
+        message: "An error occured while trying to fetch all Idea Ratings",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -42,4 +42,4 @@ ideaRouter.get(
   }
 )
 
-module.exports = ideaRouter;
+module.exports = ideaRatingRouter;
