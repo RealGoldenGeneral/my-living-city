@@ -10,7 +10,7 @@ CREATE TABLE "report" (
     "email" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -28,7 +28,7 @@ CREATE TABLE "user" (
     "latitude" DECIMAL(65,30),
     "longitude" DECIMAL(65,30),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "role" "Role" NOT NULL DEFAULT E'USER',
 
     PRIMARY KEY ("id")
@@ -40,7 +40,7 @@ CREATE TABLE "category" (
     "title" TEXT NOT NULL,
     "description" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -60,7 +60,7 @@ CREATE TABLE "idea" (
     "state" "IdeaState" NOT NULL DEFAULT E'IDEA',
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -71,7 +71,7 @@ CREATE TABLE "proposal" (
     "idea_id" INTEGER NOT NULL,
     "description" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -82,7 +82,7 @@ CREATE TABLE "project" (
     "idea_id" INTEGER NOT NULL,
     "description" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -95,7 +95,7 @@ CREATE TABLE "idea_rating" (
     "rating" INTEGER NOT NULL DEFAULT 0,
     "rating_explanation" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -108,7 +108,7 @@ CREATE TABLE "idea_comment" (
     "content" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
@@ -120,7 +120,7 @@ CREATE TABLE "idea_comment_like" (
     "ideaCommentId" INTEGER NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("id")
 );
