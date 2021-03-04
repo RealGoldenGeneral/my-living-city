@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
 const reportRouter = express.Router();
-const prisma = require('../prismaClient');
+const prisma = require('../lib/prismaClient');
 
 reportRouter.get(
   '/',
