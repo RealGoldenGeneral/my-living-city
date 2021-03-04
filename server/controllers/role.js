@@ -6,8 +6,9 @@ roleRouter.get(
 	'/getall',
 	async (req, res, next) => {
 		try {
-			const roles = await Role.findAll();
-			res.json(roles);
+			res.json({
+				welcome: "to roles router"
+			})
 		} catch (error) {
 			res.status(400).json({
 				message: error.message,

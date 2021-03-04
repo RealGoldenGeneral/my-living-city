@@ -1,8 +1,8 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
-const { JWT_SECRET } = require('../constants');
-const prisma = require('../prismaClient');
-const { argon2Hash, argon2ConfirmHash } = require('../utilityFunctions');
+const { JWT_SECRET } = require('../lib/constants');
+const prisma = require('../lib/prismaClient');
+const { argon2Hash, argon2ConfirmHash } = require('../lib/utilityFunctions');
 
 passport.use(
   'signup',

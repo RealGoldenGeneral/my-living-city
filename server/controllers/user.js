@@ -2,16 +2,80 @@ const passport = require('passport');
 const express = require('express');
 const userRouter = express.Router();
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET, JWT_EXPIRY } = require('../constants');
-const { argon2ConfirmHash, argon2Hash } = require('../utilityFunctions');
-const prisma = require('../prismaClient');
+const { JWT_SECRET, JWT_EXPIRY } = require('../lib/constants');
+const { argon2ConfirmHash, argon2Hash } = require('../lib/utilityFunctions');
+const prisma = require('../lib/prismaClient');
 
 /**
- * Test route to ensure JWT tokens are being parsed correctly
+ * @swagger
+ * tags: 
+ *    name: User
+ *    description: The User managing route
  * 
- * @route			GET /user/test-secure
- * @access		Private (Signued up User with JWT)
  */
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    User:
+ *      type: object
+ *      required:
+ *        - id
+ *        - email
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: Auto-generated id of the User
+ *          readOnly: true
+ *        email:
+ *          type: string
+ *          description: The unique email of the User.
+ *        password:
+ *          type: string
+ *          description: The password of the user
+ *          writeOnly: true
+ *        fname:
+ *          type: string
+ *          description: The first name of the user
+ *        lname:
+ *          type: string
+ *          description: The last name of the user
+ *        streetAddress:
+ *          type: string
+ *          description: The street address of the user
+ *        postalCode:
+ *          type: string
+ *          description: The Postal Code of the user
+ *        city:
+ *          type: string
+ *          description: The City the user lives in 
+ *        latitude:
+ *          type: number
+ *          format: double
+ *          description: The latitude coordinate of the User
+ *        longitude:
+ *          type: number
+ *          format: double
+ *          description: The Longitude coordinate of the User
+ *        createdAt:
+ *          type: string
+ *          format: date
+ *          description: The Time stamp that the user was created at
+ *          readOnly: true
+ *        updatedAt:
+ *          type: string
+ *          format: date
+ *          description: The Time stamp that the user was last updated
+ *          readOnly: true
+ *        Role:
+ *          type: string
+ *          description: The Role designation of the user
+ *          readOnly: true
+ */
+
+
+
 userRouter.get(
 	'/test-secure',
 	passport.authenticate('jwt', { session: false }),
@@ -25,13 +89,30 @@ userRouter.get(
 	}
 )
 
+
 /**
- * Based on user JWT checks if it is valid and returns who
- * the JWT is referencing or "logged in" as.
- * 
- * @route			GET /user/me
- * @access		Private (Signued up User with JWT)
- */
+ * @swagger
+ * /user/me:
+ *  get:
+ *    summary: Retrieves current user authenticated by JWT
+ *    tags: [User]
+ *    description: Based on user JWT provided checks to see if JWT is valid and returns back a User object.
+ *    parameters:
+ *      - name: secret_token
+ *        in: header
+ *        description: an authorization header
+ *        required: true
+ *        type: string
+ *    responses:
+ *      200:
+ *        description: The user logged in with JWT
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ * 			400:
+ *        description: The user logged in with JWT
+*/
 userRouter.get(
 	'/me',
 	passport.authenticate('jwt', { session: false }),
@@ -55,10 +136,10 @@ userRouter.get(
 
 			res.status(200);
 			res.json({
-				user: parsedUser,
+        ...parsedUser
 			})
 		} catch (error) {
-			res.status(500);
+			res.status(400);
 			res.json({
 				message: error.message,
 				stack: error.stack,
@@ -77,6 +158,35 @@ userRouter.get(
  * @access		Public (No credentials required)
  * @returns		{{ User, JWT }}
  */
+
+/**
+ * @swagger
+ * /user/signup:
+ *  post:
+ *    summary: Creates a user based on User Values
+ *    tags: [User]
+ *    description: Creates a user with desired properties
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema: 
+ *            $ref: '#/components/schemas/User'
+ *    responses:
+ *      201:
+ *        description: The user was succesfully created
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                user:
+ *                  $ref: '#/components/schemas/User'
+ *                token:
+ *                  type: string
+ * 			401:
+ *        description: The user couldn't be created
+*/
 userRouter.post(
 	'/signup',
 	async (req, res, next) => {
@@ -106,7 +216,10 @@ userRouter.post(
 			});
 
 			res.status(201).json({
-				user,
+				user: {
+          ...user,
+          password: null,
+        },
 				token,
 			});
 		})(req, res, next);
@@ -114,12 +227,37 @@ userRouter.post(
 )
 
 /**
- * Logs in user with email and password and issues a JWT.
- * 
- * @route			POST /user/login
- * @access		Public (No credentials required)
- * @returns		{{ User, JWT }}
- */
+ * @swagger
+ * /user/login:
+ *  post:
+ *    summary: Login a User with email and password
+ *    tags: [User]
+ *    description: Login a user using email and password
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            properties:
+ *              email:
+ *                type: string
+ *              password:
+ *                type: string
+ *    responses:
+ *      200:
+ *        description: The user is succesfully logged in 
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                user:
+ *                  $ref: '#/components/schemas/User'
+ *                token:
+ *                  type: string
+ * 			400:
+ *        description: The user could not be logged in
+*/
 userRouter.post(
 	'/login',
 	async (req, res, next) => {
@@ -179,14 +317,25 @@ userRouter.post(
 	}
 )
 
-// TODO: Limit return payload so that only id is returned?
 /**
- * Grabs all users and their respective roles without User password
- * 
- * @route			GET /user/getall
- * @access		Public (No credentials required)
- * @returns 	{ User[] }
- */
+ * @swagger
+ * /user/getall:
+ *  get:
+ *    summary: Grabs all the users in the database
+ *    tags: [User]
+ *    description: Retrieve all users without personal information
+ *    responses:
+ *      200:
+ *        description: All the users were succesfully retrieved
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/User'
+ * 			400:
+ *        description: A set of users could not be fetched properly
+*/
 userRouter.get(
 	'/getall',
 	async (req, res, next) => {
@@ -225,6 +374,48 @@ userRouter.get(
  * @access		Private (Signued up User with JWT)
  * @returns 	{ message, User, validPassword }
  */
+
+
+/**
+ * @swagger
+ * /user/password:
+ *  put:
+ *    summary: Updates user password
+ *    tags: [User]
+ *    description: Reset the password of the user who is logged in and updates it
+ *    parameters:
+ *      - name: secret_token
+ *        in: header
+ *        description: an authorization header
+ *        required: true
+ *        type: string
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            properties:
+ *              originalPassword:
+ *                type: string
+ *              newPassword:
+ *                type: string
+ *    responses:
+ *      204:
+ *        description: The user's password was succesfully updated
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                user:
+ *                  $ref: '#/components/schemas/User'
+ *                validPassword:
+ *                  type: boolean
+ * 			400:
+ *        description: The user's password failed to update
+*/
 userRouter.post(
 	'/password',
 	passport.authenticate('jwt', { session: false }),

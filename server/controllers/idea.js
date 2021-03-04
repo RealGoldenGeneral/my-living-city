@@ -2,7 +2,7 @@ const passport = require('passport');
 
 const express = require('express');
 const ideaRouter = express.Router();
-const prisma = require('../prismaClient');
+const prisma = require('../lib/prismaClient');
 
 ideaRouter.get(
   '/',
