@@ -201,4 +201,5 @@ enum Role {
   GUEST
   USER
   ASSOCIATE
+  ADMIN
 }
