@@ -2,15 +2,15 @@ const passport = require('passport');
 const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
-const commentRouter = express.Router();
+const ideaRatingRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
-commentRouter.get(
+ideaRatingRouter.get(
   '/',
   async (req, res, next) => {
     try {
       res.json({
-        route: 'welcome to comment Router'
+        route: 'welcome to the Idea Rating Router'
       })
     } catch (error) {
 			res.status(400).json({
@@ -21,16 +21,16 @@ commentRouter.get(
   }
 )
 
-commentRouter.get(
+ideaRatingRouter.get(
   '/getall',
   async (req, res, next) => {
     try {
-      const allIdeaComments = await prisma.ideaComment.findMany();
+      const allIdeaRating = await prisma.ideaRating.findMany();
 
-      res.status(200).json(allIdeaComments);
+      res.status(200).json(allIdeaRating);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all Idea Comments.",
+        message: "An error occured while trying to fetch all Idea Ratings",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -42,8 +42,8 @@ commentRouter.get(
   }
 )
 
-// Get all under idea id
-commentRouter.get(
+// Get all ratings under idea id
+ideaRatingRouter.get(
   '/getall/:ideaId',
   async (req, res, next) => {
     try {
@@ -56,12 +56,12 @@ commentRouter.get(
         });
       }
 
-      const comments = await prisma.ideaComment.findMany({ where: { ideaId: parsedIdeaId }});
+      const ratings = await prisma.ideaRating.findMany({ where: { ideaId: parsedIdeaId }});
 
-      res.status(200).json(comments);
+      res.status(200).json(ratings);
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to fetch all comments under idea ${req.params.ideaId}.`,
+        message: `An error occured while trying to fetch all ratings under idea ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -73,14 +73,14 @@ commentRouter.get(
   }
 )
 
-// Create a comment under an idea
-commentRouter.post(
+// Create a rating under an idea
+ideaRatingRouter.post(
   '/create/:ideaId',
 	passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
-      const { content } = req.body;
+      const { rating, ratingExplanation } = req.body;
       const parsedIdeaId = parseInt(req.params.ideaId);
 
       // check if id is valid
@@ -97,19 +97,36 @@ commentRouter.post(
         });
       }
 
-      const createdComment = await prisma.ideaComment.create({ data: {
-        content,
+      // Check if user already submitted rating under "idea"
+      const userAlreadyCreatedRating = await prisma.ideaRating.findFirst({
+        where: { 
+          authorId: loggedInUserId,
+          ideaId: parsedIdeaId,
+        }
+      });
+      if (userAlreadyCreatedRating) {
+        return res.status(400).json({
+          message: `You have already rated this idea. You cannot rate an idea twice.`,
+          details: {
+            errorMessage: "A rating can only be voted on once."
+          }
+        });
+      }
+
+      const createdRating = await prisma.ideaRating.create({ data: {
+        rating,
+        ratingExplanation,
         authorId: loggedInUserId,
         ideaId: parsedIdeaId,
       }});
 
       res.status(200).json({
-        message: `Comment succesfully created under Idea ${parsedIdeaId}`,
-        comment: createdComment
+        message: `Rating succesfully created under Idea ${parsedIdeaId}`,
+        comment: createdRating
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to create a comment for idea ${req.params.ideaId}.`,
+        message: `An error occured while trying to create a rating for idea ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -121,56 +138,57 @@ commentRouter.post(
   }
 )
 
-// Create a comment under an idea
-commentRouter.put(
-  '/update/:commentId',
+// Create a rating under an idea
+ideaRatingRouter.put(
+  '/update/:ratingId',
 	passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
-      const { content } = req.body;
-      const parsedCommentId = parseInt(req.params.commentId);
+      const { rating, ratingExplanation } = req.body;
+      const parsedRatingId = parseInt(req.params.ratingId);
 
       // check if id is valid
-      if (!parsedCommentId) {
+      if (!parsedRatingId) {
         return res.status(400).json({
-          message: `A valid commentId must be specified in the route paramater.`,
+          message: `A valid ratingId must be specified in the route paramater.`,
         });
       }
 
-      // Check to see if comment exists
-      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId }});
-      if (!foundComment) {
+      // Check to see if rating exists
+      const foundRating = await prisma.ideaRating.findUnique({ where: { id: parsedRatingId }});
+      if (!foundRating) {
         return res.status(400).json({
-          message: `The comment with the listed ID (${commentId}) does not exist.`,
+          message: `The rating with the listed ID (${commentId}) does not exist.`,
         });
       }
 
-      // Check if comment is requestee's comment
-      const commentOwnedByUser = foundComment.authorId === loggedInUserId;
-      if (!commentOwnedByUser) {
+      // Check if rating is owned by requestee
+      const ratingOwnedByUser = foundRating.authorId === loggedInUserId;
+      if (!ratingOwnedByUser) {
         return res.status(401).json({
-          message: `The user ${email} is not the author or an admin and therefore cannot edit this comment.`
+          message: `The user ${email} is not the author or an admin and therefore cannot edit this rating.`
         });
       }
 
       // Conditional add params to update only fields passed in 
       const updateData = {
-        ...content && { content }
+        ...rating && { rating }, // TODO: 0 is valid input and is also falsy will not be updated
+        ...ratingExplanation && { ratingExplanation }
       };
 
-      const updatedComment = await prisma.ideaComment.update({
-        where: { id: parsedCommentId },
+      const updatedRating = await prisma.ideaRating.update({
+        where: { id: parsedRatingId },
         data: updateData
       });
 
       res.status(200).json({
-        message: "Comment succesfully updated",
-        comment: updatedComment,
+        message: "Rating succesfully updated",
+        rating: updatedRating,
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to edit comment ${req.params.commentId}.`,
+        message: `An error occured while trying to edit rating ${req.params.ratingId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -182,47 +200,48 @@ commentRouter.put(
   }
 )
 
-// delete a comment
-commentRouter.delete(
-  '/delete/:commentId',
+
+// delete a rating by ID
+ideaRatingRouter.delete(
+  '/delete/:ratingId',
 	passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
-      const parsedCommentId = parseInt(req.params.commentId);
+      const parsedRatingId = parseInt(req.params.ratingId);
 
       // check if id is valid
-      if (!parsedCommentId) {
+      if (!parsedRatingId) {
         return res.status(400).json({
-          message: `A valid commentId must be specified in the route paramater.`,
+          message: `A valid ratingId must be specified in the route paramater.`,
         });
       }
 
       // Check to see if comment exists
-      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId }});
-      if (!foundComment) {
+      const foundRating = await prisma.ideaRating.findUnique({ where: { id: parsedRatingId }});
+      if (!foundRating) {
         return res.status(400).json({
-          message: `The comment with the listed ID (${commentId}) does not exist.`,
+          message: `The rating with the listed ID (${commentId}) does not exist.`,
         });
       }
 
       // Check if comment is requestee's comment
-      const commentOwnedByUser = foundComment.authorId === loggedInUserId;
-      if (!commentOwnedByUser) {
+      const ratingOwnedByUser = foundRating.authorId === loggedInUserId;
+      if (!ratingOwnedByUser) {
         return res.status(401).json({
           message: `The user ${email} is not the author or an admin and therefore cannot delete this comment.`
         });
       }
 
-      const deletedComment = await prisma.ideaComment.delete({ where: { id: parsedCommentId }});
+      const deletedRating = await prisma.ideaRating.delete({ where: { id: parsedRatingId }});
 
       res.status(200).json({
-        message: "Comment succesfully deleted",
-        deletedComment: deletedComment,
+        message: "Rating succesfully deleted",
+        deletedRating,
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to delete comment ${req.params.commentId}.`,
+        message: `An error occured while trying to delete rating ${req.params.ratingId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -234,5 +253,4 @@ commentRouter.delete(
   }
 )
 
-
-module.exports = commentRouter;
+module.exports = ideaRatingRouter;
