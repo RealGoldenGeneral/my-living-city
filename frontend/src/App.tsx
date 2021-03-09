@@ -7,6 +7,7 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
+import SingleIdeaPage from './pages/SingleIdeaPage';
 import Team404Page from './pages/Team404Page';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Switch>
           <Route path='/' component={LandingPage} exact />
           <Route path='/ideas' component={IdeasPage} />
+          <Route path='/idea/:ideaId' component={SingleIdeaPage} />
           <Route path='/login' component={LoginPage} />
           <Route path='/register' component={RegisterPage} />
           <Route path='/profile' component={ProfilePage} />
