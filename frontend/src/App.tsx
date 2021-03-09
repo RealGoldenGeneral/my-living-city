@@ -9,6 +9,7 @@ import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import SingleIdeaPage from './pages/SingleIdeaPage';
 import Team404Page from './pages/Team404Page';
+import TestPage from './pages/TestPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='/login' component={LoginPage} />
           <Route path='/register' component={RegisterPage} />
           <Route path='/profile' component={ProfilePage} />
+          <Route path='/test' component={TestPage} />
           <Route path='/*' component={Team404Page} />
         </Switch>
       </div>
