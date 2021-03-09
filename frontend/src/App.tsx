@@ -1,24 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, Switch } from 'react-router-dom';
+
+// Pages
+import IdeasPage from './pages/IdeasPage';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
+import RegisterPage from './pages/RegisterPage';
+import Team404Page from './pages/Team404Page';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* maybe put layout content wrapping around switch case? */}
+      <div className="main-content">
+        <Switch>
+          <Route path='/' component={LandingPage} exact />
+          <Route path='/ideas' component={IdeasPage} />
+          <Route path='/login' component={LoginPage} />
+          <Route path='/register' component={RegisterPage} />
+          <Route path='/profile' component={ProfilePage} />
+          <Route path='/*' component={Team404Page} />
+        </Switch>
+      </div>
     </div>
   );
 }
