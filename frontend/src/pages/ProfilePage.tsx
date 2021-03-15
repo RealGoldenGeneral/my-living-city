@@ -2,8 +2,10 @@ import React from 'react'
 
 export default function ProfilePage() {
   return (
-    <div>
+    <>
+      <div className="wrapper">
       Profile Page 
-    </div>
+      </div>
+    </>
   )
 }

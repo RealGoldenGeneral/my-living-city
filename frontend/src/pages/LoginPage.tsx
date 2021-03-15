@@ -1,9 +1,12 @@
 import React from 'react'
+import LoginPageContent from '../components/content/LoginPageContent'
 
 export default function LoginPage() {
   return (
-    <div>
-      Login page
-    </div>
+    <>
+      <div className="wrapper">
+        <LoginPageContent />
+      </div>
+    </>
   )
 }

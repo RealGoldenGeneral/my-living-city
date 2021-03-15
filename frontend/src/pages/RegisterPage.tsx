@@ -2,8 +2,10 @@ import React from 'react'
 
 export default function RegisterPage() {
   return (
-    <div>
+    <>
+      <div className="wrapper">
     Register page
-    </div>
+      </div>
+    </>
   )
 }

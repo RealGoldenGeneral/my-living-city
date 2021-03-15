@@ -4,6 +4,9 @@ import { IdeaData } from '../lib/types/data.types';
 import { FetchMeta } from '../lib/types/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../lib/constants';
+import SingleIdeaPageContent from '../components/content/SingleIdeaPageContent';
+
+// TODO: Pages are responsible for fetching, error handling, and loading spinner
 
 // Extends Route component props with idea title route param
 interface SingleIdeaPageProps extends RouteComponentProps<{
@@ -14,7 +17,7 @@ interface SingleIdeaPageProps extends RouteComponentProps<{
 
 const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   // Destructured props
-  const { match: { params: { ideaId }}} = props;
+  const { match: { params: { ideaId } } } = props;
 
   const [pageData, setPageData] = useState<IdeaData | null>(null);
   const [fetchMeta, setFetchMeta] = useState<FetchMeta>({
@@ -49,7 +52,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
           })
           console.log(error.response)
         } else {
-          setFetchMeta({ loading: false, errors: [{ message: error.message }]});
+          setFetchMeta({ loading: false, errors: [{ message: error.message }] });
         }
       }
     }
@@ -57,14 +60,31 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   }, []);
 
 
-  // Set loading
+  const { loading, errors } = fetchMeta;
 
-  // Set errors
+  // Guard condition if data is loading
+  if (loading) {
+    return (
+      <div className="wrapper">
+        <h1>Loading spinner here...</h1>
+      </div>
+    )
+  }
 
-  // Set succesful
-  return(
-    <div>
-      <h1>A single page idea {ideaId}</h1>
+  // Guard condition if error during fetch
+  if (errors) {
+    return (
+      <div className="wrapper">
+        <h1>Could not retrieve idea with id { ideaId }</h1>
+      </div>
+    )
+  }
+
+  // Content when succesful
+  // TODO: One more condition if errors is null and page data is null
+  return pageData && (
+    <div className="wrapper">
+      <SingleIdeaPageContent ideaData={ pageData } />
     </div>
   )
 }

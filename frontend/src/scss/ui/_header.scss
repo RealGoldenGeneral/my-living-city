@@ -1,0 +1,8 @@
+.outer-header {
+  background-color: $outer-header-colour;
+
+  .inner-header {
+    max-width: $wrapper-max-width;
+    margin: 0 auto;
+  }
+}

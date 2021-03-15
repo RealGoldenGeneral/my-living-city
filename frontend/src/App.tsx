@@ -1,5 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import Footer from './components/ui/Footer';
+import Header from './components/ui/Header';
 
 // Pages
 import IdeasPage from './pages/IdeasPage';
@@ -15,6 +17,7 @@ function App() {
   return (
     <div className="App">
       {/* maybe put layout content wrapping around switch case? */}
+      <Header />
       <div className="main-content">
         <Switch>
           <Route path='/' component={LandingPage} exact />
@@ -27,6 +30,7 @@ function App() {
           <Route path='/*' component={Team404Page} />
         </Switch>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -2,8 +2,8 @@ import React from 'react'
 
 export default function PageLayout() {
   return (
-    <div>
+    <main>
       Page Layout
-    </div>
+    </main>
   )
 }

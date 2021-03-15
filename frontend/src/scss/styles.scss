@@ -1,17 +1,13 @@
-@import "custom";
+// Resets
+@import "resets";
 
-.header {
-  text-align: center;
-}
+@import "bootstrap/config";
 
-span {
-  &.dangerText {
-    color: #dc3545
-  }
+// Variables and constants
+@import "./constants";
 
-  &.infoText {
-    color: #17a2b8;
-    font-weight: bold;
-  }
-}
+// UI Partial components styles
+@import "./ui/master-ui.scss";
 
+// Page and Content Styles
+@import "./content/master-content.scss"
