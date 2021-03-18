@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom';
-import { IdeaData } from '../lib/types/data.types';
+import { IdeaInterface } from '../lib/types/data.types';
 import { FetchMeta } from '../lib/types/types';
 import axios from 'axios';
 import { API_BASE_URL } from '../lib/constants';
@@ -19,7 +19,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   // Destructured props
   const { match: { params: { ideaId } } } = props;
 
-  const [pageData, setPageData] = useState<IdeaData | null>(null);
+  const [pageData, setPageData] = useState<IdeaInterface | null>(null);
   const [fetchMeta, setFetchMeta] = useState<FetchMeta>({
     loading: false,
     errors: null, // Can be an array of errors
@@ -34,7 +34,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
           ...prevState,
           loading: true,
         }))
-        const res = await axios.get<IdeaData>(`${API_BASE_URL}/idea/get/${ideaId}`)
+        const res = await axios.get<IdeaInterface>(`${API_BASE_URL}/idea/get/${ideaId}`)
 
         setPageData(res.data);
         setFetchMeta({ loading: false, errors: null })
