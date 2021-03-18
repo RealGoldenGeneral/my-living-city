@@ -142,7 +142,10 @@ userRouter.get(
 			res.status(400);
 			res.json({
 				message: error.message,
-				stack: error.stack,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
 			})
 		} finally {
 			await prisma.$disconnect();

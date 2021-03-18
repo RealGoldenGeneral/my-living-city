@@ -14,7 +14,10 @@ ideaRouter.get(
     } catch (error) {
 			res.status(400).json({
 				message: error.message,
-				stack: error.stack,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
 			})
     }
   }
