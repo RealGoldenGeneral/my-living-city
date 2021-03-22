@@ -16,30 +16,24 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   // Destructured props
   const { match: { params: { ideaId } } } = props;
 
-  const { data, error, isLoading, isError } = useSingleIdea(ideaId);
+  const { data, error, isLoading, isError, status } = useSingleIdea(ideaId);
 
-  // Guard condition if data is loading
-  if (isLoading) {
-    return (
-      <div className="wrapper">
-        <h1>Loading spinner here...</h1>
-      </div>
-    )
-  }
-
-  // Guard condition if error during fetch
   if (isError) {
-    return (
-      <div className="wrapper">
-        <h1>Could not retrieve idea with id { ideaId }</h1>
-        {JSON.stringify(error)}
-      </div>
-    )
+    console.error(error);
   }
 
   return (
     <div className="wrapper">
-      <SingleIdeaPageContent ideaData={ data! } />
+      {isError && (
+        <>
+        <p>{error!.message}</p>
+        <p>Error fetching: {JSON.stringify(error)}</p>
+        </>
+      )}
+      {isLoading && <h2>Fetching data...</h2>}
+      {status === 'success' && (
+        <SingleIdeaPageContent ideaData={ data! } />
+      )}
     </div>
   )
 }

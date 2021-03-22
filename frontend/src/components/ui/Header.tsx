@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Nav, Navbar, Form, FormControl, Button } from 'react-bootstrap'
+import { UserProfileContext } from '../../contexts/UserProfile.Context';
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const { logout, user } = useContext(UserProfileContext);
 
   // Here Items are not coming Inline
   return (
@@ -22,15 +23,14 @@ export default function Header() {
           <Nav className='ml-auto'>
             <Nav.Link href='/'>Home</Nav.Link>
             <Nav.Link href='/ideas'>Ideas</Nav.Link>
-            <Nav.Link href='/test'>Test</Nav.Link>
-            {isLoggedIn ? (
+            {user ? (
               <>
                 {/* <Navbar.Text> Fake Name</Navbar.Text> */}
                 <Nav.Link href='/profile'>Profile</Nav.Link>
-                <Nav.Link onClick={() => setIsLoggedIn(!isLoggedIn)}>Log out</Nav.Link>
+                <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
               </>
             ) : (
-              <Nav.Link>Login</Nav.Link>
+              <Nav.Link href='/login'>Login</Nav.Link>
             )}
           </Nav>
         </Navbar.Collapse>

@@ -1,8 +1,8 @@
 import React from 'react'
-import { IdeaInterface } from '../../lib/types/data.types';
+import { IIdea } from '../../lib/types/data/idea.type';
 
 interface SingleIdeaPageContentProps {
-  ideaData: IdeaInterface
+  ideaData: IIdea
 }
 
 const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({}) => {

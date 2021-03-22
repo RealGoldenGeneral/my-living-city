@@ -8,15 +8,17 @@ import './scss/styles.scss';
 
 // React query state
 import { QueryClient, QueryClientProvider } from 'react-query'
-
-const queryClient = new QueryClient();
+import UserProfileProvider from './contexts/UserProfile.Context';
+import { queryClient } from './lib/react-query/clientInitializer';
 
 ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <UserProfileProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </UserProfileProvider>
     </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')

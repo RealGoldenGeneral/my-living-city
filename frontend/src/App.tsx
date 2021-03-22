@@ -21,8 +21,8 @@ function App() {
       <div className="main-content">
         <Switch>
           <Route path='/' component={LandingPage} exact />
-          <Route path='/ideas' component={IdeasPage} />
-          <Route path='/idea/:ideaId' component={SingleIdeaPage} />
+          <Route path='/ideas' component={IdeasPage} exact />
+          <Route path='/ideas/:ideaId' component={SingleIdeaPage} />
           <Route path='/login' component={LoginPage} />
           <Route path='/register' component={RegisterPage} />
           <Route path='/profile' component={ProfilePage} />
