@@ -1,14 +1,15 @@
 
 const express = require('express');
+const prisma = require('../lib/prismaClient');
 const roleRouter = express.Router();
 
 roleRouter.get(
 	'/getall',
 	async (req, res, next) => {
 		try {
-			res.json({
-				welcome: "to roles router"
-			})
+			const allRoles = await prisma.userRole.findMany();
+
+			res.status(200).json(allRoles);
 		} catch (error) {
 			res.status(400).json({
 				message: error.message,

@@ -120,7 +120,7 @@ userRouter.get(
 		try {
 			const { id, email } = req.user;
 			const foundUser = await prisma.user.findUnique({
-				where: { id }
+				where: { id },
 			});
 
 			if (!foundUser) {
@@ -464,11 +464,18 @@ userRouter.put(
 			const {
         fname,
         lname,
-        streetAddress,
-        postalCode,
-        city,
-        latitude,
-        longitude,
+				userRoleId,
+				geo: {
+					lat,
+					lon
+				},
+				address: {
+					streetAddress,
+					streetAddress2,
+					city,
+					country,
+					postalCode,
+				},
       } = req.body;
 
       // Conditional add params to update only fields passed in 
@@ -476,16 +483,37 @@ userRouter.put(
       const updateData = {
 					...fname && { fname },
 					...lname && { lname },
-					...streetAddress && { streetAddress },
-					...postalCode && { postalCode },
-					...city && { city },
-					...latitude && { latitude },
-					...longitude && { longitude },
+					... userRoleId && { userRoleId }
       }
+
+			const updateGeoData = {
+				...lat && { lat },
+				...lon && { lon }
+			}
+
+			const updateAddressData = {
+				...streetAddress && { streetAddress },
+				...streetAddress2 && { streetAddress2 },
+				...city && { city },
+				...country && { country },
+				...postalCode && { postalCode },
+			}
 
 			const updatedUser = await prisma.user.update({
 				where: { id },
-				data: updateData
+				data: {
+					...updateData,
+					geo: {
+						update: updateGeoData
+					},
+					address: {
+						update: updateAddressData
+					}
+				},
+				include: {
+					geo: true,
+					address: true
+				}
 			});
 
 			const parsedUser = { ...updatedUser, password: null };

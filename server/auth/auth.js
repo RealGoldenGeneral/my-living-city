@@ -35,12 +35,30 @@ passport.use(
           // return done(null, false, { message: "User with that email already exists" })
         }
 
+
+        // Parse body
+        const geoData = { ...req.body.geo }
+        const addressData = { ...req.body.address }
+        delete req.body.geo;
+        delete req.body.address;
+
         // Create user
         const createdUser = await prisma.user.create({
           data: {
+            geo: {
+              create: geoData
+            },
+            address: {
+              create: addressData
+            },
             ...req.body,
             password: hashedPassword
           },
+          include: {
+            geo: true,
+            address: true,
+            userRole: true,
+          }
         });
 
         return done(null, createdUser);
@@ -65,7 +83,13 @@ passport.use(
     async (req, email, password, done) => {
       try {
         const foundUser = await prisma.user.findUnique({
-          where: { email }
+          where: { email },
+          // TODO: May cause unnecessary queries to database
+          include: {
+            geo: true,
+            address: true,
+            userRole: true,
+          }
         });
 
         if (!foundUser) {

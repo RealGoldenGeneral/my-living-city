@@ -27,7 +27,7 @@ ideaRouter.get(
   '/getall',
   async (req, res, next) => {
     try {
-      const allCategories = await prisma.category.findMany();
+      const allCategories = await prisma.idea.findMany();
 
       res.status(200).json(allCategories);
     } catch (error) {
@@ -95,6 +95,18 @@ ideaRouter.put(
         artsImpact,
         energyImpact,
         manufacturingImpact,
+        // TODO: If these fields are not passed will break code
+				geo: {
+					lat,
+					lon
+				},
+				address: {
+					streetAddress,
+					streetAddress2,
+					city,
+					country,
+					postalCode,
+				},
       } = req.body;
 
       if (!ideaId || !parsedIdeaId) {
@@ -120,6 +132,19 @@ ideaRouter.put(
       }
 
       // Conditional add params to update only fields passed in 
+			const updateGeoData = {
+				...lat && { lat },
+				...lon && { lon }
+			}
+
+			const updateAddressData = {
+				...streetAddress && { streetAddress },
+				...streetAddress2 && { streetAddress2 },
+				...city && { city },
+				...country && { country },
+				...postalCode && { postalCode },
+			}
+
       const updateData = {
 					...title && { title },
 					...description && { description },
@@ -132,7 +157,15 @@ ideaRouter.put(
 
       const updatedIdea = await prisma.idea.update({
         where: { id: parsedIdeaId },
-        data: updateData
+        data: {
+          geo: { update: updateGeoData },
+          address: { update: updateAddressData },
+          ...updateData,
+        },
+        include: {
+          geo: true,
+          address: true,
+        }
       });
 
       console.log("Returns here")
@@ -174,6 +207,13 @@ ideaRouter.post(
         })
       }
 
+      // Parse data
+      const geoData = { ...req.body.geo };
+      const addressData = { ...req.body.address };
+      delete req.body.geo;
+      delete req.body.address;
+
+
       const ideaData = {
         ...req.body,
         authorId: id
@@ -181,7 +221,16 @@ ideaRouter.post(
 
       // Create an idea and make the author JWT bearer
       const createdIdea = await prisma.idea.create({
-        data: ideaData
+        data: {
+          geo: { create: geoData },
+          address: { create: addressData },
+          ...ideaData
+        },
+        include: {
+          geo: true,
+          address: true,
+          category: true,
+        }
       });
 
       res.status(201).json({

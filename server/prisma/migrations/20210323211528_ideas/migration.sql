@@ -1,44 +1,38 @@
 -- CreateEnum
-CREATE TYPE "IdeaState" AS ENUM ('IDEA', 'PROPOSAL', 'PROJECT');
-
--- CreateEnum
-CREATE TYPE "Role" AS ENUM ('RESIDENT', 'WORKER', 'GUEST', 'USER', 'ASSOCIATE');
-
--- CreateTable
-CREATE TABLE "report" (
-    "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "user" (
-    "id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "f_name" TEXT,
-    "l_name" TEXT,
-    "street_address" TEXT,
-    "postal_code" TEXT,
-    "city" TEXT,
-    "latitude" DECIMAL(65,30),
-    "longitude" DECIMAL(65,30),
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "role" "Role" NOT NULL DEFAULT E'USER',
-
-    PRIMARY KEY ("id")
-);
+CREATE TYPE "idea_state" AS ENUM ('IDEA', 'PROPOSAL', 'PROJECT');
 
 -- CreateTable
 CREATE TABLE "category" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "idea_geo" (
+    "id" SERIAL NOT NULL,
+    "idea_id" INTEGER NOT NULL,
+    "lat" DECIMAL(65,30) NOT NULL,
+    "lon" DECIMAL(65,30) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "idea_address" (
+    "id" SERIAL NOT NULL,
+    "idea_id" INTEGER NOT NULL,
+    "street_address" TEXT NOT NULL,
+    "street_address_2" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
+    "postal_code" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -57,7 +51,7 @@ CREATE TABLE "idea" (
     "arts_impact" TEXT,
     "energy_impact" TEXT,
     "manufacturing_impact" TEXT,
-    "state" "IdeaState" NOT NULL DEFAULT E'IDEA',
+    "state" "idea_state" NOT NULL DEFAULT E'IDEA',
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -126,13 +120,22 @@ CREATE TABLE "idea_comment_like" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user.email_unique" ON "user"("email");
+CREATE UNIQUE INDEX "idea_geo_idea_id_unique" ON "idea_geo"("idea_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "idea_address_idea_id_unique" ON "idea_address"("idea_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "proposal_idea_id_unique" ON "proposal"("idea_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "project_idea_id_unique" ON "project"("idea_id");
+
+-- AddForeignKey
+ALTER TABLE "idea_geo" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "idea_address" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "idea" ADD FOREIGN KEY ("authorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -10,104 +10,47 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Report Entity
 model Report {
-  id          Int      @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   email       String
   description String
-  createdAt   DateTime @default(now()) @map(name: "created_at")
-  updatedAt   DateTime @default(now()) @updatedAt @map(name: "updated_at")
+
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // Model Overwrites
   @@map(name: "report")
 }
 
-// User Entity
-enum UserType {
-  USER
-  ADMIN
-  DEVELOPER
-
-  @@map(name: "user_type")
-}
-
-model UserRole {
-  // keys
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
-  // relations
-  users User[]
-}
-
-model UserGeo {
-  // keys
-  id     Int    @id @default(autoincrement())
-  userId String @map("user_id")
-
-  // Columns
-  lat       Decimal?
-  lon       Decimal?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
-  // relationships
-  user User @relation(fields: [userId], references: [id])
-
-  @@map(name: "user_geo")
-}
-
-model UserAddress {
-  // keys
-  id     Int    @id @default(autoincrement())
-  userId String @map("user_id")
-
-  // Columns
-  streetAddress  String?   @map("street_address")
-  streetAddress2 String?   @map("street_address_2")
-  city           String?
-  country        String?
-  postalCode     String?  @map("postal_code")
-  createdAt      DateTime @default(now()) @map(name: "created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
-  // relationships
-  user User @relation(fields: [userId], references: [id])
-
-  @@map(name: "user_address")
-}
-
 model User {
   // Keys
-  id         String   @id @default(cuid())
-  userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(USER) @map("user_type")
+  id String @id @default(cuid())
 
   // Fields
-  email     String   @unique
-  password  String
-  fname     String?  @map("f_name")
-  lname     String?  @map("l_name")
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  email         String   @unique
+  password      String
+  fname         String?  @map("f_name")
+  lname         String?  @map("l_name")
+  streetAddress String?  @map("street_address")
+  postalCode    String?  @map("postal_code")
+  city          String?
+  latitude      Decimal?
+  longitude     Decimal?
+  createdAt     DateTime @default(now()) @map(name: "created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
-  // Relationships
-  address         UserAddress?
-  geo             UserGeo?
-  userRole        UserRole?         @relation(fields: [userRoleId], references: [id])
-  Idea            Idea[]
-  IdeaRating      IdeaRating[]
-  IdeaComment     IdeaComment[]
-  IdeaCommentLike IdeaCommentLike[]
+  // relations
+  role             Role              @default(USER)
+  ideas            Idea[]
+  ideaRatings      IdeaRating[]
+  ideaComments     IdeaComment[]
+  ideaCommentLikes IdeaCommentLike[]
 
 
   // Model overwrites
   @@map(name: "user")
 }
 
-// Category entity
 model Category {
   // keys
   id Int @id @default(autoincrement())
@@ -122,52 +65,6 @@ model Category {
   ideas Idea[]
 
   @@map(name: "category")
-}
-
-// Idea Entity
-enum IdeaState {
-  IDEA
-  PROPOSAL
-  PROJECT
-
-  @@map(name: "idea_state")
-}
-
-model IdeaGeo {
-  // keys
-  id     Int @id @default(autoincrement())
-  ideaId Int @map("idea_id")
-
-  // Columns
-  lat       Decimal?
-  lon       Decimal?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
-  // relationships
-  idea Idea @relation(fields: [ideaId], references: [id])
-
-  @@map(name: "idea_geo")
-}
-
-model IdeaAddress {
-  // keys
-  id     Int @id @default(autoincrement())
-  ideaId Int @map("idea_id")
-
-  // Columns
-  streetAddress  String?   @map("street_address")
-  streetAddress2 String?   @map("street_address_2")
-  city           String?
-  country        String?
-  postalCode     String?  @map("postal_code")
-  createdAt      DateTime @default(now()) @map(name: "created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
-  // relationships
-  idea Idea @relation(fields: [ideaId], references: [id])
-
-  @@map(name: "idea_address")
 }
 
 model Idea {
@@ -194,9 +91,6 @@ model Idea {
   ratings      IdeaRating[]
   proposalInfo Proposal?
   projectInfo  Project?
-  address      IdeaAddress?
-  geo          IdeaGeo?
-
 
   author   User     @relation(fields: [authorId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
@@ -293,4 +187,19 @@ model IdeaCommentLike {
   ideaComment IdeaComment @relation(fields: [ideaCommentId], references: [id])
 
   @@map(name: "idea_comment_like")
+}
+
+enum IdeaState {
+  IDEA
+  PROPOSAL
+  PROJECT
+}
+
+enum Role {
+  RESIDENT
+  WORKER
+  GUEST
+  USER
+  ASSOCIATE
+  ADMIN
 }
