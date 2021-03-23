@@ -57,7 +57,20 @@ ideaRouter.get(
         });
       }
 
-      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
+      const foundIdea = await prisma.idea.findUnique({
+        where: { id: parsedIdeaId },
+        include: {
+          // TODO: Is this necessary? SQL query will join 8 times.
+          geo: true,
+          address: true,
+          category: true,
+          author: true,
+          comments: true,
+          projectInfo: true,
+          proposalInfo: true,
+          ratings: true,
+        }
+      });
       if (!foundIdea) {
         return res.status(400).json({
           message: `The idea with that listed ID (${ideaId}) does not exist.`,
