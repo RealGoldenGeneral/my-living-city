@@ -1,27 +1,20 @@
+import { Address } from 'node:cluster';
+import { Geo } from './geo.type';
+import { UserRole } from './userRole.type';
+
 export interface IUser {
-  // Keys
-  id: string;
-  email: string;
-  fname: string | null;
-  lname: string | null;
-  streetAddress: string | null;
-  postalCode: string | null;
-  city: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  createdAt: Date;
-  updatedAt: Date;
-	role: 'RESIDENT' | 'WORKER' | 'GUEST' | 'USER' | 'ASSOCIATE' | 'ADMIN'
-}
+	id: string;
+	userRoleId?: number;
+	userType: 'USER' | 'ADMIN' | 'DEVELOPER';
+	email: string;
+	password: string;
+	fname?: string;
+	lname?: string;
+	createdAt: Date;
+	updatedAt: Date;
 
-export interface Address {
-
-}
-
-export interface Geo {
-
-}
-
-export interface Company {
-
+	// Relationships can be nullable
+	geo?: Geo;
+	address?: Address;
+	userRole?: UserRole;
 }
