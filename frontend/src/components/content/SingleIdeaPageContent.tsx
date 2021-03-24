@@ -5,10 +5,11 @@ interface SingleIdeaPageContentProps {
   ideaData: IIdea
 }
 
-const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({}) => {
+const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData }) => {
   return (
     <>
       <h1>Idea data here</h1>
+      <p>{JSON.stringify(ideaData)}</p>
     </>
   );
 }

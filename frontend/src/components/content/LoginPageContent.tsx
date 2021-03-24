@@ -1,12 +1,11 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { Col, Container, Row, Image, Form, Button } from 'react-bootstrap'
 import { useFormik } from 'formik'
-import { IUser } from '../../lib/types/data/user.type';
-import { stringify } from 'node:querystring';
 import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { getUserWithEmailAndPass } from '../../hooks/useUserLoginWithEmailAndPass';
 import { FetchError } from '../../lib/types/types';
+import { storeObjectInLocalStorage } from '../../lib/utilityFunctions';
 
 export default function LoginPageContent() {
   const {
@@ -25,8 +24,7 @@ export default function LoginPageContent() {
 
       // Destructure payload and set global and local state
       const { token, user } = await getUserWithEmailAndPass(values);
-      const stringifiedUser = JSON.stringify(user);
-      localStorage.setItem('logged-user', stringifiedUser);
+      storeObjectInLocalStorage('logged-user', user);
       localStorage.setItem('token', token);
       setToken(token);
       setUser(user)

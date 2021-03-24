@@ -7,7 +7,7 @@ import App from './App';
 import './scss/styles.scss';
 
 // React query state
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClientProvider } from 'react-query'
 import UserProfileProvider from './contexts/UserProfile.Context';
 import { queryClient } from './lib/react-query/clientInitializer';
 

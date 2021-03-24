@@ -20,6 +20,7 @@ function App() {
       <Header />
       <div className="main-content">
         <Switch>
+          {/* Redirect?? */}
           <Route path='/' component={LandingPage} exact />
           <Route path='/ideas' component={IdeasPage} exact />
           <Route path='/ideas/:ideaId' component={SingleIdeaPage} />

@@ -1,10 +1,9 @@
-import { AxiosError } from 'axios';
 import React, { createContext, useEffect, useState } from 'react'
-import { getUserWithEmailAndPass } from '../hooks/useUserLoginWithEmailAndPass';
 import { useUserWithJwt } from '../hooks/useUserWithJwt';
 import { IUser } from '../lib/types/data/user.type';
 import { LoginWithEmailAndPass } from '../lib/types/input/loginWithEmailAndPass.input';
 import { FetchError } from '../lib/types/types';
+import { storeObjectInLocalStorage } from '../lib/utilityFunctions';
 
 export interface IUserProfileContext {
   token: string | null;
@@ -48,9 +47,20 @@ const UserProfileProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(getUserFromLocalStorage())
   const [fetchError, setFetchError] = useState<FetchError | null>(null);
 
+  // Removes Token from global state and local storage
+  const purgeToken = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+  }
+
+  // Removes User object from global state and local storage
+  const purgeUser = () => {
+    localStorage.removeItem('logged-user');
+    setUser(null);
+  }
+
   // Function to check if user should be refetched
   const shouldTriggerUserFetch = (): boolean => {
-    // Should this be or?
     return token !== null && user === null;
   }
 
@@ -60,9 +70,8 @@ const UserProfileProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (isError) {
-      localStorage.removeItem('token');
-      setToken(null);
-      setUser(null)
+      purgeUser()
+      purgeToken()
       setFetchError({ message: error?.response?.data.message })
       return;
     }
@@ -70,16 +79,14 @@ const UserProfileProvider: React.FC = ({ children }) => {
     if (!isLoading && data && !isError) {
       setFetchError(null);
       setUser(data);
+      storeObjectInLocalStorage('logged-user', data);
     }
   }, [data, isLoading, isError])
 
 
   const logout = () => {
-    console.log("Logging out");
-    localStorage.removeItem('token');
-    localStorage.removeItem('logged-user')
-    setToken(null);
-    setUser(null);
+    purgeUser();
+    purgeToken();
   }
 
   return (
