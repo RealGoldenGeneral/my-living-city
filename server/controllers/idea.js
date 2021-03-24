@@ -64,7 +64,6 @@ ideaRouter.get(
           geo: true,
           address: true,
           category: true,
-          author: true,
           comments: true,
           projectInfo: true,
           proposalInfo: true,

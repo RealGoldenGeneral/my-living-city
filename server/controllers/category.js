@@ -27,7 +27,7 @@ categoryRouter.get(
   '/getall',
   async (req, res, next) => {
     try {
-      const allIdeas = await prisma.idea.findMany();
+      const allIdeas = await prisma.category.findMany();
 
       res.status(200).json(allIdeas);
     } catch (error) {

@@ -125,7 +125,7 @@ ideaRatingRouter.post(
 
       res.status(200).json({
         message: `Rating succesfully created under Idea ${parsedIdeaId}`,
-        comment: createdRating
+        rating: createdRating
       });
     } catch (error) {
       res.status(400).json({
