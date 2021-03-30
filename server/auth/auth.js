@@ -14,7 +14,10 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
-        const { password, confirmPassword } = req.body;
+        const { 
+          confirmPassword, 
+          userRoleId,
+        } = req.body;
         if (!email) {
           return done({ message: "You must supply an email." })
         }
@@ -22,6 +25,8 @@ passport.use(
         if (!password) {
           return done({ message: "You must supply a password."})
         }
+
+        console.log(req.body);
 
         // hash password
         const hashedPassword = await argon2Hash(password);
@@ -41,13 +46,17 @@ passport.use(
           // return done(null, false, { message: "User with that email already exists" })
         }
 
-
         // Parse body
-        const geoData = { ...req.body.geo }
-        const addressData = { ...req.body.address }
-        delete req.body.geo;
-        delete req.body.address;
-        delete req.body.confirmPassword;
+        const geoData = { ...req.body.geo };
+        const addressData = { ...req.body.address };
+        const parsedMainData = { 
+          ...req.body,
+          ...userRoleId && { userRoleId: Number(userRoleId) }
+        };
+        if (userRoleId == null) delete parsedMainData.userRoleId;
+        delete parsedMainData.geo;
+        delete parsedMainData.address;
+        delete parsedMainData.confirmPassword;
 
         // Create user
         const createdUser = await prisma.user.create({
@@ -58,8 +67,8 @@ passport.use(
             address: {
               create: addressData
             },
-            ...req.body,
-            password: hashedPassword
+            ...parsedMainData,
+            password: hashedPassword,
           },
           include: {
             geo: true,
