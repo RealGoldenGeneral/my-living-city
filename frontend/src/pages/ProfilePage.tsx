@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { UserProfileContext } from '../contexts/UserProfile.Context';
 
 interface ProfilePageProps {
@@ -9,11 +10,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({}) => {
   const { user, loading, errorOccured, error } = useContext(UserProfileContext)
 
   if (loading) {
-    return <p>Loading...</p>
+    return (
+      <div className="wrapper">
+        <LoadingSpinner />
+      </div>
+    )
   }
 
   if (errorOccured) {
-    return <p>{JSON.stringify(error)}</p>
+    <div className="wrapper">
+      {JSON.stringify(error)}
+    </div>
   }
 
   return (

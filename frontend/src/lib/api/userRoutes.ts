@@ -39,6 +39,16 @@ export const getUserWithJWT = async ({ jwtAuthToken }: GetUserWithJWTInput): Pro
 }
 
 export const postRegisterUser = async (registerData: RegisterInput): Promise<LoginResponse> => {
+  const { email, password, confirmPassword } = registerData;
+  // Verify Payload
+  if (!email || !password) {
+    throw new Error("You must provide an email and password to sign up.")
+  }
+
+  if (password !== confirmPassword) {
+    throw new Error("Both your passwords must match. Please ensure both passwords match to register.")
+  }
+
   const res = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, registerData);
   return res.data;
 }

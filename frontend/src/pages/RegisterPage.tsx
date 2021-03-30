@@ -1,5 +1,6 @@
 import React from 'react'
 import RegisterPageContent from '../components/content/RegisterPageContent'
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import useUserRoles from '../hooks/useUserRoles';
 
 export default function RegisterPage() {
@@ -10,7 +11,7 @@ export default function RegisterPage() {
   if (isLoading) {
     return (
       <div className="wrapper">
-        <p>Loading...</p>
+        <LoadingSpinner />
       </div>
     )
   }

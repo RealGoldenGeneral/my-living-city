@@ -2,7 +2,15 @@
   padding-top: 10%;
   padding-bottom: 40%;
 
+  h1 {
+    text-align: center;
+  }
+
   .register-form-group {
     padding-top: 20px;
+
+    .error-alert {
+      margin-top: 15px;
+    }
   }
 }

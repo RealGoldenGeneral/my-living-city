@@ -1,5 +1,6 @@
 import React from 'react'
 import { useQuery } from 'react-query'
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useIdeas } from '../hooks/ideaHooks';
 
 
@@ -9,7 +10,7 @@ export default function IdeasPage() {
   if (isLoading) {
     return (
       <div className="wrapper">
-        <h2>Loading...</h2>
+        <LoadingSpinner />
       </div>
     )
   }

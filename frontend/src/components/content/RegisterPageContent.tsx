@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { Col, Container, Row, Form, Button } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
@@ -12,10 +12,6 @@ interface RegisterPageContentProps {
   userRoles: UserRole[] | undefined;
 }
 
-const validatePasswordInput = (password: string, confirmPassword: string): boolean => {
-  return password === confirmPassword;
-}
-
 const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) => {
   const {
     setToken,
@@ -24,41 +20,35 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<FetchError | null>(null);
-  
+
   const submitHandler = async (values: RegisterInput) => {
     try {
-      const { confirmPassword, password } = values;
       // Set loading 
+      setError(null);
       setIsLoading(true);
-
-      // Ensure password is matching
-      if (!validatePasswordInput(confirmPassword, password)) {
-        throw new Error("Your passwords don't match. Please make sure that both passwords match.");
-      }
 
       const { token, user } = await postRegisterUser(values);
       storeUserAndTokenInLocalStorage(token, user);
       setToken(token);
       setUser(user);
-  
+
       // remove previous errors
       setError(null);
+      formik.resetForm();
     } catch (error) {
       let errorObj: FetchError = {
         message: "Error occured while logging in user."
       }
       if (error.response) {
         // Request made and server responded
-        errorObj.details = {
-          errorMessage: error.response.data.message,
-          errorStack: error.response.status
-        }
+        errorObj.message = error.response.data.message;
         console.log(error.response.data);
         console.log(error.response.status);
         console.log(error.response.headers);
       } else if (error.request) {
         // The request was made but no response was received
         console.log(error.request);
+        errorObj.message = "Error no response received"
       } else {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
@@ -67,10 +57,9 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       setError(errorObj);
     } finally {
       setIsLoading(false);
-      formik.resetForm();
     }
   }
-  
+
   const formik = useFormik<RegisterInput>({
     initialValues: {
       userRoleId: userRoles ? userRoles[0].id : undefined,
@@ -93,7 +82,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     },
     onSubmit: submitHandler
   })
-  
+
   return (
     <main className='register-page'>
       <Container>
@@ -105,37 +94,37 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
             <Form onSubmit={formik.handleSubmit}>
               <Form.Group controlId="registerCredentials">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control 
-                  type="email" 
+                <Form.Control
+                  type="email"
                   name="email"
                   onChange={formik.handleChange}
                   value={formik.values.email}
-                  placeholder="name@example.com" 
+                  placeholder="name@example.com"
                 />
                 <Form.Label>Password</Form.Label>
-                <Form.Control 
-                  type="password" 
+                <Form.Control
+                  type="password"
                   name="password"
                   onChange={formik.handleChange}
                   value={formik.values.password}
                 />
                 <Form.Label>Confirm Password</Form.Label>
-                <Form.Control 
-                  type="password" 
+                <Form.Control
+                  type="password"
                   name="confirmPassword"
                   onChange={formik.handleChange}
                   value={formik.values.confirmPassword}
                 />
                 <Form.Label>First Name</Form.Label>
-                <Form.Control 
-                  type="text" 
+                <Form.Control
+                  type="text"
                   name="fname"
                   onChange={formik.handleChange}
                   value={formik.values.fname}
                 />
                 <Form.Label>Last Name</Form.Label>
-                <Form.Control 
-                  type="text" 
+                <Form.Control
+                  type="text"
                   name="lname"
                   onChange={formik.handleChange}
                   value={formik.values.lname}
@@ -143,7 +132,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
               </Form.Group>
               <Form.Group controlId="registerAddress">
                 <Form.Label>Zip / Postal Code</Form.Label>
-                <Form.Control 
+                <Form.Control
                   type="text"
                   name="address.postalCode"
                   onChange={formik.handleChange}
@@ -152,14 +141,14 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
               </Form.Group>
               <Form.Group controlId="registerUserType">
                 <Form.Label>Choose your desired account type:</Form.Label>
-                <Form.Control 
+                <Form.Control
                   as="select"
                   name="userRoleId"
                   onChange={formik.handleChange}
                   value={formik.values.userRoleId}
                 >
                   {userRoles && userRoles.map(role => (
-                      <option id={String(role.id)} value={role.id}>{role.name}</option>
+                    <option key={String(role.id)} value={role.id}>{role.name}</option>
                   ))}
                 </Form.Control>
               </Form.Group>
@@ -171,6 +160,12 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                 Register!
               </Button>
             </Form>
+
+            {error && (
+              <Alert variant='danger' className="error-alert">
+                { error.message }
+              </Alert>
+            )}
           </Col>
         </Row>
       </Container>
