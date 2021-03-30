@@ -14,7 +14,7 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
-        const { password } = req.body;
+        const { password, confirmPassword } = req.body;
         if (!email) {
           return done({ message: "You must supply an email." })
         }
@@ -26,12 +26,18 @@ passport.use(
         // hash password
         const hashedPassword = await argon2Hash(password);
 
+        // Check if confirmPassword and password are the same
+        const passwordConfirmation = password === confirmPassword;
+        if (!passwordConfirmation) {
+          return done({ message: "Both password and password confirmation must be the same. Please try again."})
+        }
+
         // Check if user exists
         const userExists = await prisma.user.findUnique({
           where: { email }
         })
         if (userExists) {
-          return done({ message: "User with that email already exists" })
+          return done({ message: "User with that email already exists." })
           // return done(null, false, { message: "User with that email already exists" })
         }
 
@@ -41,6 +47,7 @@ passport.use(
         const addressData = { ...req.body.address }
         delete req.body.geo;
         delete req.body.address;
+        delete req.body.confirmPassword;
 
         // Create user
         const createdUser = await prisma.user.create({
@@ -63,7 +70,8 @@ passport.use(
 
         return done(null, createdUser);
       } catch (error) {
-        console.log("ERROR")
+        // console.log("ERROR")
+        console.error(error);
         done(error);
       } finally {
         await prisma.$disconnect();
