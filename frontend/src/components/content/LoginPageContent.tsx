@@ -6,19 +6,21 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { getUserWithEmailAndPass } from '../../hooks/useUserLoginWithEmailAndPass';
 import { FetchError } from '../../lib/types/types';
 import { storeObjectInLocalStorage } from '../../lib/utilityFunctions';
+import { useHistory } from 'react-router';
 
 export default function LoginPageContent() {
   const {
-    logout,
     setToken,
     setUser,
     user
   } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<FetchError | null>(null);
+  const history = useHistory();
 
   const submitHandler = async (values: LoginWithEmailAndPass) => {
     try {
+      console.log("Submitted")
       // Set loading 
       setIsLoading(true);
 
@@ -50,10 +52,11 @@ export default function LoginPageContent() {
       } else {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
-      } 
+      }
       setError(errorObj);
     } finally {
       setIsLoading(false);
+      formik.resetForm();
     }
   }
 
@@ -66,64 +69,61 @@ export default function LoginPageContent() {
   })
 
   return (
-    <main>
+    <main className='login-page'>
       <Container>
         <Row>
-          <Col>
-            <Image
-              src='/MyLivingCity_Logo_NameOnly.png'
-              fluid
-            />
+          <Image
+            src='/MyLivingCity_Logo_NameOnly.png'
+            fluid
+          />
+        </Row>
+        <Row 
+          className='login-form-group justify-content-center'
+        >
+          <Col md={8}>
+            <Form onSubmit={formik.handleSubmit}>
+              <Form.Group controlId="loginEmail">
+                <Form.Label>Email Address</Form.Label>
+                <Form.Control
+                  name='email'
+                  type='email'
+                  placeholder='Enter email'
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
+                />
+                <Form.Text className='text-muted'>
+                  We'll never share your email with anyone else.
+                </Form.Text>
+              </Form.Group>
+              <Form.Group controlId="loginPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  name='password'
+                  type='password'
+                  placeholder='Password'
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                />
+              </Form.Group>
+              <Button
+                block
+                type='submit'
+                disabled={isLoading ? true : false}
+              >
+                Login
+              </Button>
+              <Button
+                block
+                type='button'
+                disabled={isLoading ? true : false}
+                onClick={() => history.push('/register')}
+              >
+                Register
+              </Button>
+            </Form>
           </Col>
         </Row>
-        <Form onSubmit={formik.handleSubmit}>
-          <Row>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email Address</Form.Label>
-              <Form.Control 
-                name='email'
-                type='email' 
-                placeholder='Enter email'
-                onChange={formik.handleChange}
-                value={formik.values.email}
-              />
-              <Form.Text className='text-muted'>
-                We'll never share your email with anyone else.
-              </Form.Text>
-            </Form.Group>
-          </Row>
-          <Row>
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control 
-                name='password'
-                type='password' 
-                placeholder='Password' 
-                onChange={formik.handleChange}
-                value={formik.values.password}
-              />
-            </Form.Group>
-          </Row>
-          <Row>
-            <Button variant='primary' type='submit'>
-              Submit
-            </Button>
-          </Row>
-        </Form>
       </Container>
-      <br />
-            {/* Remove after */}
-            <button onClick={() => logout()}>Logout</button>
-      <br />
-      <h3>{isLoading ? "Loading" : "Idle"}</h3>
-      {
-        error && (
-          <p>{JSON.stringify(error)}</p>
-        )
-      }
-
-      <h3>User</h3>
-      <p>{JSON.stringify(user)}</p>
     </main>
   )
 }
