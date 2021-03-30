@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { useUserWithJwt } from '../hooks/useUserWithJwt';
+import { useUserWithJwt } from '../hooks/userHooks';
 import { IUser } from '../lib/types/data/user.type';
 import { LoginWithEmailAndPass } from '../lib/types/input/loginWithEmailAndPass.input';
 import { FetchError } from '../lib/types/types';

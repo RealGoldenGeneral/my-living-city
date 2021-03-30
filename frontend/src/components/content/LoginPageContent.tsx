@@ -3,10 +3,10 @@ import { Col, Container, Row, Image, Form, Button } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-import { getUserWithEmailAndPass } from '../../hooks/useUserLoginWithEmailAndPass';
 import { FetchError } from '../../lib/types/types';
 import { storeObjectInLocalStorage } from '../../lib/utilityFunctions';
 import { useHistory } from 'react-router';
+import { getUserWithEmailAndPass } from '../../lib/api/userRoutes';
 
 export default function LoginPageContent() {
   const {

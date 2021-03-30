@@ -1,6 +1,6 @@
 import React from 'react'
 import RegisterPageContent from '../components/content/RegisterPageContent'
-import useUserRoles from '../hooks/roles/useUserRoles';
+import useUserRoles from '../hooks/useUserRoles';
 
 export default function RegisterPage() {
 

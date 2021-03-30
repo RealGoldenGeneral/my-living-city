@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from 'react-query'
-import useIdeas from '../hooks/useIdeas';
+import { useIdeas } from '../hooks/ideaHooks';
 
 
 export default function IdeasPage() {
