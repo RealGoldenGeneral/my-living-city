@@ -186,6 +186,9 @@ CREATE TABLE "idea_comment_like" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "UserRole.name_unique" ON "UserRole"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "user_geo_user_id_unique" ON "user_geo"("user_id");
 
 -- CreateIndex
@@ -193,6 +196,9 @@ CREATE UNIQUE INDEX "user_address_user_id_unique" ON "user_address"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user.email_unique" ON "user"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "category.title_unique" ON "category"("title");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "idea_geo_idea_id_unique" ON "idea_geo"("idea_id");

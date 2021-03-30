@@ -7,7 +7,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["createMany", "groupBy"]
 }
 
 // Report Entity
@@ -34,7 +35,7 @@ enum UserType {
 model UserRole {
   // keys
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
@@ -65,8 +66,8 @@ model UserAddress {
   userId String @map("user_id")
 
   // Columns
-  streetAddress  String?   @map("street_address")
-  streetAddress2 String?   @map("street_address_2")
+  streetAddress  String?  @map("street_address")
+  streetAddress2 String?  @map("street_address_2")
   city           String?
   country        String?
   postalCode     String?  @map("postal_code")
@@ -113,7 +114,7 @@ model Category {
   id Int @id @default(autoincrement())
 
   // Fields
-  title       String
+  title       String   @unique
   description String?
   createdAt   DateTime @default(now()) @map(name: "created_at")
   updatedAt   DateTime @default(now()) @updatedAt @map(name: "updated_at")
@@ -156,8 +157,8 @@ model IdeaAddress {
   ideaId Int @map("idea_id")
 
   // Columns
-  streetAddress  String?   @map("street_address")
-  streetAddress2 String?   @map("street_address_2")
+  streetAddress  String?  @map("street_address")
+  streetAddress2 String?  @map("street_address_2")
   city           String?
   country        String?
   postalCode     String?  @map("postal_code")
