@@ -69,6 +69,7 @@ passport.use(
             },
             ...parsedMainData,
             password: hashedPassword,
+            email: email.toLowerCase(),
           },
           include: {
             geo: true,
@@ -100,7 +101,7 @@ passport.use(
     async (req, email, password, done) => {
       try {
         const foundUser = await prisma.user.findUnique({
-          where: { email },
+          where: { email: email.toLowerCase() },
           // TODO: May cause unnecessary queries to database
           include: {
             geo: true,
