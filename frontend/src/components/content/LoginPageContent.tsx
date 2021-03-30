@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { Col, Container, Row, Image, Form, Button } from 'react-bootstrap'
+import { Col, Container, Row, Image, Form, Button, Alert } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
@@ -32,12 +32,14 @@ export default function LoginPageContent() {
 
       // remove previous errors
       setError(null);
+      formik.resetForm();
     } catch (error) {
       let errorObj: FetchError = {
         message: "Error occured while logging in user."
       }
       if (error.response) {
         // Request made and server responded
+        errorObj.message = error.response.data.message;
         errorObj.details = {
           errorMessage: error.response.data.message,
           errorStack: error.response.status
@@ -48,14 +50,15 @@ export default function LoginPageContent() {
       } else if (error.request) {
         // The request was made but no response was received
         console.log(error.request);
+        errorObj.message = "Error no response received";
       } else {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
+        errorObj.message = error.message
       }
       setError(errorObj);
     } finally {
       setIsLoading(false);
-      formik.resetForm();
     }
   }
 
@@ -76,7 +79,7 @@ export default function LoginPageContent() {
             fluid
           />
         </Row>
-        <Row 
+        <Row
           className='login-form-group justify-content-center'
         >
           <Col md={8}>
@@ -119,6 +122,11 @@ export default function LoginPageContent() {
               >
                 Register
               </Button>
+              {error && (
+                <Alert variant='danger' className="error-alert">
+                  { error.message}
+                </Alert>
+              )}
             </Form>
           </Col>
         </Row>
