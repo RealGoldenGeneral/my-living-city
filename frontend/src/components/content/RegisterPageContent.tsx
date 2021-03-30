@@ -1,16 +1,19 @@
 import { useContext, useState } from 'react'
-import { Col, Container, Row, Image, Form, Button } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button } from 'react-bootstrap'
 import { useFormik } from 'formik'
-import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
-import { storeObjectInLocalStorage } from '../../lib/utilityFunctions';
-import { useHistory } from 'react-router';
+import { storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
 import { RegisterInput } from '../../lib/types/input/register.input';
 import { UserRole } from '../../lib/types/data/userRole.type';
+import { postRegisterUser } from '../../lib/api/userRoutes';
 
 interface RegisterPageContentProps {
   userRoles: UserRole[] | undefined;
+}
+
+const validatePasswordInput = (password: string, confirmPassword: string): boolean => {
+  return password === confirmPassword;
 }
 
 const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) => {
@@ -24,10 +27,19 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   
   const submitHandler = async (values: RegisterInput) => {
     try {
+      const { confirmPassword, password } = values;
       // Set loading 
       setIsLoading(true);
-  
-      console.log(values)
+
+      // Ensure password is matching
+      if (!validatePasswordInput(confirmPassword, password)) {
+        throw new Error("Your passwords don't match. Please make sure that both passwords match.");
+      }
+
+      const { token, user } = await postRegisterUser(values);
+      storeUserAndTokenInLocalStorage(token, user);
+      setToken(token);
+      setUser(user);
   
       // remove previous errors
       setError(null);
@@ -50,6 +62,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       } else {
         // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
+        errorObj.message = error.message;
       }
       setError(errorObj);
     } finally {
@@ -60,7 +73,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   
   const formik = useFormik<RegisterInput>({
     initialValues: {
-      userRoleId: undefined,
+      userRoleId: userRoles ? userRoles[0].id : undefined,
       email: '',
       password: '',
       confirmPassword: '',
@@ -146,7 +159,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                   value={formik.values.userRoleId}
                 >
                   {userRoles && userRoles.map(role => (
-                    <option value={role.id}>{role.name}</option>
+                      <option id={String(role.id)} value={role.id}>{role.name}</option>
                   ))}
                 </Form.Control>
               </Form.Group>

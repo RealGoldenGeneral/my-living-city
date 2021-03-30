@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
-import { storeObjectInLocalStorage } from '../../lib/utilityFunctions';
+import { storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
 import { useHistory } from 'react-router';
 import { getUserWithEmailAndPass } from '../../lib/api/userRoutes';
 
@@ -26,8 +26,7 @@ export default function LoginPageContent() {
 
       // Destructure payload and set global and local state
       const { token, user } = await getUserWithEmailAndPass(values);
-      storeObjectInLocalStorage('logged-user', user);
-      localStorage.setItem('token', token);
+      storeUserAndTokenInLocalStorage(token, user);
       setToken(token);
       setUser(user)
 
