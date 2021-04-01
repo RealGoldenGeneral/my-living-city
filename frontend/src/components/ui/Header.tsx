@@ -26,6 +26,7 @@ export default function Header() {
             {user ? (
               <>
                 {/* <Navbar.Text> Fake Name</Navbar.Text> */}
+                <Nav.Link href='/submit'>Submit Idea</Nav.Link>
                 <Nav.Link href='/profile'>Profile</Nav.Link>
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
               </>

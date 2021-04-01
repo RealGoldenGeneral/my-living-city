@@ -12,7 +12,6 @@ export default function LoginPageContent() {
   const {
     setToken,
     setUser,
-    user
   } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<FetchError | null>(null);
@@ -71,7 +70,7 @@ export default function LoginPageContent() {
   })
 
   return (
-    <main className='login-page'>
+    <main className='login-page-content'>
       <Container>
         <Row>
           <Image

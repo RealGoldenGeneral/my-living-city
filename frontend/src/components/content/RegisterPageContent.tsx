@@ -3,7 +3,7 @@ import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
-import { storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
+import { capitalizeString, handlePotentialAxiosError, storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
 import { RegisterInput } from '../../lib/types/input/register.input';
 import { UserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
@@ -36,24 +36,8 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       setError(null);
       formik.resetForm();
     } catch (error) {
-      let errorObj: FetchError = {
-        message: "Error occured while logging in user."
-      }
-      if (error.response) {
-        // Request made and server responded
-        errorObj.message = error.response.data.message;
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log(error.request);
-        errorObj.message = "Error no response received"
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message);
-        errorObj.message = error.message;
-      }
+      const genericMessage = 'An error occured while trying to create a new account.';
+      const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {
       setIsLoading(false);
@@ -84,7 +68,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   })
 
   return (
-    <main className='register-page'>
+    <main className='register-page-content'>
       <Container>
         <Row className='justify-content-center'>
           <h1>Create an account</h1>
@@ -148,7 +132,15 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                   value={formik.values.userRoleId}
                 >
                   {userRoles && userRoles.map(role => (
-                    <option key={String(role.id)} value={role.id}>{role.name}</option>
+                    <option 
+                      key={String(role.id)} 
+                      value={Number(role.id)}
+                      style={{
+                        textTransform: 'capitalize'
+                      }}
+                    >
+                      {capitalizeString(role.name)}
+                    </option>
                   ))}
                 </Form.Control>
               </Form.Group>
