@@ -64,10 +64,10 @@ ideaRouter.get(
           geo: true,
           address: true,
           category: true,
-          comments: true,
           projectInfo: true,
           proposalInfo: true,
-          ratings: true,
+          // ratings: true,
+          // comments: true,
         }
       });
       if (!foundIdea) {

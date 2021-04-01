@@ -1,10 +1,10 @@
-import React from 'react'
-import { useQuery } from 'react-query'
+import ConversationsPageContent from '../components/content/ConversationsPageContent';
+import IdeaTile from '../components/tiles/IdeaTile'
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useIdeas } from '../hooks/ideaHooks';
 
 
-export default function IdeasPage() {
+export default function ConversationsPage() {
   const { data, error, isLoading, isError } = useIdeas();
 
   if (isLoading) {
@@ -27,8 +27,7 @@ export default function IdeasPage() {
   return (
     <>
       <div className="wrapper">
-        <p>Ideas page</p>
-        <p>{JSON.stringify(data)}</p>
+        <ConversationsPageContent ideas={data} />
       </div>
     </>
   )

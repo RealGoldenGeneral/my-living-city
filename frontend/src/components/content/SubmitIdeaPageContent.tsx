@@ -180,6 +180,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               { error.message}
             </Alert>
           )}
+          {/* TODO: Add ui alert flash to inform user that idea has succesfully been created */}
         </Col>
       </Row>
     </Container>
