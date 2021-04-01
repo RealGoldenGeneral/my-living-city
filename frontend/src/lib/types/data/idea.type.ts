@@ -4,6 +4,7 @@ import { Geo } from "./geo.type";
 import { Proposal } from "./proposal.type";
 import { Project } from "./project.type";
 import { Rating } from "./rating.type";
+import { Comment } from "./comment.type";
 
 export interface IIdea {
 	id: number;
@@ -18,8 +19,8 @@ export interface IIdea {
 	manufacturingImpact?: String;
 	state: string;
 	active: boolean;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 
 	// Relationships can be nullable 
 	geo?: Geo;
