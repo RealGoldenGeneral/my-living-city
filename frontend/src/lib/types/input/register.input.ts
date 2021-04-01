@@ -1,3 +1,6 @@
+import { AddressInput } from "./address.input";
+import { GeoInput } from "./geo.input";
+
 export interface RegisterInput {
   userRoleId?: number;
   email: string;
@@ -7,17 +10,4 @@ export interface RegisterInput {
   lname?: string;
   address?: AddressInput;
   geo?: GeoInput;
-}
-
-export interface AddressInput {
-  streetAddress?: string;
-  streetAddress2?: string;
-  city?: string;
-  country?: string;
-  postalCode?: string;
-}
-
-export interface GeoInput {
-  lon?: number;
-  lat?: number;
 }
