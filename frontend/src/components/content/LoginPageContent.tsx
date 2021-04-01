@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
-import { storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
+import { handlePotentialAxiosError, storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
 import { useHistory } from 'react-router';
 import { getUserWithEmailAndPass } from '../../lib/api/userRoutes';
 
@@ -33,28 +33,8 @@ export default function LoginPageContent() {
       setError(null);
       formik.resetForm();
     } catch (error) {
-      let errorObj: FetchError = {
-        message: "Error occured while logging in user."
-      }
-      if (error.response) {
-        // Request made and server responded
-        errorObj.message = error.response.data.message;
-        errorObj.details = {
-          errorMessage: error.response.data.message,
-          errorStack: error.response.status
-        }
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.log(error.request);
-        errorObj.message = "Error no response received";
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message);
-        errorObj.message = error.message
-      }
+      const genericMessage = "Error occured while logging in user.";
+      const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {
       setIsLoading(false);
