@@ -53,7 +53,7 @@ ideaRouter.get(
       // check if id is valid
       if (!parsedIdeaId) {
         return res.status(400).json({
-          message: `A valid ideaId must be specified in the route paramater.`,
+          message: `A valid ideaId must be specified in the route parameter.`,
         });
       }
 
