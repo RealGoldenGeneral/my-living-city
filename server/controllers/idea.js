@@ -245,9 +245,7 @@ ideaRouter.post(
         }
       });
 
-      res.status(201).json({
-        createdIdea
-      });
+      res.status(201).json(createdIdea);
     } catch (error) {
       console.error(error);
       res.status(400).json({
