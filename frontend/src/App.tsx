@@ -4,14 +4,15 @@ import Footer from './components/ui/Footer';
 import Header from './components/ui/Header';
 
 // Pages
-import IdeasPage from './pages/IdeasPage';
 import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
+import ConversationsPage from './pages/ConversationsPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import SingleIdeaPage from './pages/SingleIdeaPage';
 import Team404Page from './pages/Team404Page';
 import TestPage from './pages/TestPage';
+import SubmitIdeaPage from './pages/SubmitIdeaPage';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
@@ -22,8 +23,9 @@ function App() {
         <Switch>
           {/* Redirect?? */}
           <Route path='/' component={LandingPage} exact />
-          <Route path='/ideas' component={IdeasPage} exact />
+          <Route path='/ideas' component={ConversationsPage} exact />
           <Route path='/ideas/:ideaId' component={SingleIdeaPage} />
+          <Route path='/submit' component={SubmitIdeaPage} />
           <Route path='/login' component={LoginPage} />
           <Route path='/register' component={RegisterPage} />
           <Route path='/profile' component={ProfilePage} />
