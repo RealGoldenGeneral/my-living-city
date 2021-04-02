@@ -1,12 +1,23 @@
 import { useQuery } from 'react-query';
 import { IIdea } from '../lib/types/data/idea.type';
 import { FetchError } from '../lib/types/types';
-import { getAllIdeas, getSingleIdea } from '../lib/api/ideaRoutes';
+import { getAllIdeas, getSingleIdea, postAllIdeasWithAggregates } from '../lib/api/ideaRoutes';
+import { defaultOrderByAggregate, GetAllIdeasWithAggregate, getAllIdeasWithAggregateDefault, IdeaOrderByAggregate } from '../lib/types/args/getAllIdeas.args';
 
-export const useIdeas = () => {
+export const useIdeas = (
+) => {
   return useQuery<IIdea[], FetchError>(
     'ideas', 
-    getAllIdeas,
+    () => getAllIdeas(),
+  );
+}
+
+export const useIdeasWithAggregate = (
+  aggregateOptions: GetAllIdeasWithAggregate = getAllIdeasWithAggregateDefault
+) => {
+  return useQuery<IIdea[], FetchError>(
+    ['ideas', aggregateOptions], 
+    () => postAllIdeasWithAggregates(aggregateOptions),
   );
 }
 

@@ -1,11 +1,11 @@
 import ConversationsPageContent from '../components/content/ConversationsPageContent';
 import IdeaTile from '../components/tiles/IdeaTile'
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { useIdeas } from '../hooks/ideaHooks';
+import { useIdeas, useIdeasWithAggregate } from '../hooks/ideaHooks';
 
 
 export default function ConversationsPage() {
-  const { data, error, isLoading, isError } = useIdeas();
+  const { data, error, isLoading, isError } = useIdeasWithAggregate();
 
   if (isLoading) {
     return (

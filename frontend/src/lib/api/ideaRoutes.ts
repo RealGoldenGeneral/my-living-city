@@ -1,10 +1,21 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
+import { defaultOrderByAggregate, GetAllIdeasWithAggregate, getAllIdeasWithAggregateDefault, IdeaOrderByAggregate } from "../types/args/getAllIdeas.args";
 import { IIdea } from "../types/data/idea.type";
 import { CreateIdeaInput } from "../types/input/createIdea.input";
 
 export const getAllIdeas = async () => {
   const res = await axios.get<IIdea[]>(`${API_BASE_URL}/idea/getall`);
+  return res.data;
+}
+
+export const postAllIdeasWithAggregates = async (
+  aggregateOptions: GetAllIdeasWithAggregate = getAllIdeasWithAggregateDefault
+) => {
+  const res = await axios.post<IIdea[]>(
+    `${API_BASE_URL}/idea/getall-aggregate`,
+    aggregateOptions,
+  );
   return res.data;
 }
 

@@ -27,9 +27,35 @@ ideaRouter.get(
   '/getall',
   async (req, res, next) => {
     try {
-      const allCategories = await prisma.idea.findMany();
+      const allIdeas = await prisma.idea.findMany({
+        orderBy: {
+          updatedAt: 'desc'
+        }
+      });
 
-      res.status(200).json(allCategories);
+      res.status(200).json(allIdeas);
+    } catch (error) {
+      res.status(400).json({
+        message: "An error occured while trying to fetch all ideas",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
+ideaRouter.post(
+  '/getall-aggregate',
+  async (req, res, next) => {
+    try {
+      console.log(req.body);
+      const allIdeas = await prisma.idea.findMany(req.body);
+
+      res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
         message: "An error occured while trying to fetch all ideas",
