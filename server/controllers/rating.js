@@ -1,9 +1,14 @@
 const passport = require('passport');
-const { PrismaClient } = require('@prisma/client')
 
 const express = require('express');
 const ideaRatingRouter = express.Router();
 const prisma = require('../lib/prismaClient');
+const {
+  PROPOSAL_RATING_AVG, 
+  PROPOSAL_RATING_COUNT, 
+  PROJECT_RATING_AVG, 
+  PROJECT_RATING_COUNT 
+} = require('../lib/constants');
 
 ideaRatingRouter.get(
   '/',
@@ -124,9 +129,69 @@ ideaRatingRouter.post(
         ideaId: parsedIdeaId,
       }});
 
+      // Check if ideas have exceeded threshold count as well as average
+      const aggregations = await prisma.ideaRating.aggregate({
+        where: {
+          ideaId: parsedIdeaId
+        },
+        avg: {
+          rating: true
+        },
+        count: true
+      });
+
+      const ratingAverage = aggregations?.avg.rating;
+      const ratingCount = aggregations?.count;
+
+      let updatedIdea = null;
+      // Advance Idea to Proposal if thresholds are met 
+      if (
+        PROPOSAL_RATING_AVG <= ratingAverage &&
+        PROPOSAL_RATING_COUNT <= ratingCount &&
+        (
+          foundIdea.state !== 'PROPOSAL' ||
+          foundIdea.state !== 'PROJECT'
+        )
+      ) {
+        console.log("Updating idea to Proposal state");
+        updatedIdea = await prisma.idea.update({
+          where: { id: parsedIdeaId },
+          data: {
+            state: 'PROPOSAL',
+            proposalInfo: {
+              create: {
+                description: 'Proposal has been initialized',
+              },
+            },
+          },
+        });
+      }
+
+      // Advance Proposal to Project if Thresholds and conditions are met
+      if (
+        PROJECT_RATING_AVG <= ratingAverage &&
+        PROJECT_RATING_COUNT <= ratingCount &&
+        foundIdea.state !== 'PROJECT'
+        // TODO: check if someone is championing idea state checker
+      ) {
+        console.log("Updating idea to Project state");
+        updatedIdea = await prisma.idea.update({
+          where: { id: parsedIdeaId },
+          data: {
+            state: 'PROJECT',
+            projectInfo: {
+              create: {
+                description: 'Project has been initialized.'
+              }
+            }
+          }
+        })
+      }
+
       res.status(200).json({
         message: `Rating succesfully created under Idea ${parsedIdeaId}`,
-        rating: createdRating
+        rating: createdRating,
+        updatedIdea,
       });
     } catch (error) {
       res.status(400).json({
