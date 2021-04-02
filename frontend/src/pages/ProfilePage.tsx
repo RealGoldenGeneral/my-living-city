@@ -1,15 +1,21 @@
 import React, { useContext } from 'react'
+import ProfileContent from '../components/content/ProfileContent';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { UserProfileContext } from '../contexts/UserProfile.Context';
+import { useUserWithJwtVerbose } from '../hooks/userHooks';
 
 interface ProfilePageProps {
   
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({}) => {
-  const { user, loading, errorOccured, error } = useContext(UserProfileContext)
+  const { token } = useContext(UserProfileContext)
+  const { data: user, isLoading, isError, error } = useUserWithJwtVerbose({
+    jwtAuthToken: token!,
+    shouldTrigger: token != null
+  });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="wrapper">
         <LoadingSpinner />
@@ -17,7 +23,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({}) => {
     )
   }
 
-  if (errorOccured) {
+  if (isError) {
     <div className="wrapper">
       {JSON.stringify(error)}
     </div>
@@ -25,8 +31,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({}) => {
 
   return (
     <div className="wrapper">
-      <h2>User Profile</h2>
-      <p>{JSON.stringify(user)}</p>
+      <ProfileContent user={user!} />
     </div>
   );
 }

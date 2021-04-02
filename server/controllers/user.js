@@ -153,6 +153,50 @@ userRouter.get(
 	}
 )
 
+userRouter.get(
+	'/me-verbose',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+		try {
+			const { id, email } = req.user;
+			const foundUser = await prisma.user.findUnique({
+				where: { id },
+				include: {
+					address: true,
+					geo: true,
+				}
+			});
+
+			if (!foundUser) {
+				return res.status(400).json({
+					message: "User could not be found or does not exist in the database."
+				})
+			}
+
+			const parsedUser = {
+				...foundUser,
+				password: null,
+			}
+
+			res.status(200);
+			res.json({
+        ...parsedUser
+			})
+		} catch (error) {
+			res.status(400);
+			res.json({
+				message: error.message,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+			})
+		} finally {
+			await prisma.$disconnect();
+		}
+	}
+)
+
 /**
  * Signs up a user with fields referenced in the User DB model.
  * At a minimum must have email and password to succeed.

@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import { FetchError } from '../lib/types/types';
-import { getUserWithEmailAndPass, getUserWithJWT, LoginData, LoginResponse, UseUserWithJwtInput } from '../lib/api/userRoutes';
+import { getUserWithEmailAndPass, getUserWithJWT, getUserWithJWTVerbose, LoginData, LoginResponse, UseUserWithJwtInput } from '../lib/api/userRoutes';
 import { AxiosError } from 'axios';
 import { queryClient } from '../lib/react-query/clientInitializer';
 import { IUser } from '../lib/types/data/user.type';
@@ -20,6 +20,16 @@ export const useUserWithJwt = ({ jwtAuthToken, shouldTrigger}: UseUserWithJwtInp
 
         return cachedData
       },
+      enabled: shouldTrigger
+    }
+  )
+}
+
+export const useUserWithJwtVerbose = ({ jwtAuthToken, shouldTrigger}: UseUserWithJwtInput) => {
+  return useQuery<IUser, AxiosError>(
+    'user',
+    () => getUserWithJWTVerbose({ jwtAuthToken }),
+    {
       enabled: shouldTrigger
     }
   )

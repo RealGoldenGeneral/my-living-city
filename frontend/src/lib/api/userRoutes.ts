@@ -38,6 +38,17 @@ export const getUserWithJWT = async ({ jwtAuthToken }: GetUserWithJWTInput): Pro
   return res.data;
 }
 
+export const getUserWithJWTVerbose = async ({ jwtAuthToken }: GetUserWithJWTInput): Promise<IUser> => {
+  const options = {
+    headers: {
+      secret_token: jwtAuthToken
+    }
+  }
+
+  const res = await axios.get<IUser>(`${API_BASE_URL}/user/me-verbose`, options)
+  return res.data;
+}
+
 export const postRegisterUser = async (registerData: RegisterInput): Promise<LoginResponse> => {
   const { email, password, confirmPassword } = registerData;
   // Verify Payload

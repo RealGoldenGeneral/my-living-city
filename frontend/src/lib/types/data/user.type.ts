@@ -1,6 +1,7 @@
-import { Address } from 'node:cluster';
 import { Geo } from './geo.type';
 import { UserRole } from './userRole.type';
+import { Address } from './address.type';
+import { Comment } from './comment.type';
 
 export interface IUser {
 	id: string;
@@ -17,4 +18,6 @@ export interface IUser {
 	geo?: Geo;
 	address?: Address;
 	userRole?: UserRole;
+
+	IdeaComments?: Comment[]
 }

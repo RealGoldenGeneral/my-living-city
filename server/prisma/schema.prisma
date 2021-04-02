@@ -97,10 +97,10 @@ model User {
   address         UserAddress?
   geo             UserGeo?
   userRole        UserRole?         @relation(fields: [userRoleId], references: [id])
-  Idea            Idea[]
-  IdeaRating      IdeaRating[]
-  IdeaComment     IdeaComment[]
-  IdeaCommentLike IdeaCommentLike[]
+  ideas            Idea[]
+  ideaRatings      IdeaRating[]
+  ideaComments     IdeaComment[]
+  ideaCommentLikes IdeaCommentLike[]
 
 
   // Model overwrites
