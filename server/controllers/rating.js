@@ -76,6 +76,7 @@ ideaRatingRouter.get(
   }
 )
 
+
 // Create a rating under an idea
 ideaRatingRouter.post(
   '/create/:ideaId',
@@ -245,6 +246,35 @@ ideaRatingRouter.delete(
     } catch (error) {
       res.status(400).json({
         message: `An error occured while trying to delete rating ${req.params.ratingId}.`,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
+ideaRatingRouter.get(
+  '/check/:ideaId',
+  async (req, res, next) => {
+    try {
+      const parsedIdeaId = parseInt(req.params.ideaId);
+      const aggregations = await prisma.ideaRating.aggregate({
+        where: {
+          ideaId: parsedIdeaId,
+        },
+        avg: {
+          rating: true,
+        },
+        count: true,
+      });
+      res.status(200).json(aggregations);
+    } catch (error) {
+      res.status(400).json({
+        message: `An error occured while trying to check the ratings of idea #${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,

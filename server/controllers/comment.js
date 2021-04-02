@@ -237,5 +237,31 @@ commentRouter.delete(
   }
 )
 
+commentRouter.get(
+  '/check/:ideaId',
+  async (req, res, next) => {
+    try {
+      const parsedIdeaId = parseInt(req.params.ideaId);
+      const aggregations = await prisma.ideaComment.aggregate({
+        where: {
+          ideaId: parsedIdeaId,
+        },
+        count: true,
+      })
+      res.status(200).json(aggregations);
+    } catch (error) {
+      res.status(400).json({
+        message: `An error occured while trying to check the comments of idea #${req.params.ideaId}.`,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
 
 module.exports = commentRouter;
