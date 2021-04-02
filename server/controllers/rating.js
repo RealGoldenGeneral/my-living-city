@@ -81,7 +81,6 @@ ideaRatingRouter.get(
   }
 )
 
-
 // Create a rating under an idea
 ideaRatingRouter.post(
   '/create/:ideaId',
@@ -268,7 +267,6 @@ ideaRatingRouter.put(
     }
   }
 )
-
 
 // delete a rating by ID
 ideaRatingRouter.delete(
