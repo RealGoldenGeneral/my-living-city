@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Card } from 'react-bootstrap';
 import { IIdea } from '../../lib/types/data/idea.type';
+import { timeDifference } from '../../lib/utilityFunctions'
 
 interface ideaTileProps {
   ideaData: IIdea
@@ -11,6 +12,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData }) => {
     id,
     title,
     description,
+    updatedAt
   } = ideaData;
   return (
     // <Card style={{ width: '18rem' }}>
@@ -23,6 +25,9 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData }) => {
           <Button variant="primary">Open</Button>
         </a>
       </Card.Body>
+      <Card.Footer>
+        <small className='text-muted'>Updated { timeDifference(new Date(), new Date(updatedAt)) }</small>
+      </Card.Footer>
     </Card>
   );
 }
