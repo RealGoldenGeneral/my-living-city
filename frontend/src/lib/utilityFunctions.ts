@@ -70,6 +70,14 @@ export const handlePotentialAxiosError = (genericMessage: string, error: any): F
 };
 
 // https://stackoverflow.com/questions/14980014/how-can-i-calculate-the-time-between-2-dates-in-typescript
+/**
+ * Calculates the difference between the dates and returns a string representation of the 
+ * difference between them. 
+ * 
+ * @param current A Date object that will be the Minuend of the calculation.
+ * @param previous A Date object that will be the subtrahend of the calculation.
+ * @returns A simplified difference in time as a string.
+ */
 export const timeDifference = (current: Date, previous: Date) => {
 	var msPerMinute = 60 * 1000;
 	var msPerHour = msPerMinute * 60;
