@@ -78,7 +78,7 @@ export const handlePotentialAxiosError = (genericMessage: string, error: any): F
  * @param previous A Date object that will be the subtrahend of the calculation.
  * @returns A simplified difference in time as a string.
  */
-export const timeDifference = (current: Date, previous: Date) => {
+export const timeDifference = (current: Date, previous: Date): string => {
 	var msPerMinute = 60 * 1000;
 	var msPerHour = msPerMinute * 60;
 	var msPerDay = msPerHour * 24;
@@ -100,4 +100,20 @@ export const timeDifference = (current: Date, previous: Date) => {
 	} else {
 		return 'approximately ' + Math.round(elapsed / msPerYear) + ' years ago';
 	}
+}
+
+/**
+ * Truncates a string based on the amount of characters passed to it. Used to enforce 
+ * sizing of tiles in application.
+ * 
+ * @param str A string that will be truncated
+ * @param numberOfChars The number of characters that will be kept in the original string
+ * @returns A new string that truncates the original
+ */
+export const truncateString = (str: string, numberOfChars: number): string => {
+	if (str.length <= numberOfChars) {
+		return str;
+	}
+
+	return str.slice(0, numberOfChars) + '...'
 }
