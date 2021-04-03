@@ -1,6 +1,7 @@
 import React from 'react'
 import { Container } from 'react-bootstrap';
 import { IIdea } from '../../lib/types/data/idea.type';
+import { capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
 import RatingsSection from '../partials/SingleIdeaContent/RatingsSection';
 
@@ -35,7 +36,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
       <p>Nature and Food Security: { natureImpact }</p>
       <p>Arts, Culture, and Education: { artsImpact }</p>
       <p>Water and Energy: { energyImpact }</p>
-      <p>Manufacturing and Waste: { manufacturingImpact }</p>
+      <p>Manufacturing and Waste: { manufacturingImpact ? capitalizeString(manufacturingImpact) : "" }</p>
 
       <RatingsSection />
       <CommentsSection />

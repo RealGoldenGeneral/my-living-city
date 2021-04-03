@@ -20,20 +20,26 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   const { data, error, isLoading, isError, status } = useSingleIdea(ideaId);
 
   if (isError) {
-    console.error(error);
+    console.log(error);
+    return (
+      <div className="wrapper">
+        <p>Error occured while trying to retrieve idea. Please try again later.</p>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="wrapper">
+        <LoadingSpinner />
+      </div>
+    )
   }
 
   return (
     <div className="wrapper">
-      {isError && (
-        <>
-        <p>{error!.message}</p>
-        <p>Error fetching: {JSON.stringify(error)}</p>
-        </>
-      )}
-      {isLoading && <LoadingSpinner />}
-      {status === 'success' && (
-        <SingleIdeaPageContent ideaData={ data! } />
+      {data && (
+        <SingleIdeaPageContent ideaData={data} />
       )}
     </div>
   )

@@ -13,6 +13,8 @@ import Team404Page from './pages/Team404Page';
 import TestPage from './pages/TestPage';
 import SubmitIdeaPage from './pages/SubmitIdeaPage';
 import LoginPage from './pages/LoginPage';
+import { ROUTES } from './lib/constants';
+import PrivateRoute from './components/utility/PrivateRoute';
 
 function App() {
   return (
@@ -22,15 +24,15 @@ function App() {
       <div className="main-content">
         <Switch>
           {/* Redirect?? */}
-          <Route path='/' component={LandingPage} exact />
-          <Route path='/ideas' component={ConversationsPage} exact />
-          <Route path='/ideas/:ideaId' component={SingleIdeaPage} />
-          <Route path='/submit' component={SubmitIdeaPage} />
-          <Route path='/login' component={LoginPage} />
-          <Route path='/register' component={RegisterPage} />
-          <Route path='/profile' component={ProfilePage} />
-          <Route path='/test' component={TestPage} />
-          <Route path='/*' component={Team404Page} />
+          <Route path={ROUTES.LANDING} component={LandingPage} exact />
+          <Route path={ROUTES.CONVERSATIONS} component={ConversationsPage} exact />
+          <Route path={ROUTES.SINGLE_IDEA} component={SingleIdeaPage} />
+          <Route path={ROUTES.LOGIN} component={LoginPage} />
+          <Route path={ROUTES.REGISTER} component={RegisterPage} />
+          <PrivateRoute path={ROUTES.SUBMIT_IDEA} component={SubmitIdeaPage} />
+          <PrivateRoute path={ROUTES.USER_PROFILE} component={ProfilePage} />
+          <PrivateRoute path={ROUTES.TEST_PAGE} component={TestPage} />
+          <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>
       </div>
       <Footer />
