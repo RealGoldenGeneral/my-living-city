@@ -4,18 +4,14 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { ROUTES } from '../../lib/constants';
 
 /**
- * Private Route Higher Order Component that checks if the user is logged in 
- * and redirects them to the desired authenticated page or redirects them to login page
- * if they are not authenticated. 
+ * Mainly used for signup and signin pages where once logged in user should be redirected to home page
  */
-interface PrivateRouteProps {
-  redirectPath?: string;
+interface PublicRouteProps {
   path: RouteProps['path'];
   component: React.ElementType
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({
-  redirectPath,
+const PublicRoute: React.FC<PublicRouteProps> = ({
   component: Component,
   ...routeProps
 }) => {
@@ -34,13 +30,13 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
       {...routeProps}
       render={(props) =>
         isLoggedIn ? (
-          <ComponentToRender {...props} />
+          <Redirect to={ROUTES.LANDING} />
         ) : (
-          <Redirect to={ redirectPath || ROUTES.LOGIN } />
+          <ComponentToRender {...props} />
         )
       }
     />
   );
 }
 
-export default PrivateRoute
+export default PublicRoute
