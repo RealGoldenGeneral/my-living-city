@@ -108,7 +108,7 @@ CREATE TABLE "idea_address" (
 -- CreateTable
 CREATE TABLE "idea" (
     "id" SERIAL NOT NULL,
-    "authorId" TEXT NOT NULL,
+    "author_id" TEXT NOT NULL,
     "category_id" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -150,8 +150,8 @@ CREATE TABLE "project" (
 -- CreateTable
 CREATE TABLE "idea_rating" (
     "id" SERIAL NOT NULL,
-    "ideaId" INTEGER NOT NULL,
-    "authorId" TEXT NOT NULL,
+    "idea_id" INTEGER NOT NULL,
+    "author_id" TEXT NOT NULL,
     "rating" INTEGER NOT NULL DEFAULT 0,
     "rating_explanation" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -163,8 +163,8 @@ CREATE TABLE "idea_rating" (
 -- CreateTable
 CREATE TABLE "idea_comment" (
     "id" SERIAL NOT NULL,
-    "ideaId" INTEGER NOT NULL,
-    "authorId" TEXT NOT NULL,
+    "idea_id" INTEGER NOT NULL,
+    "author_id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -176,8 +176,8 @@ CREATE TABLE "idea_comment" (
 -- CreateTable
 CREATE TABLE "idea_comment_like" (
     "id" SERIAL NOT NULL,
-    "authorId" TEXT NOT NULL,
-    "ideaCommentId" INTEGER NOT NULL,
+    "author_id" TEXT NOT NULL,
+    "idea_comment_id" INTEGER NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -228,7 +228,7 @@ ALTER TABLE "idea_geo" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DE
 ALTER TABLE "idea_address" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "idea" ADD FOREIGN KEY ("authorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "idea" ADD FOREIGN KEY ("author_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "idea" ADD FOREIGN KEY ("category_id") REFERENCES "category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -240,19 +240,19 @@ ALTER TABLE "proposal" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DE
 ALTER TABLE "project" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "idea_rating" ADD FOREIGN KEY ("authorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "idea_rating" ADD FOREIGN KEY ("author_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "idea_rating" ADD FOREIGN KEY ("ideaId") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "idea_rating" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "idea_comment" ADD FOREIGN KEY ("authorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "idea_comment" ADD FOREIGN KEY ("author_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "idea_comment" ADD FOREIGN KEY ("ideaId") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "idea_comment" ADD FOREIGN KEY ("idea_id") REFERENCES "idea"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "idea_comment_like" ADD FOREIGN KEY ("authorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "idea_comment_like" ADD FOREIGN KEY ("author_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "idea_comment_like" ADD FOREIGN KEY ("ideaCommentId") REFERENCES "idea_comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "idea_comment_like" ADD FOREIGN KEY ("idea_comment_id") REFERENCES "idea_comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;

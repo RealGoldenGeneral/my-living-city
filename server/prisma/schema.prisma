@@ -95,9 +95,9 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // Relationships
-  address         UserAddress?
-  geo             UserGeo?
-  userRole        UserRole?         @relation(fields: [userRoleId], references: [id])
+  address          UserAddress?
+  geo              UserGeo?
+  userRole         UserRole?         @relation(fields: [userRoleId], references: [id])
   ideas            Idea[]
   ideaRatings      IdeaRating[]
   ideaComments     IdeaComment[]
@@ -174,7 +174,7 @@ model IdeaAddress {
 model Idea {
   // Keys
   id         Int    @id @default(autoincrement())
-  authorId   String
+  authorId   String @map("author_id")
   categoryId Int    @map("category_id")
 
   // Values
@@ -241,11 +241,11 @@ model Project {
 
 model IdeaRating {
   // Keys
-  id     Int @id @default(autoincrement())
-  ideaId Int
+  id       Int    @id @default(autoincrement())
+  ideaId   Int    @map("idea_id")
+  authorId String @map("author_id")
 
   // Fields
-  authorId          String
   rating            Int      @default(0)
   ratingExplanation String?  @map("rating_explanation")
   createdAt         DateTime @default(now()) @map(name: "created_at")
@@ -261,10 +261,10 @@ model IdeaRating {
 model IdeaComment {
   // keys
   id     Int @id @default(autoincrement())
-  ideaId Int
+  ideaId Int @map("idea_id")
 
   // Fields
-  authorId  String
+  authorId  String   @map("author_id")
   content   String
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map(name: "created_at")
@@ -281,8 +281,8 @@ model IdeaComment {
 model IdeaCommentLike {
   // keys
   id            Int    @id @default(autoincrement())
-  authorId      String
-  ideaCommentId Int
+  authorId      String @map("author_id")
+  ideaCommentId Int    @map("idea_comment_id")
 
   // fields
   active    Boolean  @default(true)
