@@ -23,6 +23,7 @@ ideaRouter.get(
   }
 )
 
+// Get all Ideas
 ideaRouter.get(
   '/getall',
   async (req, res, next) => {
@@ -48,6 +49,7 @@ ideaRouter.get(
   }
 )
 
+// Get all ideas with aggregations
 ideaRouter.post(
   '/getall-aggregate',
   async (req, res, next) => {
@@ -70,6 +72,8 @@ ideaRouter.post(
   }
 )
 
+
+// Get all idea as well as relations with ideaId
 ideaRouter.get(
   '/get/:ideaId',
   async (req, res, next) => {
@@ -117,6 +121,8 @@ ideaRouter.get(
   }
 )
 
+
+// Put request to update data
 ideaRouter.put(
   '/update/:ideaId',
   passport.authenticate('jwt', { session: false }),
@@ -225,6 +231,7 @@ ideaRouter.put(
   }
 )
 
+// post request to create an idea
 ideaRouter.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
@@ -287,6 +294,7 @@ ideaRouter.post(
   }
 )
 
+// delete request to delete an idea
 ideaRouter.delete(
   '/delete/:ideaId',
   passport.authenticate('jwt', { session: false }),
