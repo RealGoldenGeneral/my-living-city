@@ -7,9 +7,11 @@ const { swaggerSpec } = require('./lib/swaggerConfig');
 // TODO: May be reason why logout not working
 
 // Constants
-const { __prod__ } = require('./lib/constants');
-const PORT = 3001;
-const CORS_ORIGIN = process.env.CORS_ORIGIN;
+const { 
+	__prod__, 
+	PORT, 
+	CORS_ORIGIN 
+} = require('./lib/constants');
 
 const main = async () => {
 	// Initialize dependencies

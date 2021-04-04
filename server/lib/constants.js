@@ -1,6 +1,9 @@
+// Production NECESSARY application configuration
 const __prod__ = process.env.NODE_ENV === 'production';
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = process.env.JWT_EXPIRY;
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+const PORT = 3001;
 
 // Rating Thresholds to advance
 // Retrieve from environment and set defaults if not set
@@ -16,9 +19,13 @@ const PROJECT_RATING_COUNT = parseInt(env_project_rating_count);
 const PROJECT_RATING_AVG = parseInt(env_project_rating_avg);
 
 module.exports = {
+  // mandatory application configuration
   __prod__,
   JWT_SECRET,
   JWT_EXPIRY,
+  CORS_ORIGIN,
+  PORT,
+  // application configuration
   PROPOSAL_RATING_AVG,
   PROPOSAL_RATING_COUNT,
   PROJECT_RATING_AVG,

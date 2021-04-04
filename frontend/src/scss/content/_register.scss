@@ -1,15 +1,16 @@
 .register-page-content {
-  margin-top: 10rem;
+	margin-top: 10rem;
 
-  h1 {
-    text-align: center;
-  }
+	.card {
+		max-width: 800px;
+		margin: 0 auto;
 
-  .register-form-group {
-    padding-top: 20px;
+		&-body {
+			margin: 2rem 0;
+		}
+	}
 
-    .error-alert {
-      margin-top: 15px;
-    }
-  }
+	.error-alert {
+    margin-top: 1rem;
+	}
 }

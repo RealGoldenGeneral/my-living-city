@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
@@ -69,12 +69,9 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
 
   return (
     <main className='register-page-content'>
-      <Container>
-        <Row className='justify-content-center'>
-          <h1>Create an account</h1>
-        </Row>
-        <Row className='register-form-group justify-content-center'>
-          <Col sm={10} md={8} lg={6} >
+        <Card>
+          <Card.Body>
+            <h1>Create an account</h1>
             <Form onSubmit={formik.handleSubmit}>
               <Form.Group controlId="registerCredentials">
                 <Form.Label>Email address</Form.Label>
@@ -132,8 +129,8 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                   value={formik.values.userRoleId}
                 >
                   {userRoles && userRoles.map(role => (
-                    <option 
-                      key={String(role.id)} 
+                    <option
+                      key={String(role.id)}
                       value={Number(role.id)}
                       style={{
                         textTransform: 'capitalize'
@@ -155,12 +152,11 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
 
             {error && (
               <Alert variant='danger' className="error-alert">
-                { error.message }
+                { error.message}
               </Alert>
             )}
-          </Col>
-        </Row>
-      </Container>
+          </Card.Body>
+        </Card>
     </main>
   )
 }
