@@ -15,7 +15,10 @@ reportRouter.get(
     } catch (error) {
 			res.status(400).json({
 				message: error.message,
-				stack: error.stack,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
 			})
     }
   }
@@ -31,7 +34,7 @@ reportRouter.get(
 
       // Check if user is admin
       const foundUser = await prisma.user.findUnique({ where: { id: loggedInUserId }});
-      const isUserAdmin = foundUser.role === 'ADMIN';
+      const isUserAdmin = foundUser.userType === 'ADMIN';
       if (!isUserAdmin) {
         return res.status(401).json({
           message: 'You must be an Administrator to view reports.'
@@ -105,7 +108,7 @@ reportRouter.delete(
 
       // Check if user is admin
       const foundUser = await prisma.user.findUnique({ where: { id: loggedInUserId }});
-      const isUserAdmin = foundUser.role === 'ADMIN';
+      const isUserAdmin = foundUser.userType === 'ADMIN';
       if (!isUserAdmin) {
         return res.status(401).json({
           message: 'You must be an Administrator to delete reports.'

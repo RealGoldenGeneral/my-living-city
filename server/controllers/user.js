@@ -120,7 +120,7 @@ userRouter.get(
 		try {
 			const { id, email } = req.user;
 			const foundUser = await prisma.user.findUnique({
-				where: { id }
+				where: { id },
 			});
 
 			if (!foundUser) {
@@ -142,7 +142,54 @@ userRouter.get(
 			res.status(400);
 			res.json({
 				message: error.message,
-				stack: error.stack,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+			})
+		} finally {
+			await prisma.$disconnect();
+		}
+	}
+)
+
+userRouter.get(
+	'/me-verbose',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+		try {
+			const { id, email } = req.user;
+			const foundUser = await prisma.user.findUnique({
+				where: { id },
+				include: {
+					address: true,
+					geo: true,
+				}
+			});
+
+			if (!foundUser) {
+				return res.status(400).json({
+					message: "User could not be found or does not exist in the database."
+				})
+			}
+
+			const parsedUser = {
+				...foundUser,
+				password: null,
+			}
+
+			res.status(200);
+			res.json({
+        ...parsedUser
+			})
+		} catch (error) {
+			res.status(400);
+			res.json({
+				message: error.message,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
 			})
 		} finally {
 			await prisma.$disconnect();
@@ -461,11 +508,18 @@ userRouter.put(
 			const {
         fname,
         lname,
-        streetAddress,
-        postalCode,
-        city,
-        latitude,
-        longitude,
+				userRoleId,
+				geo: {
+					lat,
+					lon
+				},
+				address: {
+					streetAddress,
+					streetAddress2,
+					city,
+					country,
+					postalCode,
+				},
       } = req.body;
 
       // Conditional add params to update only fields passed in 
@@ -473,16 +527,37 @@ userRouter.put(
       const updateData = {
 					...fname && { fname },
 					...lname && { lname },
-					...streetAddress && { streetAddress },
-					...postalCode && { postalCode },
-					...city && { city },
-					...latitude && { latitude },
-					...longitude && { longitude },
+					... userRoleId && { userRoleId }
       }
+
+			const updateGeoData = {
+				...lat && { lat },
+				...lon && { lon }
+			}
+
+			const updateAddressData = {
+				...streetAddress && { streetAddress },
+				...streetAddress2 && { streetAddress2 },
+				...city && { city },
+				...country && { country },
+				...postalCode && { postalCode },
+			}
 
 			const updatedUser = await prisma.user.update({
 				where: { id },
-				data: updateData
+				data: {
+					...updateData,
+					geo: {
+						update: updateGeoData
+					},
+					address: {
+						update: updateAddressData
+					}
+				},
+				include: {
+					geo: true,
+					address: true
+				}
 			});
 
 			const parsedUser = { ...updatedUser, password: null };

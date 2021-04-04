@@ -28,6 +28,8 @@ const main = async () => {
 
 	require('./auth/auth');
 
+	app.get('/', (req, res) => res.send('Welcome the My Living City API V2'));
+
 	// Routing
 	const userRouter = require('./controllers/user');
 	const roleRouter = require('./controllers/role');

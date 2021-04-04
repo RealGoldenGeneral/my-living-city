@@ -14,7 +14,10 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
-        const { password } = req.body;
+        const { 
+          confirmPassword, 
+          userRoleId,
+        } = req.body;
         if (!email) {
           return done({ message: "You must supply an email." })
         }
@@ -23,29 +26,62 @@ passport.use(
           return done({ message: "You must supply a password."})
         }
 
+        console.log(req.body);
+
         // hash password
         const hashedPassword = await argon2Hash(password);
+
+        // Check if confirmPassword and password are the same
+        const passwordConfirmation = password === confirmPassword;
+        if (!passwordConfirmation) {
+          return done({ message: "Both password and password confirmation must be the same. Please try again."})
+        }
 
         // Check if user exists
         const userExists = await prisma.user.findUnique({
           where: { email }
         })
         if (userExists) {
-          return done({ message: "User with that email already exists" })
+          return done({ message: "User with that email already exists." })
           // return done(null, false, { message: "User with that email already exists" })
         }
+
+        // Parse body
+        const geoData = { ...req.body.geo };
+        const addressData = { ...req.body.address };
+        const parsedMainData = { 
+          ...req.body,
+          ...userRoleId && { userRoleId: Number(userRoleId) }
+        };
+        if (userRoleId == null) delete parsedMainData.userRoleId;
+        delete parsedMainData.geo;
+        delete parsedMainData.address;
+        delete parsedMainData.confirmPassword;
 
         // Create user
         const createdUser = await prisma.user.create({
           data: {
-            ...req.body,
-            password: hashedPassword
+            geo: {
+              create: geoData
+            },
+            address: {
+              create: addressData
+            },
+            ...parsedMainData,
+            password: hashedPassword,
+            email: email.toLowerCase(),
           },
+          include: {
+            geo: true,
+            address: true,
+            userRole: true,
+          }
         });
 
         return done(null, createdUser);
       } catch (error) {
-        console.log("ERROR")
+        // console.log("ERROR")
+        console.error(error);
         done(error);
       } finally {
         await prisma.$disconnect();
@@ -65,7 +101,13 @@ passport.use(
     async (req, email, password, done) => {
       try {
         const foundUser = await prisma.user.findUnique({
-          where: { email }
+          where: { email: email.toLowerCase() },
+          // TODO: May cause unnecessary queries to database
+          include: {
+            geo: true,
+            address: true,
+            userRole: true,
+          }
         });
 
         if (!foundUser) {

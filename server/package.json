@@ -4,11 +4,12 @@
   "description": "backend for mylivingcity",
   "main": "server.js",
   "scripts": {
+    "ts-node": "ts-node --compiler-options '{\"module\":\"CommonJS\"}'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "migrate": "npx sequelize-cli db:migrate && popd",
-    "db:seed": "npx sequelize-cli db:seed:all",
-    "db:seed:undo": "npx sequelize-cli db:seed:undo:all",
+    "dangerously:migrate": "npx prisma migrate dev --preview-feature",
+    "db:seed": "npx prisma db seed --preview-feature",
+    "db:seed:undo": "echo no command yet",
     "dev": "nodemon server.js"
   },
   "repository": {
@@ -22,7 +23,7 @@
   },
   "homepage": "https://github.com/MyLivingCity/my-living-city#readme",
   "dependencies": {
-    "@prisma/client": "^2.18.0",
+    "@prisma/client": "^2.20.1",
     "argon2": "^0.27.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -39,6 +40,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
-    "prisma": "^2.18.0"
+    "prisma": "^2.20.1"
   }
 }

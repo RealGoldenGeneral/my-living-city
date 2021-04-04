@@ -14,19 +14,27 @@ ideaRouter.get(
     } catch (error) {
 			res.status(400).json({
 				message: error.message,
-				stack: error.stack,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
 			})
     }
   }
 )
 
+// Get all Ideas
 ideaRouter.get(
   '/getall',
   async (req, res, next) => {
     try {
-      const allCategories = await prisma.category.findMany();
+      const allIdeas = await prisma.idea.findMany({
+        orderBy: {
+          updatedAt: 'desc'
+        }
+      });
 
-      res.status(200).json(allCategories);
+      res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
         message: "An error occured while trying to fetch all ideas",
@@ -41,6 +49,83 @@ ideaRouter.get(
   }
 )
 
+// Get all ideas with aggregations
+ideaRouter.post(
+  '/getall-aggregate',
+  async (req, res, next) => {
+    try {
+      console.log(req.body);
+      const allIdeas = await prisma.idea.findMany(req.body);
+
+      res.status(200).json(allIdeas);
+    } catch (error) {
+      res.status(400).json({
+        message: "An error occured while trying to fetch all ideas",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
+ideaRouter.post(
+  '/getall/rating',
+  async (req, res, next) => {
+    const take = req.body.take;
+    let takeClause = ''
+    if (!!take) {
+      takeClause = `limit ${take}`;
+    }
+    try {
+      // TODO: if rating is adjusted raw query will break
+      const data = await prisma.$queryRaw(`
+        select 
+          i.id, 
+          i.author_id as "authorId",
+          i.category_id as "categoryId",
+          i.title,
+          i.description,
+          i.community_impact as "communityImpact",
+          i.nature_impact as "natureImpact",
+          i.arts_impact as "artsImpact",
+          i.energy_impact as "energyImpact",
+          i.manufacturing_impact as "manufacturingImpact",
+          i.state,
+          i.active,
+          i.created_at,
+          i.updated_at,
+          count(ir.idea_id) as "ratingCount", 
+          avg(ir.rating) as "ratingAvg"
+        from idea i 
+        left join idea_rating ir on i.id = ir.idea_id 
+        group by i.id
+        order by "ratingAvg" desc
+        ${takeClause}
+        ;
+      `)
+
+      res.status(200).json(data);
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({
+        message: "An error occured while trying to fetch all ideas",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
+
+// Get all idea as well as relations with ideaId
 ideaRouter.get(
   '/get/:ideaId',
   async (req, res, next) => {
@@ -50,11 +135,23 @@ ideaRouter.get(
       // check if id is valid
       if (!parsedIdeaId) {
         return res.status(400).json({
-          message: `A valid ideaId must be specified in the route paramater.`,
+          message: `A valid ideaId must be specified in the route parameter.`,
         });
       }
 
-      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
+      const foundIdea = await prisma.idea.findUnique({
+        where: { id: parsedIdeaId },
+        include: {
+          // TODO: Is this necessary? SQL query will join 8 times.
+          geo: true,
+          address: true,
+          category: true,
+          projectInfo: true,
+          proposalInfo: true,
+          // ratings: true,
+          // comments: true,
+        }
+      });
       if (!foundIdea) {
         return res.status(400).json({
           message: `The idea with that listed ID (${ideaId}) does not exist.`,
@@ -76,6 +173,8 @@ ideaRouter.get(
   }
 )
 
+
+// Put request to update data
 ideaRouter.put(
   '/update/:ideaId',
   passport.authenticate('jwt', { session: false }),
@@ -92,6 +191,18 @@ ideaRouter.put(
         artsImpact,
         energyImpact,
         manufacturingImpact,
+        // TODO: If these fields are not passed will break code
+				geo: {
+					lat,
+					lon
+				},
+				address: {
+					streetAddress,
+					streetAddress2,
+					city,
+					country,
+					postalCode,
+				},
       } = req.body;
 
       if (!ideaId || !parsedIdeaId) {
@@ -117,6 +228,19 @@ ideaRouter.put(
       }
 
       // Conditional add params to update only fields passed in 
+			const updateGeoData = {
+				...lat && { lat },
+				...lon && { lon }
+			}
+
+			const updateAddressData = {
+				...streetAddress && { streetAddress },
+				...streetAddress2 && { streetAddress2 },
+				...city && { city },
+				...country && { country },
+				...postalCode && { postalCode },
+			}
+
       const updateData = {
 					...title && { title },
 					...description && { description },
@@ -129,7 +253,15 @@ ideaRouter.put(
 
       const updatedIdea = await prisma.idea.update({
         where: { id: parsedIdeaId },
-        data: updateData
+        data: {
+          geo: { update: updateGeoData },
+          address: { update: updateAddressData },
+          ...updateData,
+        },
+        include: {
+          geo: true,
+          address: true,
+        }
       });
 
       console.log("Returns here")
@@ -151,6 +283,7 @@ ideaRouter.put(
   }
 )
 
+// post request to create an idea
 ideaRouter.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
@@ -171,6 +304,13 @@ ideaRouter.post(
         })
       }
 
+      // Parse data
+      const geoData = { ...req.body.geo };
+      const addressData = { ...req.body.address };
+      delete req.body.geo;
+      delete req.body.address;
+
+
       const ideaData = {
         ...req.body,
         authorId: id
@@ -178,12 +318,19 @@ ideaRouter.post(
 
       // Create an idea and make the author JWT bearer
       const createdIdea = await prisma.idea.create({
-        data: ideaData
+        data: {
+          geo: { create: geoData },
+          address: { create: addressData },
+          ...ideaData
+        },
+        include: {
+          geo: true,
+          address: true,
+          category: true,
+        }
       });
 
-      res.status(201).json({
-        createdIdea
-      });
+      res.status(201).json(createdIdea);
     } catch (error) {
       console.error(error);
       res.status(400).json({
@@ -199,6 +346,7 @@ ideaRouter.post(
   }
 )
 
+// delete request to delete an idea
 ideaRouter.delete(
   '/delete/:ideaId',
   passport.authenticate('jwt', { session: false }),
