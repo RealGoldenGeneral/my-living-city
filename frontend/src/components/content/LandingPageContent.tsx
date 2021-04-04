@@ -7,7 +7,7 @@ interface LandingPageContentProps {
 
 const LandingPageContent: React.FC<LandingPageContentProps> = ({}) => {
   return (
-    <p>Landing Page!</p>
+    <p>Landing Page!!</p>
   );
 }
 
