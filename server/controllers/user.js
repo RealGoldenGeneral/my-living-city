@@ -82,9 +82,6 @@ userRouter.get(
 	(req, res, next) => {
 		res.json({
 			message: "You made it to the secure route",
-			user: req.user,
-			tokenQuery: req.query?.secret_token,
-			tokenHeader: req.headers?.secret_token,
 		})
 	}
 )

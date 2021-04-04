@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dangerously:migrate": "npx prisma migrate dev --preview-feature",
+    "prisma:generate": "npx prisma generate",
     "db:seed": "npx prisma db seed --preview-feature",
     "db:seed:undo": "echo no command yet",
     "dev": "nodemon server.js"
