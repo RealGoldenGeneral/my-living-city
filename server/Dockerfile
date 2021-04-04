@@ -1,6 +1,6 @@
 # Server Dockerfile
 
-# Stage 1
+# Stage 1 - set Environment
 FROM node:12
 
 # Create Directory to store backend API
@@ -15,8 +15,6 @@ RUN npm install
 # Copies rest of source code into container
 COPY . ./
 
-# MUST HAVE .env.production which contains environment variables
-# for application to run see "UserManual" documentation
 # Environment Vars are now set in Dokku manually to prevent leaking secrets
 # COPY .env.production .env
 
