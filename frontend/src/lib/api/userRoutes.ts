@@ -1,7 +1,8 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "../constants";
 import { IUser } from "../types/data/user.type";
 import { RegisterInput } from "../types/input/register.input";
+import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 
 export interface LoginData {
   email: string;
@@ -28,24 +29,18 @@ export interface UseUserWithJwtInput {
 }
 
 export const getUserWithJWT = async ({ jwtAuthToken }: GetUserWithJWTInput): Promise<IUser> => {
-  const options = {
-    headers: {
-      secret_token: jwtAuthToken
-    }
-  }
-
-  const res = await axios.get<IUser>(`${API_BASE_URL}/user/me`, options)
+  const res = await axios.get<IUser>(
+    `${API_BASE_URL}/user/me`, 
+    getAxiosJwtRequestOption(jwtAuthToken)
+  );
   return res.data;
 }
 
 export const getUserWithJWTVerbose = async ({ jwtAuthToken }: GetUserWithJWTInput): Promise<IUser> => {
-  const options = {
-    headers: {
-      secret_token: jwtAuthToken
-    }
-  }
-
-  const res = await axios.get<IUser>(`${API_BASE_URL}/user/me-verbose`, options)
+  const res = await axios.get<IUser>(
+    `${API_BASE_URL}/user/me-verbose`, 
+    getAxiosJwtRequestOption(jwtAuthToken)
+  );
   return res.data;
 }
 

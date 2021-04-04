@@ -146,10 +146,11 @@ passport.use(
     {
       secretOrKey: JWT_SECRET,
       jwtFromRequest: ExtractJWT.fromExtractors([
-        ExtractJWT.fromUrlQueryParameter('secret_token'),
-        ExtractJWT.fromHeader('secret_token'),
+        ExtractJWT.fromUrlQueryParameter('x-auth-token'),
+        ExtractJWT.fromHeader('x-auth-token'),
         ExtractJWT.fromAuthHeaderAsBearerToken(),
-      ])
+        ExtractJWT.fromAuthHeaderWithScheme('jwt'),
+      ]),
     },
     async (token, done) => {
       try {

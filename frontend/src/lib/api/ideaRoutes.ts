@@ -3,6 +3,7 @@ import { API_BASE_URL } from "../constants";
 import { defaultOrderByAggregate, GetAllIdeasWithAggregate, getAllIdeasWithAggregateDefault, IdeaOrderByAggregate } from "../types/args/getAllIdeas.args";
 import { IIdea } from "../types/data/idea.type";
 import { CreateIdeaInput } from "../types/input/createIdea.input";
+import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 
 export const getAllIdeas = async () => {
   const res = await axios.get<IIdea[]>(`${API_BASE_URL}/idea/getall`);
@@ -42,9 +43,11 @@ export const postCreateIdea = async (ideaData: CreateIdeaInput, token: string | 
     categoryId: parsedCatId,
   }
 
-  const res = await axios.post<IIdea>(`${API_BASE_URL}/idea/create`, parsedPayload, {
-    headers: { "secret_token": token }
-  });
+  const res = await axios.post<IIdea>(
+    `${API_BASE_URL}/idea/create`, 
+    parsedPayload, 
+    getAxiosJwtRequestOption(token)
+  );
   return res.data;
 }
 
