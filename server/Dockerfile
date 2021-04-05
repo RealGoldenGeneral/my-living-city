@@ -1,7 +1,8 @@
 # Server Dockerfile
 
-# Stage 1 - set Environment
-FROM node:12
+# https://stackoverflow.com/questions/59574047/how-to-use-optional-chaining-in-node-js-12
+# Stage 1 - set Environment Must use node 14! Optional chaining is used in backend "?."
+FROM node:14
 
 # Create Directory to store backend API
 WORKDIR /usr/src/app/server
@@ -17,6 +18,9 @@ COPY . ./
 
 # Environment Vars are now set in Dokku manually to prevent leaking secrets
 # COPY .env.production .env
+
+# Ensure that prisma has the generated files to initialize
+RUN npm run prisma:generate
 
 # Ensures that environment is run in production
 ENV NODE_ENV production

@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert, Card } from 'react-bootstrap'
+import { Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
