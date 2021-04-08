@@ -1,24 +1,17 @@
 import LandingPageContent from '../components/content/LandingPageContent'
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { useIdeasWithSort } from '../hooks/ideaHooks'
+import { useIdeasWithBreakdown, useIdeasWithSort } from '../hooks/ideaHooks'
 
 export default function LandingPage() {
-  const { data, isLoading, error, isError } = useIdeasWithSort({
-    orderBy: {
-      updatedAt: 'desc'
-    },
-    take: 3,
-  });
-
-  if (isLoading) {
-    <div className="wrapper">
-      <LoadingSpinner />
-    </div>
-  }
-
+  const { data, isLoading, error, isError } = useIdeasWithBreakdown(3);
   return (
     <div className="wrapper">
-      <LandingPageContent topIdeas={data} />
+      <LandingPageContent 
+        topIdeas={data} 
+        ideasLoading={isLoading}
+        ideasIsError={isError}
+        ideasError={error}
+      />
     </div>
   )
 }

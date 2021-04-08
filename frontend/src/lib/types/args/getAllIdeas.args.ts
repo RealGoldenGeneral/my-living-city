@@ -24,12 +24,12 @@ export const defaultOrderByAggregate: IdeaOrderByAggregate = {
 }
 
 
-export interface GetAllIdeasWithAggregate {
+export interface GetAllIdeasWithSort {
   orderBy?: IdeaOrderByAggregate,
   take?: number,
 }
 
-export const getAllIdeasWithAggregateDefault: GetAllIdeasWithAggregate = {
+export const getAllIdeasWithSortDefault: GetAllIdeasWithSort = {
   orderBy: {
     updatedAt: 'desc'
   }

@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
-import { IIdea } from '../lib/types/data/idea.type';
+import { IdeaBreakdown, IIdea } from '../lib/types/data/idea.type';
 import { FetchError } from '../lib/types/types';
-import { getAllIdeas, getSingleIdea, postAllIdeasWithSort } from '../lib/api/ideaRoutes';
-import { defaultOrderByAggregate, GetAllIdeasWithAggregate, getAllIdeasWithAggregateDefault, IdeaOrderByAggregate } from '../lib/types/args/getAllIdeas.args';
+import { getAllIdeas, getSingleIdea, postAllIdeasWithBreakdown, postAllIdeasWithSort } from '../lib/api/ideaRoutes';
+import { GetAllIdeasWithSort, getAllIdeasWithSortDefault, IdeaOrderByAggregate } from '../lib/types/args/getAllIdeas.args';
 
 export const useIdeas = (
 ) => {
@@ -13,11 +13,20 @@ export const useIdeas = (
 }
 
 export const useIdeasWithSort = (
-  aggregateOptions: GetAllIdeasWithAggregate = getAllIdeasWithAggregateDefault
+  sortingOptions: GetAllIdeasWithSort = getAllIdeasWithSortDefault
 ) => {
   return useQuery<IIdea[], FetchError>(
-    ['ideas', aggregateOptions], 
-    () => postAllIdeasWithSort(aggregateOptions),
+    ['ideas', sortingOptions], 
+    () => postAllIdeasWithSort(sortingOptions),
+  );
+}
+
+export const useIdeasWithBreakdown = (
+  take?: number
+) => {
+  return useQuery<IdeaBreakdown[], FetchError>(
+    ['ideas-breakdown', take],
+    () => postAllIdeasWithBreakdown(take),
   );
 }
 

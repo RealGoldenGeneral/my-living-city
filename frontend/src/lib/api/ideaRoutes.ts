@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
-import { defaultOrderByAggregate, GetAllIdeasWithAggregate, getAllIdeasWithAggregateDefault, IdeaOrderByAggregate } from "../types/args/getAllIdeas.args";
-import { IIdea } from "../types/data/idea.type";
+import { defaultOrderByAggregate, GetAllIdeasWithSort, getAllIdeasWithSortDefault, IdeaOrderByAggregate } from "../types/args/getAllIdeas.args";
+import { IdeaBreakdown, IIdea } from "../types/data/idea.type";
 import { CreateIdeaInput } from "../types/input/createIdea.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 
@@ -11,11 +11,27 @@ export const getAllIdeas = async () => {
 }
 
 export const postAllIdeasWithSort = async (
-  aggregateOptions: GetAllIdeasWithAggregate = getAllIdeasWithAggregateDefault
+  sortOptions: GetAllIdeasWithSort = getAllIdeasWithSortDefault
 ) => {
   const res = await axios.post<IIdea[]>(
-    `${API_BASE_URL}/idea/getall-aggregate`,
-    aggregateOptions,
+    `${API_BASE_URL}/idea/getall/with-sort`,
+    sortOptions,
+  );
+  return res.data;
+}
+
+export const postAllIdeasWithBreakdown = async (
+  take?: number
+) => {
+  let reqBody = {};
+  if (!!take) {
+    reqBody = {
+      take
+    }
+  }
+  const res = await axios.post<IdeaBreakdown[]>(
+    `${API_BASE_URL}/idea/getall/aggregations`,
+    reqBody,
   );
   return res.data;
 }

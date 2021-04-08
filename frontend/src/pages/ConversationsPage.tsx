@@ -1,10 +1,10 @@
 import ConversationsPageContent from '../components/content/ConversationsPageContent';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { useIdeasWithSort } from '../hooks/ideaHooks';
+import { useIdeasWithBreakdown, useIdeasWithSort } from '../hooks/ideaHooks';
 
 
 export default function ConversationsPage() {
-  const { data, error, isLoading, isError } = useIdeasWithSort();
+  const { data, error, isLoading, isError } = useIdeasWithBreakdown();
 
   if (isLoading) {
     return (

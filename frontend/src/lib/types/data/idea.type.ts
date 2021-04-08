@@ -6,6 +6,7 @@ import { Project } from "./project.type";
 import { Rating } from "./rating.type";
 import { Comment } from "./comment.type";
 
+export type IdeaState = 'IDEA' | 'PROPOSAL' | 'PROJECT';
 export interface IIdea {
 	id: number;
 	authorId: string;
@@ -17,7 +18,7 @@ export interface IIdea {
 	artsImpact?: string;
 	energyImpact?: string;
 	manufacturingImpact?: string;
-	state: string;
+	state: IdeaState;
 	active: boolean;
 	createdAt: string;
 	updatedAt: string;
@@ -32,4 +33,24 @@ export interface IIdea {
 	ratings?: Rating[];
 	proposalInfo?: Proposal;
 	projectInfo?: Project;
+}
+
+export interface IdeaBreakdown {
+	id: number;
+	authorId: string;
+	categoryId: number;
+	title: string;
+	description: string;
+	state: IdeaState;
+	active: boolean;
+	createdAt: string;
+	updatedAt: string;
+
+	// Aggregate breakdown
+	engagements: number;
+	ratingAvg: number;
+	commentCount: number;
+	ratingCount: number;
+	posRatings: number;
+	negRatings: number;
 }
