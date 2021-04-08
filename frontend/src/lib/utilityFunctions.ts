@@ -1,3 +1,4 @@
+import { TOKEN_EXPIRY } from './constants';
 import { IUser } from './types/data/user.type';
 import { FetchError } from './types/types';
 
@@ -22,6 +23,33 @@ export const storeUserAndTokenInLocalStorage = (token: string, user: IUser): voi
 	storeObjectInLocalStorage('logged-user', user);
 	localStorage.setItem('token', token);
 };
+
+
+/**
+ * Stores the token expiry time in localstorage to compare defaults to TOKEN_EXPIRY
+ * @param minutesOffset The number of minutes it takes for the token to expire from the current time
+ */
+export const storeTokenExpiryInLocalStorage = (minutesOffset: number = TOKEN_EXPIRY) => {
+	const tokenExpiry = new Date();
+	tokenExpiry.setMinutes( tokenExpiry.getMinutes() + minutesOffset );
+	localStorage.setItem('token-expiry', tokenExpiry.toISOString());
+}
+
+export const retrieveStoredTokenExpiryInLocalStorage = (): Date | null => {
+	const retrievedDateString = localStorage.getItem('token-expiry');
+	if (!retrievedDateString) {
+		return null;
+	}
+
+	return new Date(retrievedDateString);
+}
+
+/**
+ * Clears local storage of any set variables effectively logging user out. 
+ */
+export const wipeLocalStorage = () => {
+	localStorage.clear();
+}
 
 /**
  * Capitalize the first letter of a string.

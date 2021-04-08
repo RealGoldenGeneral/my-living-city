@@ -10,7 +10,7 @@ export const getAllIdeas = async () => {
   return res.data;
 }
 
-export const postAllIdeasWithAggregates = async (
+export const postAllIdeasWithSort = async (
   aggregateOptions: GetAllIdeasWithAggregate = getAllIdeasWithAggregateDefault
 ) => {
   const res = await axios.post<IIdea[]>(
@@ -19,6 +19,7 @@ export const postAllIdeasWithAggregates = async (
   );
   return res.data;
 }
+
 
 export const getSingleIdea = async (ideaId: string) => {
   const res = await axios.get<IIdea>(`${API_BASE_URL}/idea/get/${ideaId}`);
