@@ -34,11 +34,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           <p>Created: {parsedDate.toLocaleDateString()}</p>
           <br />
           <p>{description}</p>
-          <p>Community and place: {communityImpact}</p>
-          <p>Nature and Food Security: {natureImpact}</p>
-          <p>Arts, Culture, and Education: {artsImpact}</p>
-          <p>Water and Energy: {energyImpact}</p>
-          <p>Manufacturing and Waste: {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p>
+          <p><strong>Community and place:</strong> {communityImpact}</p>
+          <p><strong>Nature and Food Security:</strong> {natureImpact}</p>
+          <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p>
+          <p><strong>Water and Energy:</strong> {energyImpact}</p>
+          <p><strong>Manufacturing and Waste:</strong> {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p>
         </Col>
       </Row>
       <Row>

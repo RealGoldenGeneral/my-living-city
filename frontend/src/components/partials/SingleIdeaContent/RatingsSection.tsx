@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { useAllRatingsUnderIdea } from '../../../hooks/ratingHooks';
+import { useAllRatingsUnderIdeaWithAggregations } from '../../../hooks/ratingHooks';
 import LoadingSpinner from '../../ui/LoadingSpinner';
 
 interface RatingsSectionProps {
@@ -11,7 +11,10 @@ interface RatingsSectionProps {
 const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
   const { ideaId } = useParams<{ ideaId: string }>();
 
-  const { data: ideaRatings, isLoading, isError, error } = useAllRatingsUnderIdea(ideaId);
+
+  const {
+    data: ideaAggregateResponse, isLoading, isError, error
+  } = useAllRatingsUnderIdeaWithAggregations(ideaId);
 
   if (error && isError) {
     return (
@@ -25,10 +28,11 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
     )
   }
 
+
   return (
     <Container>
       <h2>Ratings</h2>
-      {ideaRatings && ideaRatings.map(rating => (
+      {ideaAggregateResponse?.ratings && ideaAggregateResponse.ratings.map(rating => (
         <p key={rating.id}>{rating.rating}</p>
       ))}
     </Container>
