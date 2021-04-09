@@ -1,4 +1,5 @@
 import React from 'react'
+import { Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useAllRatingsUnderIdea } from '../../../hooks/ratingHooks';
 import LoadingSpinner from '../../ui/LoadingSpinner';
@@ -25,12 +26,12 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
   }
 
   return (
-    <>
+    <Container>
       <h2>Ratings</h2>
       {ideaRatings && ideaRatings.map(rating => (
-        <p>{rating.rating}</p>
+        <p key={rating.id}>{rating.rating}</p>
       ))}
-    </>
+    </Container>
   );
 }
 

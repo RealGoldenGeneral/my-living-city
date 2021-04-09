@@ -1,3 +1,9 @@
+export interface ParsedCommentAuthor {
+  email: string;
+  fname: string;
+  lname: string;
+}
+
 export interface Comment {
   id:        number;
   ideaId:    number;
@@ -6,4 +12,6 @@ export interface Comment {
   active:    boolean;
   createdAt: Date;
   updatedAt: Date;
+
+  author: ParsedCommentAuthor;
 }

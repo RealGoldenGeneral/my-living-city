@@ -136,8 +136,8 @@ ideaRouter.post(
             group by idea_id
         ) pr on	i.id = pr.idea_id
         order by
-          "ratingAvg" desc,
-          engagements desc
+          engagements desc,
+          "ratingAvg" desc
         ${takeClause}
         ;
       `);

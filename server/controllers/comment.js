@@ -59,10 +59,29 @@ commentRouter.get(
         });
       }
 
-      const comments = await prisma.ideaComment.findMany({ where: { ideaId: parsedIdeaId }});
+      const comments = await prisma.ideaComment.findMany({
+        where: { ideaId: parsedIdeaId },
+        include: {
+          author: {
+            select: {
+              email: true,
+              fname: true,
+              lname: true,
+            }
+          },
+        }
+        // include: {
+        //   author: {
+        //     select: {
+        //       updatedAt,
+        //     }
+        //   }
+        // }
+      });
 
       res.status(200).json(comments);
     } catch (error) {
+      console.error(error);
       res.status(400).json({
         message: `An error occured while trying to fetch all comments under idea ${req.params.ideaId}.`,
         details: {

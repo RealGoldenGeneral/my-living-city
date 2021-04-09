@@ -1,11 +1,10 @@
 import { useContext, useState } from 'react'
-import { Col, Container, Row, Image, Form, Button, Alert, Card } from 'react-bootstrap'
+import { Image, Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
 import { handlePotentialAxiosError, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from '../../lib/utilityFunctions';
-import { useHistory } from 'react-router';
 import { getUserWithEmailAndPass } from '../../lib/api/userRoutes';
 import { ROUTES } from '../../lib/constants';
 
