@@ -30,6 +30,13 @@ export const useIdeasWithBreakdown = (
   );
 }
 
+export const useIdeasHomepage = () => {
+  return useQuery<IdeaBreakdown[], FetchError>(
+    'ideas-homepage',
+    () => postAllIdeasWithBreakdown(3),
+  );
+}
+
 export const useSingleIdea = (ideaId: string) => {
   return useQuery<IIdea, FetchError>(
     ['idea', ideaId], 

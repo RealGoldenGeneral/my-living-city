@@ -1,8 +1,6 @@
-import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
 import { Comment } from '../../../lib/types/data/comment.type';
 import { timeDifference } from '../../../lib/utilityFunctions';
-import { FaThumbsUp, FaRegThumbsUp } from 'react-icons/fa'
 import IdeaCommentLike from './IdeaCommentLike';
 
 interface IdeaCommentTileProps {

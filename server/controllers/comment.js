@@ -70,13 +70,6 @@ commentRouter.get(
             }
           },
         }
-        // include: {
-        //   author: {
-        //     select: {
-        //       updatedAt,
-        //     }
-        //   }
-        // }
       });
 
       res.status(200).json(comments);
@@ -119,16 +112,24 @@ commentRouter.post(
         });
       }
 
-      const createdComment = await prisma.ideaComment.create({ data: {
-        content,
-        authorId: loggedInUserId,
-        ideaId: parsedIdeaId,
-      }});
+      const createdComment = await prisma.ideaComment.create({
+        data: {
+          content,
+          authorId: loggedInUserId,
+          ideaId: parsedIdeaId,
+        },
+        include: {
+          author: {
+            select: {
+              email: true,
+              fname: true,
+              lname: true,
+            }
+          }
+        }
+      })
 
-      res.status(200).json({
-        message: `Comment succesfully created under Idea ${parsedIdeaId}`,
-        comment: createdComment
-      });
+      res.status(200).json(createdComment);
     } catch (error) {
       res.status(400).json({
         message: `An error occured while trying to create a comment for idea ${req.params.ideaId}.`,
