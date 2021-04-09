@@ -1,7 +1,9 @@
 import React from 'react'
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Spinner } from 'react-bootstrap';
 import { IdeaBreakdown, IIdea } from '../../lib/types/data/idea.type';
 import { FetchError } from '../../lib/types/types';
+import CategoriesSection from '../partials/LandingContent/CategoriesSection';
+import DescriptionSection from '../partials/LandingContent/DescriptionSection';
 import HeroBannerSection from '../partials/LandingContent/HeroBannerSection';
 import NewAndTrendingSection from '../partials/LandingContent/NewAndTrendingSection';
 import LoadingSpinner from '../ui/LoadingSpinner';
@@ -21,25 +23,27 @@ const LandingPageContent: React.FC<LandingPageContentProps> = ({
 }) => {
   return (
     <Container className='landing-page-content'>
-        <HeroBannerSection />
+      <HeroBannerSection />
       <Row as='article' className='featured'>
       </Row>
-      <Row as='article' className='new-and-trending'>
-        {ideasLoading && (
-          <LoadingSpinner />
-        )}
-        {topIdeas && !ideasIsError && !ideasLoading && (
+      {ideasLoading && (
+        <div className="landing-spinner d-flex justify-content-center my-4">
+          <Spinner animation='border' />
+        </div>
+      )}
+      {topIdeas && !ideasIsError && !ideasLoading && (
+        <Row as='article' className='new-and-trending'>
           <NewAndTrendingSection topIdeas={topIdeas!} />
-        )}
-      </Row>
+        </Row>
+      )}
       <Row as='article' className='categories'>
-        <p>Categories</p>
+        <CategoriesSection />
       </Row>
       <Row as='article' className='description'>
-        <p>Description</p>
+        <DescriptionSection />
       </Row>
     </Container>
-  );
+  )
 }
 
 export default LandingPageContent
