@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/react-bootstrap": "^0.32.25",
     "@types/react-router-dom": "^5.1.7"
   },
   "engines": {
