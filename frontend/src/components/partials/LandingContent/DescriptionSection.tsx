@@ -1,5 +1,6 @@
 import React from 'react'
-import { Container } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
+import { FaComment, FaComments, FaClipboard, FaRegUserCircle } from 'react-icons/fa';
 
 interface DescriptionSectionProps {
 
@@ -7,18 +8,22 @@ interface DescriptionSectionProps {
 
 const DescriptionSection = (props: DescriptionSectionProps) => {
   return (
-    <Container className="py-3">
-      <h2 className="pb-1 border-bottom">Our Mission</h2>
-      <div className="row featurette">
-        <div className="col-md-7">
-          <h2 className="featurette-heading">First featurette heading. <span className="text-muted">It’ll blow your mind.</span></h2>
-          <p className="lead">Some great placeholder content for the first featurette here. Imagine some exciting prose here.</p>
-        </div>
-        <div className="col-md-5">
-          <svg className="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#eee" /><text x="50%" y="50%" fill="#aaa" dy=".3em">500x500</text></svg>
-
-        </div>
-      </div>
+    <Container className='py-5'>
+      <h2 className="pb-1 border-bottom display-4 text-center">Share your Ideas</h2>
+      <Row className='py-3'>
+        <Col className='text-center py-2'>
+          <FaRegUserCircle size={150} />
+          <p className='lead text-center pt-3'>Create your account</p>
+        </Col>
+        <Col className='text-center py-2'>
+          <FaClipboard size={150} />
+          <p className='lead text-center pt-3'>Post your Idea</p>
+        </Col>
+        <Col className='text-center py-2'>
+          <FaComments size={150} />
+          <p className='lead text-center pt-3'>Take part in Discussion</p>
+        </Col>
+      </Row>
     </Container>
   );
 }

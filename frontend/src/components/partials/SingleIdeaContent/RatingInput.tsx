@@ -10,6 +10,7 @@ import { Rating } from '../../../lib/types/data/rating.type';
 import { CreateRatingInput } from '../../../lib/types/input/createRating.input';
 import { FetchError } from '../../../lib/types/types';
 // https://github.com/microsoft/TypeScript/issues/22217
+// https://github.com/ekeric13/react-ratings-declarative
 import Ratings from 'react-ratings-declarative';
 
 interface RatingInputProps {
@@ -20,7 +21,7 @@ interface RatingInputProps {
 const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) => {
   const { token, user } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
-  const [ ratingValue, setRatingValue ] = useState<number>(0);
+  const [ ratingValue, setRatingValue ] = useState<number>(userSubmittedRating ?? 0);
   const queryClient = useQueryClient();
   const previousRatingsKey = ['ratings', ideaId];
 
@@ -121,7 +122,7 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     let buttonText = 'Please login to comment';
     if (tokenExists()) buttonText = 'Share';
     if (isLoading) buttonText = 'Saving Comment';
-    if (userHasRated) buttonText = 'You have already rated';
+    if (userHasRated) buttonText = 'You have already rated. You cannot rate an Idea twice.';
     if (!user) buttonText = 'You must sign in to rate an idea'
     return buttonText;
   }

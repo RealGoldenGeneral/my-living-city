@@ -76,7 +76,8 @@ const CommentInput = (props: CommentInputProps) => {
   );
 
   const submitHandler = (values: { content: string }) => {
-    commentMutation.mutate(values)
+    commentMutation.mutate(values);
+    formik.resetForm();
   }
 
   const formik = useFormik<{ content: string }>({

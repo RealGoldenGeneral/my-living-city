@@ -20,5 +20,8 @@ export const useAllCommentsUnderIdea = (ideaId: string) => {
   return useQuery<Comment[], FetchError>(
     ['comments', ideaId],
     () => getCommentsUnderIdea(ideaId),
+    {
+      staleTime: 60 * 1000 // 1 minute
+    }
   )
 }

@@ -15,5 +15,8 @@ export const useAllRatingsUnderIdeaWithAggregations = (ideaId: string) => {
   return useQuery<RatingAggregateResponse, FetchError>(
     ['ratings-aggregate', ideaId],
     () => getAllRatingsUnderIdeaWithAggregations(ideaId),
+    {
+      staleTime: 60 * 1000
+    }
   )
 }

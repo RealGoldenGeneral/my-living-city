@@ -41,5 +41,9 @@ export const useSingleIdea = (ideaId: string) => {
   return useQuery<IIdea, FetchError>(
     ['idea', ideaId], 
     () => getSingleIdea(ideaId),
+    // https://react-query.tanstack.com/guides/initial-query-data#staletime-and-initialdataupdatedat
+    {
+      staleTime: 45 * 60 * 1000 // 30 minutes
+    }
   );
 }

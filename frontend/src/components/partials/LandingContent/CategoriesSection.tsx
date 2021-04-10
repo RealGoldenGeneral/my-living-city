@@ -8,8 +8,8 @@ interface CategoriesSectionProps {
 const CategoriesSection = (props: CategoriesSectionProps) => {
 
   return (
-    <Container className="py-3">
-      <h2 className="pb-1 border-bottom">Project Categories</h2>
+    <Container className="py-5">
+      <h2 className="pb-1 border-bottom display-4 text-center">Project Categories</h2>
       <Row className='justify-content-center g-5 pt-4'>
         <Col xs={6} md={2} className='col-sm-4'>
           <Image className='cat-image' fluid src='/categories/MLC-Icons-Green-01.png' />
