@@ -4,8 +4,8 @@ export interface Rating {
 	authorId: string;
 	rating: number;
 	ratingExplanation?: string;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface RatingAggregateSummary {

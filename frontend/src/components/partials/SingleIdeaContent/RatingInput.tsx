@@ -12,7 +12,7 @@ import { CreateRatingInput } from '../../../lib/types/input/createRating.input';
 import { FetchError } from '../../../lib/types/types';
 
 interface RatingInputProps {
-  
+
 }
 
 const RatingInput = (props: RatingInputProps) => {
@@ -27,6 +27,47 @@ const RatingInput = (props: RatingInputProps) => {
       newRating,
       getAxiosJwtRequestOption(token!),
     ),
+    {
+      onMutate: async (newRating) => {
+        const { id: userId } = user!;
+
+        // snapshot previous value
+        const previousRatings = queryClient.getQueryData<Rating[]>(previousRatingsKey);
+
+        // Cancel outgoing refetches
+        await queryClient.cancelQueries(previousRatingsKey);
+
+        // Optimistically update to new value
+        if (previousRatings) {
+          queryClient.setQueryData<Rating[]>(
+            previousRatingsKey,
+            [
+              ...previousRatings,
+              {
+                id: Math.random(),
+                authorId: userId,
+                ideaId: parseInt(ideaId!),
+                rating: newRating.rating,
+                ratingExplanation: newRating.ratingExplanation,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              }
+            ]
+          )
+        }
+        console.log(previousRatings);
+
+        return previousRatings
+      },
+      onError: (err, variables, context: any) => {
+        if (context) {
+          console.log("Error context", context)
+        }
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(previousRatingsKey);
+      }
+    }
   )
 
   const submitHandler = (values: CreateRatingInput) => {
@@ -36,13 +77,13 @@ const RatingInput = (props: RatingInputProps) => {
 
   const formik = useFormik<CreateRatingInput>({
     initialValues: {
-      rating: 0,
+      rating: 5,
       ratingExplanation: '',
     },
     onSubmit: submitHandler,
   })
 
-  const { isLoading, isError, isSuccess } = ratingMutation;
+  const { isLoading, isError, isSuccess, error } = ratingMutation;
 
   // Helper functions
   const tokenExists = (): boolean => {
@@ -68,14 +109,14 @@ const RatingInput = (props: RatingInputProps) => {
     <Container>
       <Row>
         <Col>
-        <Form onSubmit={formik.handleSubmit}>
-          <Button
-            type='submit'
-            disabled={shouldButtonBeDisabled()}
-          >
-            {buttonTextOutput()}
-          </Button>
-        </Form>
+          <Form onSubmit={formik.handleSubmit}>
+            <Button
+              type='submit'
+              disabled={shouldButtonBeDisabled()}
+            >
+              {buttonTextOutput()}
+            </Button>
+          </Form>
         </Col>
       </Row>
     </Container>
