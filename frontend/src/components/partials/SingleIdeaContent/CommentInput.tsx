@@ -64,6 +64,7 @@ const CommentInput = (props: CommentInputProps) => {
         return previousComments
       },
       onError: (err, variables, context: any) => {
+        // TODO: Show error to user if 
         if (context) {
           queryClient.setQueryData<Comment[]>(previousCommentsKey, context)
         }

@@ -194,3 +194,15 @@ export const checkIfUserHasRated = (ratings: Rating[] | undefined, userId: strin
 
 	return flag;
 }
+
+export const findUserRatingSubmission = (
+	ratings?: Rating[], 
+	userId?: string
+): number | null => {
+	if (!ratings || !userId) {
+		return null
+	}
+
+	let foundRating = ratings.find(rating => rating.authorId === userId);
+	return foundRating ? foundRating.rating : null;
+}

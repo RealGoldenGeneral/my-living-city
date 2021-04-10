@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { useFormik } from 'formik';
-import React, { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useMutation, useQueryClient } from 'react-query';
 import { useParams } from 'react-router';
@@ -10,14 +9,18 @@ import { API_BASE_URL } from '../../../lib/constants';
 import { Rating } from '../../../lib/types/data/rating.type';
 import { CreateRatingInput } from '../../../lib/types/input/createRating.input';
 import { FetchError } from '../../../lib/types/types';
+// https://github.com/microsoft/TypeScript/issues/22217
+import Ratings from 'react-ratings-declarative';
 
 interface RatingInputProps {
-  userHasRated: boolean
+  userHasRated: boolean,
+  userSubmittedRating: number | null,
 }
 
-const RatingInput = ({ userHasRated }: RatingInputProps) => {
+const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) => {
   const { token, user } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
+  const [ ratingValue, setRatingValue ] = useState<number>(0);
   const queryClient = useQueryClient();
   const previousRatingsKey = ['ratings', ideaId];
 
@@ -70,20 +73,34 @@ const RatingInput = ({ userHasRated }: RatingInputProps) => {
     }
   )
 
-  const submitHandler = (values: CreateRatingInput) => {
-    console.log(values);
-    ratingMutation.mutate(values);
+  const parseNegativeRatingValue = (val: number): void => {
+    if (userHasRated) return;
+
+    let parsedVal = -1 * val;
+    setRatingValue(parsedVal);
   }
 
-  const formik = useFormik<CreateRatingInput>({
-    initialValues: {
-      rating: 5,
-      ratingExplanation: '',
-    },
-    onSubmit: submitHandler,
-  })
+  const parsePositiveRatingValue = (val: number): void => {
+    if (userHasRated) return;
+
+    let parsedVal = val - 1;
+    setRatingValue(parsedVal);
+  }
+
+  const submitHandler = () => {
+    const payload = {
+      rating: ratingValue,
+      ratingExplanation: ''
+    };
+    ratingMutation.mutate(payload);
+  }
 
   const { isLoading, isError, isSuccess, error } = ratingMutation;
+
+  // Loads user submitted rating
+  useEffect(() => {
+    setRatingValue(userSubmittedRating ?? 0)
+  }, [ userSubmittedRating ])
 
   // Helper functions
   const tokenExists = (): boolean => {
@@ -111,15 +128,43 @@ const RatingInput = ({ userHasRated }: RatingInputProps) => {
   return (
     <Container>
       <Row>
-        <Col>
-          <Form onSubmit={formik.handleSubmit}>
-            <Button
-              type='submit'
-              disabled={shouldButtonBeDisabled()}
-            >
-              {buttonTextOutput()}
-            </Button>
-          </Form>
+        <Col xs={12} className='text-center'>
+          <Ratings
+            rating={-1 * ratingValue}
+            widgetRatedColors='red'
+            widgetHoverColors='red'
+            changeRating={parseNegativeRatingValue}
+          >
+            <Ratings.Widget />
+            <Ratings.Widget />
+            <Ratings.Widget />
+            <Ratings.Widget />
+            <Ratings.Widget />
+          </Ratings>
+          <Ratings
+            rating={ratingValue < 0 ? 0 : ratingValue + 1}
+            widgetRatedColors='gold'
+            widgetHoverColors='gold'
+            changeRating={parsePositiveRatingValue}
+          >
+            <Ratings.Widget
+              widgetHoverColor='grey'
+              widgetRatedColor='grey'
+            />
+            <Ratings.Widget />
+            <Ratings.Widget />
+            <Ratings.Widget />
+            <Ratings.Widget />
+            <Ratings.Widget />
+          </Ratings>
+        </Col>
+        <Col xs={12} className='text-center mt-3'>
+          <Button
+            onClick={submitHandler}
+            disabled={shouldButtonBeDisabled()}
+          >
+            {buttonTextOutput()}
+          </Button>
         </Col>
       </Row>
     </Container>
