@@ -12,10 +12,10 @@ import { CreateRatingInput } from '../../../lib/types/input/createRating.input';
 import { FetchError } from '../../../lib/types/types';
 
 interface RatingInputProps {
-
+  userHasRated: boolean
 }
 
-const RatingInput = (props: RatingInputProps) => {
+const RatingInput = ({ userHasRated }: RatingInputProps) => {
   const { token, user } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
   const queryClient = useQueryClient();
@@ -95,6 +95,7 @@ const RatingInput = (props: RatingInputProps) => {
     let flag = true;
     if (tokenExists()) flag = false;
     if (isLoading) flag = true;
+    if (userHasRated) flag = true;
     return flag;
   }
 
@@ -103,6 +104,8 @@ const RatingInput = (props: RatingInputProps) => {
     let buttonText = 'Please login to comment';
     if (tokenExists()) buttonText = 'Share';
     if (isLoading) buttonText = 'Saving Comment';
+    if (userHasRated) buttonText = 'You have already rated';
+    if (!user) buttonText = 'You must sign in to rate an idea'
     return buttonText;
   }
   return (

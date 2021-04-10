@@ -147,6 +147,11 @@ export const truncateString = (str: string, numberOfChars: number): string => {
 	return str.slice(0, numberOfChars) + '...'
 }
 
+/**
+ * Aggregates all Ratings
+ * @param ratings 
+ * @returns 
+ */
 export const getRatingAggregateSummary = (ratings: Rating[] | undefined): RatingAggregateSummary => {
 	if (!ratings) {
 		return {
@@ -175,4 +180,17 @@ export const getRatingAggregateSummary = (ratings: Rating[] | undefined): Rating
 		ratingCount,
 		ratingAvg: ratingCount ? ratingSum / ratingCount : 0,
 	}
+}
+
+export const checkIfUserHasRated = (ratings: Rating[] | undefined, userId: string | undefined): boolean => {
+	let flag = false;
+	if (!ratings || !userId) return flag;
+
+	ratings.forEach(({ authorId }) => {
+		if (authorId === userId) {
+			flag = true
+		}
+	});
+
+	return flag;
 }
