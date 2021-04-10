@@ -1,4 +1,3 @@
-import React from 'react'
 import LoginPageContent from '../components/content/LoginPageContent'
 
 export default function LoginPage() {
