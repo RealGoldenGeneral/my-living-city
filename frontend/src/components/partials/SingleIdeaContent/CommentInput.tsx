@@ -5,7 +5,6 @@ import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useMutation, useQueryClient } from 'react-query';
 import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
-import { useCreateCommentMutation } from '../../../hooks/commentHooks';
 import { getAxiosJwtRequestOption } from '../../../lib/api/axiosRequestOptions';
 import { API_BASE_URL } from '../../../lib/constants';
 import { Comment } from '../../../lib/types/data/comment.type';
@@ -74,7 +73,6 @@ const CommentInput = (props: CommentInputProps) => {
       }
     }
   );
-
 
   const submitHandler = (values: { content: string }) => {
     commentMutation.mutate(values)

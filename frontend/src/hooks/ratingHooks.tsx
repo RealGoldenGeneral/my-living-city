@@ -13,7 +13,7 @@ export const useAllRatingsUnderIdea = (ideaId: string) => {
 
 export const useAllRatingsUnderIdeaWithAggregations = (ideaId: string) => {
   return useQuery<RatingAggregateResponse, FetchError>(
-    ['ratings', ideaId],
+    ['ratings-aggregate', ideaId],
     () => getAllRatingsUnderIdeaWithAggregations(ideaId),
   )
 }

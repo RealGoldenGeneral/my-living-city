@@ -1,4 +1,5 @@
 import { TOKEN_EXPIRY } from './constants';
+import { Rating, RatingAggregateSummary } from './types/data/rating.type';
 import { IUser } from './types/data/user.type';
 import { FetchError } from './types/types';
 
@@ -144,4 +145,34 @@ export const truncateString = (str: string, numberOfChars: number): string => {
 	}
 
 	return str.slice(0, numberOfChars) + '...'
+}
+
+export const getRatingAggregateSummary = (ratings: Rating[] | undefined): RatingAggregateSummary => {
+	if (!ratings) {
+		return {
+			negRatings: 0,
+			posRatings: 0,
+			ratingAvg: 0,
+			ratingCount: 0
+		}
+	}
+	let ratingCount = 0;
+	let negRatings = 0;
+	let posRatings = 0;
+	let ratingSum = 0;
+
+	ratings.forEach(({ rating }) => {
+		ratingCount++;
+		ratingSum += rating;
+
+		if (rating < 0) negRatings++;
+		if (0 < rating) posRatings++;
+	})
+
+	return {
+		negRatings,
+		posRatings,
+		ratingCount,
+		ratingAvg: ratingCount ? ratingSum / ratingCount : 0,
+	}
 }
