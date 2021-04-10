@@ -1,27 +1,25 @@
-import React from 'react'
+import { useEffect } from 'react';
+import { useQueryClient } from 'react-query';
 import LandingPageContent from '../components/content/LandingPageContent'
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { useIdeas, useIdeasWithAggregate } from '../hooks/ideaHooks'
+import { useIdeasWithBreakdown, useIdeasWithSort, useIdeasHomepage} from '../hooks/ideaHooks'
+import { queryCache } from '../lib/react-query/clientInitializer';
 
 export default function LandingPage() {
+  const { data, isLoading, error, isError } = useIdeasHomepage();
+  const queryClient = useQueryClient();
 
-  const { data, isLoading, error, isError } = useIdeasWithAggregate({
-    orderBy: {
-      updatedAt: 'desc'
-    },
-    take: 3,
-  });
-
-
-  if (isLoading) {
-    <div className="wrapper">
-      <LoadingSpinner />
-    </div>
-  }
-
+  useEffect(() => {
+    console.log(queryClient.getQueryData('ideas-homepage'))
+  }, [isLoading, isError])
   return (
     <div className="wrapper">
-      <LandingPageContent topIdeas={data} />
+      <LandingPageContent 
+        topIdeas={data} 
+        ideasLoading={isLoading}
+        ideasIsError={isError}
+        ideasError={error}
+      />
     </div>
   )
 }

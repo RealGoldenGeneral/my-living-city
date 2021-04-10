@@ -1,11 +1,10 @@
 import { useContext, useState } from 'react'
-import { Col, Container, Row, Image, Form, Button, Alert, Card } from 'react-bootstrap'
+import { Image, Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { LoginWithEmailAndPass } from '../../lib/types/input/loginWithEmailAndPass.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
-import { handlePotentialAxiosError, storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
-import { useHistory } from 'react-router';
+import { handlePotentialAxiosError, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from '../../lib/utilityFunctions';
 import { getUserWithEmailAndPass } from '../../lib/api/userRoutes';
 import { ROUTES } from '../../lib/constants';
 
@@ -17,17 +16,16 @@ export default function LoginPageContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<FetchError | null>(null);
   const [showError, setShowError] = useState(true);
-  const history = useHistory();
 
   const submitHandler = async (values: LoginWithEmailAndPass) => {
     try {
-      console.log("Submitted")
       // Set loading 
       setIsLoading(true);
 
       // Destructure payload and set global and local state
       const { token, user } = await getUserWithEmailAndPass(values);
       storeUserAndTokenInLocalStorage(token, user);
+      storeTokenExpiryInLocalStorage();
       setToken(token);
       setUser(user)
 
@@ -38,6 +36,7 @@ export default function LoginPageContent() {
       const genericMessage = "Error occured while logging in user.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
+      wipeLocalStorage();
     } finally {
       setIsLoading(false);
     }

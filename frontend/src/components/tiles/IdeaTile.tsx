@@ -1,13 +1,14 @@
 import React from 'react'
 import { Button, Card } from 'react-bootstrap';
-import { IIdea } from '../../lib/types/data/idea.type';
+import { IdeaBreakdown } from '../../lib/types/data/idea.type';
 import { timeDifference, truncateString } from '../../lib/utilityFunctions'
 
 interface ideaTileProps {
-  ideaData: IIdea
+  ideaData: IdeaBreakdown,
+  showFooter: boolean,
 }
 
-const IdeaTile: React.FC<ideaTileProps> = ({ ideaData }) => {
+const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
   const {
     id,
     title,
@@ -19,15 +20,17 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData }) => {
     <Card>
       {/* <Card.Img variant="top" src="https://via.placeholder.com/300x150" /> */}
       <Card.Body>
-        <Card.Title>{ title }</Card.Title>
-        <Card.Text>{ truncateString(description, 100) }</Card.Text>
+        <Card.Title>{truncateString(title, 50)}</Card.Title>
+        <Card.Text>{truncateString(description, 100)}</Card.Text>
         <a href={`/ideas/${id}`}>
           <Button variant="primary">Read more</Button>
         </a>
       </Card.Body>
-      <Card.Footer>
-        <small className='text-muted'>Updated { timeDifference(new Date(), new Date(updatedAt)) }</small>
-      </Card.Footer>
+      {showFooter && (
+        <Card.Footer>
+          <small className='text-muted'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small>
+        </Card.Footer>
+      )}
     </Card>
   );
 }

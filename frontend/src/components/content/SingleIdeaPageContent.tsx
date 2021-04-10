@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { IIdea } from '../../lib/types/data/idea.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
@@ -27,19 +27,26 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
 
   return (
     <Container className='single-idea-content'>
-      <h1>{ title }</h1>
-      <h5>Category: { catTitle }</h5>
-      <p>Created: { parsedDate.toLocaleDateString() }</p>
-      <br/>
-      <p>{ description }</p>
-      <p>Community and place: { communityImpact }</p>
-      <p>Nature and Food Security: { natureImpact }</p>
-      <p>Arts, Culture, and Education: { artsImpact }</p>
-      <p>Water and Energy: { energyImpact }</p>
-      <p>Manufacturing and Waste: { manufacturingImpact ? capitalizeString(manufacturingImpact) : "" }</p>
-
-      <RatingsSection />
-      <CommentsSection />
+      <Row>
+        <Col>
+          <h1>{title}</h1>
+          <h5>Category: {catTitle}</h5>
+          <p>Created: {parsedDate.toLocaleDateString()}</p>
+          <br />
+          <p>{description}</p>
+          <p><strong>Community and place:</strong> {communityImpact}</p>
+          <p><strong>Nature and Food Security:</strong> {natureImpact}</p>
+          <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p>
+          <p><strong>Water and Energy:</strong> {energyImpact}</p>
+          <p><strong>Manufacturing and Waste:</strong> {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p>
+        </Col>
+      </Row>
+      <Row>
+        <RatingsSection />
+      </Row>
+      <Row>
+        <CommentsSection />
+      </Row>
     </Container>
   );
 }

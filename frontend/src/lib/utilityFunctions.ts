@@ -1,3 +1,5 @@
+import { TOKEN_EXPIRY } from './constants';
+import { Rating, RatingAggregateSummary } from './types/data/rating.type';
 import { IUser } from './types/data/user.type';
 import { FetchError } from './types/types';
 
@@ -22,6 +24,33 @@ export const storeUserAndTokenInLocalStorage = (token: string, user: IUser): voi
 	storeObjectInLocalStorage('logged-user', user);
 	localStorage.setItem('token', token);
 };
+
+
+/**
+ * Stores the token expiry time in localstorage to compare defaults to TOKEN_EXPIRY
+ * @param minutesOffset The number of minutes it takes for the token to expire from the current time
+ */
+export const storeTokenExpiryInLocalStorage = (minutesOffset: number = TOKEN_EXPIRY) => {
+	const tokenExpiry = new Date();
+	tokenExpiry.setMinutes( tokenExpiry.getMinutes() + minutesOffset );
+	localStorage.setItem('token-expiry', tokenExpiry.toISOString());
+}
+
+export const retrieveStoredTokenExpiryInLocalStorage = (): Date | null => {
+	const retrievedDateString = localStorage.getItem('token-expiry');
+	if (!retrievedDateString) {
+		return null;
+	}
+
+	return new Date(retrievedDateString);
+}
+
+/**
+ * Clears local storage of any set variables effectively logging user out. 
+ */
+export const wipeLocalStorage = () => {
+	localStorage.clear();
+}
 
 /**
  * Capitalize the first letter of a string.
@@ -116,4 +145,64 @@ export const truncateString = (str: string, numberOfChars: number): string => {
 	}
 
 	return str.slice(0, numberOfChars) + '...'
+}
+
+/**
+ * Aggregates all Ratings
+ * @param ratings 
+ * @returns 
+ */
+export const getRatingAggregateSummary = (ratings: Rating[] | undefined): RatingAggregateSummary => {
+	if (!ratings) {
+		return {
+			negRatings: 0,
+			posRatings: 0,
+			ratingAvg: 0,
+			ratingCount: 0
+		}
+	}
+	let ratingCount = 0;
+	let negRatings = 0;
+	let posRatings = 0;
+	let ratingSum = 0;
+
+	ratings.forEach(({ rating }) => {
+		ratingCount++;
+		ratingSum += rating;
+
+		if (rating < 0) negRatings++;
+		if (0 < rating) posRatings++;
+	})
+
+	return {
+		negRatings,
+		posRatings,
+		ratingCount,
+		ratingAvg: ratingCount ? ratingSum / ratingCount : 0,
+	}
+}
+
+export const checkIfUserHasRated = (ratings: Rating[] | undefined, userId: string | undefined): boolean => {
+	let flag = false;
+	if (!ratings || !userId) return flag;
+
+	ratings.forEach(({ authorId }) => {
+		if (authorId === userId) {
+			flag = true
+		}
+	});
+
+	return flag;
+}
+
+export const findUserRatingSubmission = (
+	ratings?: Rating[], 
+	userId?: string
+): number | null => {
+	if (!ratings || !userId) {
+		return null
+	}
+
+	let foundRating = ratings.find(rating => rating.authorId === userId);
+	return foundRating ? foundRating.rating : null;
 }

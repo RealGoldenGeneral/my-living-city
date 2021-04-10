@@ -51,7 +51,7 @@ ideaRouter.get(
 
 // Get all ideas with aggregations
 ideaRouter.post(
-  '/getall-aggregate',
+  '/getall/with-sort',
   async (req, res, next) => {
     try {
       console.log(req.body);
@@ -73,7 +73,7 @@ ideaRouter.post(
 )
 
 ideaRouter.post(
-  '/getall/rating',
+  '/getall/aggregations',
   async (req, res, next) => {
     const take = req.body.take;
     let takeClause = ''
@@ -83,30 +83,65 @@ ideaRouter.post(
     try {
       // TODO: if rating is adjusted raw query will break
       const data = await prisma.$queryRaw(`
-        select 
-          i.id, 
+        select		
+          i.id,
           i.author_id as "authorId",
           i.category_id as "categoryId",
           i.title,
           i.description,
-          i.community_impact as "communityImpact",
-          i.nature_impact as "natureImpact",
-          i.arts_impact as "artsImpact",
-          i.energy_impact as "energyImpact",
-          i.manufacturing_impact as "manufacturingImpact",
+          coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
+          coalesce(ir.avg_rating, 0) as "ratingAvg",			
+          coalesce(ic.total_comments, 0) as "commentCount",
+          coalesce(ir.total_ratings, 0) as "ratingCount",
+          coalesce(pr.pos_rating, 0) as "posRatings",
+          coalesce(nr.neg_rating, 0) as "negRatings",
           i.state,
           i.active,
-          i.created_at,
-          i.updated_at,
-          count(ir.idea_id) as "ratingCount", 
-          avg(ir.rating) as "ratingAvg"
-        from idea i 
-        left join idea_rating ir on i.id = ir.idea_id 
-        group by i.id
-        order by "ratingAvg" desc
+          i.updated_at as "updatedAt",
+          i.created_at as "createdAt"
+        from idea i
+        -- Aggregate total comments
+        left join (
+            select		
+              idea_id,
+              count(id) as total_comments
+            from idea_comment
+            group by idea_comment.idea_id
+        ) ic on i.id = ic.idea_id
+        -- Aggregate total ratings and rating avg
+        left join (
+            select		
+              idea_id,
+              count(id) as total_ratings,
+              avg(rating) as avg_rating 
+            from idea_rating
+            group by idea_rating.idea_id
+        ) ir on	i.id = ir.idea_id
+        -- Aggregate total neg ratings
+        left join (
+            select 		
+              idea_id,
+              count(id) as neg_rating
+            from idea_rating
+            where rating < 0
+            group by idea_id
+        ) nr on	i.id = nr.idea_id
+        -- Aggregate total pos ratings
+        left join (
+            select 		
+              idea_id,
+              count(id) as pos_rating
+            from idea_rating
+            where rating > 0
+            group by idea_id
+        ) pr on	i.id = pr.idea_id
+        order by
+          "ratingCount" desc,
+          "ratingAvg" desc,
+          engagements desc
         ${takeClause}
         ;
-      `)
+      `);
 
       res.status(200).json(data);
     } catch (error) {
@@ -123,7 +158,6 @@ ideaRouter.post(
     }
   }
 )
-
 
 // Get all idea as well as relations with ideaId
 ideaRouter.get(

@@ -3,7 +3,7 @@ import { useUserWithJwt } from '../hooks/userHooks';
 import { IUser } from '../lib/types/data/user.type';
 import { LoginWithEmailAndPass } from '../lib/types/input/loginWithEmailAndPass.input';
 import { FetchError } from '../lib/types/types';
-import { storeObjectInLocalStorage } from '../lib/utilityFunctions';
+import { retrieveStoredTokenExpiryInLocalStorage, storeObjectInLocalStorage, wipeLocalStorage } from '../lib/utilityFunctions';
 
 export interface IUserProfileContext {
   token: string | null;
@@ -12,11 +12,10 @@ export interface IUserProfileContext {
   error: FetchError | null;
   user: IUser | null;
   loginWithEmailAndPass?: (data: LoginWithEmailAndPass) => void,
-  logout: () =>  void,
+  logout: () => void,
   setUser: (data: IUser) => void,
   setToken: (str: string) => void,
 }
-
 
 export const UserProfileContext = createContext<IUserProfileContext>({
   // Initial values 
@@ -31,6 +30,10 @@ export const UserProfileContext = createContext<IUserProfileContext>({
   setToken: () => { }
 })
 
+/**
+ * Retrieves User object that is stored in local storage in Javascript object format
+ * @returns {IUser} Retrieves User object from localstorage in Javascript Object format`
+ */
 const getUserFromLocalStorage = (): (IUser | null) => {
   const stringifiedUser = localStorage.getItem('logged-user');
 
@@ -47,47 +50,79 @@ const UserProfileProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(getUserFromLocalStorage())
   const [fetchError, setFetchError] = useState<FetchError | null>(null);
 
-  // Removes Token from global state and local storage
-  const purgeToken = () => {
-    localStorage.removeItem('token');
-    setToken(null);
+  /**
+   * Checks to see if token is expired based on expiry date set in local storage.
+   * 
+   * @returns {boolean} False if token is expired True if token is still valid
+   */
+  const isTokenValid = (): boolean => {
+    const tokenExpiry = retrieveStoredTokenExpiryInLocalStorage();
+    const currentTime = new Date();
+    if (!tokenExpiry) { return false }
+
+    return currentTime <= tokenExpiry;
   }
 
-  // Removes User object from global state and local storage
-  const purgeUser = () => {
-    localStorage.removeItem('logged-user');
-    setUser(null);
-  }
-
-  // Function to check if user should be refetched
+  /**
+   * Determines if the user should be fetched. If there is a token but no
+   * user object then the user should be refetched. Any errors occured during this refetch
+   * will be caught in the use effect and will automatically log user out if token is invalid.
+   * @returns {boolean} True if user should be refetched false if not
+   */
   const shouldTriggerUserFetch = (): boolean => {
-    return token !== null && user === null;
+    return (
+      token !== null &&
+      user === null &&
+      isTokenValid()
+    )
+  }
+
+  /**
+   * Removes user object, token, and token expiry from 
+   * global state as well as local storage. Logging user out.
+   */
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    wipeLocalStorage();
   }
 
   const { data, isLoading, isError, error } = useUserWithJwt(
-    { jwtAuthToken: token!, shouldTrigger: shouldTriggerUserFetch()}
+    { jwtAuthToken: token!, shouldTrigger: shouldTriggerUserFetch() }
   )
 
+  /**
+   * Checks to see if token is valid everytime component is initially loaded.
+   */
+  useEffect(() => {
+    if (!isTokenValid()) {
+      logout();
+      setFetchError({ message: "Your session token has expired. Please login again." });
+      return;
+    }
+
+    return setFetchError(null);
+  }, [])
+
+  /**
+   * Checks to see if an error has occured upon retrieving user using JWT
+   * and destroys localstorage state and user auth if error has occured.
+   * If User is fetched using React query reupdates global state variable
+   * to store newly fetched user. 
+   */
   useEffect(() => {
     if (isError) {
-      purgeUser()
-      purgeToken()
-      setFetchError({ message: error?.response?.data.message })
+      logout();
+      setFetchError({ message: error?.response?.data.message });
       return;
     }
 
     if (!isLoading && data && !isError) {
+      storeObjectInLocalStorage('logged-user', data);
       setFetchError(null);
       setUser(data);
-      storeObjectInLocalStorage('logged-user', data);
     }
   }, [data, isLoading, isError])
-
-
-  const logout = () => {
-    purgeUser();
-    purgeToken();
-  }
 
   return (
     <UserProfileContext.Provider
@@ -102,7 +137,7 @@ const UserProfileProvider: React.FC = ({ children }) => {
         token,
       }}
     >
-      { children }
+      { children}
     </UserProfileContext.Provider>
   )
 }

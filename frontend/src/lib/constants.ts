@@ -1,6 +1,9 @@
 export const __prod__ = process.env.NODE_ENV === 'production';
 export const API_BASE_URL = process.env.REACT_APP_BASE_API_URL || 'http://localhost:3001'
 
+// Token expiry in minutes
+export const TOKEN_EXPIRY = Number(process.env.REACT_APP_TOKEN_EXPIRY || 60);
+
 // Routes should be placed here and called into "path" in Route component
 export const ROUTES = {
   LANDING: '/',

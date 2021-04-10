@@ -3,7 +3,7 @@ import { Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { FetchError } from '../../lib/types/types';
-import { capitalizeString, handlePotentialAxiosError, storeUserAndTokenInLocalStorage } from '../../lib/utilityFunctions';
+import { capitalizeString, handlePotentialAxiosError, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from '../../lib/utilityFunctions';
 import { RegisterInput } from '../../lib/types/input/register.input';
 import { UserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
@@ -29,6 +29,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
 
       const { token, user } = await postRegisterUser(values);
       storeUserAndTokenInLocalStorage(token, user);
+      storeTokenExpiryInLocalStorage();
       setToken(token);
       setUser(user);
 
@@ -39,6 +40,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       const genericMessage = 'An error occured while trying to create a new account.';
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
+      wipeLocalStorage();
     } finally {
       setIsLoading(false);
     }

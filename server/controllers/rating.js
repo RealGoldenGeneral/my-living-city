@@ -50,6 +50,72 @@ ideaRatingRouter.get(
   }
 )
 
+// Get all ratings under idea id including aggregations
+ideaRatingRouter.get(
+  '/getall/:ideaId/aggregations',
+  async (req, res, next) => {
+    try {
+      const parsedIdeaId = parseInt(req.params.ideaId);
+
+      // check if id is valid
+      if (!parsedIdeaId) {
+        return res.status(400).json({
+          message: `A valid ideaId must be specified in the route paramater.`,
+        });
+      }
+
+      const ratings = await prisma.ideaRating.findMany({ where: { ideaId: parsedIdeaId }});
+      const posRatings = await prisma.ideaRating.aggregate({
+        where: { 
+          ideaId: parsedIdeaId,
+          rating: {
+            gt: 0
+          }
+        },
+        count: true
+      })
+      const negRatings = await prisma.ideaRating.aggregate({
+        where: { 
+          ideaId: parsedIdeaId ,
+          rating: {
+            lt: 0
+          }
+        },
+        count: true
+      })
+      const aggregates = await prisma.ideaRating.aggregate({
+        where: { ideaId: parsedIdeaId },
+        avg: {
+          rating: true
+        },
+        count: true,
+      })
+
+      const summary = {
+        ratingAvg: aggregates.avg.rating,
+        ratingCount: aggregates.count,
+        posRatings: posRatings.count,
+        negRatings: negRatings.count,
+      }
+
+      res.status(200).json({
+        ratings,
+        summary,
+      });
+    } catch (error) {
+      res.status(400).json({
+        message: `An error occured while trying to fetch all ratings under idea ${req.params.ideaId}.`,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
 // Get all ratings under idea id
 ideaRatingRouter.get(
   '/getall/:ideaId',

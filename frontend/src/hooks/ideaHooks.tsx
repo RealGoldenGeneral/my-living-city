@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
-import { IIdea } from '../lib/types/data/idea.type';
+import { IdeaBreakdown, IIdea } from '../lib/types/data/idea.type';
 import { FetchError } from '../lib/types/types';
-import { getAllIdeas, getSingleIdea, postAllIdeasWithAggregates } from '../lib/api/ideaRoutes';
-import { defaultOrderByAggregate, GetAllIdeasWithAggregate, getAllIdeasWithAggregateDefault, IdeaOrderByAggregate } from '../lib/types/args/getAllIdeas.args';
+import { getAllIdeas, getSingleIdea, postAllIdeasWithBreakdown, postAllIdeasWithSort } from '../lib/api/ideaRoutes';
+import { GetAllIdeasWithSort, getAllIdeasWithSortDefault, IdeaOrderByAggregate } from '../lib/types/args/getAllIdeas.args';
 
 export const useIdeas = (
 ) => {
@@ -12,12 +12,28 @@ export const useIdeas = (
   );
 }
 
-export const useIdeasWithAggregate = (
-  aggregateOptions: GetAllIdeasWithAggregate = getAllIdeasWithAggregateDefault
+export const useIdeasWithSort = (
+  sortingOptions: GetAllIdeasWithSort = getAllIdeasWithSortDefault
 ) => {
   return useQuery<IIdea[], FetchError>(
-    ['ideas', aggregateOptions], 
-    () => postAllIdeasWithAggregates(aggregateOptions),
+    ['ideas', sortingOptions], 
+    () => postAllIdeasWithSort(sortingOptions),
+  );
+}
+
+export const useIdeasWithBreakdown = (
+  take?: number
+) => {
+  return useQuery<IdeaBreakdown[], FetchError>(
+    ['ideas-breakdown', take],
+    () => postAllIdeasWithBreakdown(take),
+  );
+}
+
+export const useIdeasHomepage = () => {
+  return useQuery<IdeaBreakdown[], FetchError>(
+    'ideas-homepage',
+    () => postAllIdeasWithBreakdown(3),
   );
 }
 
@@ -25,5 +41,9 @@ export const useSingleIdea = (ideaId: string) => {
   return useQuery<IIdea, FetchError>(
     ['idea', ideaId], 
     () => getSingleIdea(ideaId),
+    // https://react-query.tanstack.com/guides/initial-query-data#staletime-and-initialdataupdatedat
+    {
+      staleTime: 45 * 60 * 1000 // 30 minutes
+    }
   );
 }
