@@ -10,8 +10,8 @@ export interface Comment {
   authorId:  string;
   content:   string;
   active:    boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 
   author: ParsedCommentAuthor;
 }

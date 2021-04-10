@@ -1,22 +1,82 @@
+import axios from 'axios';
 import { useFormik } from 'formik';
 import { useContext, useEffect } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 import { useCreateCommentMutation } from '../../../hooks/commentHooks';
+import { getAxiosJwtRequestOption } from '../../../lib/api/axiosRequestOptions';
+import { API_BASE_URL } from '../../../lib/constants';
+import { Comment } from '../../../lib/types/data/comment.type';
+import { CreateCommentInput } from '../../../lib/types/input/createComment.input';
+import { FetchError } from '../../../lib/types/types';
 
 interface CommentInputProps {
 
 }
 
 const CommentInput = (props: CommentInputProps) => {
-  const { token } = useContext(UserProfileContext);
+  const { token, user } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
-  const commentMutation = useCreateCommentMutation(token, parseInt(ideaId))
+  const queryClient = useQueryClient();
+  const previousCommentsKey = ['comments', ideaId];
+  // https://react-query.tanstack.com/guides/mutations#persist-mutations
+  // https://stackoverflow.com/questions/65760158/react-query-mutation-typescript
+  const commentMutation = useMutation<Comment, FetchError, CreateCommentInput>(
+    newComment => axios.post(
+      `${API_BASE_URL}/comment/create/${ideaId}`,
+      { content: newComment.content },
+      getAxiosJwtRequestOption(token!),
+    ),
+    {
+      onMutate: async (newComment) => {
+        const { id: userId, fname, lname, email } = user!
+
+        // snapshot previous value
+        const previousComments = queryClient.getQueryData<Comment[]>(previousCommentsKey);
+
+        // Cancel outgoing refetches
+        await queryClient.cancelQueries(previousCommentsKey);
+
+        // Optimistically update to new value
+        if (previousComments) {
+          queryClient.setQueryData<Comment[]>(previousCommentsKey,
+            [
+              ...previousComments,
+              {
+                id: Math.random(),
+                ideaId: parseInt(ideaId!),
+                active: true,
+                authorId: userId,
+                author: {
+                  email,
+                  fname: fname ?? '',
+                  lname: lname ?? '',
+                },
+                content: newComment.content,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              }
+            ]
+          )
+        }
+        console.log("previousu comments", previousComments);
+        return previousComments
+      },
+      onError: (err, variables, context: any) => {
+        if (context) {
+          queryClient.setQueryData<Comment[]>(previousCommentsKey, context)
+        }
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(previousCommentsKey);
+      }
+    }
+  );
+
 
   const submitHandler = (values: { content: string }) => {
-    console.log("Submitting comment")
     commentMutation.mutate(values)
   }
 
@@ -27,7 +87,7 @@ const CommentInput = (props: CommentInputProps) => {
     onSubmit: submitHandler,
   })
 
-  const { isLoading, isError, isSuccess} = commentMutation;
+  const { isLoading, isError, isSuccess } = commentMutation;
 
   // Helper Functions
   const tokenExists = (): boolean => {
@@ -69,8 +129,8 @@ const CommentInput = (props: CommentInputProps) => {
                 value={formik.values.content}
               />
             )}
-            <Button 
-              block 
+            <Button
+              block
               type='submit'
               disabled={shouldButtonBeDisabled()}
             >
