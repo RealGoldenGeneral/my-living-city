@@ -13,7 +13,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({ topIdeas }) => {
       <h2 className="pb-1 border-bottom display-4 text-center">New and Trending</h2>
       <Row className="g-5 py-3 justify-content-center">
         {topIdeas && topIdeas.map(idea => (
-          <Col key={idea.id} md={4} className="d-flex pt-3 align-items-start">
+          <Col key={idea.id} md={6} lg={4} className="d-flex pt-3 align-items-start">
             <IdeaTile ideaData={idea} showFooter={true} />
           </Col>
         ))}

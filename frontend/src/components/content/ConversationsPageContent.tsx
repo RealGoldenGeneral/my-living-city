@@ -14,7 +14,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({ ide
     <Container className='conversations-page-content'>
       <Row>
         {ideas && ideas.map(idea => (
-          <Col key={idea.id} className='col-card col-lg-4' xs={12} md={6}>
+          <Col key={idea.id} className='col-card' xs={12} md={6} lg={4}>
             <IdeaTile ideaData={idea} showFooter={true} />
           </Col>
         ))}

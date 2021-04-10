@@ -79,7 +79,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
         <h1>Submit Idea</h1>
       </Row>
       <Row className='submit-idea-form-group justify-content-center'>
-        <Col md={10} >
+        <Col lg={10} >
           <Form onSubmit={formik.handleSubmit}>
             <Form.Group controlId="submitIdeaCategory">
               <Form.Label>Select Category:</Form.Label>
