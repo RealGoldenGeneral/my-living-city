@@ -6,6 +6,7 @@ import { useAllRatingsUnderIdea } from '../../../hooks/ratingHooks';
 import { RatingAggregateSummary } from '../../../lib/types/data/rating.type';
 import { checkIfUserHasRated, findUserRatingSubmission, getRatingAggregateSummary } from '../../../lib/utilityFunctions';
 import LoadingSpinner from '../../ui/LoadingSpinner';
+import RatingDisplay from './RatingDisplay';
 import RatingInput from './RatingInput';
 
 interface RatingsSectionProps {
@@ -42,18 +43,19 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
     )
   }
 
+  const { ratingValueBreakdown } = ratingSummary
   return (
     <Container>
       <h2>Ratings</h2>
+      {ratingValueBreakdown && (
+        <RatingDisplay ratingValueBreakdown={ratingValueBreakdown} />
+      )}
       {user && (
         <RatingInput 
           userHasRated={userHasRated} 
           userSubmittedRating={userSubmittedRating}
         />
       )}
-      {ratings && ratings.map(rating => (
-        <p key={rating.id}>{rating.rating}</p>
-      ))}
     </Container>
   );
 }

@@ -3,7 +3,7 @@ const __prod__ = process.env.NODE_ENV === 'production';
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = process.env.JWT_EXPIRY;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
-const PORT = 3001;
+const PORT = parseInt(process.env.EXPRESS_PORT ?? 3001);
 
 // Rating Thresholds to advance
 // Retrieve from environment and set defaults if not set

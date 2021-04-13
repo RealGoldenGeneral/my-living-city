@@ -138,9 +138,6 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
           >
             <Ratings.Widget />
             <Ratings.Widget />
-            <Ratings.Widget />
-            <Ratings.Widget />
-            <Ratings.Widget />
           </Ratings>
           <Ratings
             rating={ratingValue < 0 ? 0 : ratingValue + 1}
@@ -152,9 +149,6 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
               widgetHoverColor='grey'
               widgetRatedColor='grey'
             />
-            <Ratings.Widget />
-            <Ratings.Widget />
-            <Ratings.Widget />
             <Ratings.Widget />
             <Ratings.Widget />
           </Ratings>
