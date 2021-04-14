@@ -4,6 +4,8 @@ const { PrismaClient } = require('@prisma/client')
 const express = require('express');
 const commentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
+const { includes } = require('lodash');
+const { checkIfUserIsLoggedIn } = require('../middlewares/checkAuth');
 
 commentRouter.get(
   '/',
@@ -48,9 +50,16 @@ commentRouter.get(
 // Get all under idea id
 commentRouter.get(
   '/getall/:ideaId',
+  checkIfUserIsLoggedIn,
   async (req, res, next) => {
     try {
+      const loggedInUser = req.user;
       const parsedIdeaId = parseInt(req.params.ideaId);
+
+      // TODO: check if prisma exists for like under comment under userId
+      // TODO: check if prisma exists dislike under comment under userId
+      console.log("route")
+      console.log('\n\nINSIDE ROUTER', req.user);
 
       // check if id is valid
       if (!parsedIdeaId) {
@@ -59,20 +68,53 @@ commentRouter.get(
         });
       }
 
+      const prismaLikesAndDislikesQuery = {
+        likes: {
+          where: {
+            authorId: loggedInUser?.id
+          }
+        },
+        dislikes: {
+          where: {
+            authorId: loggedInUser?.id
+          }
+        }
+      }
+
       const comments = await prisma.ideaComment.findMany({
         where: { ideaId: parsedIdeaId },
         include: {
+          _count: {
+            select: {
+              likes: true,
+              dislikes: true,
+            }
+          },
           author: {
             select: {
+              id: true,
               email: true,
               fname: true,
               lname: true,
+              address: {
+                select: {
+                  streetAddress: true,
+                  postalCode: true,
+                }
+              }
             }
           },
-        }
+          ...loggedInUser && { ...prismaLikesAndDislikesQuery }
+        },
       });
 
-      res.status(200).json(comments);
+      const result = comments.map(comment => ({
+        ...comment,
+        likes: comment.likes ?? [],
+        dislikes: comment.dislikes ?? [],
+      }))
+
+      res.status(200).json(result);
     } catch (error) {
       console.error(error);
       res.status(400).json({

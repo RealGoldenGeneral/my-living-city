@@ -16,12 +16,12 @@ export const useAllComments = () => {
   )
 }
 
-export const useAllCommentsUnderIdea = (ideaId: string) => {
+export const useAllCommentsUnderIdea = (ideaId: string, token: string | null) => {
   return useQuery<Comment[], FetchError>(
     ['comments', ideaId],
-    () => getCommentsUnderIdea(ideaId),
+    () => getCommentsUnderIdea(ideaId, token),
     {
-      staleTime: 60 * 1000 // 1 minute
+      staleTime: 5 * 60 * 1000 // 5 minutes
     }
   )
 }

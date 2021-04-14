@@ -4,7 +4,7 @@ import { timeDifference } from '../../../lib/utilityFunctions';
 import IdeaCommentLike from './IdeaCommentLike';
 
 interface IdeaCommentTileProps {
-  commentData: Comment
+  commentData: Comment;
 }
 
 const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
@@ -23,7 +23,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
   }
 
   return (
-    <Container className='my-1'>
+    <Container fluid className='my-1'>
       <Row className='justify-content-center'>
         <Col className='mx-2'>
           <div className="d-flex flex-column justify-content-start">
@@ -36,6 +36,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
             {content}
           </div>
           {/* <IdeaCommentLike /> */}
+          <p>{JSON.stringify(commentData)}</p>
         </Col>
       </Row>
       <hr className="bg-info" />

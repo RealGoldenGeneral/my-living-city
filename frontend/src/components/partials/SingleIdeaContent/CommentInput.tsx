@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { useFormik } from 'formik';
 import { useContext, useEffect } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
@@ -30,7 +31,7 @@ const CommentInput = (props: CommentInputProps) => {
     ),
     {
       onMutate: async (newComment) => {
-        const { id: userId, fname, lname, email } = user!
+        const { id: userId, fname, lname, email, address } = user!
 
         // snapshot previous value
         const previousComments = queryClient.getQueryData<Comment[]>(previousCommentsKey);
@@ -49,10 +50,17 @@ const CommentInput = (props: CommentInputProps) => {
                 active: true,
                 authorId: userId,
                 author: {
+                  id: uuidv4(),
                   email,
                   fname: fname ?? '',
                   lname: lname ?? '',
+                  address: {
+                    postalCode: address?.postalCode ?? '',
+                    streetAddress: address?.streetAddress ?? '',
+                  }
                 },
+                likes: [],
+                dislikes: [],
                 content: newComment.content,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),

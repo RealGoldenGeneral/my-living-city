@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
+import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 import { useAllCommentsUnderIdea } from '../../../hooks/commentHooks';
 import IdeaCommentTile from '../../tiles/IdeaComment/IdeaCommentTile';
 import LoadingSpinner from '../../ui/LoadingSpinner';
@@ -10,9 +11,15 @@ interface CommentsSection {
 }
 
 const CommentsSection: React.FC<CommentsSection> = () => {
+  const { token } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
 
-  const { data: ideaComments, isLoading, isError, error } = useAllCommentsUnderIdea(ideaId);
+  const { 
+    data: ideaComments,
+    isLoading,
+    isError,
+    error 
+  } = useAllCommentsUnderIdea(ideaId, token);
 
   if (error && isError) {
     return (
