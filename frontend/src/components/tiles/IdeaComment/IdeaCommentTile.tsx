@@ -1,4 +1,6 @@
+import { useContext } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
+import { UserProfileContext } from 'src/contexts/UserProfile.Context';
 import { Comment } from '../../../lib/types/data/comment.type';
 import { timeDifference } from '../../../lib/utilityFunctions';
 import IdeaCommentDislike from './IdeaCommentDislike';
@@ -9,6 +11,7 @@ interface IdeaCommentTileProps {
 }
 
 const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
+  const { isUserAuthenticated } = useContext(UserProfileContext);
   const {
     id,
     ideaId,
@@ -40,10 +43,12 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
           <div>
             Likes and Dislikes: {likes} / {dislikes}
           </div>
-          <div className='d-flex'>
-            <IdeaCommentLike commentData={commentData} />
-            <IdeaCommentDislike commentData={commentData} />
-          </div>
+          {isUserAuthenticated() && (
+            <div className='d-flex'>
+              <IdeaCommentLike commentData={commentData} />
+              <IdeaCommentDislike commentData={commentData} />
+            </div>
+          )}
           {/* <p>{JSON.stringify(commentData)}</p> */}
         </Col>
       </Row>

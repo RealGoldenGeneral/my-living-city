@@ -15,6 +15,7 @@ export interface IUserProfileContext {
   logout: () => void,
   setUser: (data: IUser) => void,
   setToken: (str: string) => void,
+  isUserAuthenticated: () => boolean,
 }
 
 export const UserProfileContext = createContext<IUserProfileContext>({
@@ -27,7 +28,8 @@ export const UserProfileContext = createContext<IUserProfileContext>({
   loginWithEmailAndPass: () => { },
   logout: () => { },
   setUser: () => { },
-  setToken: () => { }
+  setToken: () => { },
+  isUserAuthenticated: () => false,
 })
 
 /**
@@ -87,6 +89,10 @@ const UserProfileProvider: React.FC = ({ children }) => {
     wipeLocalStorage();
   }
 
+  const isUserAuthenticated = (): boolean => {
+    return !!user && !!token;
+  }
+
   const { data, isLoading, isError, error } = useUserWithJwt(
     { jwtAuthToken: token!, shouldTrigger: shouldTriggerUserFetch() }
   )
@@ -130,6 +136,7 @@ const UserProfileProvider: React.FC = ({ children }) => {
         logout,
         setUser,
         setToken,
+        isUserAuthenticated,
         loading: isLoading,
         errorOccured: isError,
         error: fetchError,

@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { API_BASE_URL } from "src/lib/constants";
 import { getAxiosJwtRequestOption } from "src/lib/api/axiosRequestOptions";
+import { delay } from "../lib/utilityFunctions";
 
 export const useCommentLikeMutation = (
   commentId: number,
@@ -74,8 +75,9 @@ export const useCommentLikeMutation = (
           queryClient.setQueryData<Comment[]>(previousCommentsKey, context);
         }
       },
-      onSettled: () => {
-        queryClient.invalidateQueries(previousCommentsKey);
+      onSettled: async () => {
+        await delay(2000);
+        await queryClient.invalidateQueries(previousCommentsKey);
       }
     }
   );
@@ -158,9 +160,10 @@ export const useCommentDislikeMutation = (
           queryClient.setQueryData<Comment[]>(previousCommentsKey, context);
         }
       },
-      // onSettled: () => {
-      //   queryClient.invalidateQueries(previousCommentsKey);
-      // }
+      onSettled: async () => {
+        await delay(2000);
+        await queryClient.invalidateQueries(previousCommentsKey);
+      }
     }
   );
 

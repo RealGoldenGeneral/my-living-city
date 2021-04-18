@@ -1,6 +1,11 @@
 export const __prod__ = process.env.NODE_ENV === 'production';
 export const API_BASE_URL = process.env.REACT_APP_BASE_API_URL || 'http://localhost:3001'
 
+// UTILITY defaults
+export const UTIL_FUNCTIONS = {
+  delayDefault: Number(process.env.REACT_APP_UTIL_FUNC_DELAY ?? 2000)
+}
+
 // Basic styles
 export const MLC_COLOUR_THEME = {
   mainDark: '#549762',

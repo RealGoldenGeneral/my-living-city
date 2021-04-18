@@ -17,7 +17,7 @@ const IdeaCommentDislike = ({ commentData }: IdeaCommentLikeProps) => {
     dislikes
   } = commentData;
 
-  const { token } = useContext(UserProfileContext);
+  const { token, isUserAuthenticated } = useContext(UserProfileContext);
 
   const {
     submitDislikeMutation,
@@ -30,19 +30,29 @@ const IdeaCommentDislike = ({ commentData }: IdeaCommentLikeProps) => {
     return 0 < dislikes.length
   }
 
+  const submitHandler = () => {
+    // Check if user is authenticated
+    if (isUserAuthenticated()) {
+      submitDislikeMutation();
+    } else {
+      alert('You must be signed in to interact with comments')
+    }
+
+  }
+
 
   return (
     // TODO: Implement logic to like a comment
     <IconContext.Provider
       value={{
         size: '1.2rem',
-        color: checkIfUserHasDisliked() ? MLC_COLOUR_THEME.redWarning : '',
+        color: isUserAuthenticated() && checkIfUserHasDisliked() ? MLC_COLOUR_THEME.redWarning : '',
       }}
     >
       <div className="d-flex flex-row fs-12 p-2">
         <div
           className="like p-2"
-          onClick={submitDislikeMutation}
+          onClick={submitHandler}
         >
           <FaRegThumbsDown />
           <span className="ml-1">Dislike</span>

@@ -1,4 +1,4 @@
-import { TOKEN_EXPIRY } from './constants';
+import { TOKEN_EXPIRY, UTIL_FUNCTIONS } from './constants';
 import { Rating, RatingAggregateSummary, RatingValueBreakdown } from './types/data/rating.type';
 import { IUser } from './types/data/user.type';
 import { FetchError } from './types/types';
@@ -223,4 +223,10 @@ export const findUserRatingSubmission = (
 
 	let foundRating = ratings.find(rating => rating.authorId === userId);
 	return foundRating ? foundRating.rating : null;
+}
+
+export const delay = (
+	milliseconds: number = UTIL_FUNCTIONS.delayDefault
+): Promise<void> => {
+	return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
