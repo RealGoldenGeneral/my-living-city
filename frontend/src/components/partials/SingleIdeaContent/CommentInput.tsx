@@ -62,6 +62,10 @@ const CommentInput = (props: CommentInputProps) => {
                 likes: [],
                 dislikes: [],
                 content: newComment.content,
+                _count: {
+                  dislikes: 0,
+                  likes: 0,
+                },
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
               }

@@ -17,7 +17,11 @@ const likeCommentAndRemoveDislike = async (userId, commentId) => {
   const foundDislike = await prisma.userCommentDislikes.findFirst(prismaWhereClause)
 
   if (foundDislike) {
-    await prisma.userCommentDislikes.delete({ where: { id: foundDislike.id }});
+    // await prisma.userCommentDislikes.delete({ where: { id: foundDislike.id }});
+    await prisma.userCommentDislikes.deleteMany({ where: {
+      authorId: userId,
+      ideaCommentId: commentId,
+    }})
   }
 
   let createdLike = null;
@@ -51,7 +55,10 @@ const dislikeCommentAndRemoveLike = async (userId, commentId) => {
   const foundDislike = await prisma.userCommentDislikes.findFirst(prismaWhereClause)
 
   if (foundLike) {
-    await prisma.userCommentLikes.delete({ where: { id: foundLike.id }});
+    await prisma.userCommentLikes.deleteMany({ where: {
+      authorId: userId,
+      ideaCommentId: commentId,
+    }})
   }
 
   let createdDislike = null;

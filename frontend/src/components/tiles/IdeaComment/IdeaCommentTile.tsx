@@ -1,6 +1,7 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import { Comment } from '../../../lib/types/data/comment.type';
 import { timeDifference } from '../../../lib/utilityFunctions';
+import IdeaCommentDislike from './IdeaCommentDislike';
 import IdeaCommentLike from './IdeaCommentLike';
 
 interface IdeaCommentTileProps {
@@ -10,17 +11,18 @@ interface IdeaCommentTileProps {
 const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
   const {
     id,
+    ideaId,
     authorId,
     content,
     createdAt,
     updatedAt,
+    _count: {
+      likes,
+      dislikes
+    }
   } = commentData;
 
   const { email, fname, lname } = commentData?.author;
-
-  const submitLikeHandler = () => {
-    console.log("Like comment")
-  }
 
   return (
     <Container fluid className='my-1'>
@@ -35,8 +37,14 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
           <div className="mt-2">
             {content}
           </div>
-          {/* <IdeaCommentLike /> */}
-          <p>{JSON.stringify(commentData)}</p>
+          <div>
+            Likes and Dislikes: {likes} / {dislikes}
+          </div>
+          <div className='d-flex'>
+            <IdeaCommentLike commentData={commentData} />
+            <IdeaCommentDislike commentData={commentData} />
+          </div>
+          {/* <p>{JSON.stringify(commentData)}</p> */}
         </Col>
       </Row>
       <hr className="bg-info" />
