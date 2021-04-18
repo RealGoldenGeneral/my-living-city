@@ -11,6 +11,7 @@ import { API_BASE_URL } from '../../../lib/constants';
 import { Comment } from '../../../lib/types/data/comment.type';
 import { CreateCommentInput } from '../../../lib/types/input/createComment.input';
 import { FetchError } from '../../../lib/types/types';
+import { useCreateCommentMutation } from 'src/hooks/commentHooks';
 
 interface CommentInputProps {
 
@@ -23,72 +24,18 @@ const CommentInput = (props: CommentInputProps) => {
   const previousCommentsKey = ['comments', ideaId];
   // https://react-query.tanstack.com/guides/mutations#persist-mutations
   // https://stackoverflow.com/questions/65760158/react-query-mutation-typescript
-  const commentMutation = useMutation<Comment, FetchError, CreateCommentInput>(
-    newComment => axios.post(
-      `${API_BASE_URL}/comment/create/${ideaId}`,
-      { content: newComment.content },
-      getAxiosJwtRequestOption(token!),
-    ),
-    {
-      onMutate: async (newComment) => {
-        const { id: userId, fname, lname, email, address } = user!
 
-        // snapshot previous value
-        const previousComments = queryClient.getQueryData<Comment[]>(previousCommentsKey);
+  const {
+    submitComment,
+    isLoading,
+    isError,
+    isSuccess,
+    error
+  } = useCreateCommentMutation(parseInt(ideaId), token, user);
 
-        // Cancel outgoing refetches
-        await queryClient.cancelQueries(previousCommentsKey);
-
-        // Optimistically update to new value
-        if (previousComments) {
-          queryClient.setQueryData<Comment[]>(previousCommentsKey,
-            [
-              ...previousComments,
-              {
-                id: Math.random(),
-                ideaId: parseInt(ideaId!),
-                active: true,
-                authorId: userId,
-                author: {
-                  id: uuidv4(),
-                  email,
-                  fname: fname ?? '',
-                  lname: lname ?? '',
-                  address: {
-                    postalCode: address?.postalCode ?? '',
-                    streetAddress: address?.streetAddress ?? '',
-                  }
-                },
-                likes: [],
-                dislikes: [],
-                content: newComment.content,
-                _count: {
-                  dislikes: 0,
-                  likes: 0,
-                },
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              }
-            ]
-          )
-        }
-        console.log("previousu comments", previousComments);
-        return previousComments
-      },
-      onError: (err, variables, context: any) => {
-        // TODO: Show error to user if 
-        if (context) {
-          queryClient.setQueryData<Comment[]>(previousCommentsKey, context)
-        }
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(previousCommentsKey);
-      }
-    }
-  );
 
   const submitHandler = (values: { content: string }) => {
-    commentMutation.mutate(values);
+    submitComment(values);
     formik.resetForm();
   }
 
@@ -98,8 +45,6 @@ const CommentInput = (props: CommentInputProps) => {
     },
     onSubmit: submitHandler,
   })
-
-  const { isLoading, isError, isSuccess } = commentMutation;
 
   // Helper Functions
   const tokenExists = (): boolean => {

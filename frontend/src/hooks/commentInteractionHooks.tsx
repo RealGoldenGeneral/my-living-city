@@ -76,7 +76,7 @@ export const useCommentLikeMutation = (
         }
       },
       onSettled: async () => {
-        await delay(2000);
+        await delay();
         await queryClient.invalidateQueries(previousCommentsKey);
       }
     }
@@ -161,7 +161,7 @@ export const useCommentDislikeMutation = (
         }
       },
       onSettled: async () => {
-        await delay(2000);
+        await delay();
         await queryClient.invalidateQueries(previousCommentsKey);
       }
     }
