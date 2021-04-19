@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { IdeaBreakdown, IIdea } from '../lib/types/data/idea.type';
+import { IdeaBreakdown, IIdea, IIdeaWithBasicUser } from '../lib/types/data/idea.type';
 import { FetchError } from '../lib/types/types';
 import { getAllIdeas, getSingleIdea, postAllIdeasWithBreakdown, postAllIdeasWithSort } from '../lib/api/ideaRoutes';
 import { GetAllIdeasWithSort, getAllIdeasWithSortDefault, IdeaOrderByAggregate } from '../lib/types/args/getAllIdeas.args';
@@ -38,7 +38,7 @@ export const useIdeasHomepage = () => {
 }
 
 export const useSingleIdea = (ideaId: string) => {
-  return useQuery<IIdea, FetchError>(
+  return useQuery<IIdeaWithBasicUser, FetchError>(
     ['idea', ideaId], 
     () => getSingleIdea(ideaId),
     // https://react-query.tanstack.com/guides/initial-query-data#staletime-and-initialdataupdatedat

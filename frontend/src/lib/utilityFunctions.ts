@@ -1,5 +1,5 @@
-import { TOKEN_EXPIRY } from './constants';
-import { Rating, RatingAggregateSummary } from './types/data/rating.type';
+import { TOKEN_EXPIRY, UTIL_FUNCTIONS } from './constants';
+import { Rating, RatingAggregateSummary, RatingValueBreakdown } from './types/data/rating.type';
 import { IUser } from './types/data/user.type';
 import { FetchError } from './types/types';
 
@@ -153,22 +153,39 @@ export const truncateString = (str: string, numberOfChars: number): string => {
  * @returns 
  */
 export const getRatingAggregateSummary = (ratings: Rating[] | undefined): RatingAggregateSummary => {
+	const defaultRatingValueBreakdown = {
+		strongDisagree: 0,
+		slightDisagree: 0,
+		neutral: 0,
+		slightAgree: 0,
+		strongAgree: 0,
+	}
+
 	if (!ratings) {
 		return {
 			negRatings: 0,
 			posRatings: 0,
 			ratingAvg: 0,
-			ratingCount: 0
+			ratingCount: 0,
+			ratingValueBreakdown: defaultRatingValueBreakdown
 		}
 	}
 	let ratingCount = 0;
 	let negRatings = 0;
 	let posRatings = 0;
 	let ratingSum = 0;
+	let ratingValueBreakdown: RatingValueBreakdown = defaultRatingValueBreakdown;
 
 	ratings.forEach(({ rating }) => {
 		ratingCount++;
 		ratingSum += rating;
+
+		// Check ratings
+		if (rating <= -2) { ratingValueBreakdown.strongDisagree++ } else;
+		if (rating === -1) { ratingValueBreakdown.slightDisagree++ } else;
+		if (rating === 0) { ratingValueBreakdown.neutral++ } else;
+		if (rating === 1) { ratingValueBreakdown.slightAgree++ } else;
+		if (rating >= 2) { ratingValueBreakdown.strongAgree++ } else;
 
 		if (rating < 0) negRatings++;
 		if (0 < rating) posRatings++;
@@ -179,6 +196,7 @@ export const getRatingAggregateSummary = (ratings: Rating[] | undefined): Rating
 		posRatings,
 		ratingCount,
 		ratingAvg: ratingCount ? ratingSum / ratingCount : 0,
+		ratingValueBreakdown,
 	}
 }
 
@@ -205,4 +223,10 @@ export const findUserRatingSubmission = (
 
 	let foundRating = ratings.find(rating => rating.authorId === userId);
 	return foundRating ? foundRating.rating : null;
+}
+
+export const delay = (
+	milliseconds: number = UTIL_FUNCTIONS.delayDefault
+): Promise<void> => {
+	return new Promise(resolve => setTimeout(resolve, milliseconds));
 }

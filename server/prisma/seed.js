@@ -3,11 +3,14 @@ const prisma = new PrismaClient();
 
 async function main() {
 	const defaultIdeaCategories = [
-		{ title: 'community', description: '' },
-		{ title: 'nature', description: '' },
-		{ title: 'arts', description: '' },
-		{ title: 'manufacturing', description: '' },
-		{ title: 'energy', description: '' }
+		{ title: 'bylaw', description: '' },
+		{ title: 'event', description: '' },
+		{ title: 'municipal infrastructure', description: '' },
+		{ title: 'park infrastructure', description: '' },
+		{ title: 'private infrastructure', description: '' },
+		{ title: 'service', description: '' },
+		{ title: 'product', description: '' },
+		{ title: 'other', description: '' },
 	];
 
 	const defaultUserRoles = [ 'resident', 'guest', 'associate', 'worker' ];

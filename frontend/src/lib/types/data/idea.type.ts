@@ -1,13 +1,15 @@
-import { Address } from "node:cluster";
 import { Category } from "./category.type";
+import { Address } from './address.type'
 import { Geo } from "./geo.type";
 import { Proposal } from "./proposal.type";
 import { Project } from "./project.type";
 import { Rating } from "./rating.type";
 import { Comment } from "./comment.type";
+import { IUser } from "./user.type";
 
 export type IdeaState = 'IDEA' | 'PROPOSAL' | 'PROJECT';
-export interface IIdea {
+
+export interface IBasicIdea {
 	id: number;
 	authorId: string;
 	categoryId: number;
@@ -22,7 +24,15 @@ export interface IIdea {
 	active: boolean;
 	createdAt: string;
 	updatedAt: string;
+}
 
+export interface IIdeaWithBasicUser extends IBasicIdea {
+	geo?: Geo,
+	address?: Address,
+	category?: Category
+	author?: IUser;
+}
+export interface IIdea extends IBasicIdea{
 	// Relationships can be nullable 
 	geo?: Geo;
 	address?: Address;

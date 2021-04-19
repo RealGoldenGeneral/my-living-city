@@ -182,8 +182,16 @@ ideaRouter.get(
           category: true,
           projectInfo: true,
           proposalInfo: true,
-          // ratings: true,
-          // comments: true,
+          author: {
+            include: {
+              address: {
+                select: {
+                  postalCode: true,
+                  streetAddress: true,
+                }
+              }
+            }
+          }
         }
       });
       if (!foundIdea) {
@@ -192,8 +200,12 @@ ideaRouter.get(
         });
       }
 
+      const result = { ...foundIdea };
+      delete result.author.password;
+
       res.status(200).json(foundIdea);
     } catch (error) {
+      console.error(error);
       res.status(400).json({
         message: `An Error occured while trying to fetch idea with id ${req.params.ideaId}.`,
         details: {

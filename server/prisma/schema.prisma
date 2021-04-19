@@ -8,7 +8,7 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["orderByRelation"]
+  previewFeatures = ["orderByRelation", "selectRelationCount"]
 }
 
 // Report Entity
@@ -95,13 +95,14 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // Relationships
-  address          UserAddress?
-  geo              UserGeo?
-  userRole         UserRole?         @relation(fields: [userRoleId], references: [id])
-  ideas            Idea[]
-  ideaRatings      IdeaRating[]
-  ideaComments     IdeaComment[]
-  ideaCommentLikes IdeaCommentLike[]
+  address             UserAddress?
+  geo                 UserGeo?
+  userRole            UserRole?             @relation(fields: [userRoleId], references: [id])
+  ideas               Idea[]
+  ideaRatings         IdeaRating[]
+  ideaComments        IdeaComment[]
+  ideaCommentLikes    UserCommentLikes[]
+  ideaCommentDislikes UserCommentDislikes[]
 
 
   // Model overwrites
@@ -271,27 +272,32 @@ model IdeaComment {
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relations
-  author User              @relation(fields: [authorId], references: [id])
-  idea   Idea              @relation(fields: [ideaId], references: [id])
-  likes  IdeaCommentLike[]
+  author   User                  @relation(fields: [authorId], references: [id])
+  idea     Idea                  @relation(fields: [ideaId], references: [id])
+  likes    UserCommentLikes[]
+  dislikes UserCommentDislikes[]
 
   @@map(name: "idea_comment")
 }
 
-model IdeaCommentLike {
-  // keys
-  id            Int    @id @default(autoincrement())
-  authorId      String @map("author_id")
-  ideaCommentId Int    @map("idea_comment_id")
+model UserCommentLikes {
+  id            Int     @id @default(autoincrement())
+  ideaCommentId Int?    @map("idea_comment_id")
+  authorId      String? @map("author_id")
 
-  // fields
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
+  author      User?        @relation(fields: [authorId], references: [id])
 
-  // relations
-  author      User        @relation(fields: [authorId], references: [id])
-  ideaComment IdeaComment @relation(fields: [ideaCommentId], references: [id])
+  @@map(name: "user_comment_likes")
+}
 
-  @@map(name: "idea_comment_like")
+model UserCommentDislikes {
+  id            Int     @id @default(autoincrement())
+  ideaCommentId Int?    @map("idea_comment_id")
+  authorId      String? @map("author_id")
+
+  ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
+  author      User?        @relation(fields: [authorId], references: [id])
+
+  @@map(name: "user_comment_dislikes")
 }

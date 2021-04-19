@@ -9,12 +9,18 @@ export const getAllComments = async (): Promise<Comment[]> => {
   return res.data;
 }
 
-export const getCommentsUnderIdea = async (ideaId: string): Promise<Comment[]> => {
+export const getCommentsUnderIdea = async (
+  ideaId: string,
+  token: string | null | undefined,
+): Promise<Comment[]> => {
   if (!ideaId) {
     throw new Error("An ideaId must be specified to fetch all comments under idea.")
   }
 
-  const res = await axios.get<Comment[]>(`${API_BASE_URL}/comment/getall/${ideaId}`);
+  const res = await axios.get<Comment[]>(
+    `${API_BASE_URL}/comment/getall/${ideaId}`,
+    getAxiosJwtRequestOption(token!)
+  );
   return res.data;
 }
 

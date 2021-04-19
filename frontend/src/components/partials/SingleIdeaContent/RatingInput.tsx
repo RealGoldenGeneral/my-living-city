@@ -127,7 +127,8 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     return buttonText;
   }
   return (
-    <Container>
+    <Container className='mt-5'>
+      <h2 className='text-center'>Submit Your Rating:</h2>
       <Row>
         <Col xs={12} className='text-center'>
           <Ratings
@@ -136,9 +137,6 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
             widgetHoverColors='red'
             changeRating={parseNegativeRatingValue}
           >
-            <Ratings.Widget />
-            <Ratings.Widget />
-            <Ratings.Widget />
             <Ratings.Widget />
             <Ratings.Widget />
           </Ratings>
@@ -152,9 +150,6 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
               widgetHoverColor='grey'
               widgetRatedColor='grey'
             />
-            <Ratings.Widget />
-            <Ratings.Widget />
-            <Ratings.Widget />
             <Ratings.Widget />
             <Ratings.Widget />
           </Ratings>
