@@ -106,6 +106,24 @@ commentRouter.get(
           },
           ...loggedInUser && { ...prismaLikesAndDislikesQuery }
         },
+        orderBy: [
+          {
+            likes: {
+              count: 'asc'
+            }
+          },
+          {
+            dislikes: {
+              count: 'asc'
+            }
+          },
+          {
+            updatedAt: 'desc'
+          },
+          {
+            createdAt: 'desc'
+          }
+        ]
       });
 
       const result = comments.map(comment => ({

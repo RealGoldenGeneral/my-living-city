@@ -75,9 +75,10 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
           <Card.Body>
             <h1>Create an account</h1>
             <Form onSubmit={formik.handleSubmit}>
-              <Form.Group controlId="registerCredentials">
+              <Form.Group>
                 <Form.Label>Email address</Form.Label>
                 <Form.Control
+                  required
                   type="email"
                   name="email"
                   onChange={formik.handleChange}
@@ -86,6 +87,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                 />
                 <Form.Label>Password</Form.Label>
                 <Form.Control
+                  required
                   type="password"
                   name="password"
                   onChange={formik.handleChange}
@@ -93,6 +95,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                 />
                 <Form.Label>Confirm Password</Form.Label>
                 <Form.Control
+                  required
                   type="password"
                   name="confirmPassword"
                   onChange={formik.handleChange}
@@ -100,6 +103,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                 />
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
+                  required
                   type="text"
                   name="fname"
                   onChange={formik.handleChange}
@@ -107,6 +111,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                 />
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
+                  required
                   type="text"
                   name="lname"
                   onChange={formik.handleChange}
@@ -116,10 +121,21 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
               <Form.Group controlId="registerAddress">
                 <Form.Label>Zip / Postal Code</Form.Label>
                 <Form.Control
+                  required
                   type="text"
                   name="address.postalCode"
                   onChange={formik.handleChange}
                   value={formik.values.address?.postalCode}
+                />
+              </Form.Group>
+              <Form.Group controlId="registerAddress">
+                <Form.Label>Street Name</Form.Label>
+                <Form.Control
+                  required
+                  type="text"
+                  name="address.streetAddress"
+                  onChange={formik.handleChange}
+                  value={formik.values.address?.streetAddress}
                 />
               </Form.Group>
               <Form.Group controlId="registerUserType">

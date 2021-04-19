@@ -45,10 +45,10 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
 
   const { ratingValueBreakdown } = ratingSummary
   return (
-    <Container>
+    <Container className='mt-5'>
       <h2>Ratings</h2>
       {ratingValueBreakdown && (
-        <RatingDisplay ratingValueBreakdown={ratingValueBreakdown} />
+        <RatingDisplay ratingValueBreakdown={ratingValueBreakdown} ratingSummary={ratingSummary} />
       )}
       {user && (
         <RatingInput 

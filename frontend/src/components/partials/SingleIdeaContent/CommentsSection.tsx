@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Button, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
-import { useAllCommentsUnderIdea } from '../../../hooks/commentHooks';
+import { useAllCommentsUnderIdea, useCreateCommentMutation } from '../../../hooks/commentHooks';
 import IdeaCommentTile from '../../tiles/IdeaComment/IdeaCommentTile';
 import LoadingSpinner from '../../ui/LoadingSpinner';
 import CommentInput from './CommentInput';
@@ -12,7 +12,7 @@ interface CommentsSection {
 }
 
 const CommentsSection: React.FC<CommentsSection> = () => {
-  const { token } = useContext(UserProfileContext);
+  const { token, user, isUserAuthenticated } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -24,7 +24,28 @@ const CommentsSection: React.FC<CommentsSection> = () => {
   } = useAllCommentsUnderIdea(ideaId, token);
 
 
-  // 
+  const {
+    submitComment,
+    isLoading: commentIsLoading,
+    isError: commentIsError,
+    error: commentError,
+  } = useCreateCommentMutation(parseInt(ideaId), token, user);
+
+  const shouldButtonBeDisabled = (): boolean => {
+    // Unauthenticated
+    let flag = true;
+    if (isUserAuthenticated()) flag = false;
+    if (isLoading) flag = true;
+    return flag;
+  }
+
+  const buttonTextOutput = (): string => {
+    // Unauthenticated
+    let buttonText = 'Please login to comment';
+    if (isUserAuthenticated()) buttonText = 'Submit Comment';
+    if (isLoading) buttonText = 'Saving Comment';
+    return buttonText;
+  }
 
   if (error && isError) {
     return (
@@ -39,9 +60,16 @@ const CommentsSection: React.FC<CommentsSection> = () => {
   }
 
   return (
-    <Container>
-      <h2>Comments</h2>
-      <CommentSubmitModal show={showModal} setShow={setShowModal} />
+    <Container className='mt-5'>
+      <h2>Feedback</h2>
+      <CommentSubmitModal 
+        comments={ideaComments?.slice(0, 10)} 
+        show={showModal} 
+        setShow={setShowModal} 
+        buttonTextOutput={buttonTextOutput}
+        shouldButtonBeDisabled={shouldButtonBeDisabled}
+        submitComment={submitComment}
+      />
       {ideaComments && ideaComments.length === 0 ? (
         <Row className='justify-content-center'>
           <p>No Comments yet!</p>
@@ -53,13 +81,14 @@ const CommentsSection: React.FC<CommentsSection> = () => {
       ))
       }
       <Row>
-        <CommentInput />
-        {/* <Button 
+        {/* <CommentInput /> */}
+        <Button 
           onClick={() => setShowModal(true)}
-          disabled={}
+          block
+          disabled={shouldButtonBeDisabled()}
         >
-          Show Modal
-        </Button> */}
+          {buttonTextOutput()}
+        </Button>
       </Row>
     </Container>
   );

@@ -98,6 +98,8 @@ export const useCreateCommentMutation = (
   )
 
   const submitComment = (newComment: CreateCommentInput) => {
+    // console.log("submit");
+    // console.log(newComment);
     createCommentMutation.mutate(newComment);
   }
 

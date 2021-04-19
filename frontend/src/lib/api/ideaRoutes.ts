@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import { defaultOrderByAggregate, GetAllIdeasWithSort, getAllIdeasWithSortDefault, IdeaOrderByAggregate } from "../types/args/getAllIdeas.args";
-import { IdeaBreakdown, IIdea } from "../types/data/idea.type";
+import { IdeaBreakdown, IIdea, IIdeaWithBasicUser } from "../types/data/idea.type";
 import { CreateIdeaInput } from "../types/input/createIdea.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 
@@ -38,7 +38,7 @@ export const postAllIdeasWithBreakdown = async (
 
 
 export const getSingleIdea = async (ideaId: string) => {
-  const res = await axios.get<IIdea>(`${API_BASE_URL}/idea/get/${ideaId}`);
+  const res = await axios.get<IIdeaWithBasicUser>(`${API_BASE_URL}/idea/get/${ideaId}`);
   return res.data;
 }
 

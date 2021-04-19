@@ -33,7 +33,6 @@ const CommentInput = (props: CommentInputProps) => {
     error
   } = useCreateCommentMutation(parseInt(ideaId), token, user);
 
-
   const submitHandler = (values: { content: string }) => {
     submitComment(values);
     formik.resetForm();

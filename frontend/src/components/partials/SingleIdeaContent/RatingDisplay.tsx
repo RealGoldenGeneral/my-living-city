@@ -1,13 +1,14 @@
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
 import { CanvasJSChart } from 'src/lib/canvasjs';
-import { RatingValueBreakdown } from 'src/lib/types/data/rating.type';
+import { RatingAggregateSummary, RatingValueBreakdown } from 'src/lib/types/data/rating.type';
 
 interface RatingDisplayProps {
-  ratingValueBreakdown: RatingValueBreakdown
+  ratingValueBreakdown: RatingValueBreakdown;
+  ratingSummary: RatingAggregateSummary;
 }
 
-const RatingDisplay = ({ ratingValueBreakdown }: RatingDisplayProps) => {
+const RatingDisplay = ({ ratingValueBreakdown, ratingSummary }: RatingDisplayProps) => {
   const {
     strongDisagree,
     slightDisagree,
@@ -25,28 +26,28 @@ const RatingDisplay = ({ ratingValueBreakdown }: RatingDisplayProps) => {
     data: [{
       type: 'column',
       dataPoints: [
-        { 
-          label: 'Strongly Oppose',   
-          y: strongDisagree   ,
+        {
+          label: 'Strongly Oppose',
+          y: strongDisagree,
           color: '#E74236'
         },
-        { 
-          label: 'Slightly Oppose',   
+        {
+          label: 'Slightly Oppose',
           y: slightDisagree,
           color: '#EA5348'
         },
-        { 
+        {
           label: 'Neutral',
-          y: neutral ,
+          y: neutral,
           color: '#7A7A7A'
         },
-        { 
+        {
           label: 'Slightly Support',
-          y: slightAgree ,
+          y: slightAgree,
           color: '#99DC56',
         },
-        { 
-          label: 'Strongly Support',  
+        {
+          label: 'Strongly Support',
           y: strongAgree,
           color: '#8FD945'
         },
@@ -54,20 +55,29 @@ const RatingDisplay = ({ ratingValueBreakdown }: RatingDisplayProps) => {
     }]
   };
 
+  const {
+    negRatings,
+    posRatings,
+    ratingAvg,
+    ratingCount,
+  } = ratingSummary;
+
   return (
     <Container>
       <Row>
-        <Col>
-          <p>Breakdown</p>
+        <Col className='text-center'>
+          <p>Negative Ratings: {negRatings}</p>
+          <p>Positive Ratings: {posRatings}</p>
         </Col>
-        <Col>
-          <p>Breakdown</p>
+        <Col className='text-center'>
+          <p>Rating Average: {ratingAvg}</p>
+          <p>Number of ratings: {ratingCount}</p>
         </Col>
-        <Col sm={12}>
-          <CanvasJSChart 
-            options={options} 
-          />
-        </Col>
+      </Row>
+      <Row>
+        <CanvasJSChart
+          options={options}
+        />
       </Row>
     </Container>
   );

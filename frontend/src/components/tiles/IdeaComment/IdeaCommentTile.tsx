@@ -25,14 +25,14 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
     }
   } = commentData;
 
-  const { email, fname, lname } = commentData?.author;
+  const { email, fname, lname, address } = commentData?.author;
 
   return (
     <Container fluid className='my-1'>
       <Row className='justify-content-center'>
         <Col className='mx-2'>
           <div className="d-flex flex-column justify-content-start">
-            <span className="name d-block font-weight-bold">{email}</span>
+            <span className="name d-block font-weight-bold">{fname}@{address.streetAddress}</span>
             <span className="date text-black-50">
               Shared publicly - {timeDifference(new Date(), new Date(createdAt))}
             </span>
@@ -49,7 +49,6 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
               <IdeaCommentDislike commentData={commentData} />
             </div>
           )}
-          {/* <p>{JSON.stringify(commentData)}</p> */}
         </Col>
       </Row>
       <hr className="bg-info" />

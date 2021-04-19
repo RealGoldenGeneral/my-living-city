@@ -1,30 +1,85 @@
-import React from 'react'
-import { Button, Modal } from 'react-bootstrap';
+import { useFormik } from 'formik';
+import React, { useState } from 'react'
+import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
+import IdeaCommentTile from 'src/components/tiles/IdeaComment/IdeaCommentTile';
+import { CreateCommentInput } from 'src/lib/types/input/createComment.input';
+import { Comment } from '../../../lib/types/data/comment.type';
 
 interface CommentSubmitModalProps {
-  show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  shouldButtonBeDisabled: () => boolean;
+  buttonTextOutput: () => string;
+  submitComment: (newComment: CreateCommentInput) => void;
+  show: boolean;
+  comments?: Comment[]
 }
 
-const CommentSubmitModal = ({ show, setShow }: CommentSubmitModalProps) => {
-
-
+const CommentSubmitModal = ({
+  setShow,
+  shouldButtonBeDisabled,
+  buttonTextOutput,
+  submitComment,
+  show,
+  comments,
+}: CommentSubmitModalProps) => {
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [commentText, setCommentText] = useState('');
+
+  const submitHandler = (values: CreateCommentInput) => {
+    submitComment(values);
+    setCommentText('');
+    handleClose();
+  };
 
   return (
-    <Modal show={show} onHide={handleClose} size='lg'>
+    <Modal
+      show={show}
+      onHide={handleClose}
+      centered
+      size='lg'
+    >
       <Modal.Header closeButton>
-        <Modal.Title>Modal heading</Modal.Title>
+        <Container>
+          <Row className='justify-content-center'>
+            <Modal.Title>Top 10 Feedbacks</Modal.Title>
+          </Row>
+          <Row className='text-center'>
+            <p>Please take a look at top 10 feedbacks. Do you see your opinion there? Why not encourage participation instead by liking it?</p>
+          </Row>
+
+        </Container>
       </Modal.Header>
-      <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
+      <Modal.Body>
+        {comments && (comments.length <= 0) ? (
+          <p className='text-center'>There are no Feedback Comments for this idea yet. Try posting one!</p>
+        ) : null}
+        {comments && comments?.map(comment => (
+          <IdeaCommentTile commentData={comment} />
+        ))}
+      </Modal.Body>
+      <Modal.Footer className='d-flex flex-column'>
+        <textarea
+          className='w-100'
+          rows={3}
+          value={commentText}
+          onChange={e => setCommentText(e.target.value)}
+        />
+        <div className='w-100 d-flex justify-content-end'>
+          <Button
+            className='mr-3'
+            variant="secondary"
+            onClick={handleClose}
+          >
+            Close
           </Button>
-        <Button variant="primary" onClick={handleClose}>
-          Save Changes
+          <Button
+            variant="primary"
+            disabled={shouldButtonBeDisabled()}
+            onClick={() => submitHandler({ content: commentText })}
+          >
+            {buttonTextOutput()}
           </Button>
+        </div>
       </Modal.Footer>
     </Modal>
   );
