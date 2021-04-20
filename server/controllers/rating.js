@@ -387,10 +387,43 @@ ideaRatingRouter.delete(
 )
 
 ideaRatingRouter.get(
-  '/check/:ideaId',
+  '/aggregate/:ideaId',
   async (req, res, next) => {
     try {
       const parsedIdeaId = parseInt(req.params.ideaId);
+
+      // Check if idea exists
+      const foundIdea = await prisma.idea.findFirst({
+        where: {
+          id: parsedIdeaId
+        }
+      });
+      if (!foundIdea) {
+        return res.status(400).json({
+          message: `The Idea with listed id ${parsedIdeaId} does not exist.`,
+        });
+      }
+
+      // Grab data
+      const negativeRatings = await prisma.ideaRating.aggregate({
+        where: {
+          ideaId: parsedIdeaId,
+          rating: {
+            lt: 0
+          }
+        },
+        count: true,
+      });
+
+      const positiveRatings = await prisma.ideaRating.aggregate({
+        where: {
+          ideaId: parsedIdeaId,
+          rating: {
+            gt: 0
+          }
+        },
+        count: true,
+      });
       const aggregations = await prisma.ideaRating.aggregate({
         where: {
           ideaId: parsedIdeaId,
@@ -400,7 +433,19 @@ ideaRatingRouter.get(
         },
         count: true,
       });
-      res.status(200).json(aggregations);
+
+      // Shape data
+      const result = {
+        count: aggregations.count,
+        avg: aggregations.avg.rating,
+        negativeRatings: {
+          count: negativeRatings.count,
+        },
+        positiveRatings: {
+          count: positiveRatings.count,
+        },
+      };
+      res.status(200).json(result);
     } catch (error) {
       res.status(400).json({
         message: `An error occured while trying to check the ratings of idea #${req.params.ideaId}.`,

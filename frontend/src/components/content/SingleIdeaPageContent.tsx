@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import UserProfileContext from 'src/contexts/UserProfile.Context';
+import { useAllCommentsUnderIdea } from 'src/hooks/commentHooks';
 import { IIdea, IIdeaWithBasicUser } from '../../lib/types/data/idea.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';

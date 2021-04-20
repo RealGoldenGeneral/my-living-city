@@ -1,11 +1,10 @@
 import { useState } from "react"
 import { Comment } from '../lib/types/data/comment.type'
 import { useMutation, useQueryClient } from "react-query";
-import { dislikeCommentRequest, likeCommentRequest } from '../lib/api/commentInteractionRoutes'
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
-import { API_BASE_URL } from "src/lib/constants";
-import { getAxiosJwtRequestOption } from "src/lib/api/axiosRequestOptions";
+import { API_BASE_URL } from "../lib/constants";
+import { getAxiosJwtRequestOption } from "../lib/api/axiosRequestOptions";
 import { delay } from "../lib/utilityFunctions";
 
 export const useCommentLikeMutation = (

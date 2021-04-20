@@ -1,6 +1,6 @@
 import axios from "axios"
 import { API_BASE_URL } from "../constants"
-import { Comment } from "../types/data/comment.type"
+import { Comment, CommentAggregateCount } from "../types/data/comment.type"
 import { CreateCommentInput } from "../types/input/createComment.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 
@@ -20,6 +20,17 @@ export const getCommentsUnderIdea = async (
   const res = await axios.get<Comment[]>(
     `${API_BASE_URL}/comment/getall/${ideaId}`,
     getAxiosJwtRequestOption(token!)
+  );
+  return res.data;
+}
+
+export const getCommentAggregateUnderIdea = async (ideaId: string) => {
+  if (!ideaId) {
+    throw new Error("An ideaId must be specified to fetch all comments under idea.")
+  }
+
+  const res = await axios.get<CommentAggregateCount>(
+    `${API_BASE_URL}/comment/aggregate/${ideaId}`
   );
   return res.data;
 }

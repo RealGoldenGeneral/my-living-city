@@ -1,17 +1,9 @@
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
 import { useFormik } from 'formik';
 import { useContext, useEffect } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { useMutation, useQueryClient } from 'react-query';
 import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
-import { getAxiosJwtRequestOption } from '../../../lib/api/axiosRequestOptions';
-import { API_BASE_URL } from '../../../lib/constants';
-import { Comment } from '../../../lib/types/data/comment.type';
-import { CreateCommentInput } from '../../../lib/types/input/createComment.input';
-import { FetchError } from '../../../lib/types/types';
-import { useCreateCommentMutation } from 'src/hooks/commentHooks';
+import { useCreateCommentMutation } from '../../../hooks/commentHooks';
 
 interface CommentInputProps {
 
@@ -20,10 +12,6 @@ interface CommentInputProps {
 const CommentInput = (props: CommentInputProps) => {
   const { token, user } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
-  const queryClient = useQueryClient();
-  const previousCommentsKey = ['comments', ideaId];
-  // https://react-query.tanstack.com/guides/mutations#persist-mutations
-  // https://stackoverflow.com/questions/65760158/react-query-mutation-typescript
 
   const {
     submitComment,

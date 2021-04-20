@@ -8,7 +8,7 @@ const CategoriesSection = (props: CategoriesSectionProps) => {
 
   return (
     <Container className="py-5">
-      <h2 className="pb-1 border-bottom display-4 text-center">Project Categories</h2>
+      <h2 className="pb-1 border-bottom display-4 text-center">Impact Areas</h2>
       <Row className='justify-content-center g-5 pt-4'>
         <Col xs={6} sm={4} lg={2}>
           <Image className='cat-image' fluid src='/categories/MLC-Icons-Green-01.png' />

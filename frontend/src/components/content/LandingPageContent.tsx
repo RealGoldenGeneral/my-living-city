@@ -1,12 +1,11 @@
 import React from 'react'
 import { Container, Row, Spinner } from 'react-bootstrap';
-import { IdeaBreakdown, IIdea } from '../../lib/types/data/idea.type';
+import { IdeaBreakdown } from '../../lib/types/data/idea.type';
 import { FetchError } from '../../lib/types/types';
 import CategoriesSection from '../partials/LandingContent/CategoriesSection';
 import DescriptionSection from '../partials/LandingContent/DescriptionSection';
 import HeroBannerSection from '../partials/LandingContent/HeroBannerSection';
 import NewAndTrendingSection from '../partials/LandingContent/NewAndTrendingSection';
-import LoadingSpinner from '../ui/LoadingSpinner';
 
 interface LandingPageContentProps {
   topIdeas: IdeaBreakdown[] | undefined;

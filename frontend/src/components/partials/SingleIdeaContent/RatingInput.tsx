@@ -12,6 +12,7 @@ import { FetchError } from '../../../lib/types/types';
 // https://github.com/microsoft/TypeScript/issues/22217
 // https://github.com/ekeric13/react-ratings-declarative
 import Ratings from 'react-ratings-declarative';
+import { useCreateRatingMutation } from 'src/hooks/ratingHooks';
 
 interface RatingInputProps {
   userHasRated: boolean,
@@ -22,57 +23,22 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
   const { token, user } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
   const [ ratingValue, setRatingValue ] = useState<number>(userSubmittedRating ?? 0);
-  const queryClient = useQueryClient();
-  const previousRatingsKey = ['ratings', ideaId];
 
-  const ratingMutation = useMutation<Rating, FetchError, CreateRatingInput>(
-    newRating => axios.post(
-      `${API_BASE_URL}/rating/create/${ideaId}`,
-      newRating,
-      getAxiosJwtRequestOption(token!),
-    ),
-    {
-      onMutate: async (newRating) => {
-        const { id: userId } = user!;
-
-        // snapshot previous value
-        const previousRatings = queryClient.getQueryData<Rating[]>(previousRatingsKey);
-
-        // Cancel outgoing refetches
-        await queryClient.cancelQueries(previousRatingsKey);
-
-        // Optimistically update to new value
-        if (previousRatings) {
-          queryClient.setQueryData<Rating[]>(
-            previousRatingsKey,
-            [
-              ...previousRatings,
-              {
-                id: Math.random(),
-                authorId: userId,
-                ideaId: parseInt(ideaId!),
-                rating: newRating.rating,
-                ratingExplanation: newRating.ratingExplanation,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              }
-            ]
-          )
-        }
-        console.log(previousRatings);
-
-        return previousRatings
-      },
-      onError: (err, variables, context: any) => {
-        if (context) {
-          console.log("Error context", context)
-        }
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(previousRatingsKey);
-      }
-    }
-  )
+  const {
+    submitRatingMutation,
+    isLoading,
+    isError,
+    error,
+    isSuccess
+  } = useCreateRatingMutation(parseInt(ideaId), token, user);
+  
+  const submitHandler = () => {
+    const payload = {
+      rating: ratingValue,
+      ratingExplanation: ''
+    };
+    submitRatingMutation(payload);
+  }
 
   const parseNegativeRatingValue = (val: number): void => {
     if (userHasRated) return;
@@ -88,15 +54,6 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     setRatingValue(parsedVal);
   }
 
-  const submitHandler = () => {
-    const payload = {
-      rating: ratingValue,
-      ratingExplanation: ''
-    };
-    ratingMutation.mutate(payload);
-  }
-
-  const { isLoading, isError, isSuccess, error } = ratingMutation;
 
   // Loads user submitted rating
   useEffect(() => {

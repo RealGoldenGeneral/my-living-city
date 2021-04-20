@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { Button, Container, Row } from 'react-bootstrap';
+import { UseQueryResult } from 'react-query/types/react';
 import { useParams } from 'react-router';
+import { FetchError } from 'src/lib/types/types';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 import { useAllCommentsUnderIdea, useCreateCommentMutation } from '../../../hooks/commentHooks';
 import IdeaCommentTile from '../../tiles/IdeaComment/IdeaCommentTile';

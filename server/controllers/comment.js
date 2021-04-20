@@ -6,6 +6,7 @@ const commentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 const { includes } = require('lodash');
 const { checkIfUserIsLoggedIn } = require('../middlewares/checkAuth');
+const { compareCommentsBasedOnLikesAndDislikes } = require('../lib/sortingFunctions');
 
 commentRouter.get(
   '/',
@@ -109,19 +110,11 @@ commentRouter.get(
         orderBy: [
           {
             likes: {
-              count: 'asc'
-            }
-          },
-          {
-            dislikes: {
-              count: 'asc'
+              count: 'desc'
             }
           },
           {
             updatedAt: 'desc'
-          },
-          {
-            createdAt: 'desc'
           }
         ]
       });
@@ -131,6 +124,8 @@ commentRouter.get(
         likes: comment.likes ?? [],
         dislikes: comment.dislikes ?? [],
       }))
+
+      result.sort(compareCommentsBasedOnLikesAndDislikes);
 
       res.status(200).json(result);
     } catch (error) {
@@ -319,17 +314,20 @@ commentRouter.delete(
 
 
 commentRouter.get(
-  '/check/:ideaId',
+  '/aggregate/:ideaId',
   async (req, res, next) => {
     try {
       const parsedIdeaId = parseInt(req.params.ideaId);
       const aggregations = await prisma.ideaComment.aggregate({
-        where: {
-          ideaId: parsedIdeaId,
-        },
-        count: true,
+        where: { ideaId: parsedIdeaId },
+        count: {
+          _all: true,
+        }
       })
-      res.status(200).json(aggregations);
+      const result = {
+        count: aggregations.count._all,
+      }
+      res.status(200).json(result);
     } catch (error) {
       res.status(400).json({
         message: `An error occured while trying to check the comments of idea #${req.params.ideaId}.`,

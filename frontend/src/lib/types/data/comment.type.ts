@@ -3,6 +3,10 @@ export interface CommentLikeAndDislikeAggregation {
   dislikes: number;
 }
 
+export interface CommentAggregateCount {
+  count: number;
+}
+
 export interface ParsedCommentAuthor {
   id: string;
   email: string;

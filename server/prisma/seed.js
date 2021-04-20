@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function main() {
 	const defaultIdeaCategories = [
-		{ title: 'bylaw', description: '' },
+		{ title: 'policy', description: '' },
 		{ title: 'event', description: '' },
 		{ title: 'municipal infrastructure', description: '' },
 		{ title: 'park infrastructure', description: '' },
@@ -13,7 +13,12 @@ async function main() {
 		{ title: 'other', description: '' },
 	];
 
-	const defaultUserRoles = [ 'resident', 'guest', 'associate', 'worker' ];
+	const defaultUserRoles = [
+		'resident', 
+		'guest', 
+		'associate', 
+		'worker' 
+	];
 
 	const resolvedCategories = await Promise.all(
 		defaultIdeaCategories.map(({ title, description }) => (
@@ -23,11 +28,11 @@ async function main() {
 				},
 				update: {
 					title,
-					description
+					description,
 				},
 				create: {
 					title,
-					description
+					description,
 				}
 			})
 		))

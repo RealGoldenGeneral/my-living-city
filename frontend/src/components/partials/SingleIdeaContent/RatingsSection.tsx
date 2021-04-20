@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { useCommentAggregateUnderIdea } from 'src/hooks/commentHooks';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 import { useAllRatingsUnderIdea } from '../../../hooks/ratingHooks';
 import { RatingAggregateSummary } from '../../../lib/types/data/rating.type';
@@ -18,6 +19,12 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
   const { ideaId } = useParams<{ ideaId: string }>();
   
   const { data: ratings, isLoading, isError, error } = useAllRatingsUnderIdea(ideaId);
+  const { 
+    data: commentAggregate,
+    isLoading: aggregateIsLoading,
+    isError: aggregateIsError,
+    error: aggregateError,
+  } = useCommentAggregateUnderIdea(ideaId);
   const [ userHasRated, setUserHasRated ] = 
     useState<boolean>(checkIfUserHasRated(ratings, user?.id));
   const [ userSubmittedRating, setUserHasSubmittedRating ] =
@@ -31,13 +38,14 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
     setUserHasSubmittedRating(findUserRatingSubmission(ratings, user?.id));
   }, [ ratings ])
 
-  if (error && isError) {
+
+  if ((error && isError) || (aggregateIsError && aggregateError)) {
     return (
       <p>An error occured while fetching comments</p>
     )
   }
 
-  if (isLoading) {
+  if (isLoading || aggregateIsLoading) {
     return (
       <LoadingSpinner />
     )
@@ -47,8 +55,12 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
   return (
     <Container className='mt-5'>
       <h2>Ratings</h2>
-      {ratingValueBreakdown && (
-        <RatingDisplay ratingValueBreakdown={ratingValueBreakdown} ratingSummary={ratingSummary} />
+      {ratingValueBreakdown && commentAggregate && (
+        <RatingDisplay 
+          ratingValueBreakdown={ratingValueBreakdown} 
+          ratingSummary={ratingSummary}
+          commentAggregate={commentAggregate}
+        />
       )}
       {user && (
         <RatingInput 

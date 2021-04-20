@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { IdeaBreakdown, IIdea, IIdeaWithBasicUser } from '../lib/types/data/idea.type';
 import { FetchError } from '../lib/types/types';
 import { getAllIdeas, getSingleIdea, postAllIdeasWithBreakdown, postAllIdeasWithSort } from '../lib/api/ideaRoutes';
-import { GetAllIdeasWithSort, getAllIdeasWithSortDefault, IdeaOrderByAggregate } from '../lib/types/args/getAllIdeas.args';
+import { GetAllIdeasWithSort, getAllIdeasWithSortDefault } from '../lib/types/args/getAllIdeas.args';
 
 export const useIdeas = (
 ) => {

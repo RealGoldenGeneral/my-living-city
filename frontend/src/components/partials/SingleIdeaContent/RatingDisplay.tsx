@@ -1,14 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
-import { CanvasJSChart } from 'src/lib/canvasjs';
-import { RatingAggregateSummary, RatingValueBreakdown } from 'src/lib/types/data/rating.type';
+import { useQueryClient } from 'react-query';
+import { CanvasJSChart } from '../../../lib/canvasjs';
+import { Comment, CommentAggregateCount } from '../../../lib/types/data/comment.type';
+import { RatingAggregateSummary, RatingValueBreakdown } from '../../../lib/types/data/rating.type';
 
 interface RatingDisplayProps {
   ratingValueBreakdown: RatingValueBreakdown;
   ratingSummary: RatingAggregateSummary;
+  commentAggregate: CommentAggregateCount;
 }
 
-const RatingDisplay = ({ ratingValueBreakdown, ratingSummary }: RatingDisplayProps) => {
+const RatingDisplay = ({
+  ratingValueBreakdown,
+  ratingSummary,
+  commentAggregate
+}: RatingDisplayProps) => {
   const {
     strongDisagree,
     slightDisagree,
@@ -72,6 +79,7 @@ const RatingDisplay = ({ ratingValueBreakdown, ratingSummary }: RatingDisplayPro
         <Col className='text-center'>
           <p>Rating Average: {ratingAvg}</p>
           <p>Number of ratings: {ratingCount}</p>
+          <p>Total Comments: {commentAggregate.count}</p>
         </Col>
       </Row>
       <Row>

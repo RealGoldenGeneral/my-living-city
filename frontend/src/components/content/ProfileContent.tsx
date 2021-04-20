@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, Container, Row, Table } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 

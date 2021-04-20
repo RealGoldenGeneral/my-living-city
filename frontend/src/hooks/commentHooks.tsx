@@ -1,13 +1,14 @@
 import axios from 'axios'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { getAxiosJwtRequestOption } from 'src/lib/api/axiosRequestOptions'
-import { API_BASE_URL } from 'src/lib/constants'
-import { CreateCommentInput } from 'src/lib/types/input/createComment.input'
-import { getAllComments, getCommentsUnderIdea } from '../lib/api/commentRoutes'
-import { Comment } from '../lib/types/data/comment.type'
+import { getAxiosJwtRequestOption } from '../lib/api/axiosRequestOptions'
+import { API_BASE_URL } from '../lib/constants'
+import { CreateCommentInput } from '../lib/types/input/createComment.input'
+import { getAllComments, getCommentAggregateUnderIdea, getCommentsUnderIdea } from '../lib/api/commentRoutes'
+import { Comment, CommentAggregateCount } from '../lib/types/data/comment.type'
 import { FetchError } from '../lib/types/types'
 import { v4 as uuidv4 } from 'uuid';
-import { IUser } from 'src/lib/types/data/user.type'
+import { IUser } from '../lib/types/data/user.type'
+import { useEffect, useState } from 'react'
 
 export const useAllComments = () => {
   return useQuery<Comment[], FetchError>(
@@ -26,12 +27,26 @@ export const useAllCommentsUnderIdea = (ideaId: string, token: string | null) =>
   )
 }
 
+export const useCommentAggregateUnderIdea = (ideaId: string) => {
+  return useQuery<CommentAggregateCount, FetchError>(
+    ['comment-aggregate', ideaId],
+    () => getCommentAggregateUnderIdea(ideaId),
+    {
+      staleTime: 5 * 60 * 1000 // 5 minutes
+    }
+  )
+}
+
+
+// https://react-query.tanstack.com/guides/mutations#persist-mutations
+// https://stackoverflow.com/questions/65760158/react-query-mutation-typescript
 export const useCreateCommentMutation = (
   ideaId: number,
   token: string | null,
   user: IUser | null,
 ) => {
   const previousCommentsKey = ['comments', String(ideaId)];
+  const previousCommentAggregateKey = ['comment-aggregate', String(ideaId)];
   const queryClient = useQueryClient();
 
   const createCommentMutation = useMutation<Comment, FetchError, CreateCommentInput>(
@@ -45,10 +60,22 @@ export const useCreateCommentMutation = (
         const { id: userId, fname, lname, email, address } = user!
 
         // snapshot previous value
+        const previousCommentAggregate = 
+          queryClient.getQueryData<CommentAggregateCount>(previousCommentAggregateKey);
         const previousComments = queryClient.getQueryData<Comment[]>(previousCommentsKey);
 
         // Cancel outgoing refetches
+        await queryClient.cancelQueries(previousCommentAggregateKey);
         await queryClient.cancelQueries(previousCommentsKey);
+
+        // Optimistically update aggregate value
+        if (previousCommentAggregate) {
+          queryClient.setQueryData<CommentAggregateCount>(previousCommentAggregateKey,
+            {
+              count: previousCommentAggregate.count + 1
+            }
+          )
+        }
 
         // Optimistically update to new value
         if (previousComments) {
