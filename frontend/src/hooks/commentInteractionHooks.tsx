@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Comment } from '../lib/types/data/comment.type'
+import { IComment } from '../lib/types/data/comment.type'
 import { useMutation, useQueryClient } from "react-query";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
@@ -27,7 +27,7 @@ export const useCommentLikeMutation = (
     {
       onMutate: async () => {
         // snapshot previous value
-        const previousComments = queryClient.getQueryData<Comment[]>(previousCommentsKey);
+        const previousComments = queryClient.getQueryData<IComment[]>(previousCommentsKey);
 
         // Cancel outgoing refetches
         await queryClient.cancelQueries(previousCommentsKey);
@@ -36,7 +36,7 @@ export const useCommentLikeMutation = (
         const foundIndex = previousComments?.findIndex(comment => comment.id === commentId);
         // DEEP copy nested values
         // https://stackoverflow.com/questions/61421873/object-copy-using-spread-operator-actually-shallow-or-deep
-        let editedComments = JSON.parse(JSON.stringify(previousComments)) as Comment[];
+        let editedComments = JSON.parse(JSON.stringify(previousComments)) as IComment[];
 
         // Change aggregates if previous comments exist
         if (previousComments && foundIndex != null) {
@@ -60,7 +60,7 @@ export const useCommentLikeMutation = (
             })
           }
 
-          queryClient.setQueryData<Comment[]>(previousCommentsKey, editedComments);
+          queryClient.setQueryData<IComment[]>(previousCommentsKey, editedComments);
         }
 
         console.log("Edited Previous comments", previousComments);
@@ -71,7 +71,7 @@ export const useCommentLikeMutation = (
         console.error('error', err)
         console.log('context', context)
         if (context) {
-          queryClient.setQueryData<Comment[]>(previousCommentsKey, context);
+          queryClient.setQueryData<IComment[]>(previousCommentsKey, context);
         }
       },
       onSettled: async () => {
@@ -113,7 +113,7 @@ export const useCommentDislikeMutation = (
     {
       onMutate: async () => {
         // snapshot previous value
-        const previousComments = queryClient.getQueryData<Comment[]>(previousCommentsKey);
+        const previousComments = queryClient.getQueryData<IComment[]>(previousCommentsKey);
 
         // Cancel outgoing refetches
         await queryClient.cancelQueries(previousCommentsKey);
@@ -124,7 +124,7 @@ export const useCommentDislikeMutation = (
         // Change aggregates if previous comments exist
         if (previousComments && foundIndex != null) {
           // Deep copy nested values
-          const editedComments = JSON.parse(JSON.stringify(previousComments)) as Comment[];
+          const editedComments = JSON.parse(JSON.stringify(previousComments)) as IComment[];
 
           // Check if user has liked
           if (0 < editedComments[foundIndex].likes.length) {
@@ -146,7 +146,7 @@ export const useCommentDislikeMutation = (
             })
           }
 
-          queryClient.setQueryData<Comment[]>(previousCommentsKey, editedComments);
+          queryClient.setQueryData<IComment[]>(previousCommentsKey, editedComments);
         }
 
         return previousComments;
@@ -156,7 +156,7 @@ export const useCommentDislikeMutation = (
         console.error('error', err)
         console.log('context', context)
         if (context) {
-          queryClient.setQueryData<Comment[]>(previousCommentsKey, context);
+          queryClient.setQueryData<IComment[]>(previousCommentsKey, context);
         }
       },
       onSettled: async () => {

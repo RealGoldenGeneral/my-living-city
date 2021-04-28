@@ -1,10 +1,10 @@
 import React from 'react'
 import { Button, Card } from 'react-bootstrap';
-import { IdeaBreakdown } from '../../lib/types/data/idea.type';
+import { IIdeaWithAggregations } from '../../lib/types/data/idea.type';
 import { timeDifference, truncateString } from '../../lib/utilityFunctions'
 
 interface ideaTileProps {
-  ideaData: IdeaBreakdown,
+  ideaData: IIdeaWithAggregations,
   showFooter: boolean,
 }
 

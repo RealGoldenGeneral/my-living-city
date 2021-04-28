@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Card, Col, Container, Row } from 'react-bootstrap';
 import { useQueryClient } from 'react-query';
 import { CanvasJSChart } from '../../../lib/canvasjs';
-import { Comment, CommentAggregateCount } from '../../../lib/types/data/comment.type';
-import { RatingAggregateSummary, RatingValueBreakdown } from '../../../lib/types/data/rating.type';
+import { IComment, ICommentAggregateCount } from '../../../lib/types/data/comment.type';
+import { IRatingAggregateSummary, IRatingValueBreakdown } from '../../../lib/types/data/rating.type';
 
 interface RatingDisplayProps {
-  ratingValueBreakdown: RatingValueBreakdown;
-  ratingSummary: RatingAggregateSummary;
-  commentAggregate: CommentAggregateCount;
+  ratingValueBreakdown: IRatingValueBreakdown;
+  ratingSummary: IRatingAggregateSummary;
+  commentAggregate: ICommentAggregateCount;
 }
 
 const RatingDisplay = ({

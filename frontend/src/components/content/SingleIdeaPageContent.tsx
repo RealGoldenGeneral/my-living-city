@@ -1,15 +1,11 @@
-import React, { useContext } from 'react'
 import { Col, Container as div, Row } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import UserProfileContext from 'src/contexts/UserProfile.Context';
-import { useAllCommentsUnderIdea } from 'src/hooks/commentHooks';
-import { IIdea, IIdeaWithBasicUser } from '../../lib/types/data/idea.type';
+import { IIdeaWithRelationship } from '../../lib/types/data/idea.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
 import RatingsSection from '../partials/SingleIdeaContent/RatingsSection';
 
 interface SingleIdeaPageContentProps {
-  ideaData: IIdeaWithBasicUser
+  ideaData: IIdeaWithRelationship
 }
 
 const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData }) => {
@@ -30,7 +26,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
   const parsedDate = new Date(createdAt);
 
   return (
-    <div className='single-idea-content'>
+    <div className='single-idea-content pt-1'>
       <Row className='bg-mlc-shade-grey py-5'>
         <Col>
           <h1 className='h1'>{capitalizeString(title)}</h1>

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useCommentAggregateUnderIdea } from 'src/hooks/commentHooks';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 import { useAllRatingsUnderIdea } from '../../../hooks/ratingHooks';
-import { RatingAggregateSummary } from '../../../lib/types/data/rating.type';
+import { IRatingAggregateSummary } from '../../../lib/types/data/rating.type';
 import { checkIfUserHasRated, findUserRatingSubmission, getRatingAggregateSummary } from '../../../lib/utilityFunctions';
 import LoadingSpinner from '../../ui/LoadingSpinner';
 import RatingDisplay from './RatingDisplay';
@@ -30,7 +30,7 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({ }) => {
   const [userSubmittedRating, setUserHasSubmittedRating] =
     useState<number | null>(findUserRatingSubmission(ratings, user?.id))
   const [ratingSummary, setRatingSummary] =
-    useState<RatingAggregateSummary>(getRatingAggregateSummary(ratings))
+    useState<IRatingAggregateSummary>(getRatingAggregateSummary(ratings))
 
   useEffect(() => {
     setRatingSummary(getRatingAggregateSummary(ratings));
@@ -64,14 +64,14 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({ }) => {
           />
         )}
       </Row>
+      {user && (
       <Row className='py-5 bg-mlc-shade-grey'>
-        {user && (
-          <RatingInput
-            userHasRated={userHasRated}
-            userSubmittedRating={userSubmittedRating}
-          />
-        )}
+        <RatingInput
+          userHasRated={userHasRated}
+          userSubmittedRating={userSubmittedRating}
+        />
       </Row>
+      )}
     </Container>
   );
 }

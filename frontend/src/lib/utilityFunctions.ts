@@ -1,7 +1,7 @@
 import { TOKEN_EXPIRY, UTIL_FUNCTIONS } from './constants';
-import { Rating, RatingAggregateSummary, RatingValueBreakdown } from './types/data/rating.type';
+import { IRating, IRatingAggregateSummary, IRatingValueBreakdown } from './types/data/rating.type';
 import { IUser } from './types/data/user.type';
-import { FetchError } from './types/types';
+import { IFetchError } from './types/types';
 
 /**
  * Stringifies given Object and stores it in local storage using the 
@@ -67,10 +67,10 @@ export const capitalizeString = (s: string) => {
  * 
  * @param genericMessage Fallback error message if no specific message is received from server
  * @param error An error object thrown that could be any
- * @returns {FetchError} Error details
+ * @returns {IFetchError} Error details
  */
-export const handlePotentialAxiosError = (genericMessage: string, error: any): FetchError => {
-	let errorObj: FetchError = {
+export const handlePotentialAxiosError = (genericMessage: string, error: any): IFetchError => {
+	let errorObj: IFetchError = {
 		message: ''
 	};
 	if (error.response) {
@@ -165,7 +165,7 @@ export const truncateString = (
  * @param ratings 
  * @returns 
  */
-export const getRatingAggregateSummary = (ratings: Rating[] | undefined): RatingAggregateSummary => {
+export const getRatingAggregateSummary = (ratings: IRating[] | undefined): IRatingAggregateSummary => {
 	const defaultRatingValueBreakdown = {
 		strongDisagree: 0,
 		slightDisagree: 0,
@@ -187,7 +187,7 @@ export const getRatingAggregateSummary = (ratings: Rating[] | undefined): Rating
 	let negRatings = 0;
 	let posRatings = 0;
 	let ratingSum = 0;
-	let ratingValueBreakdown: RatingValueBreakdown = defaultRatingValueBreakdown;
+	let ratingValueBreakdown: IRatingValueBreakdown = defaultRatingValueBreakdown;
 
 	ratings.forEach(({ rating }) => {
 		ratingCount++;
@@ -213,7 +213,7 @@ export const getRatingAggregateSummary = (ratings: Rating[] | undefined): Rating
 	}
 }
 
-export const checkIfUserHasRated = (ratings: Rating[] | undefined, userId: string | undefined): boolean => {
+export const checkIfUserHasRated = (ratings: IRating[] | undefined, userId: string | undefined): boolean => {
 	let flag = false;
 	if (!ratings || !userId) return flag;
 
@@ -227,7 +227,7 @@ export const checkIfUserHasRated = (ratings: Rating[] | undefined, userId: strin
 }
 
 export const findUserRatingSubmission = (
-	ratings?: Rating[], 
+	ratings?: IRating[], 
 	userId?: string
 ): number | null => {
 	if (!ratings || !userId) {

@@ -4,10 +4,10 @@ import { IconContext } from 'react-icons/lib';
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';
 import { useCommentDislikeMutation } from 'src/hooks/commentInteractionHooks';
 import { MLC_COLOUR_THEME } from 'src/lib/constants';
-import { Comment } from '../../../lib/types/data/comment.type';
+import { IComment } from '../../../lib/types/data/comment.type';
 
 interface IdeaCommentLikeProps {
-  commentData: Comment
+  commentData: IComment
 }
 
 const IdeaCommentDislike = ({ commentData }: IdeaCommentLikeProps) => {

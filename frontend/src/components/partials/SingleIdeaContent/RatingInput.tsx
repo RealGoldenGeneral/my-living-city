@@ -6,9 +6,9 @@ import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 import { getAxiosJwtRequestOption } from '../../../lib/api/axiosRequestOptions';
 import { API_BASE_URL } from '../../../lib/constants';
-import { Rating } from '../../../lib/types/data/rating.type';
-import { CreateRatingInput } from '../../../lib/types/input/createRating.input';
-import { FetchError } from '../../../lib/types/types';
+import { IRating } from '../../../lib/types/data/rating.type';
+import { ICreateRatingInput } from '../../../lib/types/input/createRating.input';
+import { IFetchError } from '../../../lib/types/types';
 // https://github.com/microsoft/TypeScript/issues/22217
 // https://github.com/ekeric13/react-ratings-declarative
 import Ratings from 'react-ratings-declarative';
