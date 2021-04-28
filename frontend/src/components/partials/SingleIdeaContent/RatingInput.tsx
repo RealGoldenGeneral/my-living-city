@@ -1,14 +1,7 @@
-import axios from 'axios';
 import { useContext, useEffect, useState } from 'react'
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { useMutation, useQueryClient } from 'react-query';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
-import { getAxiosJwtRequestOption } from '../../../lib/api/axiosRequestOptions';
-import { API_BASE_URL } from '../../../lib/constants';
-import { IRating } from '../../../lib/types/data/rating.type';
-import { ICreateRatingInput } from '../../../lib/types/input/createRating.input';
-import { IFetchError } from '../../../lib/types/types';
 // https://github.com/microsoft/TypeScript/issues/22217
 // https://github.com/ekeric13/react-ratings-declarative
 import Ratings from 'react-ratings-declarative';

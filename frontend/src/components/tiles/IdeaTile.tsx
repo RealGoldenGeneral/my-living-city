@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, Card } from 'react-bootstrap';
 import { IIdeaWithAggregations } from '../../lib/types/data/idea.type';
 import { timeDifference, truncateString } from '../../lib/utilityFunctions'

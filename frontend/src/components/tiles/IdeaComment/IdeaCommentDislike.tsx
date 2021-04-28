@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { FaRegThumbsDown } from 'react-icons/fa'
 import { IconContext } from 'react-icons/lib';
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';

@@ -1,4 +1,3 @@
-import { useFormik } from 'formik';
 import React, { useState } from 'react'
 import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
 import IdeaCommentTile from 'src/components/tiles/IdeaComment/IdeaCommentTile';

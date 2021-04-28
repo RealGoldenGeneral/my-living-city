@@ -8,7 +8,6 @@ import { IComment, ICommentAggregateCount } from '../lib/types/data/comment.type
 import { IFetchError } from '../lib/types/types'
 import { v4 as uuidv4 } from 'uuid';
 import { IUser } from '../lib/types/data/user.type'
-import { useEffect, useState } from 'react'
 
 export const useAllComments = () => {
   return useQuery<IComment[], IFetchError>(

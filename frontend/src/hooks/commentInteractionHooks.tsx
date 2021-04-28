@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { IComment } from '../lib/types/data/comment.type'
 import { useMutation, useQueryClient } from "react-query";
 import { v4 as uuidv4 } from 'uuid';

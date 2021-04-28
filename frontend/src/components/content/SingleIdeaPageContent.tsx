@@ -1,4 +1,4 @@
-import { Col, Container as div, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { IIdeaWithRelationship } from '../../lib/types/data/idea.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';

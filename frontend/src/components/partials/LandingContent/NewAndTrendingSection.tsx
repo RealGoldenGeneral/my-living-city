@@ -1,4 +1,3 @@
-import React from 'react'
 import { Container, Row, Col } from 'react-bootstrap';
 import { IIdeaWithAggregations } from '../../../lib/types/data/idea.type';
 import IdeaTile from '../../tiles/IdeaTile';
