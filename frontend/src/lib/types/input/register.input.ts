@@ -1,13 +1,13 @@
-import { AddressInput } from "./address.input";
-import { GeoInput } from "./geo.input";
+import { IAddressInput } from "./address.input";
+import { IGeoInput } from "./geo.input";
 
-export interface RegisterInput {
+export interface IRegisterInput {
   userRoleId?: number;
   email: string;
   password: string;
   confirmPassword: string;
   fname?: string;
   lname?: string;
-  address?: AddressInput;
-  geo?: GeoInput;
+  address?: IAddressInput;
+  geo?: IGeoInput;
 }
