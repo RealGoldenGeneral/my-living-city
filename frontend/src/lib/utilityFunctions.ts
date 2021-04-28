@@ -139,12 +139,25 @@ export const timeDifference = (current: Date, previous: Date): string => {
  * @param numberOfChars The number of characters that will be kept in the original string
  * @returns A new string that truncates the original
  */
-export const truncateString = (str: string, numberOfChars: number): string => {
+export const truncateString = (
+	str: string, 
+	numberOfChars: number, 
+	includeDots: boolean = true
+): string => {
+	let parsedString = str;
+
 	if (str.length <= numberOfChars) {
-		return str;
+		return parsedString;
 	}
 
-	return str.slice(0, numberOfChars) + '...'
+	parsedString = str.slice(0, numberOfChars);
+
+	// Add '...' if true
+	if (includeDots) {
+		parsedString += '...';
+	}
+
+	return parsedString;
 }
 
 /**

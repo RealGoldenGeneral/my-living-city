@@ -77,7 +77,7 @@ const RatingDisplay = ({
           <p>Positive Ratings: {posRatings}</p>
         </Col>
         <Col className='text-center'>
-          <p>Rating Average: {ratingAvg}</p>
+          <p>Rating Average: {ratingAvg.toFixed(2)}</p>
           <p>Number of ratings: {ratingCount}</p>
           <p>Total Comments: {commentAggregate.count}</p>
         </Col>
