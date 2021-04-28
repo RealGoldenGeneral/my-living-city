@@ -2,14 +2,14 @@ import { useContext, useState } from 'react'
 import { Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-import { FetchError } from '../../lib/types/types';
+import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from '../../lib/utilityFunctions';
-import { RegisterInput } from '../../lib/types/input/register.input';
-import { UserRole } from '../../lib/types/data/userRole.type';
+import { IRegisterInput } from '../../lib/types/input/register.input';
+import { IUserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
 
 interface RegisterPageContentProps {
-  userRoles: UserRole[] | undefined;
+  userRoles: IUserRole[] | undefined;
 }
 
 const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) => {
@@ -19,9 +19,9 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     user
   } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<FetchError | null>(null);
+  const [error, setError] = useState<IFetchError | null>(null);
 
-  const submitHandler = async (values: RegisterInput) => {
+  const submitHandler = async (values: IRegisterInput) => {
     try {
       // Set loading 
       setError(null);
@@ -46,7 +46,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     }
   }
 
-  const formik = useFormik<RegisterInput>({
+  const formik = useFormik<IRegisterInput>({
     initialValues: {
       userRoleId: userRoles ? userRoles[0].id : undefined,
       email: '',

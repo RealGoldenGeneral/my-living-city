@@ -2,6 +2,14 @@ const prisma = require("../lib/prismaClient");
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require("../lib/constants");
 
+/**
+ * Middleware to check if user is logged in and parses database to check if user
+ * actually exists in database.
+ * 
+ * @param {*} req Express Request Object
+ * @param {*} res Express Response Object
+ * @param {*} next Express next function
+ */
 const checkIfUserIsLoggedIn = async (req, res, next) => {
   try {
     const token = req.header('x-auth-token');

@@ -1,10 +1,9 @@
-import React from 'react'
 import { Button, Card } from 'react-bootstrap';
-import { IdeaBreakdown } from '../../lib/types/data/idea.type';
+import { IIdeaWithAggregations } from '../../lib/types/data/idea.type';
 import { timeDifference, truncateString } from '../../lib/utilityFunctions'
 
 interface ideaTileProps {
-  ideaData: IdeaBreakdown,
+  ideaData: IIdeaWithAggregations,
   showFooter: boolean,
 }
 
@@ -13,7 +12,12 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     id,
     title,
     description,
-    updatedAt
+    updatedAt,
+    ratingAvg,
+    ratingCount,
+    commentCount,
+    posRatings,
+    negRatings
   } = ideaData;
   return (
     // <Card style={{ width: '18rem' }}>
@@ -22,9 +26,17 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       <Card.Body>
         <Card.Title>{truncateString(title, 50)}</Card.Title>
         <Card.Text>{truncateString(description, 100)}</Card.Text>
-        <a href={`/ideas/${id}`}>
-          <Button variant="primary">Read more</Button>
-        </a>
+        <div className="button-breakdown d-flex justify-content-between align-content-center">
+          <Card.Link href={`/ideas/${id}`}>
+            <Button variant="primary">Read more</Button>
+          </Card.Link>
+          {/* <div className='d-flex justify-content-around align-content-center'> */}
+          <div className='d-flex align-content-center'>
+            <p className='px-2 my-auto text-muted'>{ratingAvg.toFixed(2)}</p>
+            <p className='px-2 my-auto text-muted'>{ratingCount + commentCount}</p>
+            <p className='px-2 my-auto text-muted'>{posRatings}/{negRatings}</p>
+          </div>
+        </div>
       </Card.Body>
       {showFooter && (
         <Card.Footer>

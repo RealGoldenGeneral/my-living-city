@@ -1,17 +1,17 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { useUserWithJwt } from '../hooks/userHooks';
 import { IUser } from '../lib/types/data/user.type';
-import { LoginWithEmailAndPass } from '../lib/types/input/loginWithEmailAndPass.input';
-import { FetchError } from '../lib/types/types';
+import { ILoginWithEmailAndPass } from '../lib/types/input/loginWithEmailAndPass.input';
+import { IFetchError } from '../lib/types/types';
 import { retrieveStoredTokenExpiryInLocalStorage, storeObjectInLocalStorage, wipeLocalStorage } from '../lib/utilityFunctions';
 
 export interface IUserProfileContext {
   token: string | null;
   loading: boolean;
   errorOccured: boolean;
-  error: FetchError | null;
+  error: IFetchError | null;
   user: IUser | null;
-  loginWithEmailAndPass?: (data: LoginWithEmailAndPass) => void,
+  loginWithEmailAndPass?: (data: ILoginWithEmailAndPass) => void,
   logout: () => void,
   setUser: (data: IUser) => void,
   setToken: (str: string) => void,
@@ -50,7 +50,7 @@ const getUserFromLocalStorage = (): (IUser | null) => {
 const UserProfileProvider: React.FC = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [user, setUser] = useState<IUser | null>(getUserFromLocalStorage())
-  const [fetchError, setFetchError] = useState<FetchError | null>(null);
+  const [fetchError, setFetchError] = useState<IFetchError | null>(null);
 
   /**
    * Checks to see if token is expired based on expiry date set in local storage.

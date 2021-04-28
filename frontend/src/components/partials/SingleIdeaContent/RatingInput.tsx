@@ -1,14 +1,7 @@
-import axios from 'axios';
 import { useContext, useEffect, useState } from 'react'
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { useMutation, useQueryClient } from 'react-query';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
-import { getAxiosJwtRequestOption } from '../../../lib/api/axiosRequestOptions';
-import { API_BASE_URL } from '../../../lib/constants';
-import { Rating } from '../../../lib/types/data/rating.type';
-import { CreateRatingInput } from '../../../lib/types/input/createRating.input';
-import { FetchError } from '../../../lib/types/types';
 // https://github.com/microsoft/TypeScript/issues/22217
 // https://github.com/ekeric13/react-ratings-declarative
 import Ratings from 'react-ratings-declarative';
@@ -84,7 +77,7 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     return buttonText;
   }
   return (
-    <Container className='mt-5'>
+    <Container className=''>
       <h2 className='text-center'>Submit Your Rating:</h2>
       <Row>
         <Col xs={12} className='text-center'>
@@ -115,6 +108,7 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
           <Button
             onClick={submitHandler}
             disabled={shouldButtonBeDisabled()}
+            size='lg'
           >
             {buttonTextOutput()}
           </Button>
