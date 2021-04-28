@@ -18,11 +18,11 @@ const CommentsSection: React.FC<CommentsSection> = () => {
   const { ideaId } = useParams<{ ideaId: string }>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const { 
+  const {
     data: ideaComments,
     isLoading,
     isError,
-    error 
+    error
   } = useAllCommentsUnderIdea(ideaId, token);
 
 
@@ -62,36 +62,37 @@ const CommentsSection: React.FC<CommentsSection> = () => {
   }
 
   return (
-    <Container className='mt-5'>
+    <Container className='my-5'>
       <h2>Feedback</h2>
-      <CommentSubmitModal 
-        comments={ideaComments?.slice(0, 10)} 
-        show={showModal} 
-        setShow={setShowModal} 
+      <CommentSubmitModal
+        comments={ideaComments?.slice(0, 10)}
+        show={showModal}
+        setShow={setShowModal}
         buttonTextOutput={buttonTextOutput}
         shouldButtonBeDisabled={shouldButtonBeDisabled}
         submitComment={submitComment}
       />
-      {ideaComments && ideaComments.length === 0 ? (
-        <Row className='justify-content-center'>
-          <p>No Comments yet!</p>
-        </Row>
-      ) : ideaComments && ideaComments.map(comment => (
-        <Row key={comment.id}>
-          <IdeaCommentTile commentData={comment} />
-        </Row>
-      ))
-      }
-      <Row>
-        {/* <CommentInput /> */}
-        <Button 
-          onClick={() => setShowModal(true)}
-          block
-          disabled={shouldButtonBeDisabled()}
-        >
-          {buttonTextOutput()}
-        </Button>
-      </Row>
+      <div className="comments-wrapper my-3">
+        {ideaComments && ideaComments.length === 0 ? (
+          <Row className='justify-content-center'>
+            <p>No Comments yet!</p>
+          </Row>
+        ) : ideaComments && ideaComments.map(comment => (
+          <Row key={comment.id}>
+            <IdeaCommentTile commentData={comment} />
+          </Row>
+        ))
+        }
+      </div>
+      {/* <CommentInput /> */}
+      <Button
+        onClick={() => setShowModal(true)}
+        block
+        size='lg'
+        disabled={shouldButtonBeDisabled()}
+      >
+        {buttonTextOutput()}
+      </Button>
     </Container>
   );
 }

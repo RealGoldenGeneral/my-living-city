@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container as div, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import UserProfileContext from 'src/contexts/UserProfile.Context';
 import { useAllCommentsUnderIdea } from 'src/hooks/commentHooks';
@@ -30,12 +30,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
   const parsedDate = new Date(createdAt);
 
   return (
-    <Container className='single-idea-content'>
-      <Row>
+    <div className='single-idea-content'>
+      <Row className='bg-mlc-shade-grey py-5'>
         <Col>
           <h1 className='h1'>{capitalizeString(title)}</h1>
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
-          <h4 className="h5">Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
+          <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
           <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5>
           <br />
           <p>{description}</p>
@@ -52,7 +52,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
       <Row>
         <CommentsSection />
       </Row>
-    </Container>
+    </div>
   );
 }
 

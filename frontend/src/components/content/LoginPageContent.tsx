@@ -64,7 +64,8 @@ export default function LoginPageContent() {
               show={showError} 
               onClose={() => setShowError(false)} 
               dismissible
-              variant='danger' 
+              // variant='danger' 
+              variant='info' 
               className="error-alert" 
             >
               { error.message}

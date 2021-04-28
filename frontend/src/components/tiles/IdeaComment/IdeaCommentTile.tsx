@@ -51,7 +51,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
           )}
         </Col>
       </Row>
-      <hr className="bg-info" />
+      <hr className="bg-primary" />
     </Container>
   );
 }

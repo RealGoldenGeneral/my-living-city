@@ -84,7 +84,7 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     return buttonText;
   }
   return (
-    <Container className='mt-5'>
+    <Container className=''>
       <h2 className='text-center'>Submit Your Rating:</h2>
       <Row>
         <Col xs={12} className='text-center'>
@@ -115,6 +115,7 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
           <Button
             onClick={submitHandler}
             disabled={shouldButtonBeDisabled()}
+            size='lg'
           >
             {buttonTextOutput()}
           </Button>
