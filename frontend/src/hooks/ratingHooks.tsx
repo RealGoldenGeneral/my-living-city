@@ -32,6 +32,7 @@ export const useCreateRatingMutation = (
   user: IUser | null,
 ) => {
   const previousRatingsKey = ['ratings', String(ideaId)];
+  const previousIdeaKey = ['idea', String(ideaId)];
   const queryClient = useQueryClient();
 
   const ratingMutation = useMutation<IRating, IFetchError, ICreateRatingInput>(
@@ -81,6 +82,7 @@ export const useCreateRatingMutation = (
       },
       onSettled: async () => {
         queryClient.invalidateQueries(previousRatingsKey);
+        queryClient.invalidateQueries(previousIdeaKey);
       },
     }
   )
