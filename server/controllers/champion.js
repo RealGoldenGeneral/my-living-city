@@ -36,12 +36,19 @@ championRouter.post(
       const { email, id } = req.user;
       const parsedIdeaId = parseInt(ideaId);
 
-      console.log(ideaId, email, id);
+      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
       const { isChampionable } = await checkIdeaThresholds(parsedIdeaId);
 
       if (!isChampionable) {
         return res.status(400).json({
           message: `This Idea is not Championable. It either already has a champion or it has not met the thresholds to become a proposal.`
+        })
+      }
+
+      // TODO: This setting may need to change but authors cannot champion their own idea
+      if (id === foundIdea.authorId) {
+        return res.status(400).json({
+          message: `You cannot champion your own idea. Please wait or find someone to endorse your idea!`
         })
       }
 
