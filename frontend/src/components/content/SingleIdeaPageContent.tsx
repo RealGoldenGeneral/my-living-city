@@ -20,6 +20,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     createdAt,
     category,
     author,
+    state
   } = ideaData;
 
   const { title: catTitle } = category!;
@@ -29,7 +30,10 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     <div className='single-idea-content pt-1'>
       <Row className='bg-mlc-shade-grey py-5'>
         <Col>
-          <h1 className='h1'>{capitalizeString(title)}</h1>
+          <div className="d-flex justify-content-between">
+            <h1 className='h1'>{capitalizeString(title)}</h1>
+            <h3 className='text-center my-auto text-muted'>Status: <span>{state}</span></h3>
+          </div>
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
           <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
           <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5>
