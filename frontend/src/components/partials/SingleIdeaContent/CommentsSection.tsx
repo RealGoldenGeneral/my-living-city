@@ -1,6 +1,8 @@
-import React, { useContext, useState } from 'react'
-import { Button, Container, Row } from 'react-bootstrap';
+import React, { useContext, useEffect, useState } from 'react'
+import { Alert, Button, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
+import { IFetchError } from 'src/lib/types/types';
+import { handlePotentialAxiosError } from 'src/lib/utilityFunctions';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 import { useAllCommentsUnderIdea, useCreateCommentMutation } from '../../../hooks/commentHooks';
 import IdeaCommentTile from '../../tiles/IdeaComment/IdeaCommentTile';
@@ -15,6 +17,7 @@ const CommentsSection: React.FC<CommentsSection> = () => {
   const { ideaId } = useParams<{ ideaId: string }>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
+  // =================== FETCHING COMMENTS HOOK ==========================
   const {
     data: ideaComments,
     isLoading,
@@ -22,7 +25,7 @@ const CommentsSection: React.FC<CommentsSection> = () => {
     error
   } = useAllCommentsUnderIdea(ideaId, token);
 
-
+  // =================== SUBMITTING COMMENT MUTATION ==========================
   const {
     submitComment,
     isLoading: commentIsLoading,
@@ -30,6 +33,14 @@ const CommentsSection: React.FC<CommentsSection> = () => {
     error: commentError,
   } = useCreateCommentMutation(parseInt(ideaId), token, user);
 
+  const [ showCommentError, setShowCommentError ] = useState(false);
+
+  useEffect(() => {
+    setShowCommentError(commentIsError);
+  }, [ commentIsError ]);
+
+
+  // =================== UTILITY FUNCTIONS FOR UI ==========================
   const shouldButtonBeDisabled = (): boolean => {
     // Unauthenticated
     let flag = true;
@@ -82,6 +93,17 @@ const CommentsSection: React.FC<CommentsSection> = () => {
         }
       </div>
       {/* <CommentInput /> */}
+      {showCommentError && (
+        <Alert
+          className=''
+          show={showCommentError}
+          onClose={() => setShowCommentError(false)}
+          dismissible
+          variant='danger'
+        >
+          {commentError?.message ?? "An Error occured while trying to create your comment."}
+        </Alert>
+      )}
       <Button
         onClick={() => setShowModal(true)}
         block

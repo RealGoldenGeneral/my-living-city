@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { getAxiosJwtRequestOption } from '../lib/api/axiosRequestOptions'
 import { API_BASE_URL } from '../lib/constants'
@@ -8,6 +8,8 @@ import { IComment, ICommentAggregateCount } from '../lib/types/data/comment.type
 import { IFetchError } from '../lib/types/types'
 import { v4 as uuidv4 } from 'uuid';
 import { IUser } from '../lib/types/data/user.type'
+import { useEffect, useState } from 'react'
+import { handlePotentialAxiosError } from 'src/lib/utilityFunctions'
 
 export const useAllComments = () => {
   return useQuery<IComment[], IFetchError>(
@@ -48,7 +50,7 @@ export const useCreateCommentMutation = (
   const previousCommentAggregateKey = ['comment-aggregate', String(ideaId)];
   const queryClient = useQueryClient();
 
-  const createCommentMutation = useMutation<IComment, IFetchError, ICreateCommentInput>(
+  const createCommentMutation = useMutation<IComment, AxiosError, ICreateCommentInput>(
     newComment => axios.post(
       `${API_BASE_URL}/comment/create/${ideaId}`,
       { content: newComment.content },
@@ -123,6 +125,21 @@ export const useCreateCommentMutation = (
     }
   )
 
+  const { error } = createCommentMutation;
+
+  // Handle potential Errors
+  const [ parsedErrorObj, setParsedErrorObj ] = useState<IFetchError | null>(null);
+
+  useEffect(() => {
+    if (error) {
+      const potentialFetchError = handlePotentialAxiosError(
+        "An Error occured while trying to submit a comment.",
+        error,
+      );
+      setParsedErrorObj(potentialFetchError);
+    }
+  }, [ error ]);
+
   const submitComment = (newComment: ICreateCommentInput) => {
     // console.log("submit");
     // console.log(newComment);
@@ -130,7 +147,8 @@ export const useCreateCommentMutation = (
   }
 
   return {
-    submitComment,
     ...createCommentMutation,
+    submitComment,
+    error: parsedErrorObj,
   };
 }
