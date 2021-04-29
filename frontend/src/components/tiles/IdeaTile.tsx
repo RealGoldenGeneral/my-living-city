@@ -1,6 +1,9 @@
 import { Button, Card } from 'react-bootstrap';
 import { IIdeaWithAggregations } from '../../lib/types/data/idea.type';
 import { timeDifference, truncateString } from '../../lib/utilityFunctions'
+import { BsPeople, BsHeartHalf } from 'react-icons/bs'
+import { AiOutlinePercentage } from 'react-icons/ai'
+import { FaRegThumbsUp, FaRegThumbsDown } from 'react-icons/fa'
 
 interface ideaTileProps {
   ideaData: IIdeaWithAggregations,
@@ -26,15 +29,28 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       <Card.Body>
         <Card.Title>{truncateString(title, 50)}</Card.Title>
         <Card.Text>{truncateString(description, 100)}</Card.Text>
-        <div className="button-breakdown d-flex justify-content-between align-content-center">
+        <div className="button-breakdown mt-3 d-flex justify-content-between align-items-center">
           <Card.Link href={`/ideas/${id}`}>
             <Button variant="primary">Read more</Button>
           </Card.Link>
-          {/* <div className='d-flex justify-content-around align-content-center'> */}
           <div className='d-flex align-content-center'>
-            <p className='px-2 my-auto text-muted'>{ratingAvg.toFixed(2)}</p>
-            <p className='px-2 my-auto text-muted'>{ratingCount + commentCount}</p>
-            <p className='px-2 my-auto text-muted'>{posRatings}/{negRatings}</p>
+            <div className="px-2 text-muted d-flex flex-column justify-content-center align-items-center">
+              <AiOutlinePercentage className=''/>
+              <p className='mb-0'>{ratingAvg.toFixed(2)}</p>
+            </div>
+            <div className="px-2 text-muted d-flex flex-column justify-content-center align-items-center">
+              <BsPeople className='' />
+              <p className='mb-0'>{ratingCount + commentCount}</p>
+            </div>
+            <div className="px-2 text-muted d-flex flex-column justify-content-center align-items-center">
+              {/* <div className="">
+                <FaRegThumbsUp />
+                /
+                <FaRegThumbsDown />
+              </div> */}
+              <BsHeartHalf />
+              <p className='mb-0'>{posRatings}/{negRatings}</p>
+            </div>
           </div>
         </div>
       </Card.Body>
