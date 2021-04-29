@@ -46,8 +46,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
 
   // Social Media share for this Idea page
   // const shareUrl = 'http://github.com';
-  // const shareUrl = window.location.href;
-  const shareUrl = 'https://app.mylivingcity.org'
+  // const shareUrl = 'https://app.mylivingcity.org'
+  const shareUrl = window.location.href;
   const shareTitle = `My Living City Idea! ${title}`;
 
   /**
@@ -87,12 +87,16 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           <p><strong>Water and Energy:</strong> {energyImpact}</p>
           <p><strong>Manufacturing and Waste:</strong> {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p>
         </Col>
+
+        {/* Proposal State and Conditional Rendering */}
         {(confirmProposalState() || confirmProjectState()) && (
           <Col sm={12} className='my-3'>
             <h2>Proposal Information</h2>
             <p>{proposalInfo?.description || "Proposal has been initialized. Please describe the proposal!"}</p>
           </Col>
         )}
+
+        {/* Project State and Conditional Rendering */}
         {confirmProjectState() && (
           <Col sm={12} className='my-3'>
             <h2>Project Information:</h2>
@@ -100,48 +104,49 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           </Col>
         )}
 
-        <Col sm={12} className='my-1 d-flex justify-content-center'>
+        {/* Share functionality */}
+        <Col sm={12} className='mt-1 d-flex justify-content-center'>
           <FacebookShareButton
             className='mx-2'
             url={shareUrl}
             quote={shareTitle}
           >
-            <FacebookIcon size={36} round />
+            <FacebookIcon size={32} round />
           </FacebookShareButton>
           <TwitterShareButton
             className='mx-2'
             url={shareUrl}
             title={shareTitle}
           >
-            <TwitterIcon size={36} round />
+            <TwitterIcon size={32} round />
           </TwitterShareButton>
           <WhatsappShareButton
             className='mx-2'
             url={shareUrl}
             title={shareTitle}
           >
-            <WhatsappIcon size={36} round />
+            <WhatsappIcon size={32} round />
           </WhatsappShareButton>
           <LineShareButton
             className='mx-2'
             url={shareUrl}
             title={shareTitle}
           >
-            <LineIcon size={36} round />
+            <LineIcon size={32} round />
           </LineShareButton>
           <RedditShareButton
             className='mx-2'
             url={shareUrl}
             title={shareTitle}
           >
-            <RedditIcon size={36} round />
+            <RedditIcon size={32} round />
           </RedditShareButton>
           <EmailShareButton
             className='mx-2'
             url={shareUrl}
             title={shareTitle}
           >
-            <EmailIcon size={36} round />
+            <EmailIcon size={32} round />
           </EmailShareButton>
         </Col>
       </Row>
