@@ -101,7 +101,7 @@ export const useCreateRatingMutation = (
       );
       setParsedErrorObj(potentialAxiosError);
     }
-  })
+  }, [ error ]);
 
   const submitRatingMutation = (ratingInput: ICreateRatingInput) => {
     ratingMutation.mutate(ratingInput);

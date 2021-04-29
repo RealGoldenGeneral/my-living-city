@@ -4,9 +4,11 @@ import { IFetchError } from '../lib/types/types';
 import { getSingleIdea, postAllIdeasWithBreakdown } from '../lib/api/ideaRoutes';
 import { IUser } from 'src/lib/types/data/user.type';
 import { ISubmitChampionRequestResponse } from 'src/lib/types/responses/champion.response';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { API_BASE_URL } from 'src/lib/constants';
 import { getAxiosJwtRequestOption } from 'src/lib/api/axiosRequestOptions';
+import { useEffect, useState } from 'react';
+import { handlePotentialAxiosError } from 'src/lib/utilityFunctions';
 
 export const useSubmitChampionRequestMutation = (
   ideaId: number,
@@ -15,7 +17,7 @@ export const useSubmitChampionRequestMutation = (
   const previousIdeaKey = ['idea', String(ideaId)];
   const queryClient = useQueryClient();
 
-  const championMutation = useMutation<ISubmitChampionRequestResponse, IFetchError, {}>(
+  const championMutation = useMutation<ISubmitChampionRequestResponse, AxiosError, {}>(
     () => axios.post(
       `${API_BASE_URL}/champion/idea/${ideaId}`,
       {},
@@ -30,6 +32,20 @@ export const useSubmitChampionRequestMutation = (
     }
   )
 
+  // Handle Potential Errors
+  const { error } = championMutation;
+  const [ parsedErrorObj, setParsedErrorObj ] = useState<IFetchError | null>(null);
+
+  useEffect(() => {
+    if (error) {
+      const potentialAxiosError = handlePotentialAxiosError(
+        "An Error occured while trying request to Champion an idea.",
+        error,
+      );
+      setParsedErrorObj(potentialAxiosError);
+    }
+  }, [ error ])
+
   const submitChampionRequestMutation = () => {
     championMutation.mutate({});
   }
@@ -37,5 +53,6 @@ export const useSubmitChampionRequestMutation = (
   return {
     ...championMutation,
     submitChampionRequestMutation,
+    error: parsedErrorObj,
   }
 }

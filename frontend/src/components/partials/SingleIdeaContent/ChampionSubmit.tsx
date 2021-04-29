@@ -3,8 +3,6 @@ import { Button, Alert } from "react-bootstrap"
 import { useParams } from "react-router";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
 import { useSubmitChampionRequestMutation } from "src/hooks/championHooks";
-import { IFetchError } from "src/lib/types/types";
-import { handlePotentialAxiosError } from "src/lib/utilityFunctions";
 
 interface ChampionSubmitProps {
   
@@ -14,6 +12,7 @@ const ChampionSubmit = (props: ChampionSubmitProps) => {
   const { token } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string}>();
 
+  // =================== SUBMITTING CHAMPION REQUEST MUTATION ==========================
   const {
     submitChampionRequestMutation,
     isError,
@@ -21,23 +20,11 @@ const ChampionSubmit = (props: ChampionSubmitProps) => {
     isLoading,
   } = useSubmitChampionRequestMutation(parseInt(ideaId), token);
 
-  const [ showError, setShowError ] = useState(false);
-  const [ fetchError, setFetchError ] = useState<IFetchError | null>(null);
+  const [ showChampionSubmitError, setShowChampionSubmitError ] = useState(false);
 
   useEffect(() => {
-    setShowError(isError)
-    console.log(error);
+    setShowChampionSubmitError(isError);
   }, [isError])
-
-  useEffect(() => {
-    if (error) {
-      const potentialFetchError = handlePotentialAxiosError(
-        "An Error occured while trying to champion an idea.",
-        error
-      );
-      setFetchError(potentialFetchError);
-    }
-  }, [error])
 
   const submitHandler = () => {
     console.log("Submit Champion request");
@@ -46,16 +33,16 @@ const ChampionSubmit = (props: ChampionSubmitProps) => {
 
   return (
     <div className='d-flex flex-column justify-content-center align-items-center'>
-      {showError && (
+      {showChampionSubmitError && (
         <Alert
           className='w-100'
-          show={showError}
-          onClose={() => setShowError(false)}
+          show={showChampionSubmitError}
+          onClose={() => setShowChampionSubmitError(false)}
           dismissible
           variant='danger'
         >
           {/* {'An error occured while trying to champion an idea'} */}
-          {fetchError?.message ?? "An error occured while trying to champion an idea."}
+          {error?.message ?? "An error occured while trying to champion an idea."}
         </Alert>
       )}
       <Button 

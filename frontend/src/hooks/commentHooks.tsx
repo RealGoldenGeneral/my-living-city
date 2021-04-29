@@ -125,9 +125,9 @@ export const useCreateCommentMutation = (
     }
   )
 
-  const { error } = createCommentMutation;
-
+  
   // Handle potential Errors
+  const { error } = createCommentMutation;
   const [ parsedErrorObj, setParsedErrorObj ] = useState<IFetchError | null>(null);
 
   useEffect(() => {
