@@ -132,11 +132,11 @@ export const useCreateCommentMutation = (
 
   useEffect(() => {
     if (error) {
-      const potentialFetchError = handlePotentialAxiosError(
+      const potentialAxiosError = handlePotentialAxiosError(
         "An Error occured while trying to submit a comment.",
         error,
       );
-      setParsedErrorObj(potentialFetchError);
+      setParsedErrorObj(potentialAxiosError);
     }
   }, [ error ]);
 

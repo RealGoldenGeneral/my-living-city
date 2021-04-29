@@ -33,10 +33,10 @@ const CommentsSection: React.FC<CommentsSection> = () => {
     error: commentError,
   } = useCreateCommentMutation(parseInt(ideaId), token, user);
 
-  const [ showCommentError, setShowCommentError ] = useState(false);
+  const [ showCommentSubmitError, setShowCommentSubmitError ] = useState(false);
 
   useEffect(() => {
-    setShowCommentError(commentIsError);
+    setShowCommentSubmitError(commentIsError);
   }, [ commentIsError ]);
 
 
@@ -93,11 +93,11 @@ const CommentsSection: React.FC<CommentsSection> = () => {
         }
       </div>
       {/* <CommentInput /> */}
-      {showCommentError && (
+      {showCommentSubmitError && (
         <Alert
           className=''
-          show={showCommentError}
-          onClose={() => setShowCommentError(false)}
+          show={showCommentSubmitError}
+          onClose={() => setShowCommentSubmitError(false)}
           dismissible
           variant='danger'
         >

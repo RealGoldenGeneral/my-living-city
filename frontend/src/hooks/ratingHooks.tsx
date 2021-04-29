@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { getAxiosJwtRequestOption } from "src/lib/api/axiosRequestOptions"
 import { API_BASE_URL } from "src/lib/constants"
@@ -7,6 +7,8 @@ import { ICreateRatingInput } from "../lib/types/input/createRating.input"
 import { getAllRatingsUnderIdea, getAllRatingsUnderIdeaWithAggregations } from "../lib/api/ratingRoutes"
 import { IRating, IRatingAggregateResponse } from "../lib/types/data/rating.type"
 import { IFetchError } from "../lib/types/types"
+import { useEffect, useState } from "react"
+import { handlePotentialAxiosError } from "src/lib/utilityFunctions"
 
 export const useAllRatingsUnderIdea = (ideaId: string) => {
   return useQuery<IRating[], IFetchError>(
@@ -35,7 +37,7 @@ export const useCreateRatingMutation = (
   const previousIdeaKey = ['idea', String(ideaId)];
   const queryClient = useQueryClient();
 
-  const ratingMutation = useMutation<IRating, IFetchError, ICreateRatingInput>(
+  const ratingMutation = useMutation<IRating, AxiosError, ICreateRatingInput>(
     (newRating) => axios.post(
       `${API_BASE_URL}/rating/create/${ideaId}`,
       newRating,
@@ -87,6 +89,20 @@ export const useCreateRatingMutation = (
     }
   )
 
+  // Handle Potential Errors
+  const { error } = ratingMutation;
+  const [ parsedErrorObj, setParsedErrorObj ] = useState<IFetchError | null>(null);
+
+  useEffect(() => {
+    if (error) {
+      const potentialAxiosError = handlePotentialAxiosError(
+        "An error occured while trying to submit your rating.",
+        error,
+      );
+      setParsedErrorObj(potentialAxiosError);
+    }
+  })
+
   const submitRatingMutation = (ratingInput: ICreateRatingInput) => {
     ratingMutation.mutate(ratingInput);
     // ratingMutation.mutate()
@@ -95,5 +111,6 @@ export const useCreateRatingMutation = (
   return {
     ...ratingMutation,
     submitRatingMutation,
+    error: parsedErrorObj,
   }
 }
