@@ -13,6 +13,7 @@ export type IdeaState = 'IDEA' | 'PROPOSAL' | 'PROJECT';
 export interface IIdea {
   id: number;
 	authorId: string;
+	championId: string;
 	categoryId: number;
 	title: string;
 	description: string;
@@ -34,12 +35,16 @@ export interface IIdeaWithRelationship extends IIdea {
   address?: IAddress;
   category?: ICategory;
   author?: IUser;
+	champion?: IUser | null;
   proposalInfo?: IProposal | null;
   projectInfo?: IProject | null;
 	
 	// Comments and Ratings are fetched seperately but could be fetched
 	comments?: IComment[];
 	ratings?: IRating[]
+
+	// Checks to see if idea has met thresholds
+	isChampionable?: boolean;
 }
 
 // Idea Breakdown (Used in Landing Page and Ideas Page) extends Root base Idea

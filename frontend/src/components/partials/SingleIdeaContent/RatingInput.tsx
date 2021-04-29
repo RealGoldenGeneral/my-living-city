@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row, Alert } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { UserProfileContext } from '../../../contexts/UserProfile.Context';
 // https://github.com/microsoft/TypeScript/issues/22217
 // https://github.com/ekeric13/react-ratings-declarative
 import Ratings from 'react-ratings-declarative';
 import { useCreateRatingMutation } from 'src/hooks/ratingHooks';
+import { IFetchError } from 'src/lib/types/types';
 
 interface RatingInputProps {
   userHasRated: boolean,
@@ -17,6 +18,8 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
   const { ideaId } = useParams<{ ideaId: string }>();
   const [ ratingValue, setRatingValue ] = useState<number>(userSubmittedRating ?? 0);
 
+
+  // =================== SUBMITTING RATING MUTATION ==========================
   const {
     submitRatingMutation,
     isLoading,
@@ -24,6 +27,12 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     error,
     isSuccess
   } = useCreateRatingMutation(parseInt(ideaId), token, user);
+
+  const [ showRatingSubmitError, setShowRatingSubmitError ] = useState(false);
+
+  useEffect(() => {
+    setShowRatingSubmitError(isError);
+  }, [ isError ])
   
   const submitHandler = () => {
     const payload = {
@@ -33,6 +42,7 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     submitRatingMutation(payload);
   }
 
+  // =================== UTILITY FUNCTIONS FOR UI/AGGREGATIONS ==========================
   const parseNegativeRatingValue = (val: number): void => {
     if (userHasRated) return;
 
@@ -105,6 +115,17 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
           </Ratings>
         </Col>
         <Col xs={12} className='text-center mt-3'>
+          {showRatingSubmitError && (
+            <Alert
+              className=''
+              show={showRatingSubmitError}
+              onClose={() => setShowRatingSubmitError(false)}
+              dismissible
+              variant='danger'
+            >
+              {error?.message ?? "An Error occured while trying to submit your rating."}
+            </Alert>
+          )}
           <Button
             onClick={submitHandler}
             disabled={shouldButtonBeDisabled()}
