@@ -1,4 +1,4 @@
-import { Col, Row } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
 import { IIdeaWithRelationship } from '../../lib/types/data/idea.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
@@ -17,6 +17,7 @@ import {
   WhatsappShareButton,
   WhatsappIcon
 } from 'react-share'
+import ChampionSubmit from '../partials/SingleIdeaContent/ChampionSubmit';
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship
@@ -68,6 +69,15 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     return state === 'PROJECT' && !!projectInfo;
   }
 
+  const shouldDisplayChampionButton = (): boolean => {
+    console.log(!ideaData.champion);
+    console.log(!!ideaData.isChampionable);
+    console.log(ideaData.champion);
+    console.log(ideaData.isChampionable);
+
+    return !ideaData.champion && !!ideaData.isChampionable;
+  }
+
   return (
     <div className='single-idea-content pt-1'>
       <Row className='bg-mlc-shade-grey py-5'>
@@ -104,6 +114,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           <Col sm={12} className='my-3'>
             <h2>Project Information:</h2>
             <p>{projectInfo?.description || "Project has been initialized. Please describe the project!"}</p>
+          </Col>
+        )}
+
+        {shouldDisplayChampionButton() && (
+          <Col sm={12} className='my-3'>
+            <ChampionSubmit />
           </Col>
         )}
 

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useUserWithJwt } from '../hooks/userHooks';
 import { IUser } from '../lib/types/data/user.type';
 import { ILoginWithEmailAndPass } from '../lib/types/input/loginWithEmailAndPass.input';
@@ -31,6 +31,7 @@ export const UserProfileContext = createContext<IUserProfileContext>({
   setToken: () => { },
   isUserAuthenticated: () => false,
 })
+
 
 /**
  * Retrieves User object that is stored in local storage in Javascript object format
