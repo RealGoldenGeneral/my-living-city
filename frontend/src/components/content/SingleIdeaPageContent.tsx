@@ -3,6 +3,20 @@ import { IIdeaWithRelationship } from '../../lib/types/data/idea.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
 import RatingsSection from '../partials/SingleIdeaContent/RatingsSection';
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  TwitterShareButton,
+  TwitterIcon,
+  RedditShareButton,
+  RedditIcon,
+  LineShareButton,
+  LineIcon,
+  EmailShareButton,
+  EmailIcon,
+  WhatsappShareButton,
+  WhatsappIcon
+} from 'react-share'
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship
@@ -29,6 +43,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
 
   const { title: catTitle } = category!;
   const parsedDate = new Date(createdAt);
+
+  // Social Media share for this Idea page
+  // const shareUrl = 'http://github.com';
+  // const shareUrl = window.location.href;
+  const shareUrl = 'https://app.mylivingcity.org'
+  const shareTitle = `My Living City Idea! ${title}`;
 
   /**
    * Checks to see if the Idea's state is of Proposal and if the proposal information
@@ -79,6 +99,51 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
             <p>{projectInfo?.description || "Project has been initialized. Please describe the project!"}</p>
           </Col>
         )}
+
+        <Col sm={12} className='my-1 d-flex justify-content-center'>
+          <FacebookShareButton
+            className='mx-2'
+            url={shareUrl}
+            quote={shareTitle}
+          >
+            <FacebookIcon size={36} round />
+          </FacebookShareButton>
+          <TwitterShareButton
+            className='mx-2'
+            url={shareUrl}
+            title={shareTitle}
+          >
+            <TwitterIcon size={36} round />
+          </TwitterShareButton>
+          <WhatsappShareButton
+            className='mx-2'
+            url={shareUrl}
+            title={shareTitle}
+          >
+            <WhatsappIcon size={36} round />
+          </WhatsappShareButton>
+          <LineShareButton
+            className='mx-2'
+            url={shareUrl}
+            title={shareTitle}
+          >
+            <LineIcon size={36} round />
+          </LineShareButton>
+          <RedditShareButton
+            className='mx-2'
+            url={shareUrl}
+            title={shareTitle}
+          >
+            <RedditIcon size={36} round />
+          </RedditShareButton>
+          <EmailShareButton
+            className='mx-2'
+            url={shareUrl}
+            title={shareTitle}
+          >
+            <EmailIcon size={36} round />
+          </EmailShareButton>
+        </Col>
       </Row>
       <Row>
         <RatingsSection />

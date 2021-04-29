@@ -36,27 +36,28 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
           <div className='d-flex align-content-center'>
             <div className="px-2 text-muted d-flex flex-column justify-content-center align-items-center">
               <AiOutlinePercentage className=''/>
-              <p className='mb-0'>{ratingAvg.toFixed(2)}</p>
+              <p className='mb-0 user-select-none'>{ratingAvg.toFixed(2)}</p>
             </div>
             <div className="px-2 text-muted d-flex flex-column justify-content-center align-items-center">
               <BsPeople className='' />
-              <p className='mb-0'>{ratingCount + commentCount}</p>
+              <p className='mb-0 user-select-none'>{ratingCount + commentCount}</p>
             </div>
             <div className="px-2 text-muted d-flex flex-column justify-content-center align-items-center">
+              {/* Could possible have thumbs up and thumbs down but found heart to be clearer */}
               {/* <div className="">
                 <FaRegThumbsUp />
                 /
                 <FaRegThumbsDown />
               </div> */}
               <BsHeartHalf />
-              <p className='mb-0'>{posRatings}/{negRatings}</p>
+              <p className='mb-0 user-select-none'>{posRatings}/{negRatings}</p>
             </div>
           </div>
         </div>
       </Card.Body>
       {showFooter && (
         <Card.Footer>
-          <small className='text-muted'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small>
+          <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small>
         </Card.Footer>
       )}
     </Card>
