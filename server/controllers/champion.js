@@ -48,7 +48,7 @@ championRouter.post(
       // TODO: This setting may need to change but authors cannot champion their own idea
       if (id === foundIdea.authorId) {
         return res.status(400).json({
-          message: `You cannot champion your own idea. Please wait or find someone to endorse your idea!`
+          message: `You cannot champion your own idea. Please wait for someone else to endorse your idea!`
         })
       }
 
