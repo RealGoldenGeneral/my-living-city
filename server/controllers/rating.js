@@ -3,12 +3,6 @@ const passport = require('passport');
 const express = require('express');
 const ideaRatingRouter = express.Router();
 const prisma = require('../lib/prismaClient');
-const {
-  PROPOSAL_RATING_AVG, 
-  PROPOSAL_RATING_COUNT, 
-  PROJECT_RATING_AVG, 
-  PROJECT_RATING_COUNT 
-} = require('../lib/constants');
 const { checkIdeaThresholds } = require('../lib/prismaFunctions');
 
 ideaRatingRouter.get(

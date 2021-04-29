@@ -63,10 +63,18 @@ const checkIdeaThresholds = async (ideaId) => {
     thresholdObject.triggerProjectAdvancement = true;
   }
 
-  console.log(thresholdObject);
 
   // Check if idea has champion
   // TODO: Specify and check if idea is championable
+  if (
+    foundIdea.championId == null &&
+    PROPOSAL_RATING_AVG <= ratingAvg &&
+    PROPOSAL_RATING_COUNT <= ratingCount
+  ) {
+    thresholdObject.isChampionable = true;
+  }
+
+  console.log(thresholdObject);
 
   return thresholdObject;
 }

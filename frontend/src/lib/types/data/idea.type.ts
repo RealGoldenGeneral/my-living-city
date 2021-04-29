@@ -34,6 +34,7 @@ export interface IIdeaWithRelationship extends IIdea {
   address?: IAddress;
   category?: ICategory;
   author?: IUser;
+	champion?: IUser | null;
   proposalInfo?: IProposal | null;
   projectInfo?: IProject | null;
 	

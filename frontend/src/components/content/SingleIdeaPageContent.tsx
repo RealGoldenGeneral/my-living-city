@@ -78,6 +78,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           </div>
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
           <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
+          {!!ideaData.champion && (
+            <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
+          )}
           <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5>
           <br />
           <p>{description}</p>

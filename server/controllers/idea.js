@@ -182,6 +182,16 @@ ideaRouter.get(
           category: true,
           projectInfo: true,
           proposalInfo: true,
+          champion: {
+            include: {
+              address: {
+                select: {
+                  postalCode: true,
+                  streetAddress: true,
+                }
+              }
+            }
+          },
           author: {
             include: {
               address: {
@@ -202,6 +212,9 @@ ideaRouter.get(
 
       const result = { ...foundIdea };
       delete result.author.password;
+      if (!!result.champion) {
+        delete result.champion.password;
+      }
 
       res.status(200).json(foundIdea);
     } catch (error) {
