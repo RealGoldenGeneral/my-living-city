@@ -28,6 +28,7 @@ model Report {
 enum UserType {
   USER
   ADMIN
+  BUSINESS
   DEVELOPER
 
   @@map(name: "user_type")
