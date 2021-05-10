@@ -4,7 +4,7 @@
 datasource db {
   provider = "postgresql"
   //url      = env("DATABASE_URL")
-  url = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
+  url      = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
 }
 
 generator client {
@@ -108,6 +108,7 @@ model User {
 
   // Model overwrites
   @@map(name: "user")
+  Advertisements Advertisements[]
 }
 
 // Category entity
@@ -304,13 +305,16 @@ model UserCommentDislikes {
 }
 
 model Advertisements {
-  id            Int     @id @default(autoincrement())
-  adId          Int?    @map("advertisement_id")
-  ownerId       String? @map("owner_id")
+  id       Int     @id @default(autoincrement())
+  adId     Int?    @map("advertisement_id")
+  ownerId  String? @map("owner_id")
 
-  adTitle       String  @map("advertisement_title")
-  adPosition    String  @map("advertisement_position")
-  imagePath     String? @map("advertisement_image_path")
+  adTitle      String  @map("advertisement_title")
+  adPosition   String  @map("advertisement_position")
+  imagePath    String? @map("advertisement_image_path")
+  externalLink String? @map("advertisement_external_link")
 
-  @@map(name:"advertisements")
+  author User? @relation(fields: [ownerId], references: [id])
+
+  @@map(name: "advertisements")
 }
