@@ -33,6 +33,13 @@ enum UserType {
   @@map(name: "user_type")
 }
 
+enum AdType {
+  BASIC
+  EXTRA
+
+  @@map(name: "ad_type")
+}
+
 model UserRole {
   // keys
   id        Int      @id @default(autoincrement())
@@ -107,8 +114,8 @@ model User {
 
 
   // Model overwrites
-  @@map(name: "user")
   Advertisements Advertisements[]
+  @@map(name: "user")
 }
 
 // Category entity
@@ -305,16 +312,21 @@ model UserCommentDislikes {
 }
 
 model Advertisements {
-  id       Int     @id @default(autoincrement())
-  adId     Int?    @map("advertisement_id")
-  ownerId  String? @map("owner_id")
+  id       Int       @id @default(autoincrement())
+  adId     Int?      @map("advertisement_id")
+  ownerId  String?   @map("owner_id")
+  creatAt  DateTime  @default(now()) @map("creat_at")
+  updateAt DateTime? @default(now()) @updatedAt @map("update_at")
 
-  adTitle      String  @map("advertisement_title")
-  adPosition   String  @map("advertisement_position")
-  imagePath    String? @map("advertisement_image_path")
-  externalLink String? @map("advertisement_external_link")
+  adTitle      String   @map("advertisement_title")
+  adType       AdType   @default(BASIC) @map("advertisement_type")
+  duration     DateTime @map("advertisement_duration")
+  adPosition   String   @map("advertisement_position")
+  imagePath    String?  @map("advertisement_image_path")
+  externalLink String?  @map("advertisement_external_link")
+  published    Boolean  @default(false) @map("published")
 
   author User? @relation(fields: [ownerId], references: [id])
 
-  @@map(name: "advertisements")
+  @@map(name: "advertisement")
 }
