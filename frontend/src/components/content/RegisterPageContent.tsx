@@ -7,7 +7,7 @@ import { capitalizeString, handlePotentialAxiosError, storeTokenExpiryInLocalSto
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { IUserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
-
+import SimpleMap from '../ui/SimpleMap';
 interface RegisterPageContentProps {
   userRoles: IUserRole[] | undefined;
 }
@@ -158,12 +158,16 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                     </option>
                   ))}
                 </Form.Control>
+                
               </Form.Group>
+
+              <SimpleMap/>
               <Button
                 block
                 type='submit'
                 disabled={isLoading ? true : false}
               >
+                
                 Register!
               </Button>
             </Form>
