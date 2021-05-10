@@ -1,9 +1,10 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: https://pris.ly/d/prisma-schem
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  //url      = env("DATABASE_URL")
+  url = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
 }
 
 generator client {
@@ -300,4 +301,16 @@ model UserCommentDislikes {
   author      User?        @relation(fields: [authorId], references: [id])
 
   @@map(name: "user_comment_dislikes")
+}
+
+model Advertisements {
+  id            Int     @id @default(autoincrement())
+  adId          Int?    @map("advertisement_id")
+  ownerId       String? @map("owner_id")
+
+  adTitle       String  @map("advertisement_title")
+  adPosition    String  @map("advertisement_position")
+  imagePath     String? @map("advertisement_image_path")
+
+  @@map(name:"advertisements")
 }
