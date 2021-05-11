@@ -7,7 +7,7 @@ import { capitalizeString, handlePotentialAxiosError, storeTokenExpiryInLocalSto
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { IUserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
-import SimpleMap from '../ui/SimpleMap';
+import SimpleMap from '../map/SimpleMap';
 interface RegisterPageContentProps {
   userRoles: IUserRole[] | undefined;
 }
