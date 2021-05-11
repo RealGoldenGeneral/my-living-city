@@ -4,33 +4,38 @@ const express = require('express');
 const advertisementRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 const { isEmpty } = require('lodash');
+const { UserType } = require('@prisma/client');
 
 advertisementRouter.post(
     '/create',
     passport.authenticate('jwt',{session:false}),
     async(req,res,next) => {
         try{
-
-            if(isEmpty(req.body)){
-                return res.status(400).json({
-                    message: 'The objects in the request body are missing',
-                    details: {
-                        errorMessage: 'Creating an advertisement must explicitly be supplied with necessary fields.',
-                        errorStack: 'necessary fields must be defined in the body with a valid id found in the database.',
-                    }
-                })
-            }
-
             //get email and user id from request
             const { email, id } = req.user;
             //get adType from request body
             const { adType } = req.body;
 
             //find the requesting user in the database
-            const theUser = await prisma.user.findFirst({where:{id:{equals:{id}}}})
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            })
+
+            console.log(theUser.userType);
 
             //test to see if the user is an admin or business user
             if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS"){
+                //if there's no object in the request body
+                if(isEmpty(req.body)){
+                    return res.status(400).json({
+                        message: 'The objects in the request body are missing',
+                        details: {
+                            errorMessage: 'Creating an advertisement must explicitly be supplied with necessary fields.',
+                            errorStack: 'necessary fields must be defined in the body with a valid id found in the database.',
+                        }
+                    })
+                }
                 //if there's no adType in the request body
                 if(!adType){
                     return res.status(400).json({
@@ -138,7 +143,7 @@ advertisementRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to create an Idea.",
+                message: "An error occured while trying to create an Advertisement.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
