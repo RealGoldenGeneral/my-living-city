@@ -121,3 +121,5 @@ advertisementRouter.post(
         }
     }
 )
+
+module.exports = advertisementRouter;

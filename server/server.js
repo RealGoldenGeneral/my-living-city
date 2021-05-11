@@ -43,6 +43,7 @@ const main = async () => {
 	const categoryRouter = require('./controllers/category');
 	const ideaRatingRouter = require('./controllers/rating');
 	const commentInteractRouter = require('./controllers/commentInteract');
+	const advertisementRouter = require('./controllers/advertisement');
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -56,6 +57,7 @@ const main = async () => {
 	apiRouter.use('/category', categoryRouter);
 	apiRouter.use('/rating', ideaRatingRouter);
 	apiRouter.use('/interact/comment', commentInteractRouter);
+	apiRouter.use('/advertisement',advertisementRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
