@@ -314,8 +314,7 @@ model UserCommentDislikes {
 
 model Advertisements {
   id       Int       @id @default(autoincrement())
-  adId     Int?      @map("advertisement_id")
-  ownerId  String?   @map("owner_id")
+  ownerId  String    @map("owner_id")
   creatAt  DateTime  @default(now()) @map("creat_at")
   updateAt DateTime? @default(now()) @updatedAt @map("update_at")
 
