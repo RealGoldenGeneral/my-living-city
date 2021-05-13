@@ -8,6 +8,7 @@ import { IRegisterInput } from '../../lib/types/input/register.input';
 import { IUserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
 import SimpleMap from '../map/SimpleMap';
+import { IGeoInput } from 'src/lib/types/input/geo.input';
 interface RegisterPageContentProps {
   userRoles: IUserRole[] | undefined;
 }
@@ -20,18 +21,31 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
+  const [iconName, setIcon] = useState("home");
+  const [markers, sendData] = useState({lat:0,lon:0});
+  function handleChange(e:any){
+    var icon = e.target.value;
+    setIcon(icon);
+  }
+  
+  async function customFormikSet(name:string,value:any){
+    formik.setFieldValue(name,value)
+  }
+  
 
   const submitHandler = async (values: IRegisterInput) => {
     try {
       // Set loading 
       setError(null);
       setIsLoading(true);
-
+      await customFormikSet("geo.lat",markers.lat );
+      await customFormikSet("geo.lon",markers.lon );
       const { token, user } = await postRegisterUser(values);
       storeUserAndTokenInLocalStorage(token, user);
       storeTokenExpiryInLocalStorage();
       setToken(token);
       setUser(user);
+      //customFormikSet("geo.lat",markers.lat );
 
       // remove previous errors
       setError(null);
@@ -45,7 +59,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       setIsLoading(false);
     }
   }
-
+  
   const formik = useFormik<IRegisterInput>({
     initialValues: {
       userRoleId: userRoles ? userRoles[0].id : undefined,
@@ -65,15 +79,25 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
         lon: undefined,
         lat: undefined,
       }
+      // work_geo: {
+      //   lon: undefined,
+      //   lat: undefined,
+      // },
+      // school_geo: {
+      //   lon: undefined,
+      //   lat: undefined,
+      // }
     },
+    
     onSubmit: submitHandler
   })
-
+  // customFormikSet("geo.lon",markers.lon);
+  // customFormikSet("geo.lat",markers.lat);
   return (
     <main className='register-page-content'>
         <Card>
           <Card.Body>
-            <h1>Create an account</h1>
+            <h1>Create An Account</h1>
             <Form onSubmit={formik.handleSubmit}>
               <Form.Group>
                 <Form.Label>Email address</Form.Label>
@@ -158,10 +182,43 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                     </option>
                   ))}
                 </Form.Control>
-                
               </Form.Group>
-
-              <SimpleMap/>
+              {/* <Form.Label>Upload a profile image</Form.Label><br></br>
+              <Form.Control
+                type="file"
+                id="formFileMultiple"
+                name="profImage"
+                /> */}
+                <Form.Group controlId="registerUserLocation">
+                <Form.Label>Enter your where you are located</Form.Label>
+                <Form.Control
+                  as="select"
+                  onChange={handleChange}>
+                  <option value="home">Home</option>
+                  <option value="work">Work</option>
+                  <option value="school">School</option>
+                </Form.Control>
+                <SimpleMap iconName={iconName} sendData={(markers:any)=>sendData(markers)} />
+                <Form.Control
+                  name="geo.lat"
+                  value={markers.lat}
+                  // onChange={(e)=>{
+                  //   console.log(e.target.value);
+                  //   formik.handleChange("geo.lat");
+                  //   formik.setFieldValue('geo.lat',parseInt(e.target.value));
+                  //   }}
+                  
+                ></Form.Control>
+                <Form.Control
+                  name="geo.lon"
+                  value={markers.lon}
+                  // onChange={(e)=>{
+                  //   formik.handleChange(e);
+                  //   formik.setFieldValue('geo.lat',parseInt(e.target.value));
+                  //   }}
+                  
+                ></Form.Control>
+                </Form.Group>
               <Button
                 block
                 type='submit'
@@ -170,8 +227,8 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                 
                 Register!
               </Button>
+              {/* {customFormikSet("geo.lon",markers.lon)} */}
             </Form>
-
             {error && (
               <Alert variant='danger' className="error-alert">
                 { error.message}

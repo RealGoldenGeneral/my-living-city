@@ -51,6 +51,10 @@ model UserGeo {
   // Columns
   lat       Decimal?
   lon       Decimal?
+  work_lat  Decimal?
+  work_lon  Decimal?
+  school_lat Decimal?
+  school_lon Decimal?
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
