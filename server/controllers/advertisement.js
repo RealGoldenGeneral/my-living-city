@@ -2,15 +2,65 @@ const passport = require('passport');
 const express = require('express');
 const advertisementRouter = express.Router();
 const prisma = require('../lib/prismaClient');
-const multer = require('multer');
-const upload = multer({dest:'upload/'});
+
 const { isEmpty } = require('lodash');
 const { UserType } = require('@prisma/client');
 
+const multer = require('multer');
+
+
+const storage = multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null,'./uploads');
+    },
+    filename: function (req, file, cb) {
+      cb(null,Date.now() + '-' + file.originalname);
+    }
+});
+
+/*
+const theFileFilter = (req,file,cb) =>{
+    if(file.minetype === 'image/jepg' || file.minetype === 'image/png' || fileFilter.minetype === 'image/tiff' || fileFilter.minetype === 'image/webp'){
+        const theImage = new Image();
+        theImage.src = file.path;
+        const width = theImage.width;
+        const height = theImage.height;
+        console.log(width,height,"dimension");
+        if(width > 2500 || height > 1000){
+            cb(new Error('image dimension is invalid'),false);
+        }else{
+            cb(null,true);
+        }
+    }
+}
+*/
+/*
+upload(req, res, function (err) {
+    console.log(err);
+    error+=err+' ';
+    errorMessage+=err+' ';
+    errorStack+=err+' ';
+});
+*/
+
+const upload = multer({storage:storage,fileSize: 1024 * 1024 * 20, }).single('adImage');
+
+let error = '';
+let errorMessage = '';
+let errorStack = '';
+
 advertisementRouter.post(
     '/create',
-    passport.authenticate('jwt',{session:false}),upload.single('adImage'),
-    async(req,res,next) => {
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        upload(req, res, function (err) {
+            if(err){
+                console.log(err);
+                error+=err+' ';
+                errorMessage+=err+' ';
+                errorStack+=err+' ';
+            }
+        });
         try{
             //get email and user id from request
             const { email, id } = req.user;
@@ -25,10 +75,6 @@ advertisementRouter.post(
 
             //test to see if the user is an admin or business user
             if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS"){
-
-                let error = '';
-                let errorMessage = '';
-                let errorStack = '';
 
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
@@ -61,21 +107,23 @@ advertisementRouter.post(
                 //if there's no adTitle field
                 if(!adTitle){
                     error+='An advertisement needs a title. ';
-                    errorMessage+='Creating an advertisement must explicitly be supplied with a "adTitle" field. ';
+                    errorMessage+='Creating an advertisement must explicitly be supplied with a adTitle field. ';
                     errorStack+='adTitle must be defined in the body with a valid id found in the database. ';
                 }
 
                 //if the content size of adTitle is not valid
-                if(adTitle.length <= 2 || adTitle.length >=40){
-                    error+='adTitle size is invalid. ';
-                    errorMessage+='adTitle length must be longer than 2 and shorter than 40. ';
-                    errorStack+='adTitle content size must be valid ';
+                if(adTitle){
+                    if(adTitle.length <= 2 || adTitle.length >=40){
+                        error+='adTitle size is invalid. ';
+                        errorMessage+='adTitle length must be longer than 2 and shorter than 40. ';
+                        errorStack+='adTitle content size must be valid ';
+                    }
                 }
 
                 //console.log(adTitle.length);
 
                 //if there's no published field in the reqeust body or published field is not valid
-                if(!published || !(typeof published === 'boolean')){
+                if(!published){
                     error+='An published filed must be provided. ';
                     errorMessage+='Creating an idea must explicitly be supplied with a "published" field. ';
                     errorStack+='Published must be defined in the body with a valid value. ';
@@ -96,11 +144,18 @@ advertisementRouter.post(
                 }
 
                 if(error&&errorMessage&&errorStack){
+                    let tempErr = error;
+                    let tempErrMessage = errorMessage;
+                    let tempErrStack = errorStack;
+                    error = '';
+                    errorMessage = '';
+                    errorStack = '';
+
                     return res.status(400).json({
-                        message: error,
+                        message: tempErr,
                         details: {
-                          errorMessage: errorMessage,
-                          errorStack: errorStack
+                          errorMessage: tempErrMessage,
+                          errorStack: tempErrStack
                         }
                     });
                 }
