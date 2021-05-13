@@ -1,14 +1,15 @@
 const passport = require('passport');
-
 const express = require('express');
 const advertisementRouter = express.Router();
 const prisma = require('../lib/prismaClient');
+const multer = require('multer');
+const upload = multer({dest:'upload/'});
 const { isEmpty } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 advertisementRouter.post(
     '/create',
-    passport.authenticate('jwt',{session:false}),
+    passport.authenticate('jwt',{session:false}),upload.single('adImage'),
     async(req,res,next) => {
         try{
             //get email and user id from request
