@@ -16,6 +16,8 @@ export interface IUser {
 
 	// Relationships can be nullable
 	geo?: IGeo;
+	work_geo?: IGeo;
+	school_geo?: IGeo;
 	address?: IAddress;
 	userRole?: IUserRole;
 

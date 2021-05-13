@@ -20,7 +20,7 @@ const SimpleMap = (props: any) => {
           center={center}
           defaultZoom={zoom}
           onClick={(obj:any)=>{setMarker(marker = {lat:obj.lat,lon:obj.lng});
-          props.sendData(marker);
+          props.sendData(markers);
           setCenter(center = {lat:obj.lat, lng:obj.lng});
           markers[props.iconName]=marker}}
           >
