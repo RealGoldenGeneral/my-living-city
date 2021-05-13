@@ -21,10 +21,20 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [iconName, setIcon] = useState("home");
-  const [markers, sendData]:any = useState({lat:0,lon:0});
+  const [markers, sendData]:any = useState({
+    home: {lat: null, lon: null},
+    work: {lat: null, lon: null},
+    school: {lat: null, lon: null}
+  });
   
   function handleChange(e:any){setIcon(e.target.value);}
-
+  function diableSubmit(){
+    if(markers["home"]==null){
+      return true;
+    }else{
+      return false;
+    }
+  }
   function customFormikSet(){
     formik.setFieldValue("geo.lat",markers["home"].lat);
     formik.setFieldValue("geo.lon",markers["home"].lon );

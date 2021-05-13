@@ -5,7 +5,7 @@ import Marker from '../map/Marker';
 
 const DEFAULTGEO = {lat:48.4284,lng:-123.3656}
 var markers:any = {
-  home: {lat: 0, lon: 0},
+  home: {lat: null, lon: null},
   work: {lat: null, lon: null},
   school: {lat: null, lon: null}
 }
