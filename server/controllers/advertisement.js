@@ -18,32 +18,19 @@ const storage = multer.diskStorage({
     }
 });
 
-/*
+
 const theFileFilter = (req,file,cb) =>{
-    if(file.minetype === 'image/jepg' || file.minetype === 'image/png' || fileFilter.minetype === 'image/tiff' || fileFilter.minetype === 'image/webp'){
-        const theImage = new Image();
-        theImage.src = file.path;
-        const width = theImage.width;
-        const height = theImage.height;
-        console.log(width,height,"dimension");
-        if(width > 2500 || height > 1000){
-            cb(new Error('image dimension is invalid'),false);
-        }else{
-            cb(null,true);
-        }
+    console.log(file);
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp'){
+        cb(null,true);
+    }else{
+        cb(new Error('file format not supported'),false);
     }
 }
-*/
-/*
-upload(req, res, function (err) {
-    console.log(err);
-    error+=err+' ';
-    errorMessage+=err+' ';
-    errorStack+=err+' ';
-});
-*/
 
-const upload = multer({storage:storage,fileSize: 1024 * 1024 * 20, }).single('adImage');
+const maxFileSize = 10485760;
+
+const upload = multer({storage:storage,limits:{fileSize:maxFileSize},fileFilter:theFileFilter}).single('adImage');
 
 let error = '';
 let errorMessage = '';
@@ -88,7 +75,7 @@ advertisementRouter.post(
                 }
 
                 //decompose necessary fields from request body
-                const {adType,adTitle,adDuration,adPosition,imagePath,externalLink,published} = req.body;
+                const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
 
                 //if there's no adType in the request body
                 if(!adType){
@@ -125,7 +112,21 @@ advertisementRouter.post(
                 //if there's no published field in the reqeust body or published field is not valid
                 if(!published){
                     error+='An published filed must be provided. ';
-                    errorMessage+='Creating an idea must explicitly be supplied with a "published" field. ';
+                    errorMessage+='Creating an advertisement must explicitly supply a published field. ';
+                    errorStack+='Published must be defined in the body with a valid value. ';
+                }
+
+                let thePublished = false;
+
+                if(published&&(published=='false'||published=='true')){
+                    if(published=='true'){
+                        thePublished = true;
+                    }else{
+                        thePublished = false;
+                    }
+                }else{
+                    error+='published must be predefined values. ';
+                    errorMessage+='Creating an advertisement must explicitly supply a valid published value. '
                     errorStack+='Published must be defined in the body with a valid value. ';
                 }
 
@@ -143,19 +144,26 @@ advertisementRouter.post(
                     errorStack+='"adPosition" must be provided in the body with a valid position found in the database. '
                 }
 
+                let imagePath = '';
+
+                if(req.file){
+                    console.log(req.file);
+                    imagePath = req.file.path;
+                }
+
                 if(error&&errorMessage&&errorStack){
-                    let tempErr = error;
-                    let tempErrMessage = errorMessage;
-                    let tempErrStack = errorStack;
+                    let tempError = error;
+                    let tempErrorMessage = errorMessage;
+                    let tempErrorStack = errorStack;
                     error = '';
                     errorMessage = '';
                     errorStack = '';
 
                     return res.status(400).json({
-                        message: tempErr,
+                        message: tempError,
                         details: {
-                          errorMessage: tempErrMessage,
-                          errorStack: tempErrStack
+                          errorMessage: tempErrorMessage,
+                          errorStack: tempErrorStack
                         }
                     });
                 }
@@ -173,7 +181,7 @@ advertisementRouter.post(
                         adPosition:adPosition,
                         imagePath:imagePath,
                         externalLink:externalLink,
-                        published:published
+                        published:thePublished
                     }
                 });
 
