@@ -13,116 +13,108 @@ advertisementRouter.post(
         try{
             //get email and user id from request
             const { email, id } = req.user;
-            //get adType from request body
-            const { adType } = req.body;
-
             //find the requesting user in the database
             const theUser = await prisma.user.findUnique({
                 where:{id:id},
                 select:{userType:true}
             })
 
-            console.log(theUser.userType);
+            //console.log(theUser.userType);
+            //console.log(req)
 
             //test to see if the user is an admin or business user
             if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS"){
+
+                let error = '';
+                let errorMessage = '';
+                let errorStack = '';
+
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
                     return res.status(400).json({
                         message: 'The objects in the request body are missing',
                         details: {
-                            errorMessage: 'Creating an advertisement must explicitly be supplied with necessary fields.',
-                            errorStack: 'necessary fields must be defined in the body with a valid id found in the database.',
+                            errorMessage: 'Creating an advertisement must supply necessary fields explicitly.',
+                            errorStack: 'necessary fields must be provided in the body with a valid id found in the database.',
                         }
                     })
-                }
-                //if there's no adType in the request body
-                if(!adType){
-                    return res.status(400).json({
-                        message: 'An advertisement must has a type.',
-                        details: {
-                          errorMessage: 'Creating an advertisement must explicitly be supplied with a "adType" field.',
-                          errorStack: '"adType" must be defined in the body with a valid id found in the database.',
-                        }
-                    })
-                }
-                
-                //if adType is not valid
-                if(adType!="BASIC"||adType!="EXTRA"){
-                    return res.status(400).json({
-                        message: 'adType is invalid.',
-                        details: {
-                          errorMessage: 'adType must be BASIC or EXTRA.',
-                          errorStack: '"adType" must be assigned with BASIC or EXTRA.',
-                        }
-                      })
                 }
 
                 //decompose necessary fields from request body
-                const {adTitle,adDuration,adPosition,imagePath,externalLink,published} = req.body;
+                const {adType,adTitle,adDuration,adPosition,imagePath,externalLink,published} = req.body;
+
+                //if there's no adType in the request body
+                if(!adType){
+                    error+='An advertisement must has a type. ';
+                    errorMessage+='Creating an advertisement must explicitly be supplied with a "adType" field. ';
+                    errorStack+='adType must be defined in the body with a valid id found in the database. ';
+                }
+                
+                //if adType is not valid
+                if(!(adType=="BASIC"||adType=="EXTRA")){
+                    error+='adType is invalid. ';
+                    errorMessage+='adType must be predefined value. ';
+                    errorStack+='adType must be assigned with predfined value. ';
+                }
 
                 //if there's no adTitle field
                 if(!adTitle){
-                    return res.status(400).json({
-                        message: 'An advertisement needs a title.',
-                        details: {
-                          errorMessage: 'Creating an advertisement must explicitly be supplied with a "adTitle" field.',
-                          errorStack: '"adTitle" must be defined in the body with a valid id found in the database.',
-                        }
-                    })
-                }
-
-                //if there's no published field in the reqeust body or published field is not valid
-                if(!published || typeof published === 'boolean'){
-                    return res.status(400).json({
-                        message: 'An published filed must be provided',
-                        details: {
-                          errorMessage: 'Creating an idea must explicitly be supplied with a "published" field.',
-                          errorStack: '"Published" must be defined in the body with a valid value.',
-                        }
-                    })
+                    error+='An advertisement needs a title. ';
+                    errorMessage+='Creating an advertisement must explicitly be supplied with a "adTitle" field. ';
+                    errorStack+='adTitle must be defined in the body with a valid id found in the database. ';
                 }
 
                 //if the content size of adTitle is not valid
                 if(adTitle.length <= 2 || adTitle.length >=40){
-                    return res.status(400).json({
-                        message: 'adTitle size is invalid.',
-                        details: {
-                          errorMessage: 'adTitle length must be longer than 2 and shorter than 40.',
-                          errorStack: '"adTitle" content size must be valid',
-                        }
-                    })
+                    error+='adTitle size is invalid. ';
+                    errorMessage+='adTitle length must be longer than 2 and shorter than 40. ';
+                    errorStack+='adTitle content size must be valid ';
+                }
+
+                //console.log(adTitle.length);
+
+                //if there's no published field in the reqeust body or published field is not valid
+                if(!published || !(typeof published === 'boolean')){
+                    error+='An published filed must be provided. ';
+                    errorMessage+='Creating an idea must explicitly be supplied with a "published" field. ';
+                    errorStack+='Published must be defined in the body with a valid value. ';
                 }
 
                 //if there's no adDuration field in the request body
-                if(!adDuration){
-                    return res.status(400).json({
-                        message: 'adDuration must be provided.',
-                        details: {
-                          errorMessage: 'adDuration must be provided in the body with a valid length',
-                          errorStack: '"adDuration" must be provided in the body with a valid lenght',
-                        }
-                    })
+                if(!adDuration || adDuration <= 0){
+                    error+='adDuration must be provided. ';
+                    errorMessage+='adDuration must be provided in the body with a valid length. ';
+                    errorStack+='adDuration must be provided in the body with a valid lenght. ';
                 }
 
                 //if there's no adPosition field in the 
                 if(!adPosition){
-                    return res.status(400).json({
-                        message: 'adPosition is missing.',
-                        details: {
-                          errorMessage: 'Creating an advertisement must explicitly be supplied with a "adPosition" field.',
-                          errorStack: '"adPosition" must be defined in the body with a valid position found in the database.',
-                        }
-                    })
+                    error+='adPosition is missing. ';
+                    errorMessage+='Creating an advertisement must explicitly be supply a adPosition field. ';
+                    errorStack+='"adPosition" must be provided in the body with a valid position found in the database. '
                 }
 
+                if(error&&errorMessage&&errorStack){
+                    return res.status(400).json({
+                        message: error,
+                        details: {
+                          errorMessage: errorMessage,
+                          errorStack: errorStack
+                        }
+                    });
+                }
+
+                let theDate = new Date();
+                let endDate = new Date();
+                endDate.setDate(theDate.getDate()+adDuration);
                 //create an advertisement object
-                const createAnAdvertisement = await prisma.advertisement.create({
+                const createAnAdvertisement = await prisma.advertisements.create({
                     data:{
                         ownerId:id,
                         adTitle:adTitle,
-                        adDuration:adDuration,
+                        duration: endDate,
                         adType:adType,
+                        adPosition:adPosition,
                         imagePath:imagePath,
                         externalLink:externalLink,
                         published:published

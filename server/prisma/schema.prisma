@@ -93,7 +93,7 @@ model User {
   // Keys
   id         String   @id @default(cuid())
   userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(USER) @map("user_type")
+  userType   UserType @default(ADMIN) @map("user_type")
 
   // Fields
   email     String   @unique
@@ -315,7 +315,7 @@ model UserCommentDislikes {
 model Advertisements {
   id       Int       @id @default(autoincrement())
   ownerId  String    @map("owner_id")
-  createAt  DateTime  @default(now()) @map("creat_at")
+  createAt DateTime  @default(now()) @map("creat_at")
   updateAt DateTime? @default(now()) @updatedAt @map("update_at")
 
   adTitle      String   @map("advertisement_title")
