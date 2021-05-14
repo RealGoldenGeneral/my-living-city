@@ -3,12 +3,14 @@ const express = require('express');
 const advertisementRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
+const fs = require('fs');
+
 const { isEmpty } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 const multer = require('multer');
 
-
+//multer storage policy, including file destination and file naming policy
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,'./uploads');
@@ -18,7 +20,7 @@ const storage = multer.diskStorage({
     }
 });
 
-
+//file filter policy, only accept image file
 const theFileFilter = (req,file,cb) =>{
     console.log(file);
     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp'){
@@ -27,19 +29,20 @@ const theFileFilter = (req,file,cb) =>{
         cb(new Error('file format not supported'),false);
     }
 }
-
+//const variable for 10MB max file size in bytes
 const maxFileSize = 10485760;
-
+//multer upload project, setting receiving mode and which key components to use
 const upload = multer({storage:storage,limits:{fileSize:maxFileSize},fileFilter:theFileFilter}).single('adImage');
-
+//Error information holder
 let error = '';
 let errorMessage = '';
 let errorStack = '';
-
+//For handling post request
 advertisementRouter.post(
     '/create',
     passport.authenticate('jwt',{session:false}),
     async(req,res) => {
+        //multer error handling method
         upload(req, res, function (err) {
             if(err){
                 console.log(err);
@@ -55,10 +58,7 @@ advertisementRouter.post(
             const theUser = await prisma.user.findUnique({
                 where:{id:id},
                 select:{userType:true}
-            })
-
-            //console.log(theUser.userType);
-            //console.log(req)
+            });
 
             //test to see if the user is an admin or business user
             if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS"){
@@ -81,11 +81,11 @@ advertisementRouter.post(
                 if(!adType){
                     error+='An advertisement must has a type. ';
                     errorMessage+='Creating an advertisement must explicitly be supplied with a "adType" field. ';
-                    errorStack+='adType must be defined in the body with a valid id found in the database. ';
+                    errorStack+='adType must be defined in the body with a predefined value. ';
                 }
                 
                 //if adType is not valid
-                if(!(adType=="BASIC"||adType=="EXTRA")){
+                if(adType&&!(adType=="BASIC"||adType=="EXTRA")){
                     error+='adType is invalid. ';
                     errorMessage+='adType must be predefined value. ';
                     errorStack+='adType must be assigned with predfined value. ';
@@ -94,11 +94,11 @@ advertisementRouter.post(
                 //if there's no adTitle field
                 if(!adTitle){
                     error+='An advertisement needs a title. ';
-                    errorMessage+='Creating an advertisement must explicitly be supplied with a adTitle field. ';
-                    errorStack+='adTitle must be defined in the body with a valid id found in the database. ';
+                    errorMessage+='Creating an advertisement must explicitly supply a adTitle field. ';
+                    errorStack+='adTitle must be defined in the body with a valid length. ';
                 }
 
-                //if the content size of adTitle is not valid
+                //if the length of adTitle is not valid
                 if(adTitle){
                     if(adTitle.length <= 2 || adTitle.length >=40){
                         error+='adTitle size is invalid. ';
@@ -115,9 +115,9 @@ advertisementRouter.post(
                     errorMessage+='Creating an advertisement must explicitly supply a published field. ';
                     errorStack+='Published must be defined in the body with a valid value. ';
                 }
-
+                //published value container variable
                 let thePublished = false;
-
+                //Transfer the published variable into boolean value, if value can't be transfered into boolean, push error into error stack.
                 if(published&&(published=='false'||published=='true')){
                     if(published=='true'){
                         thePublished = true;
@@ -127,7 +127,7 @@ advertisementRouter.post(
                 }else{
                     error+='published must be predefined values. ';
                     errorMessage+='Creating an advertisement must explicitly supply a valid published value. '
-                    errorStack+='Published must be defined in the body with a valid value. ';
+                    errorStack+='Published must be provided in the body with a valid value. ';
                 }
 
                 //if there's no adDuration field in the request body
@@ -143,15 +143,19 @@ advertisementRouter.post(
                     errorMessage+='Creating an advertisement must explicitly be supply a adPosition field. ';
                     errorStack+='"adPosition" must be provided in the body with a valid position found in the database. '
                 }
-
+                //Image path holder
                 let imagePath = '';
-
+                //if there's req.file been parsed by multer
                 if(req.file){
-                    console.log(req.file);
+                    //console.log(req.file);
                     imagePath = req.file.path;
                 }
-
+                //If there's error in error holder
                 if(error&&errorMessage&&errorStack){
+                    //multer is a kind of middleware, if file is valid, multer will add it to upload folder. Following code are responsible for deleting files if error happened.
+                    if(fs.existsSync(imagePath)){
+                        fs.unlinkSync(imagePath);
+                    }
                     let tempError = error;
                     let tempErrorMessage = errorMessage;
                     let tempErrorStack = errorStack;
@@ -167,7 +171,7 @@ advertisementRouter.post(
                         }
                     });
                 }
-
+                //Calculate the ending date of advertisement based on duration field.
                 let theDate = new Date();
                 let endDate = new Date();
                 endDate.setDate(theDate.getDate()+adDuration);
