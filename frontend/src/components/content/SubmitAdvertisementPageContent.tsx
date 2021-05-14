@@ -15,6 +15,7 @@ interface SubmitAdvertisementPageContentProps {
 
 const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentProps> = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [validated, setValidated] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
   
     const { token } = useContext(UserProfileContext);
@@ -58,7 +59,51 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
   
     return (
       <Container className='submit-advertisement-page-content'>
-        
+        <Row className='justify-content-center'>
+          <h1>Create Avdertisement</h1>
+        </Row>
+        <Row className='submit-idea-form-group justify-content-center'>
+        <Col lg={10} >
+          <Form noValidate validated={validated}  onSubmit={formik.handleSubmit}>
+            <Form.Group controlId="submitAdvertisementType">
+              <Form.Label>Select Advertisement Type</Form.Label>
+              <Form.Control as="select" name="adType" onChange={formik.handleChange} value={formik.values.adType}>
+                <option key='0' value='BASIC'>BASIC</option>
+                <option key='1' value='EXTRA'>EXTRA</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="submitAdvertisementTitle">
+              <Form.Label>Advertisement title</Form.Label>
+              <Form.Control type="text" name="adTitle" onChange={formik.handleChange} value={formik.values.adTitle} placeholder="Your advertisement title" required minLength={2} maxLength={40}></Form.Control>
+              <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 2 and 40</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group controlId="submitAdvertisementPosition">
+              <Form.Label>Target position</Form.Label>
+              <Form.Control type="text" name="adPosition" onChange={formik.handleChange} value={formik.values.adPosition} placeholder="Your target position" required minLength={1} maxLength={85}></Form.Control>
+              <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 1 and 85</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group controlId="submitAdvertisementDuration">
+              <Form.Label>Advertisement Duration</Form.Label>
+              <Form.Control type="number" name="duration" onChange={formik.handleChange} value={formik.values.duration} placeholder="Your advertisement duration" required min={1}></Form.Control>
+              <Form.Control.Feedback type="invalid">Please provide a valid duration(more than 1 day)</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group controlId="submitAdvertisementExternalLink">
+              <Form.Label>Provide external link for your advertisement</Form.Label>
+              <Form.Control type="url" name="externalLink" onChange={formik.handleChange} value={formik.values.externalLink} placeholder="Your external link" required isValid></Form.Control>
+              <Form.Control.Feedback type="invalid">Please a valid external link</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group controlId="submitAdvertisementImage">
+              <Form.Label>Upload advertisement image</Form.Label>
+            </Form.Group>
+          </Form>
+          {error && (
+            <Alert variant='danger' className="error-alert">
+              { error.message}
+            </Alert>
+          )}
+          {/* TODO: Add ui alert flash to inform user that idea has succesfully been created */}
+        </Col>
+      </Row>
       </Container>
     );
   }
