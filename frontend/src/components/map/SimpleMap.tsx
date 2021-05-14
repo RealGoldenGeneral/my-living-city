@@ -14,7 +14,7 @@ const SimpleMap = (props: any) => {
     const [zoom, setZoom] = useState(12);
     var [marker, setMarker]:any = useState({lat: null, lon: null})
     return (
-        <div style={{ height: '50vh', width: '100%' }}>
+        <div style={{ height: '40vh', width: '100%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "" }}
           center={center}

@@ -21,36 +21,42 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [iconName, setIcon] = useState("home");
+  const [isHomeSet, setHome] = useState(false);
+  const handleHomeState = () => {
+    if(markers.home.lat != null){
+      setHome(true);
+    }
+  }
   const [markers, sendData]:any = useState({
     home: {lat: null, lon: null},
     work: {lat: null, lon: null},
     school: {lat: null, lon: null}
   });
-  
+
   function handleChange(e:any){setIcon(e.target.value);}
-  function diableSubmit(){
-    if(markers["home"]==null){
-      return true;
-    }else{
-      return false;
-    }
-  }
-  function customFormikSet(){
-    formik.setFieldValue("geo.lat",markers["home"].lat);
-    formik.setFieldValue("geo.lon",markers["home"].lon );
-    formik.setFieldValue("geo.work_lat",markers["work"].lat );
-    formik.setFieldValue("geo.work_lon",markers["work"].lon );
-    formik.setFieldValue("geo.school_lat",markers["school"].lat );
-    formik.setFieldValue("geo.school_lon",markers["school"].lon );
-  }
   
 
+  function customFormikSet(){
+    if(markers.home.lat!=null){
+      formik.setFieldValue("geo.lat",markers["home"].lat);
+      formik.setFieldValue("geo.lon",markers["home"].lon );
+      formik.setFieldValue("geo.work_lat",markers["work"].lat );
+      formik.setFieldValue("geo.work_lon",markers["work"].lon );
+      formik.setFieldValue("geo.school_lat",markers["school"].lat );
+      formik.setFieldValue("geo.school_lon",markers["school"].lon );
+    }
+
+  }
+  
   const submitHandler = async (values: IRegisterInput) => {
     try {
       // Set loading 
       setError(null);
+      if(markers.home.lat===null){
+        setError(new Error("Please enter your home location."))
+        throw error;
+      }
       setIsLoading(true);
-
       const { token, user } = await postRegisterUser(values);
       storeUserAndTokenInLocalStorage(token, user);
       storeTokenExpiryInLocalStorage();
@@ -98,8 +104,6 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     
     onSubmit: submitHandler
   })
-  // customFormikSet("geo.lon",markers.lon);
-  // customFormikSet("geo.lat",markers.lat);
   return (
     <main className='register-page-content'>
         <Card>
@@ -169,7 +173,20 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                   value={formik.values.address?.streetAddress}
                 />
               </Form.Group>
-              <Form.Group controlId="registerUserType">
+                <Form.Group controlId="registerUserLocation">
+                <Form.Label>Enter your where you are located</Form.Label>
+                <Form.Control
+                  as="select"
+                  onChange={handleChange}>
+                  <option value="home">Home</option>
+                  <option value="work">Work</option>
+                  <option value="school">School</option>
+                </Form.Control>
+                </Form.Group>
+                <Form.Group>
+                    <SimpleMap iconName={iconName} sendData={(markers:any)=>sendData(markers) } />
+                </Form.Group>
+                <Form.Group controlId="registerUserType">
                 <Form.Label>Choose your desired account type:</Form.Label>
                 <Form.Control
                   as="select"
@@ -190,33 +207,15 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                   ))}
                 </Form.Control>
               </Form.Group>
-              {/* <Form.Label>Upload a profile image</Form.Label><br></br>
-              <Form.Control
-                type="file"
-                id="formFileMultiple"
-                name="profImage"
-                /> */}
-                <Form.Group controlId="registerUserLocation">
-                <Form.Label>Enter your where you are located</Form.Label>
-                <Form.Control
-                  as="select"
-                  onChange={handleChange}>
-                  <option value="home">Home</option>
-                  <option value="work">Work</option>
-                  <option value="school">School</option>
-                </Form.Control>
-                <SimpleMap iconName={iconName} sendData={(markers:any)=>sendData(markers)} />
-                </Form.Group>
               <Button
                 block
                 onClick={()=>{customFormikSet()}}
                 type='submit'
-                disabled={isLoading ? true : false}
+                disabled={(isLoading) ? true : false}
               >
                 
                 Register!
               </Button>
-              {/* {customFormikSet("geo.lon",markers.lon)} */}
             </Form>
             {error && (
               <Alert variant='danger' className="error-alert">
