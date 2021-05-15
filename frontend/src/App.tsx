@@ -15,6 +15,7 @@ import SubmitIdeaPage from './pages/SubmitIdeaPage';
 import LoginPage from './pages/LoginPage';
 import PrivateRoute from './components/utility/PrivateRoute';
 import PublicRoute from './components/utility/PublicRoute';
+import SubmitAdvertisementPage from './pages/SubmitAdvertisementPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <PrivateRoute path={ROUTES.SUBMIT_IDEA} component={SubmitIdeaPage} />
           <PrivateRoute path={ROUTES.USER_PROFILE} component={ProfilePage} />
           <PrivateRoute path={ROUTES.TEST_PAGE} redirectPath='/ideas/1' component={TestPage} />
+          <PrivateRoute path={ROUTES.SUBMIT_ADVERTISEMENT} component={SubmitAdvertisementPage} />
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>
       </div>
