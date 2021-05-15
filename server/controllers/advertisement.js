@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 //file filter policy, only accept image file
 const theFileFilter = (req,file,cb) =>{
     console.log(file);
-    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp'){
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp' || file.mimetype === 'image/jpg'){
         cb(null,true);
     }else{
         cb(new Error('file format not supported'),false);
