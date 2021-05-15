@@ -101,6 +101,14 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             <Form.Group controlId="submitAdvertisementPublished" >
               <Form.Check type="checkbox" label="Publish your advertisement" name="published" onChange={formik.handleChange}></Form.Check>
             </Form.Group>
+            <Button
+              block
+              size="lg"
+              type='submit'
+              disabled={isLoading ? true : false}
+            >
+              {isLoading ? "Saving..." : "Submit your Advertisement!"}
+            </Button>
           </Form>
           {error && (
             <Alert variant='danger' className="error-alert">
