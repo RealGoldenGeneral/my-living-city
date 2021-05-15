@@ -4,12 +4,11 @@ import React, { useContext, useState } from 'react'
 import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
 import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-import { postCreateIdea } from '../../lib/api/ideaRoutes';
+import { postCreateAdvertisement } from 'src/lib/api/advertisementRoutes';
 import { IBasicAdvertisement } from '../../lib/types/data/advertisement.type';
 import { FetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
-import ImageUploader from 'react-images-upload';
-import { Image } from 'react-bootstrap';
+import ImageUploader from 'react-images-upload'
 
 interface SubmitAdvertisementPageContentProps {
     
@@ -31,8 +30,8 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
   
         setTimeout(() => console.log("timeout"), 5000);
   
-        //const res = await postCreateIdea(values, token);
-        //console.log(res);
+        const res = await postCreateAdvertisement(values, token);
+        console.log(res);
   
         setError(null);
         formik.resetForm();
