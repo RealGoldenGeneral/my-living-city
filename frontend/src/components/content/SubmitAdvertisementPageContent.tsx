@@ -52,7 +52,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         adTitle: '',
         adPosition: '',
         duration: 0,
-        published: 'false',
+        published: false,
         externalLink: '',
         adImage: undefined
       },
@@ -98,6 +98,9 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Label>Upload advertisement image</Form.Label>
               {/*<Form.File label="Your advertisement image" type="image" name="adImage" onChange={formik.handleChange} value={formik.values.adImage} required accept="image/png,image/jepg,image/webp,image/tiff" ></Form.File>*/}
               <ImageUploader name="adImage" onChange={formik.handleChange} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg,jpeg,png,webp"/>
+            </Form.Group>
+            <Form.Group controlId="submitAdvertisementPublished" >
+              <Form.Check type="checkbox" label="Publish your advertisement" name="published" onChange={formik.handleChange}></Form.Check>
             </Form.Group>
           </Form>
           {error && (

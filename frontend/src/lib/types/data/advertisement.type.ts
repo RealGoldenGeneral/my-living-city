@@ -2,7 +2,6 @@
 
 export type AdvertisementType = 'BASIC' | 'EXTRA';
 
-export type PublishedType = 'false' | 'true';
 
 export interface IBasicAdvertisement {
 	id: number;
@@ -12,7 +11,7 @@ export interface IBasicAdvertisement {
     duration: number;
     adPosition: string;
     externalLink: string;
-    published: PublishedType;
+    published: boolean;
     adImage: any;
 	createdAt: string;
 	updatedAt: string;

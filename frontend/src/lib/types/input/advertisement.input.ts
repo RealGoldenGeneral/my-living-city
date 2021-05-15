@@ -1,5 +1,4 @@
 import { AdvertisementType } from "../data/advertisement.type";
-import { PublishedType } from "../data/advertisement.type";
 
 export interface CreateAdvertisementInput {
 	adTitle: string;
@@ -8,5 +7,5 @@ export interface CreateAdvertisementInput {
     adPosition: string;
     adImage: any;
     externalLink: string;
-    published: PublishedType;
+    published: boolean;
 }
