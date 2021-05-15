@@ -8,6 +8,8 @@ import { postCreateIdea } from '../../lib/api/ideaRoutes';
 import { IBasicAdvertisement } from '../../lib/types/data/advertisement.type';
 import { FetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
+import ImageUploader from 'react-images-upload';
+import { Image } from 'react-bootstrap';
 
 interface SubmitAdvertisementPageContentProps {
     
@@ -41,7 +43,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
       } finally {
         setIsLoading(false)
       }
-    }
+    };
   
     const formik = useFormik<CreateAdvertisementInput>({
       initialValues: {
@@ -52,10 +54,10 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         duration: 0,
         published: 'false',
         externalLink: '',
-        adImage: null
+        adImage: undefined
       },
       onSubmit: submitHandler
-    })
+    });
   
     return (
       <Container className='submit-advertisement-page-content'>
@@ -89,11 +91,13 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             </Form.Group>
             <Form.Group controlId="submitAdvertisementExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
-              <Form.Control type="url" name="externalLink" onChange={formik.handleChange} value={formik.values.externalLink} placeholder="Your external link" required isValid></Form.Control>
+              <Form.Control type="url" name="externalLink" onChange={formik.handleChange} value={formik.values.externalLink} placeholder="Your external link" required ></Form.Control>
               <Form.Control.Feedback type="invalid">Please a valid external link</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="submitAdvertisementImage">
               <Form.Label>Upload advertisement image</Form.Label>
+              {/*<Form.File label="Your advertisement image" type="image" name="adImage" onChange={formik.handleChange} value={formik.values.adImage} required accept="image/png,image/jepg,image/webp,image/tiff" ></Form.File>*/}
+              <ImageUploader name="adImage" onChange={formik.handleChange} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg,jpeg,png,webp"/>
             </Form.Group>
           </Form>
           {error && (
