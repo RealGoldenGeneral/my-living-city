@@ -21,19 +21,20 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
   
     const { token } = useContext(UserProfileContext);
   
-  
+    //sumit handler which calls api posting component to post form data of user input
     const submitHandler = async (values: CreateAdvertisementInput) => {
       try {
         // Set loading and error state
         setError(null);
         setIsLoading(true);
-  
+        //timeout period
         setTimeout(() => console.log("timeout"), 5000);
-  
+        //api component call
         const res = await postCreateAdvertisement(values, token);
         console.log(res);
-  
+        //if successfully posted, set error to null
         setError(null);
+        //reset the form
         formik.resetForm();
       } catch (error) {
         const genericMessage = 'An error occured while trying to create an Idea.';
@@ -43,10 +44,9 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         setIsLoading(false)
       }
     };
-  
+    //setting state handler for user input based on advertisement input model
     const formik = useFormik<CreateAdvertisementInput>({
       initialValues: {
-        // TODO: CatId when chosen is a string
         adType: 'BASIC',
         adTitle: '',
         adPosition: '',
@@ -73,32 +73,31 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
                 <option key='1' value='EXTRA'>EXTRA</option>
               </Form.Control>
             </Form.Group>
-            <Form.Group controlId="submitAdvertisementTitle">
+            <Form.Group>
               <Form.Label>Advertisement title</Form.Label>
               <Form.Control type="text" name="adTitle" onChange={formik.handleChange} value={formik.values.adTitle} placeholder="Your advertisement title" required minLength={2} maxLength={40}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 2 and 40</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="submitAdvertisementPosition">
+            <Form.Group>
               <Form.Label>Target position</Form.Label>
               <Form.Control type="text" name="adPosition" onChange={formik.handleChange} value={formik.values.adPosition} placeholder="Your target position" required minLength={1} maxLength={85}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 1 and 85</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="submitAdvertisementDuration">
+            <Form.Group>
               <Form.Label>Advertisement Duration</Form.Label>
-              <Form.Control type="number" name="duration" onChange={formik.handleChange} value={formik.values.duration} placeholder="Your advertisement duration" required min={1}></Form.Control>
+              <Form.Control type="number" name="duration" size="sm" onChange={formik.handleChange} value={formik.values.duration} placeholder="Your advertisement duration" required min={1}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide a valid duration(more than 1 day)</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="submitAdvertisementExternalLink">
+            <Form.Group>
               <Form.Label>Provide external link for your advertisement</Form.Label>
               <Form.Control type="url" name="externalLink" onChange={formik.handleChange} value={formik.values.externalLink} placeholder="Your external link" required ></Form.Control>
               <Form.Control.Feedback type="invalid">Please a valid external link</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="submitAdvertisementImage">
-              <Form.Label>Upload advertisement image</Form.Label>
+            <Form.Group>
               {/*<Form.File label="Your advertisement image" type="image" name="adImage" onChange={formik.handleChange} value={formik.values.adImage} required accept="image/png,image/jepg,image/webp,image/tiff" ></Form.File>*/}
               <ImageUploader name="adImage" onChange={formik.handleChange} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg,jpeg,png,webp"/>
             </Form.Group>
-            <Form.Group controlId="submitAdvertisementPublished" >
+            <Form.Group>
               <Form.Check type="checkbox" label="Publish your advertisement" name="published" onChange={formik.handleChange}></Form.Check>
             </Form.Group>
             <Button

@@ -39,11 +39,17 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
     advertisementForm.append('adImage', adImage);
     advertisementForm.append('published', published ? 'true' : 'false');
 
-    axios({
+    const res = await axios({
         method: "post",
         url: `${API_BASE_URL}/advertisement/create`,
         data: advertisementForm,
         headers: { "Content-Type": "multipart/form-data", "x-auth-token": token, "Access-Control-Allow-Origin": "*" },
         withCredentials: true
     })
+
+    if(!(res.status==201 || res.status==200)){
+        throw new Error(res.data);
+    }
+
+    return res.data;
 }
