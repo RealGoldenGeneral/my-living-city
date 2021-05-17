@@ -61,7 +61,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     return (
       <Container className='submit-advertisement-page-content'>
         <Row className='justify-content-center'>
-          <h1>Create Avdertisement</h1>
+          <h1>Create Advertisement</h1>
         </Row>
         <Row className='submit-idea-form-group justify-content-center'>
         <Col lg={10} >

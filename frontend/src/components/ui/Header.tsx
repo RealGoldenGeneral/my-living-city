@@ -30,7 +30,7 @@ export default function Header() {
                 <Nav.Link href='/profile'>Profile</Nav.Link>
 
                 <NavDropdown title="Tools" id="nav-dropdown">
-                  <Nav.Link href='/advertisement/create'>Add Advertisement</Nav.Link>
+                  <Nav.Link href='/advertisement/submit'>Add Advertisement</Nav.Link>
                 </NavDropdown>
 
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
