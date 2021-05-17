@@ -22,7 +22,6 @@ export default function Header() {
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='ml-auto'>
             <Nav.Link href='/'>Home</Nav.Link>
-            <Nav.Link href ='/advertisement/create'>Advertise</Nav.Link>
             <Nav.Link href='/ideas'>Ideas</Nav.Link>
             {user ? (
               <>
