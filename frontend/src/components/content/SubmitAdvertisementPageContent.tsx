@@ -6,7 +6,7 @@ import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.inpu
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateAdvertisement } from 'src/lib/api/advertisementRoutes';
 import { IBasicAdvertisement } from '../../lib/types/data/advertisement.type';
-import { FetchError } from '../../lib/types/types';
+import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 import ImageUploader from 'react-images-upload'
 
@@ -17,7 +17,7 @@ interface SubmitAdvertisementPageContentProps {
 const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentProps> = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
-    const [error, setError] = useState<FetchError | null>(null);
+    const [error, setError] = useState<IFetchError | null>(null);
   
     const { token } = useContext(UserProfileContext);
   
@@ -61,7 +61,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     return (
       <Container className='submit-advertisement-page-content'>
         <Row className='justify-content-center'>
-          <h1>Create Avdertisement</h1>
+          <h1>Create Advertisement</h1>
         </Row>
         <Row className='submit-idea-form-group justify-content-center'>
         <Col lg={10} >
@@ -84,7 +84,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 1 and 85</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label>Advertisement Duration</Form.Label>
+              <Form.Label>Advertisement Duration in Days</Form.Label>
               <Form.Control type="number" name="duration" size="sm" onChange={formik.handleChange} value={formik.values.duration} placeholder="Your advertisement duration" required min={1}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide a valid duration(more than 1 day)</Form.Control.Feedback>
             </Form.Group>
