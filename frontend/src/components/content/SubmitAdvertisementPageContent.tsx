@@ -73,27 +73,27 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
                 <option key='1' value='EXTRA'>EXTRA</option>
               </Form.Control>
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="validateAdTitle">
               <Form.Label>Advertisement title</Form.Label>
               <Form.Control type="text" name="adTitle" onChange={formik.handleChange} value={formik.values.adTitle} placeholder="Your advertisement title" required minLength={2} maxLength={40}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 2 and 40</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="validateAdPosition">
               <Form.Label>Target position</Form.Label>
               <Form.Control type="text" name="adPosition" onChange={formik.handleChange} value={formik.values.adPosition} placeholder="Your target position" required minLength={1} maxLength={85}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 1 and 85</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="validateDuration">
               <Form.Label>Advertisement Duration in Days</Form.Label>
               <Form.Control type="number" name="duration" size="sm" onChange={formik.handleChange} value={formik.values.duration} placeholder="Your advertisement duration" required min={1}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide a valid duration(more than 1 day)</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="validateExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
               <Form.Control type="url" name="externalLink" onChange={formik.handleChange} value={formik.values.externalLink} placeholder="Your external link" required ></Form.Control>
               <Form.Control.Feedback type="invalid">Please a valid external link</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group>
+            <Form.Group controlId="validateAdImage">
               {/*<Form.File label="Your advertisement image" type="image" name="adImage" onChange={formik.handleChange} value={formik.values.adImage} required accept="image/png,image/jepg,image/webp,image/tiff" ></Form.File>*/}
               <ImageUploader name="adImage" onChange={formik.handleChange} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg,jpeg,png,webp"/>
             </Form.Group>
