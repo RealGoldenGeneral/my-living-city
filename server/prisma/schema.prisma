@@ -1,9 +1,10 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: https://pris.ly/d/prisma-schem
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  //url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
 }
 
 generator client {
@@ -27,9 +28,17 @@ model Report {
 enum UserType {
   USER
   ADMIN
+  BUSINESS
   DEVELOPER
 
   @@map(name: "user_type")
+}
+
+enum AdType {
+  BASIC
+  EXTRA
+
+  @@map(name: "ad_type")
 }
 
 model UserRole {
@@ -88,7 +97,7 @@ model User {
   // Keys
   id         String   @id @default(cuid())
   userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(USER) @map("user_type")
+  userType   UserType @default(ADMIN) @map("user_type")
 
   // Fields
   email     String   @unique
@@ -112,6 +121,7 @@ model User {
 
 
   // Model overwrites
+  Advertisements Advertisements[]
   @@map(name: "user")
 }
 
@@ -309,4 +319,23 @@ model UserCommentDislikes {
   author      User?        @relation(fields: [authorId], references: [id])
 
   @@map(name: "user_comment_dislikes")
+}
+
+model Advertisements {
+  id       Int       @id @default(autoincrement())
+  ownerId  String    @map("owner_id")
+  createAt DateTime  @default(now()) @map("creat_at")
+  updateAt DateTime? @default(now()) @updatedAt @map("update_at")
+
+  adTitle      String   @map("advertisement_title")
+  adType       AdType   @default(BASIC) @map("advertisement_type")
+  duration     DateTime @map("advertisement_duration")
+  adPosition   String   @map("advertisement_position")
+  imagePath    String?  @map("advertisement_image_path")
+  externalLink String?  @map("advertisement_external_link")
+  published    Boolean  @default(false) @map("published")
+
+  author User? @relation(fields: [ownerId], references: [id])
+
+  @@map(name: "advertisement")
 }
