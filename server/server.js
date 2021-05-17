@@ -58,3 +58,13 @@ const main = async () => {
 	apiRouter.use('/rating', ideaRatingRouter);
 	apiRouter.use('/interact/comment', commentInteractRouter);
 	apiRouter.use('/champion', championRouter);
+	apiRouter.use('/advertisement',advertisementRouter);
+
+	// Listen to server
+	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
+};
+
+
+main().catch((error) => {
+	console.log(error);
+});
