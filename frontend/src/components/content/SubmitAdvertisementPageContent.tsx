@@ -84,7 +84,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control.Feedback type="invalid">Please provide your advertisement title or make its length between 1 and 85</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label>Advertisement Duration</Form.Label>
+              <Form.Label>Advertisement Duration in Days</Form.Label>
               <Form.Control type="number" name="duration" size="sm" onChange={formik.handleChange} value={formik.values.duration} placeholder="Your advertisement duration" required min={1}></Form.Control>
               <Form.Control.Feedback type="invalid">Please provide a valid duration(more than 1 day)</Form.Control.Feedback>
             </Form.Group>
