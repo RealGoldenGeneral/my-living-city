@@ -5,7 +5,7 @@ import Marker from '../map/Marker';
 
 const DEFAULTGEO = {lat:48.4284,lng:-123.3656}
 var markers:any = {
-  home: {lat: 0, lon: 0},
+  home: {lat: null, lon: null},
   work: {lat: null, lon: null},
   school: {lat: null, lon: null}
 }
@@ -14,7 +14,7 @@ const SimpleMap = (props: any) => {
     const [zoom, setZoom] = useState(12);
     var [marker, setMarker]:any = useState({lat: null, lon: null})
     return (
-        <div style={{ height: '50vh', width: '100%' }}>
+        <div style={{ height: '40vh', width: '100%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: "" }}
           center={center}

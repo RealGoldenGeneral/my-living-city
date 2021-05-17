@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { Nav, Navbar, Form, FormControl, Button } from 'react-bootstrap'
+import { NavDropdown, Nav, Navbar, Form, FormControl, Button } from 'react-bootstrap'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 
 export default function Header() {
@@ -28,6 +28,11 @@ export default function Header() {
                 {/* <Navbar.Text> Fake Name</Navbar.Text> */}
                 <Nav.Link href='/submit'>Submit Idea</Nav.Link>
                 <Nav.Link href='/profile'>Profile</Nav.Link>
+
+                <NavDropdown title="Tools" id="nav-dropdown">
+                  <Nav.Link href='/advertisement/submit'>Add Advertisement</Nav.Link>
+                </NavDropdown>
+
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
               </>
             ) : (
