@@ -3,8 +3,8 @@
 
 datasource db {
   provider = "postgresql"
-  //url      = env("DATABASE_URL")
-  url      = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
+  url      = env("DATABASE_URL")
+  //url      = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
 }
 
 generator client {
@@ -58,14 +58,14 @@ model UserGeo {
   userId String @map("user_id")
 
   // Columns
-  lat       Decimal?
-  lon       Decimal?
-  work_lat  Decimal?
-  work_lon  Decimal?
+  lat        Decimal?
+  lon        Decimal?
+  work_lat   Decimal?
+  work_lon   Decimal?
   school_lat Decimal?
   school_lon Decimal?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relationships
   user User @relation(fields: [userId], references: [id])

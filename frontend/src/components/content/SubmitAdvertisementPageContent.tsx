@@ -6,7 +6,7 @@ import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.inpu
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateAdvertisement } from 'src/lib/api/advertisementRoutes';
 import { IBasicAdvertisement } from '../../lib/types/data/advertisement.type';
-import { FetchError } from '../../lib/types/types';
+import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 import ImageUploader from 'react-images-upload'
 
@@ -17,7 +17,7 @@ interface SubmitAdvertisementPageContentProps {
 const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentProps> = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
-    const [error, setError] = useState<FetchError | null>(null);
+    const [error, setError] = useState<IFetchError | null>(null);
   
     const { token } = useContext(UserProfileContext);
   
