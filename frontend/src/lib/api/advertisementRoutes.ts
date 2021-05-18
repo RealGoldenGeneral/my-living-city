@@ -5,7 +5,9 @@ import { CreateAdvertisementInput } from "../types/input/advertisement.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 
 export const postCreateAdvertisement = async (advertisementData:CreateAdvertisementInput, token: string | null) =>{
-    const {adType,adTitle,adPosition, duration, adImage, published} = advertisementData;
+    const {adType,adTitle,adPosition, duration,externalLink, published,adImage} = advertisementData;
+
+    console.log(advertisementData);
 
     if(!adType||!(adType==='BASIC'||adType==='EXTRA')){
         throw new Error("You must choose a advertisement type, or someting is wrong when accepting adType data.")
@@ -35,9 +37,10 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
     advertisementForm.append('adType',adType);
     advertisementForm.append('adTitle',adTitle);
     advertisementForm.append('adPosition',adPosition);
-    advertisementForm.append('duration', duration.toString());
-    advertisementForm.append('adImage', adImage);
+    advertisementForm.append('adDuration', duration.toString());
+    advertisementForm.append('externalLink', externalLink);
     advertisementForm.append('published', published ? 'true' : 'false');
+    advertisementForm.append('adImage', adImage[0]);
 
     const res = await axios({
         method: "post",
