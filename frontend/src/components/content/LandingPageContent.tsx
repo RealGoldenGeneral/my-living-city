@@ -7,6 +7,8 @@ import DescriptionSection from '../partials/LandingContent/DescriptionSection';
 import HeroBannerSection from '../partials/LandingContent/HeroBannerSection';
 import NewAndTrendingSection from '../partials/LandingContent/NewAndTrendingSection';
 
+import BasicAdsSection from '../partials/LandingContent/BasicAdsSection'; //
+
 interface LandingPageContentProps {
   topIdeas: IIdeaWithAggregations[] | undefined;
   ideasLoading: boolean,
@@ -38,6 +40,11 @@ const LandingPageContent: React.FC<LandingPageContentProps> = ({
       <Row as='article' className='categories'>
         <CategoriesSection />
       </Row>
+
+      <Row as='article' className='basicAds'>
+        <BasicAdsSection />
+      </Row>
+
       <Row as='article' className='description'>
         <DescriptionSection />
       </Row>
