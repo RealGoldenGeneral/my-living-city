@@ -331,8 +331,8 @@ model Advertisements {
   adType       AdType   @default(BASIC) @map("advertisement_type")
   duration     DateTime @map("advertisement_duration")
   adPosition   String   @map("advertisement_position")
-  imagePath    String?  @map("advertisement_image_path")
-  externalLink String?  @map("advertisement_external_link")
+  imagePath    String   @map("advertisement_image_path")
+  externalLink String   @map("advertisement_external_link")
   published    Boolean  @default(false) @map("published")
 
   author User? @relation(fields: [ownerId], references: [id])

@@ -10,6 +10,12 @@ const { UserType } = require('@prisma/client');
 
 const multer = require('multer');
 
+const addDays = (date, days) => {
+    let result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
 //multer storage policy, including file destination and file naming policy
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
@@ -77,6 +83,8 @@ advertisementRouter.post(
                 //decompose necessary fields from request body
                 const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
 
+                //console.log(adType,adTitle,adDuration,adPosition,externalLink,published);
+
                 //if there's no adType in the request body
                 if(!adType){
                     error+='An advertisement must has a type. ';
@@ -100,7 +108,7 @@ advertisementRouter.post(
 
                 //if the length of adTitle is not valid
                 if(adTitle){
-                    if(adTitle.length <= 2 || adTitle.length >=40){
+                    if(adTitle.length < 2 || adTitle.length >40){
                         error+='adTitle size is invalid. ';
                         errorMessage+='adTitle length must be longer than 2 and shorter than 40. ';
                         errorStack+='adTitle content size must be valid ';
@@ -108,7 +116,7 @@ advertisementRouter.post(
                 }
 
                 //console.log(adTitle.length);
-
+                
                 //if there's no published field in the reqeust body or published field is not valid
                 if(!published){
                     error+='An published filed must be provided. ';
@@ -143,12 +151,23 @@ advertisementRouter.post(
                     errorMessage+='Creating an advertisement must explicitly be supply a adPosition field. ';
                     errorStack+='"adPosition" must be provided in the body with a valid position found in the database. '
                 }
+                //if there's no external link provided in the request
+                if(!externalLink){
+                    error+='externalLink is missing. ';
+                    errorMessage+='Creating an advertisement must explicitly be supply a externalLink field. ';
+                    errorStack+='"adPosition" must be provided in the body with a valid externalLink.'
+                }
+
                 //Image path holder
                 let imagePath = '';
                 //if there's req.file been parsed by multer
                 if(req.file){
                     //console.log(req.file);
                     imagePath = req.file.path;
+                }else{
+                    error+='adImage is missing. ';
+                    errorMessage+='Creating an advertisement must explicitly be supply a adImage field. ';
+                    errorStack+='"adPosition" must be provided in the body with a valid image.'
                 }
                 //If there's error in error holder
                 if(error&&errorMessage&&errorStack){
@@ -168,13 +187,18 @@ advertisementRouter.post(
                         details: {
                           errorMessage: tempErrorMessage,
                           errorStack: tempErrorStack
+                        },
+                        reqBody: {
+                            adType: adType,
+                            adTitle:adTitle,
+                            adDuration: adDuration,
+                            externalLink: externalLink,
+                            published: published
                         }
                     });
                 }
                 //Calculate the ending date of advertisement based on duration field.
-                let theDate = new Date();
-                let endDate = new Date();
-                endDate.setDate(theDate.getDate()+adDuration);
+                let endDate = addDays(new Date(), Number(adDuration));
                 //create an advertisement object
                 const createAnAdvertisement = await prisma.advertisements.create({
                     data:{
