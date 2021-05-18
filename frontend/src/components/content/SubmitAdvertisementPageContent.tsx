@@ -17,7 +17,7 @@ import { values } from 'lodash';
 interface SubmitAdvertisementPageContentProps {
     
 };
-
+//formik form input validation schema
 const schema = Yup.object().shape({
   adType: Yup.string().required().oneOf(['BASIC','EXTRA']),
   adTitle: Yup.string().min(2,'title is too short!').max(50,'title is too long!').required('title is needed!'),
@@ -57,7 +57,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         setIsLoading(false)
       }
     };
-
+    //initial values for form
     const initialValues: CreateAdvertisementInput ={
         adType: 'BASIC',
         adTitle: '',
