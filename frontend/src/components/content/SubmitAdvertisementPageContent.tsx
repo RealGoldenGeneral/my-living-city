@@ -31,6 +31,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState<IFetchError | null>(null);
+    const [success,setSuccess] = useState<String>('');
   
     const { token } = useContext(UserProfileContext);
   
@@ -45,7 +46,9 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         setTimeout(() => console.log("timeout"), 5000);
         //api component call
         const res = await postCreateAdvertisement(values, token);
-        console.log(res);
+        //console.log(res);
+        setSuccess('You submitted your advertisement successfully');
+        setTimeout(()=> setSuccess(''),5000);
         //if successfully posted, set error to null
         setError(null);
         //reset the form
@@ -143,7 +146,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               { error.message}
             </Alert>
           )}
-          {/* TODO: Add ui alert flash to inform user that idea has succesfully been created */}
+          {success}
         </Col>
       </Row>
       </Container>
