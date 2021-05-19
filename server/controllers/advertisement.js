@@ -280,6 +280,8 @@ advertisementRouter.get(
                     errorStack: error.stack,
                 }
             });
+        }finally{
+            await prisma.$disconnect();
         }
     }
 );
