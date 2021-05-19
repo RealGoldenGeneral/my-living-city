@@ -9,6 +9,7 @@ const { isEmpty } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 const multer = require('multer');
+const { advertisements } = require('../lib/prismaClient');
 
 const addDays = (date, days) => {
     let result = new Date(date);
@@ -237,6 +238,6 @@ advertisementRouter.post(
             await prisma.$disconnect();
         }
     }
-)
+);
 
 module.exports = advertisementRouter;
