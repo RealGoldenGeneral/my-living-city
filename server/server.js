@@ -43,8 +43,9 @@ const main = async () => {
 	const categoryRouter = require('./controllers/category');
 	const ideaRatingRouter = require('./controllers/rating');
 	const commentInteractRouter = require('./controllers/commentInteract');
-  const championRouter = require('./controllers/champion');
-  const advertisementRouter = require('./controllers/advertisement');
+  	const championRouter = require('./controllers/champion');
+  	const advertisementRouter = require('./controllers/advertisement');
+	const sendEmailRouter = require('./controllers/sendEmailReset');
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -58,8 +59,10 @@ const main = async () => {
 	apiRouter.use('/category', categoryRouter);
 	apiRouter.use('/rating', ideaRatingRouter);
 	apiRouter.use('/interact/comment', commentInteractRouter);
-  apiRouter.use('/champion', championRouter);
-  apiRouter.use('/advertisement',advertisementRouter);
+  	apiRouter.use('/champion', championRouter);
+  	apiRouter.use('/advertisement',advertisementRouter);
+	apiRouter.use('/sendEmail',sendEmailRouter);
+	apiRouter.use('/reset-password', userRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
