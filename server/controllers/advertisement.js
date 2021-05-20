@@ -292,6 +292,31 @@ advertisementRouter.put(
                     return res.status(401).json({
                         message: `The user ${email} is not the owner or an admin and therefore cannot edit this advertisement.`
                     });
+                };
+
+                //if adType is not valid
+                if(adType&&!(adType=="BASIC"||adType=="EXTRA")){
+                    error+='adType is invalid. ';
+                    errorMessage+='adType must be predefined value. ';
+                    errorStack+='adType must be assigned with predfined value. ';
+                };
+
+                //if the length of adTitle is not valid
+                if(adTitle){
+                    if(adTitle.length < 2 || adTitle.length >40){
+                        error+='adTitle size is invalid. ';
+                        errorMessage+='adTitle length must be longer than 2 and shorter than 40. ';
+                        errorStack+='adTitle content size must be valid ';
+                    }
+                };
+
+                //if there's invalid adDuration field in the request body
+                if(!adDuration){
+                    if(adDuration <= 0){
+                        error+='adDuration must be provided. ';
+                        errorMessage+='adDuration must be provided in the body with a valid length. ';
+                        errorStack+='adDuration must be provided in the body with a valid lenght. ';
+                    }
                 }
 
                 if(adDuration){
