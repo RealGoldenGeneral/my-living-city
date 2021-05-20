@@ -8,7 +8,6 @@ interface AdsProps {
     
 }
 
-
 const AdsSection = (props: AdsProps) => {
     
     return (
