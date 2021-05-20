@@ -255,10 +255,10 @@ advertisementRouter.put(
         });
         try{
             //get email and user id from request
-            const { email, id } = req.user;
+            const { email, id: loggedInUserId} = req.user;
             //find the requesting user in the database
             const theUser = await prisma.user.findUnique({
-                where:{id:id},
+                where:{id:loggedInUserId},
                 select:{userType:true}
             });
 
@@ -277,7 +277,7 @@ advertisementRouter.put(
                 };
 
                 const theAdvertisement = await prisma.advertisements.findUnique({
-                    where:{ownerId:id}
+                    where:{id:parsedAdvertisementId}
                 });
 
                 if(!theAdvertisement){
@@ -286,7 +286,7 @@ advertisementRouter.put(
                     });
                 }
 
-                const advertisementOwnedByUser = theAdvertisement.ownerId === id;
+                const advertisementOwnedByUser = theAdvertisement.ownerId === loggedInUserId;
 
                 if(!advertisementOwnedByUser){
                     return res.status(401).json({
@@ -316,7 +316,9 @@ advertisementRouter.put(
                         externalLink:externalLink,
                         published:published
                     }
-                })
+                });
+
+                return res.status(200).send(updatedAdvertisement);
 
             }else{
                 return res.status(403).json({
