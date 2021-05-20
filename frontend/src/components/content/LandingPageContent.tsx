@@ -43,8 +43,8 @@ const LandingPageContent: React.FC<LandingPageContentProps> = ({
         <CategoriesSection />
       </Row>
 
-      {/* Desktop View >= 992px */}
-      <Row className='d-none d-lg-block'>
+      {/* Desktop View >= 768px */}
+      <Row className='d-none d-md-block'>
         <AdsSection />
       </Row>
 

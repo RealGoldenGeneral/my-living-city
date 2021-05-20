@@ -7,8 +7,8 @@ export default function Footer() {
     <div className="outer-footer w-100 ml-0">
       <p className='text-center'>COPYRIGHT &#169; MY LIVING CITY {new Date().getFullYear()}</p>
       
-      {/* Mobile View <= 992px */}
-      <Row className='d-lg-none'>
+      {/* Mobile View <= 768px */}
+      <Row className='d-md-none'>
         <AdsSection />
       </Row>
     </div>
