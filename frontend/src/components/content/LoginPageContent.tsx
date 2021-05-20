@@ -44,7 +44,7 @@ function ResetPasswordModal(props:any, email:string){
         <Modal.Footer>
           <Button type={"submit"} variant="primary" onClick={()=>{
             handleClose();
-            sendEmail({email:inputVal});
+            sendEmail({email:inputVal.toLowerCase()});
             }}>
             Send Reset Link
           </Button>
