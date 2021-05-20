@@ -240,4 +240,106 @@ advertisementRouter.post(
     }
 );
 
+advertisementRouter.put(
+    '/update/:advertisementId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        //multer error handling method
+        upload(req, res, function (err) {
+            if(err){
+                console.log(err);
+                error+=err+' ';
+                errorMessage+=err+' ';
+                errorStack+=err+' ';
+            }
+        });
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+            //find the requesting user in the database
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            });
+
+            const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
+
+            if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
+                const {advertisementId} = req.params;
+                const parsedAdvertisementId = parseInt(advertisementId);
+
+                let imagePath;
+
+                if(!advertisementId || !parsedAdvertisementId){
+                    return res.status(400).json({
+                        message: `A valid advertisementId must be specified in the route paramater.`
+                    });
+                };
+
+                const theAdvertisement = await prisma.advertisements.findUnique({
+                    where:{ownerId:id}
+                });
+
+                if(!theAdvertisement){
+                    return res.status(400).json({
+                        message: `The advertisement with that listed ID (${advertisementId}) does not exist.`
+                    });
+                }
+
+                const advertisementOwnedByUser = theAdvertisement.ownerId === id;
+
+                if(!advertisementOwnedByUser){
+                    return res.status(401).json({
+                        message: `The user ${email} is not the owner or an admin and therefore cannot edit this advertisement.`
+                    });
+                }
+
+                if(adDuration){
+                    adDuration = addDays(new Date(), Number(adDuration));
+                }
+
+                if(req.file){
+                    if(fs.existsSync(theAdvertisement.imagePath)){
+                        fs.unlinkSync(theAdvertisement.imagePath);
+                    }
+                    imagePath = req.file.path;
+                }
+
+                const updatedAdvertisement = await prisma.advertisements.update({
+                    where:{id:parsedAdvertisementId},
+                    data:{
+                        adType:adType,
+                        adTitle:adTitle,
+                        adDuration:adDuration,
+                        adDuration:adDuration,
+                        imagePath:imagePath,
+                        externalLink:externalLink,
+                        published:published
+                    }
+                })
+
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to update an advertisement!",
+                    details: {
+                      errorMessage: 'In order to update an advertisement, you must be an admin or business user.',
+                      errorStack: 'user must be an admin or business if they want to update an advertisement',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to update an Advertisement.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+)
+
 module.exports = advertisementRouter;
