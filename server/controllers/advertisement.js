@@ -269,6 +269,8 @@ advertisementRouter.put(
                 const parsedAdvertisementId = parseInt(advertisementId);
 
                 let imagePath;
+                let endDate;
+                let thePublished;
 
                 if(!advertisementId || !parsedAdvertisementId){
                     return res.status(400).json({
@@ -320,14 +322,65 @@ advertisementRouter.put(
                 }
 
                 if(adDuration){
-                    adDuration = addDays(new Date(), Number(adDuration));
+                    if(parseInt(adDuration)<=0){
+                        error+='adDuration must be provided. ';
+                        errorMessage+='adDuration must be provided in the body with a valid length. ';
+                        errorStack+='adDuration must be provided in the body with a valid lenght. ';
+                    }else{
+                        endDate = addDays(new Date(), Number(adDuration));
+                    }
                 }
 
+                if(published){
+                    if(published=='false'||published=='true'){
+                        if(published=='true'){
+                            thePublished = true;
+                        }else{
+                            thePublished = false;
+                        }
+                    }else{
+                        error+='published must be predefined values. ';
+                        errorMessage+='Updating an advertisement must explicitly supply a valid published value. '
+                        errorStack+='Published must be provided in the body with a valid value.';
+                    }
+                }
+
+                //If there's error in error holder
+                if(error&&errorMessage&&errorStack){
+                    //multer is a kind of middleware, if file is valid, multer will add it to upload folder. Following code are responsible for deleting files if error happened.
+                    if(req.file){
+                        if(fs.existsSync(req.file.path)){
+                            fs.unlinkSync(req.file.path);
+                        }
+                    }
+                    let tempError = error;
+                    let tempErrorMessage = errorMessage;
+                    let tempErrorStack = errorStack;
+                    error = '';
+                    errorMessage = '';
+                    errorStack = '';
+
+                    return res.status(400).json({
+                        message: tempError,
+                        details: {
+                          errorMessage: tempErrorMessage,
+                          errorStack: tempErrorStack
+                        },
+                        reqBody: {
+                            adType: adType,
+                            adTitle:adTitle,
+                            adDuration: adDuration,
+                            externalLink: externalLink,
+                            published: published
+                        }
+                    });
+                }
+                let newImagePath;
                 if(req.file){
                     if(fs.existsSync(theAdvertisement.imagePath)){
                         fs.unlinkSync(theAdvertisement.imagePath);
                     }
-                    imagePath = req.file.path;
+                    newImagePath = req.file.path;
                 }
 
                 const updatedAdvertisement = await prisma.advertisements.update({
@@ -335,9 +388,8 @@ advertisementRouter.put(
                     data:{
                         adType:adType,
                         adTitle:adTitle,
-                        adDuration:adDuration,
-                        adDuration:adDuration,
-                        imagePath:imagePath,
+                        duration:endDate,
+                        imagePath:newImagePath,
                         externalLink:externalLink,
                         published:published
                     }
