@@ -267,8 +267,7 @@ advertisementRouter.put(
             if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
                 const {advertisementId} = req.params;
                 const parsedAdvertisementId = parseInt(advertisementId);
-
-                let imagePath;
+                
                 let endDate;
                 let thePublished;
 
