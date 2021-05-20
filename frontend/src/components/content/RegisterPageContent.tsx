@@ -206,16 +206,6 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                     </option>
                   ))}
                 </Form.Control>
-                <Form.Group controlId="uploadProfImage">
-                <Form.Label>Profile Image</Form.Label>
-                <Form.Control
-                  required
-                  type="file"
-                  name="profImage"
-                  onChange={formik.handleChange}
-                  //value={formik.values.profImage}
-                />
-              </Form.Group>
               </Form.Group>
               <Button
                 block
