@@ -7,7 +7,8 @@ import DescriptionSection from '../partials/LandingContent/DescriptionSection';
 import HeroBannerSection from '../partials/LandingContent/HeroBannerSection';
 import NewAndTrendingSection from '../partials/LandingContent/NewAndTrendingSection';
 
-import BasicAdsSection from '../partials/LandingContent/BasicAdsSection'; //
+import AdsSection from '../partials/LandingContent/AdsSection'; //
+// import '../content/_adsSection.scss';
 
 interface LandingPageContentProps {
   topIdeas: IIdeaWithAggregations[] | undefined;
@@ -22,6 +23,8 @@ const LandingPageContent: React.FC<LandingPageContentProps> = ({
   ideasIsError,
   ideasError,
 }) => {
+  
+
   return (
     <Container className='landing-page-content'>
       <HeroBannerSection />
@@ -41,8 +44,9 @@ const LandingPageContent: React.FC<LandingPageContentProps> = ({
         <CategoriesSection />
       </Row>
 
-      <Row as='article' className='basicAds'>
-        <BasicAdsSection />
+      {/* Desktop View */}
+      <Row as='article' className='adsSection'>
+        <AdsSection />
       </Row>
 
       <Row as='article' className='description'>

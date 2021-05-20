@@ -4,12 +4,12 @@ import React from 'react';
 
 //http://madmartech.com/wp-content/uploads/2019/05/970x250-1.png
 //https://www.frontiersin.org/files/Articles/70413/fpsyg-05-00166-HTML/image_m/fpsyg-05-00166-g006.jpg
-interface BasicAdsProps {
+interface AdsProps {
     
 }
 
 
-const BasicAdsSection = (props: BasicAdsProps) => {
+const AdsSection = (props: AdsProps) => {
     
     return (
         <Container>
@@ -39,4 +39,4 @@ const BasicAdsSection = (props: BasicAdsProps) => {
     );
 }
 
-export default BasicAdsSection;
+export default AdsSection;
