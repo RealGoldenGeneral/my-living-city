@@ -140,8 +140,8 @@ userRouter.get(
 			res.json({
 				message: error.message,
         details: {
-          errorMessage: error.message,
-          errorStack: error.stack,
+        	errorMessage: error.message,
+        	errorStack: error.stack,
         }
 			})
 		} finally {

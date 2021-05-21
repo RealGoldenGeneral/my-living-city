@@ -45,7 +45,9 @@ const main = async () => {
 	const commentInteractRouter = require('./controllers/commentInteract');
 	const championRouter = require('./controllers/champion');
 	const advertisementRouter = require('./controllers/advertisement');
+	const avatarRouter = require('./controllers/avatar');
 	const apiRouter = express.Router();
+	
 	app.use('/', apiRouter);
 	apiRouter.use('/user', userRouter);
 	apiRouter.use('/role', roleRouter);
@@ -59,6 +61,7 @@ const main = async () => {
 	apiRouter.use('/interact/comment', commentInteractRouter);
 	apiRouter.use('/champion', championRouter);
 	apiRouter.use('/advertisement',advertisementRouter);
+	apiRouter.use('/avatar', avatarRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

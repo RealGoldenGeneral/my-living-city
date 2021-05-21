@@ -3,7 +3,6 @@ import { API_BASE_URL } from "../constants";
 import { IUser } from "../types/data/user.type";
 import { IRegisterInput } from "../types/input/register.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
-
 export interface LoginData {
   email: string;
   password: string;

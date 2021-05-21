@@ -106,7 +106,7 @@ model User {
   lname     String?  @map("l_name")
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
+  imagePath String?
   // Relationships
   address             UserAddress?
   geo                 UserGeo?
