@@ -239,42 +239,176 @@ advertisementRouter.post(
         }
     }
 );
-//for retriving all advertisement table item for user.
-advertisementRouter.get(
-    '/getAll',
+
+advertisementRouter.put(
+    '/update/:advertisementId',
     passport.authenticate('jwt',{session:false}),
     async(req,res) => {
+        //multer error handling method
+        upload(req, res, function (err) {
+            if(err){
+                console.log(err);
+                error+=err+' ';
+                errorMessage+=err+' ';
+                errorStack+=err+' ';
+            }
+        });
         try{
             //get email and user id from request
-            const { email, id } = req.user;
+            const { email, id: loggedInUserId} = req.user;
             //find the requesting user in the database
             const theUser = await prisma.user.findUnique({
-                where:{id:id},
+                where:{id:loggedInUserId},
                 select:{userType:true}
             });
 
-            if(theUser.userType === 'ADMIN' || theUser.userType === 'BUSINESS'){
-                const allAd = await prisma.advertisements.findMany({
-                    where:{ownerId:id}
+            const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
+
+            if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
+                const {advertisementId} = req.params;
+                const parsedAdvertisementId = parseInt(advertisementId);
+                
+                let endDate;
+                let thePublished;
+
+                if(!advertisementId || !parsedAdvertisementId){
+                    return res.status(400).json({
+                        message: `A valid advertisementId must be specified in the route paramater.`
+                    });
+                };
+
+                const theAdvertisement = await prisma.advertisements.findUnique({
+                    where:{id:parsedAdvertisementId}
                 });
-                if(allAd){
-                    return res.status(200).json(allAd);
-                }else{
-                    return res.status(404).send("there's no advertisement belongs to you!");
+
+                if(!theAdvertisement){
+                    return res.status(400).json({
+                        message: `The advertisement with that listed ID (${advertisementId}) does not exist.`
+                    });
                 }
+
+                const advertisementOwnedByUser = theAdvertisement.ownerId === loggedInUserId;
+
+                if(!advertisementOwnedByUser){
+                    return res.status(401).json({
+                        message: `The user ${email} is not the owner or an admin and therefore cannot edit this advertisement.`
+                    });
+                };
+
+                //if adType is not valid
+                if(adType&&!(adType=="BASIC"||adType=="EXTRA")){
+                    error+='adType is invalid. ';
+                    errorMessage+='adType must be predefined value. ';
+                    errorStack+='adType must be assigned with predfined value. ';
+                };
+
+                //if the length of adTitle is not valid
+                if(adTitle){
+                    if(adTitle.length < 2 || adTitle.length >40){
+                        error+='adTitle size is invalid. ';
+                        errorMessage+='adTitle length must be longer than 2 and shorter than 40. ';
+                        errorStack+='adTitle content size must be valid ';
+                    }
+                };
+
+                //if there's invalid adDuration field in the request body
+                if(!adDuration){
+                    if(adDuration <= 0){
+                        error+='adDuration must be provided. ';
+                        errorMessage+='adDuration must be provided in the body with a valid length. ';
+                        errorStack+='adDuration must be provided in the body with a valid lenght. ';
+                    }
+                }
+
+                if(adDuration){
+                    if(parseInt(adDuration)<=0){
+                        error+='adDuration must be provided. ';
+                        errorMessage+='adDuration must be provided in the body with a valid length. ';
+                        errorStack+='adDuration must be provided in the body with a valid lenght. ';
+                    }else{
+                        endDate = addDays(new Date(), Number(adDuration));
+                    }
+                }
+
+                if(published){
+                    if(published=='false'||published=='true'){
+                        if(published=='true'){
+                            thePublished = true;
+                        }else{
+                            thePublished = false;
+                        }
+                    }else{
+                        error+='published must be predefined values. ';
+                        errorMessage+='Updating an advertisement must explicitly supply a valid published value. '
+                        errorStack+='Published must be provided in the body with a valid value.';
+                    }
+                }
+
+                //If there's error in error holder
+                if(error&&errorMessage&&errorStack){
+                    //multer is a kind of middleware, if file is valid, multer will add it to upload folder. Following code are responsible for deleting files if error happened.
+                    if(req.file){
+                        if(fs.existsSync(req.file.path)){
+                            fs.unlinkSync(req.file.path);
+                        }
+                    }
+                    let tempError = error;
+                    let tempErrorMessage = errorMessage;
+                    let tempErrorStack = errorStack;
+                    error = '';
+                    errorMessage = '';
+                    errorStack = '';
+
+                    return res.status(400).json({
+                        message: tempError,
+                        details: {
+                          errorMessage: tempErrorMessage,
+                          errorStack: tempErrorStack
+                        },
+                        reqBody: {
+                            adType: adType,
+                            adTitle:adTitle,
+                            adDuration: adDuration,
+                            externalLink: externalLink,
+                            published: published
+                        }
+                    });
+                }
+                let newImagePath;
+                if(req.file){
+                    if(fs.existsSync(theAdvertisement.imagePath)){
+                        fs.unlinkSync(theAdvertisement.imagePath);
+                    }
+                    newImagePath = req.file.path;
+                }
+
+                const updatedAdvertisement = await prisma.advertisements.update({
+                    where:{id:parsedAdvertisementId},
+                    data:{
+                        adType:adType,
+                        adTitle:adTitle,
+                        duration:endDate,
+                        imagePath:newImagePath,
+                        externalLink:externalLink,
+                        published:published
+                    }
+                });
+
+                return res.status(200).send(updatedAdvertisement);
+
             }else{
                 return res.status(403).json({
-                    message: "You don't have the right to add an advertisement!",
+                    message: "You don't have the right to update an advertisement!",
                     details: {
-                    errorMessage: 'In order to create an advertisement, you must be an admin or business user.',
-                    errorStack: 'user must be an admin or business if they want to create an advertisement',
+                      errorMessage: 'In order to update an advertisement, you must be an admin or business user.',
+                      errorStack: 'user must be an admin or business if they want to update an advertisement',
                     }
                 });
             }
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to get advertisements.",
+                message: "An error occured while trying to update an Advertisement.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -284,77 +418,6 @@ advertisementRouter.get(
             await prisma.$disconnect();
         }
     }
-);
-
-advertisementRouter.delete(
-    '/delete/:advertisementId',
-    passport.authenticate('jwt',{session:false}),
-    async (req,res) => {
-        try{
-            const { id: loggedInUserId, email } = req.user;
-            const parsedAdvertisementId = parseInt(req.params.advertisementId);
-
-            console.log(email);
-            // check if id is valid
-            if (!parsedAdvertisementId) {
-                return res.status(400).json({
-                message: `A valid advertisementId must be specified in the route paramater.`,
-                });
-            }
-
-            const theUser = await prisma.user.findUnique({
-                where:{id:loggedInUserId},
-                select:{userType:true}
-            });
-
-            if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
-                const theAdvertisement = await prisma.advertisements.findUnique({
-                    where:{id:parsedAdvertisementId}
-                })
-
-                if(!theAdvertisement){
-                    res.status(404).send("Advertisement which needs to be deleted not found!");
-                }else{
-                    if(theAdvertisement.ownerId === loggedInUserId){
-                        
-                        if(fs.existsSync(theAdvertisement.imagePath)){
-                            fs.unlinkSync(theAdvertisement.imagePath);
-                        };
-
-                        await prisma.advertisements.delete({
-                            where:{
-                                id:parsedAdvertisementId
-                            }
-                        });
-                        
-                        res.sendStatus(204);
-                    }else{
-                        return res.status(401).json({
-                            message: `The user ${email} is not the author or an admin and therefore cannot delete this advertisement.`
-                        });
-                    }
-                }  
-            }else{
-                return res.status(403).json({
-                    message: "You don't have the right to add an advertisement!",
-                    details: {
-                      errorMessage: 'In order to delete an advertisement, you must be an admin or business user.',
-                      errorStack: 'user must be an admin or business if they want to delete an advertisement',
-                    }
-                });
-            }
-        }catch(error){
-            console.log(error);
-            res.status(400).json({
-                message: "An error occured while trying to delete advertisement.",
-                details: {
-                    errorMessage: error.message,
-                    errorStack: error.stack,
-                }
-            });
-        }finally{
-            await prisma.$disconnect
-        }
-    }
 )
+
 module.exports = advertisementRouter;
