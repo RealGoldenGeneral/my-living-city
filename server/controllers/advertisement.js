@@ -390,7 +390,7 @@ advertisementRouter.put(
                         duration:endDate,
                         imagePath:newImagePath,
                         externalLink:externalLink,
-                        published:published
+                        published:thePublished
                     }
                 });
 
