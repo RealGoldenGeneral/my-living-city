@@ -261,7 +261,6 @@ advertisementRouter.put(
                 where:{id:loggedInUserId},
                 select:{userType:true}
             });
-
             const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
 
             if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
@@ -415,9 +414,79 @@ advertisementRouter.put(
                 }
             });
         }finally{
-            await prisma.$disconnect();
+            await prisma.$disconnect
         }
     }
 )
+advertisementRouter.delete(
+    '/delete/:advertisementId',
+    passport.authenticate('jwt',{session:false}),
+    async (req,res) => {
+        try{
+            const { id: loggedInUserId, email } = req.user;
+            const parsedAdvertisementId = parseInt(req.params.advertisementId);
 
+            console.log(email);
+            // check if id is valid
+            if (!parsedAdvertisementId) {
+                return res.status(400).json({
+                message: `A valid advertisementId must be specified in the route paramater.`,
+                });
+            }
+
+            const theUser = await prisma.user.findUnique({
+                where:{id:loggedInUserId},
+                select:{userType:true}
+            });
+
+            if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
+                const theAdvertisement = await prisma.advertisements.findUnique({
+                    where:{id:parsedAdvertisementId}
+                })
+
+                if(!theAdvertisement){
+                    res.status(404).send("Advertisement which needs to be deleted not found!");
+                }else{
+                    if(theAdvertisement.ownerId === loggedInUserId){
+                        
+                        if(fs.existsSync(theAdvertisement.imagePath)){
+                            fs.unlinkSync(theAdvertisement.imagePath);
+                        };
+
+                        await prisma.advertisements.delete({
+                            where:{
+                                id:parsedAdvertisementId
+                            }
+                        });
+                        
+                        res.sendStatus(204);
+                    }else{
+                        return res.status(401).json({
+                            message: `The user ${email} is not the author or an admin and therefore cannot delete this advertisement.`
+                        });
+                    }
+                }  
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to add an advertisement!",
+                    details: {
+                      errorMessage: 'In order to delete an advertisement, you must be an admin or business user.',
+                      errorStack: 'user must be an admin or business if they want to delete an advertisement',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to delete advertisement.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect
+        }
+    }
+)
 module.exports = advertisementRouter;
