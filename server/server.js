@@ -43,11 +43,13 @@ const main = async () => {
 	const categoryRouter = require('./controllers/category');
 	const ideaRatingRouter = require('./controllers/rating');
 	const commentInteractRouter = require('./controllers/commentInteract');
-  	const championRouter = require('./controllers/champion');
-  	const advertisementRouter = require('./controllers/advertisement');
+	const championRouter = require('./controllers/champion');
+	const advertisementRouter = require('./controllers/advertisement');
+	const avatarRouter = require('./controllers/avatar');
 	const sendEmailRouter = require('./controllers/sendEmailReset');
 
 	const apiRouter = express.Router();
+	
 	app.use('/', apiRouter);
 	apiRouter.use('/user', userRouter);
 	apiRouter.use('/role', roleRouter);
@@ -59,8 +61,9 @@ const main = async () => {
 	apiRouter.use('/category', categoryRouter);
 	apiRouter.use('/rating', ideaRatingRouter);
 	apiRouter.use('/interact/comment', commentInteractRouter);
-  	apiRouter.use('/champion', championRouter);
-  	apiRouter.use('/advertisement',advertisementRouter);
+	apiRouter.use('/champion', championRouter);
+	apiRouter.use('/advertisement',advertisementRouter);
+	apiRouter.use('/avatar', avatarRouter);
 	apiRouter.use('/sendEmail',sendEmailRouter);
 	apiRouter.use('/reset-password', userRouter);
 

@@ -8,6 +8,7 @@ import { IRegisterInput } from '../../lib/types/input/register.input';
 import { IUserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
 import SimpleMap from '../map/SimpleMap';
+import { postAvatarImage } from '../../lib/api/avatarRoutes';
 interface RegisterPageContentProps {
   userRoles: IUserRole[] | undefined;
 }
@@ -21,12 +22,8 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [iconName, setIcon] = useState("home");
-  const [isHomeSet, setHome] = useState(false);
-  const handleHomeState = () => {
-    if(markers.home.lat != null){
-      setHome(true);
-    }
-  }
+  const [selectedFile, setSelectedFile] = useState(undefined);
+
   const [markers, sendData]:any = useState({
     home: {lat: null, lon: null},
     work: {lat: null, lon: null},
@@ -44,6 +41,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       formik.setFieldValue("geo.work_lon",markers["work"].lon );
       formik.setFieldValue("geo.school_lat",markers["school"].lat );
       formik.setFieldValue("geo.school_lon",markers["school"].lon );
+      //formik.setFieldValue("image",selectedFile);
     }
 
   }
@@ -62,7 +60,8 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       storeTokenExpiryInLocalStorage();
       setToken(token);
       setUser(user);
-
+      await postAvatarImage(selectedFile, token);
+      
 
       // remove previous errors
       setError(null);
@@ -99,7 +98,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
         work_lon: undefined,
         school_lat: undefined,
         school_lon: undefined,
-      },
+      }
     },
     
     onSubmit: submitHandler
@@ -173,6 +172,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                   value={formik.values.address?.streetAddress}
                 />
               </Form.Group>
+              
                 <Form.Group controlId="registerUserLocation">
                 <Form.Label>Enter your where you are located</Form.Label>
                 <Form.Control
@@ -207,6 +207,17 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
                   ))}
                 </Form.Control>
               </Form.Group>
+              <Form.Group controlId="avatarImage">
+                <Form.Label>Profile Image</Form.Label>
+                <Form.Control
+                  type="file"
+                  name="image"
+                  //onChange={(e:any)=> formik.setFieldValue("image", e.target.files[0])}
+                  onChange={(e:any)=> setSelectedFile(e.target.files[0])}
+
+                  //onChange={(picture) => {formik.setFieldValue('image',picture)}}
+                />
+                </Form.Group>
               <Button
                 block
                 onClick={()=>{customFormikSet()}}
