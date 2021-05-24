@@ -100,7 +100,6 @@ model User {
   userType   UserType @default(ADMIN) @map("user_type")
 
   // Fields
-<<<<<<< HEAD
   email     String   @unique
   password  String
   fname     String?  @map("f_name")
@@ -108,15 +107,7 @@ model User {
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
   imagePath String?
-=======
-  email               String                @unique
-  password            String
-  fname               String?               @map("f_name")
-  lname               String?               @map("l_name")
-  createdAt           DateTime              @default(now()) @map(name: "created_at")
-  updatedAt           DateTime              @default(now()) @updatedAt @map(name: "updated_at")
   passCode            String?               @default(cuid())
->>>>>>> e83fb0872042747e8afb82aec686987c12f0c3b9
   // Relationships
   address             UserAddress?
   geo                 UserGeo?
