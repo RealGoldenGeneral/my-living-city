@@ -20,7 +20,6 @@ const AdsSection = (props: AdsProps) => {
                         <img
                         className="d-block w-100"
                         src="http://madmartech.com/wp-content/uploads/2019/05/970x250-1.png"
-                        alt="First slide"
                         />
                     </a>
                 </Carousel.Item>
