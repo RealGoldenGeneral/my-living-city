@@ -9,13 +9,6 @@ const { isEmpty } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 const multer = require('multer');
-const { advertisements } = require('../lib/prismaClient');
-
-const addDays = (date, days) => {
-    let result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
 
 //multer storage policy, including file destination and file naming policy
 const storage = multer.diskStorage({
@@ -84,8 +77,6 @@ advertisementRouter.post(
                 //decompose necessary fields from request body
                 const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
 
-                //console.log(adType,adTitle,adDuration,adPosition,externalLink,published);
-
                 //if there's no adType in the request body
                 if(!adType){
                     error+='An advertisement must has a type. ';
@@ -109,7 +100,7 @@ advertisementRouter.post(
 
                 //if the length of adTitle is not valid
                 if(adTitle){
-                    if(adTitle.length < 2 || adTitle.length >40){
+                    if(adTitle.length <= 2 || adTitle.length >=40){
                         error+='adTitle size is invalid. ';
                         errorMessage+='adTitle length must be longer than 2 and shorter than 40. ';
                         errorStack+='adTitle content size must be valid ';
@@ -117,7 +108,7 @@ advertisementRouter.post(
                 }
 
                 //console.log(adTitle.length);
-                
+
                 //if there's no published field in the reqeust body or published field is not valid
                 if(!published){
                     error+='An published filed must be provided. ';
@@ -152,23 +143,12 @@ advertisementRouter.post(
                     errorMessage+='Creating an advertisement must explicitly be supply a adPosition field. ';
                     errorStack+='"adPosition" must be provided in the body with a valid position found in the database. '
                 }
-                //if there's no external link provided in the request
-                if(!externalLink){
-                    error+='externalLink is missing. ';
-                    errorMessage+='Creating an advertisement must explicitly be supply a externalLink field. ';
-                    errorStack+='"adPosition" must be provided in the body with a valid externalLink.'
-                }
-
                 //Image path holder
                 let imagePath = '';
                 //if there's req.file been parsed by multer
                 if(req.file){
                     //console.log(req.file);
                     imagePath = req.file.path;
-                }else{
-                    error+='adImage is missing. ';
-                    errorMessage+='Creating an advertisement must explicitly be supply a adImage field. ';
-                    errorStack+='"adPosition" must be provided in the body with a valid image.'
                 }
                 //If there's error in error holder
                 if(error&&errorMessage&&errorStack){
@@ -188,18 +168,13 @@ advertisementRouter.post(
                         details: {
                           errorMessage: tempErrorMessage,
                           errorStack: tempErrorStack
-                        },
-                        reqBody: {
-                            adType: adType,
-                            adTitle:adTitle,
-                            adDuration: adDuration,
-                            externalLink: externalLink,
-                            published: published
                         }
                     });
                 }
                 //Calculate the ending date of advertisement based on duration field.
-                let endDate = addDays(new Date(), Number(adDuration));
+                let theDate = new Date();
+                let endDate = new Date();
+                endDate.setDate(theDate.getDate()+adDuration);
                 //create an advertisement object
                 const createAnAdvertisement = await prisma.advertisements.create({
                     data:{
@@ -239,6 +214,52 @@ advertisementRouter.post(
         }
     }
 );
+//for retriving all advertisement table item for user.
+advertisementRouter.get(
+    '/getAll',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+            //find the requesting user in the database
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            });
+
+            if(theUser.userType === 'ADMIN' || theUser.userType === 'BUSINESS'){
+                const allAd = await prisma.advertisements.findMany({
+                    where:{ownerId:id}
+                });
+                if(allAd){
+                    return res.status(200).json(allAd);
+                }else{
+                    return res.status(404).send("there's no advertisement belongs to you!");
+                }
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to add an advertisement!",
+                    details: {
+                    errorMessage: 'In order to create an advertisement, you must be an admin or business user.',
+                    errorStack: 'user must be an admin or business if they want to create an advertisement',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to get advertisements.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+);
 
 advertisementRouter.put(
     '/update/:advertisementId',
@@ -261,7 +282,6 @@ advertisementRouter.put(
                 where:{id:loggedInUserId},
                 select:{userType:true}
             });
-
             const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
 
             if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
@@ -415,9 +435,79 @@ advertisementRouter.put(
                 }
             });
         }finally{
-            await prisma.$disconnect();
+            await prisma.$disconnect
         }
     }
 )
+advertisementRouter.delete(
+    '/delete/:advertisementId',
+    passport.authenticate('jwt',{session:false}),
+    async (req,res) => {
+        try{
+            const { id: loggedInUserId, email } = req.user;
+            const parsedAdvertisementId = parseInt(req.params.advertisementId);
 
+            console.log(email);
+            // check if id is valid
+            if (!parsedAdvertisementId) {
+                return res.status(400).json({
+                message: `A valid advertisementId must be specified in the route paramater.`,
+                });
+            }
+
+            const theUser = await prisma.user.findUnique({
+                where:{id:loggedInUserId},
+                select:{userType:true}
+            });
+
+            if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS'){
+                const theAdvertisement = await prisma.advertisements.findUnique({
+                    where:{id:parsedAdvertisementId}
+                })
+
+                if(!theAdvertisement){
+                    res.status(404).send("Advertisement which needs to be deleted not found!");
+                }else{
+                    if(theAdvertisement.ownerId === loggedInUserId){
+                        
+                        if(fs.existsSync(theAdvertisement.imagePath)){
+                            fs.unlinkSync(theAdvertisement.imagePath);
+                        };
+
+                        await prisma.advertisements.delete({
+                            where:{
+                                id:parsedAdvertisementId
+                            }
+                        });
+                        
+                        res.sendStatus(204);
+                    }else{
+                        return res.status(401).json({
+                            message: `The user ${email} is not the author or an admin and therefore cannot delete this advertisement.`
+                        });
+                    }
+                }  
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to add an advertisement!",
+                    details: {
+                      errorMessage: 'In order to delete an advertisement, you must be an admin or business user.',
+                      errorStack: 'user must be an admin or business if they want to delete an advertisement',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to delete advertisement.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect
+        }
+    }
+)
 module.exports = advertisementRouter;
