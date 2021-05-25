@@ -35,7 +35,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
   
     const { token } = useContext(UserProfileContext);
   
-    //sumit handler which calls api posting component to post form data of user input
+    //submit handler which calls api posting component to post form data of user input
     const submitHandler = async (values: CreateAdvertisementInput) => {
       try {
         console.log(values);
@@ -143,7 +143,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
           </Formik>
           {error && (
             <Alert variant='danger' className="error-alert">
-              { error.message}
+              {error.message}
             </Alert>
           )}
           {success}
