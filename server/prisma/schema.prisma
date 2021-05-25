@@ -106,7 +106,8 @@ model User {
   lname     String?  @map("l_name")
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
+  imagePath String?
+  passCode            String?               @default(cuid())
   // Relationships
   address             UserAddress?
   geo                 UserGeo?
@@ -331,8 +332,8 @@ model Advertisements {
   adType       AdType   @default(BASIC) @map("advertisement_type")
   duration     DateTime @map("advertisement_duration")
   adPosition   String   @map("advertisement_position")
-  imagePath    String?  @map("advertisement_image_path")
-  externalLink String?  @map("advertisement_external_link")
+  imagePath    String   @map("advertisement_image_path")
+  externalLink String   @map("advertisement_external_link")
   published    Boolean  @default(false) @map("published")
 
   author User? @relation(fields: [ownerId], references: [id])
