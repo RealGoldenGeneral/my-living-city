@@ -30,7 +30,7 @@ const upload = multer({
   storage:storage,
   limits:{fileSize:maxFileSize},
   fileFilter:theFileFilter
-});
+}).single("image");
 
 //make this get the userId and add it to the image name;
 avatarRouter.get(
@@ -54,7 +54,6 @@ avatarRouter.get(
   avatarRouter.post(
     '/image',
     passport.authenticate('jwt',{session:false}),
-    upload.single("image"),
     async (req, res, next) => {
       
       try {
@@ -64,6 +63,11 @@ avatarRouter.get(
             //console.log(req.file);
             imagePath = req.file.path;
         }
+        upload(req, res, function (error) {
+          if(error){
+            throw error;
+          }
+      });
         const{id}=req.user;
         const result = await prisma.user.update({
           where: { id:id},
