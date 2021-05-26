@@ -186,10 +186,6 @@ segmentRouter.post(
     passport.authenticate('jwt',{session:false}),
     async(req,res) => {
         try{
-            let error = '';
-            let errorMessage = '';
-            let errorStack = '';
-
             //get email and user id from request
             const { email, id } = req.user;
             //find the requesting user in the database
