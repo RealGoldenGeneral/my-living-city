@@ -123,6 +123,61 @@ segmentRouter.get(
             await prisma.$disconnect();
         }
     }
+);
+
+segmentRouter.delete(
+    '/delete/:segmentId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+            //find the requesting user in the database
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            });
+            //Only admin can delete segment
+            if(theUser.userType == 'ADMIN'){
+                const {segmentId} = req.params;
+                const parsedSegmentId = parseInt(segmentId);
+                const theSegment = await prisma.segments.findUnique({
+                    where:{
+                        segId:parsedSegmentId
+                    }
+                });
+
+                if(!theSegment){
+                    res.status(404).json("the segment need to be deleted not found!");
+                }else{
+                    await prisma.segments.delete({
+                        where:{
+                            segId:parsedSegmentId
+                        }
+                    })
+                }
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to delete a segment!",
+                    details: {
+                      errorMessage: 'In order to delete an segment, you must be an admin or business user.',
+                      errorStack: 'user must be an admin if they want to delete a segment',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to delete a segment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
 )
 
 module.exports = segmentRouter;
