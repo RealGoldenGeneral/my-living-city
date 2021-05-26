@@ -83,7 +83,7 @@ segmentRouter.post(
                 return res.status(403).json({
                     message: "You don't have the right to add a segment!",
                     details: {
-                      errorMessage: 'In order to create an segment, you must be an admin or business user.',
+                      errorMessage: 'In order to create a segment, you must be an admin or business user.',
                       errorStack: 'user must be an admin if they want to create a segment',
                     }
                 });
@@ -161,7 +161,7 @@ segmentRouter.delete(
                 return res.status(403).json({
                     message: "You don't have the right to delete a segment!",
                     details: {
-                      errorMessage: 'In order to delete an segment, you must be an admin or business user.',
+                      errorMessage: 'In order to delete a segment, you must be an admin or business user.',
                       errorStack: 'user must be an admin if they want to delete a segment',
                     }
                 });
@@ -170,6 +170,88 @@ segmentRouter.delete(
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to delete a segment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+);
+
+segmentRouter.post(
+    '/update/:segmentId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            let error = '';
+            let errorMessage = '';
+            let errorStack = '';
+
+            //get email and user id from request
+            const { email, id } = req.user;
+            //find the requesting user in the database
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            });
+            //User must be admin to create segment
+            if(theUser.userType == 'ADMIN'){
+                const {segmentId} = req.params;
+
+                const parsedSegmentId = parseInt(segmentId);
+
+                const {country,province,name,superSegName} = req.body;
+
+                console.log(req.body);
+
+                //if there's no object in the request body
+                if(isEmpty(req.body)){
+                    return res.status(400).json({
+                        message: 'The objects in the request body are missing',
+                        details: {
+                            errorMessage: 'Creating a segment must supply necessary fields explicitly.',
+                            errorStack: 'necessary fields must be provided in the body with valid values',
+                        }
+                    })
+                }
+                //find the segment which need to be updated
+                const theSegment = await prisma.segments.findUnique({
+                    where:{
+                        segId:parsedSegmentId
+                    }
+                });
+
+                if(!theSegment){
+                    res.status(404).json("the segment need to be updated not found!");
+                }else{
+                    const result = await prisma.segments.update({
+                        where:{segId:parsedSegmentId},
+                        data:{
+                            country:country,
+                            province:province,
+                            name:name,
+                            superSegName:superSegName
+                        }
+                    });
+
+                    res.status(200).json(result);
+                }
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to update a segment!",
+                    details: {
+                      errorMessage: 'In order to delete a segment, you must be an admin or business user.',
+                      errorStack: 'user must be an admin if they want to delete a segment',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to update a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
