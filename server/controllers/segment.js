@@ -107,7 +107,8 @@ segmentRouter.get(
     '/getAll',
     async(req,res) => {
         try{
-            const result = prisma.segments.findMany();
+            const result = await prisma.segments.findMany();
+            console.log(result);
             res.status(200).send(result);
         }catch(error){
             console.log(error);
