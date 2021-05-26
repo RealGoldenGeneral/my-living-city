@@ -47,6 +47,7 @@ const main = async () => {
 	const advertisementRouter = require('./controllers/advertisement');
 	const avatarRouter = require('./controllers/avatar');
 	const sendEmailRouter = require('./controllers/sendEmailReset');
+	const segmentRouter = require('./controllers/segment');
 
 	const apiRouter = express.Router();
 	
@@ -66,6 +67,7 @@ const main = async () => {
 	apiRouter.use('/avatar', avatarRouter);
 	apiRouter.use('/sendEmail',sendEmailRouter);
 	apiRouter.use('/reset-password', userRouter);
+	apiRouter.use('/segment', segmentRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
