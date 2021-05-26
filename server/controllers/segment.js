@@ -23,7 +23,9 @@ segmentRouter.post(
             });
             //User must be admin to create segment
             if (theUser.userType == 'ADMIN'){
-                const {contry,province,name,superSegName} = req.body;
+                const {country,province,name,superSegName} = req.body;
+
+                console.log(req.body);
 
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
@@ -36,7 +38,7 @@ segmentRouter.post(
                     })
                 }
                 //if country field is missing
-                if(!contry){
+                if(!country){
                     error+='A segment must has a country field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a country field. ';
                     errorStack+='cuntry must be provided in the body with a valid value. ';
@@ -69,7 +71,7 @@ segmentRouter.post(
                 //create a segement table item
                 const createSegment = await prisma.segments.create({
                     data:{
-                        country:contry,
+                        country:country,
                         province:province,
                         name:name,
                         superSegName:superSegName
@@ -99,4 +101,6 @@ segmentRouter.post(
             await prisma.$disconnect();
         }
     }
-)
+);
+
+module.exports = segmentRouter;
