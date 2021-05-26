@@ -154,7 +154,8 @@ segmentRouter.delete(
                         where:{
                             segId:parsedSegmentId
                         }
-                    })
+                    });
+                    res.sendStatus(204);
                 }
             }else{
                 return res.status(403).json({
