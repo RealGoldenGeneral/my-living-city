@@ -103,4 +103,25 @@ segmentRouter.post(
     }
 );
 
+segmentRouter.get(
+    '/getAll',
+    async(req,res) => {
+        try{
+            const result = prisma.segments.findMany();
+            res.status(200).send(result);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve segments.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+)
+
 module.exports = segmentRouter;
