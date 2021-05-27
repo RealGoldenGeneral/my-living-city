@@ -251,7 +251,7 @@ subSegmentRouter.get(
                 }
             });
 
-            if(!theSubSegments){
+            if(theSubSegments.length==0){
                 res.status(404).json("subsegment need to retrieved not found");
             }else{
                 res.status(200).send(theSubSegments);
