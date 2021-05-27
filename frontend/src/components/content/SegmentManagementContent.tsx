@@ -46,15 +46,15 @@ const SegmentManagementContent: React.FC<SegmentPageContentProps> = ({segments, 
   console.log(segments?.[0].name)
   const [showSub, setShowSub] = useState(false);
   const [showSeg, setShowSeg] = useState(false);
-  const [segName, setSegName] = useState({name:""});
-  const [superName, setSuperName] = useState({superSegName:""});
-  const handleUpdate = async (values: any, token: any) => {
-    try{
-      await updateSegment(values,token);
-    }catch(err){
+  // const [segName, setSegName] = useState({name:""});
+  // const [superName, setSuperName] = useState({superSegName:""});
+  // const handleUpdate = async (values: any, token: any) => {
+  //   try{
+  //     await updateSegment(values,token);
+  //   }catch(err){
 
-    }
-  }
+  //   }
+  // }
   return (
     <Container className='conversations-page-content'>
       <h2>Segmentation Manager</h2>
