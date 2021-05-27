@@ -77,7 +77,30 @@ subSegmentRouter.post(
                     errorStack+='lon must be provided in the body with a valid value. ';
                 }
 
-                
+                //If there's error in error holder
+                if(error||errorMessage||errorStack){
+                    return res.status(400).json({
+                        message: error,
+                        details: {
+                          errorMessage: errorMessage,
+                          errorStack: errorStack
+                        }
+                    });
+                }
+
+                const result = await prisma.subSegments.create({
+                    data:{
+                        segRef:{
+                            connect:{segId:segId}
+                        },
+                        name:name,
+                        lat:lat,
+                        lon:lon
+                    }
+                });
+
+                res.status(200).json(result);
+
             }else{
                 return res.status(403).json({
                     message: "You don't have the right to add a subsegment!",
