@@ -47,7 +47,7 @@ const SegmentManagementContent: React.FC<SegmentPageContentProps> = ({segments, 
   console.log(segments?.[0].name)
   const [showSub, setShowSub] = useState(false);
   const [showSeg, setShowSeg] = useState(false);
-  let subArr: Promise<ISubSegment[]> | undefined;
+  let subArr: any | undefined;
   async function handleView(segId: string, token: string){
     return await getAllSubSegmentsWithId(segId,token);
   }
