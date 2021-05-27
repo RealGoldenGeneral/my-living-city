@@ -203,6 +203,39 @@ subSegmentRouter.get(
             await prisma.$disconnect();
         }
     }
+);
+
+subSegmentRouter.get(
+    '/getBySubSegmentId/:subSegmentId',
+    async(req,res) => {
+        try{
+            const {subSegmentId} = req.params;
+            const parsedSubSegmentId = parseInt(subSegmentId);
+
+            const theSubSegment = await prisma.subSegments.findUnique({
+                where:{
+                    id:parsedSubSegmentId
+                }
+            });
+
+            if(!theSubSegment){
+                res.status(404).json("subsegment need to retrieved not found");
+            }else{
+                res.status(200).json(theSubSegment);
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to get that subsegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
 )
 
 
