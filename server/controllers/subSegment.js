@@ -149,16 +149,16 @@ subSegmentRouter.delete(
                 });
                 //if the subsegment not found
                 if(!theSubSegment){
-                    return res.sendStatus(404).json("subsegment need to be deleted not found");
+                    res.status(404).json("subsegment need to be deleted not found");
+                }else{
+                    await prisma.subSegments.delete({
+                        where:{
+                            id:parsedSubSegmentId
+                        }
+                    })
+
+                    res.sendStatus(204);
                 }
-
-                await prisma.subSegments.delete({
-                    where:{
-                        id:subSegmentId
-                    }
-                })
-
-                res.status(204);
             }else{
                 return res.status(403).json({
                     message: "You don't have the right to delete a subsegment!",
