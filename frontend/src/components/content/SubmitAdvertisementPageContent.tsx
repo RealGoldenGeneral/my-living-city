@@ -74,7 +74,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     return (
       <Container className='submit-advertisement-page-content'>
         <Row className='justify-content-center'>
-          <h1>Create Advertisement</h1>
+          <h1 className="pb-1 border-bottom display-6 text-center">Create Advertisement</h1>
         </Row>
         <Row className='submit-advertisement-form-group justify-content-center'>
         <Col lg={10} >
@@ -125,6 +125,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control.Feedback type="invalid">{errors.externalLink}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validateAdImage">
+              {/*Need a specific info for image size here*/}
               <ImageUploader name="adImage" onChange={(picture) => {setFieldValue('adImage',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
               <Form.Control.Feedback type="invalid">{errors.adImage}</Form.Control.Feedback>
             </Form.Group>

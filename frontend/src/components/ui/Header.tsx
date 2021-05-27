@@ -29,8 +29,12 @@ export default function Header() {
                 <Nav.Link href='/submit'>Submit Idea</Nav.Link>
                 <Nav.Link href='/profile'>Profile</Nav.Link>
 
-                <NavDropdown title="Tools" id="nav-dropdown">
-                  <Nav.Link href='/advertisement/submit'>Add Advertisement</Nav.Link>
+                <NavDropdown title="Admin Tools" id="nav-dropdown">
+                  {/* <Nav.Link href='/advertisement/submit'>Add Ads</Nav.Link>
+                  <Nav.Link href='/advertisement/edit'>Edit Ads</Nav.Link> */}
+                  <Nav.Link href='/advertisement/submit'>Ads Management</Nav.Link>
+                  <Nav.Link href=''>Segments Management</Nav.Link>
+                  <Nav.Link href=''>Users Management</Nav.Link>
                 </NavDropdown>
 
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
