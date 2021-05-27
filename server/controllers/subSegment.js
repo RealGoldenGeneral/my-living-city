@@ -3,7 +3,7 @@ const express = require('express');
 const subSegmentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
-const { isEmpty, isNumber, isString } = require('lodash');
+const { isEmpty, isNumber, isString, isInteger } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 
@@ -141,10 +141,6 @@ subSegmentRouter.delete(
             if(theUser.userType == 'ADMIN'){
                 const {subSegmentId} = req.params;
 
-                if(!subSegmentId){
-                    res.status(400).json("subSegment id is missing");
-                }
-
                 const parsedSubSegmentId = parseInt(subSegmentId);
 
                 const theSubSegment = await prisma.subSegments.findUnique({
@@ -216,9 +212,6 @@ subSegmentRouter.get(
         try{
             const {subSegmentId} = req.params;
 
-            if(!subSegmentId){
-                res.status(400).json("subSegment id is missing");
-            }
             const parsedSubSegmentId = parseInt(subSegmentId);
 
             const theSubSegment = await prisma.subSegments.findUnique({
@@ -293,6 +286,7 @@ subSegmentRouter.put(
             let error = '';
             let errorMessage = '';
             let errorStack = '';
+            let theSegment;
             //get email and user id from request
             const { email, id } = req.user;
             //find the requesting user in the database
@@ -304,11 +298,17 @@ subSegmentRouter.put(
             if(theUser.userType == 'ADMIN'){
                 const {subSegmentId} = req.params;
 
-                if(!subSegmentId){
-                    res.status(400).json("subSegment id is misssing")
-                }
-
                 const parsedSubSegmentId = parseInt(subSegmentId);
+
+                const theSubSegment = await prisma.subSegments.findUnique({
+                    where:{
+                        id:parsedSubSegmentId
+                    }
+                })
+
+                if(!theSubSegment){
+                    res.status(404).json("the subSegment need to be updated not found!");
+                }
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
                     return res.status(400).json({
@@ -322,53 +322,62 @@ subSegmentRouter.put(
 
                 const {segId,name,lat,lon} = req.body;
 
-                if(segId&&!isNumber(segId)){
+                if(segId&&!isInteger(segId)){
                     error+='A subsegment must has a valid segId field. ';
                     errorMessage+='Creating a subsegment must explicitly be supplied with a valid segId field. ';
                     errorStack+='segId must be provided in the body with a valid value. ';
-                }
-
-                const theSegment = await prisma.segments.findUnique({
-                    where:{
-                        id:segId
+                }else if(isInteger(segId)){
+                    theSegment = await prisma.segments.findUnique({
+                        where:{segId:segId}
+                    });
+                    //if the segment not found
+                    if(!theSegment){
+                        error+='A subSegment must has a valid segment id field. ';
+                        errorMessage+='Updating a subsegment must explicitly be supplied with a valid segId field. ';
+                        errorStack+='segId must be provided in the body with a valid value. ';
                     }
-                })
-
-                if(!theSegment){
-                    error+='A subsegment must has a valid segId field. ';
-                    errorMessage+='Creating a subsegment must explicitly be supplied with a valid segId field. ';
-                    errorStack+='segId must be provided in the body with a valid value. ';
                 }
 
                 if(name&&!isString(name)){
                     error+='A subsegment must has a valid name field. ';
-                    errorMessage+='Creating a subsegment must explicitly be supplied with a name field. ';
+                    errorMessage+='Updating a subsegment must explicitly be supplied with a name field. ';
                     errorStack+='name must be provided in the body with a valid value. ';
                 }
 
                 if(lat&&!isNumber(lat)){
                     error+='A subsegment must has a lat field with a valid value. ';
-                    errorMessage+='Creating a subsegment must explicitly be supplied with a lat field. ';
+                    errorMessage+='Updating a subsegment must explicitly be supplied with a lat field. ';
                     errorStack+='lat must be provided in the body with a valid value. ';
                 }
 
                 if(lon&&!isNumber(lon)){
                     error+='A subsegment must has a lon field with a valid value. ';
-                    errorMessage+='Creating a subsegment must explicitly be supplied with a lon field. ';
+                    errorMessage+='Updating a subsegment must explicitly be supplied with a lon field. ';
                     errorStack+='lon must be provided in the body with a valid value. ';
+                }
+
+                //If there's error in error holder
+                if(error||errorMessage||errorStack){
+                    return res.status(400).json({
+                        message: error,
+                        details: {
+                          errorMessage: errorMessage,
+                          errorStack: errorStack
+                        }
+                    });
                 }
 
                 const result = await prisma.subSegments.update({
                     where:{id:parsedSubSegmentId},
                     data:{
-                        segRef:{
-                            connect:{segId:segId}
-                        },
+                        segId:segId,
                         name:name,
                         lat:lat,
                         lon:lon
                     }
-                })
+                });
+
+                res.status(200).json(result);
                 
             }else{
                 return res.status(403).json({
