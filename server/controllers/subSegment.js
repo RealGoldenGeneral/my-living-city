@@ -113,7 +113,65 @@ subSegmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to update an Advertisement.",
+                message: "An error occured while trying to create a subsegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+);
+
+subSegmentRouter.delete(
+    '/delete/:subSegmentId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+            //find the requesting user in the database
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            });
+
+            if(theUser.userType == 'ADMIN'){
+                const {subSegmentId} = req.params;
+                const parsedSubSegmentId = parseInt(subSegmentId);
+
+                const theSubSegment = await prisma.subSegments.findUnique({
+                    where:{
+                        id:parsedSubSegmentId
+                    }
+                });
+                //if the subsegment not found
+                if(!theSubSegment){
+                    return res.sendStatus(404).json("subsegment need to be deleted not found");
+                }
+
+                await prisma.subSegments.delete({
+                    where:{
+                        id:subSegmentId
+                    }
+                })
+
+                res.status(204);
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to delete a subsegment!",
+                    details: {
+                      errorMessage: 'In order to delete a subsegment, you must be an admin or business user.',
+                      errorStack: 'user must be an admin if they want to delete a subsegment',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to delete a subsegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
