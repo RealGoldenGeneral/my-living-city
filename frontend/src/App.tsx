@@ -16,10 +16,8 @@ import LoginPage from './pages/LoginPage';
 import PrivateRoute from './components/utility/PrivateRoute';
 import PublicRoute from './components/utility/PublicRoute';
 import SubmitAdvertisementPage from './pages/SubmitAdvertisementPage';
-// import EditAdvertisementPage from './pages/EditAdvertisementPage';
 import ResetPasswordContent from './pages/ResetPasswordPage';
-
-
+import SegmentManagementPage from './pages/SegmentManagementPage';
 function App() {
   return (
     <div className="App">
@@ -37,7 +35,7 @@ function App() {
           <PrivateRoute path={ROUTES.USER_PROFILE} component={ProfilePage} />
           <PrivateRoute path={ROUTES.TEST_PAGE} redirectPath='/ideas/1' component={TestPage} />
           <PrivateRoute path={ROUTES.SUBMIT_ADVERTISEMENT} component={SubmitAdvertisementPage} />
-          {/* <PrivateRoute path={ROUTES.EDIT_ADVERTISEMENT} component={EditAdvertisementPage} />  */}
+          <PrivateRoute path={ROUTES.SEGMENT_MANAGEMENT} component={SegmentManagementPage} />
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>
       </div>
