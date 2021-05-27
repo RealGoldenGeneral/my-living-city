@@ -181,6 +181,28 @@ subSegmentRouter.delete(
             await prisma.$disconnect();
         }
     }
+);
+
+subSegmentRouter.get(
+    '/getAll',
+    async(req,res) => {
+        try{
+            const result = await prisma.subSegments.findMany();
+
+            res.status(200).json(result);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to get all subsegments.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
 )
 
 
