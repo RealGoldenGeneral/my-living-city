@@ -4,14 +4,13 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <div className="outer-footer w-100 ml-0">
+    <div className="footer-copyright text-center w-100 ml-0 push">
+      <p className="fluid">COPYRIGHT &#169; MY LIVING CITY {new Date().getFullYear()}</p>
 
       {/* Mobile View <= 768px */}
       <Row className='d-md-none'>
         <AdsSection />
       </Row>
-
-      <p className='text-center'>COPYRIGHT &#169; MY LIVING CITY {new Date().getFullYear()}</p>
     </div>
   )
 }

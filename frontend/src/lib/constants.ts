@@ -29,7 +29,7 @@ export const ROUTES = {
   TEST_PAGE: '/test',
   TEAM404: '/*',
   SUBMIT_ADVERTISEMENT: '/advertisement/submit',
-  EDIT_ADVERTISEMENT: '/advertisement/edit',
+  // EDIT_ADVERTISEMENT: '/advertisement/edit',
   SEND_EMAIL: '/sendEmail',
   RESET_PASSWORD:'/user/reset-password',
   SEGMENT_MANAGEMENT:'/segment/management'

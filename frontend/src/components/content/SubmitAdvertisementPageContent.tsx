@@ -12,6 +12,8 @@ import ImageUploader from 'react-images-upload';
 import * as Yup from 'yup';
 import { values } from 'lodash';
 
+import '../../scss/content/_createAds.scss'
+
 
 
 interface SubmitAdvertisementPageContentProps {
@@ -74,7 +76,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     return (
       <Container className='submit-advertisement-page-content'>
         <Row className='justify-content-center'>
-          <h1 className="pb-1 border-bottom display-6 text-center">Create Advertisement</h1>
+          <h1 className="pb-1 border-bottom display-6">Create Advertisement</h1>
         </Row>
         <Row className='submit-advertisement-form-group justify-content-center'>
         <Col lg={10} >

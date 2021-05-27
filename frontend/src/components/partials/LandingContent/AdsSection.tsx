@@ -18,7 +18,7 @@ const AdsSection = (props: AdsProps) => {
             {/* <h2 className="pb-1 border-bottom display-6 text-center">Our Locals</h2> */}
 
             <Carousel indicators={false} pause={'hover'}>
-                <Carousel.Item interval={30000}>
+                <Carousel.Item interval={10000}>
                     <a href='https://99designs.ca/blog/marketing-advertising/14-design-tips-for-more-clickable-banner-ads/'>
                         <img
                         className="d-block w-100"
@@ -26,7 +26,7 @@ const AdsSection = (props: AdsProps) => {
                         />
                     </a>
                 </Carousel.Item>
-                <Carousel.Item interval={3000}>
+                <Carousel.Item interval={10000}>
                     <a href='https://99designs.ca/blog/marketing-advertising/14-design-tips-for-more-clickable-banner-ads/'>
                         <img
                         className="d-block w-100"
