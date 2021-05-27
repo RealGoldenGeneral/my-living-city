@@ -22,18 +22,18 @@ const AdsSection = (props: AdsProps) => {
                     <a href='https://99designs.ca/blog/marketing-advertising/14-design-tips-for-more-clickable-banner-ads/'>
                         <img
                         className="d-block w-100"
-                        src=""
+                        src="http://madmartech.com/wp-content/uploads/2019/05/970x250-1.png"
                         />
                     </a>
                 </Carousel.Item>
-                {/* <Carousel.Item interval={3000}>
+                <Carousel.Item interval={3000}>
                     <a href='https://99designs.ca/blog/marketing-advertising/14-design-tips-for-more-clickable-banner-ads/'>
                         <img
                         className="d-block w-100"
                         src="https://www.frontiersin.org/files/Articles/70413/fpsyg-05-00166-HTML/image_m/fpsyg-05-00166-g006.jpg"
                         />
                     </a>
-                </Carousel.Item> */}
+                </Carousel.Item>
             </Carousel>
         </Container>
     );
