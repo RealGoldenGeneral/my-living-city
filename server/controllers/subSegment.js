@@ -3,7 +3,7 @@ const express = require('express');
 const subSegmentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
-const { isEmpty, isNumber } = require('lodash');
+const { isEmpty, isNumber, isString } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 
@@ -140,6 +140,11 @@ subSegmentRouter.delete(
 
             if(theUser.userType == 'ADMIN'){
                 const {subSegmentId} = req.params;
+
+                if(!subSegmentId){
+                    res.status(400).json("subSegment id is missing");
+                }
+
                 const parsedSubSegmentId = parseInt(subSegmentId);
 
                 const theSubSegment = await prisma.subSegments.findUnique({
@@ -210,6 +215,10 @@ subSegmentRouter.get(
     async(req,res) => {
         try{
             const {subSegmentId} = req.params;
+
+            if(!subSegmentId){
+                res.status(400).json("subSegment id is missing");
+            }
             const parsedSubSegmentId = parseInt(subSegmentId);
 
             const theSubSegment = await prisma.subSegments.findUnique({
@@ -243,6 +252,11 @@ subSegmentRouter.get(
     async(req,res) => {
         try{
             const {segmentId} = req.params;
+
+            if(!segmentId){
+                res.status(400).json("segment id is missing");
+            }
+
             const parsedSegmentId = parseInt(segmentId);
 
             const theSubSegments = await prisma.subSegments.findMany({
@@ -260,6 +274,115 @@ subSegmentRouter.get(
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to get that subsegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+);
+
+subSegmentRouter.put(
+    '/update/:subSegmentId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            let error = '';
+            let errorMessage = '';
+            let errorStack = '';
+            //get email and user id from request
+            const { email, id } = req.user;
+            //find the requesting user in the database
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            });
+
+            if(theUser.userType == 'ADMIN'){
+                const {subSegmentId} = req.params;
+
+                if(!subSegmentId){
+                    res.status(400).json("subSegment id is misssing")
+                }
+
+                const parsedSubSegmentId = parseInt(subSegmentId);
+                //if there's no object in the request body
+                if(isEmpty(req.body)){
+                    return res.status(400).json({
+                        message: 'The objects in the request body are missing',
+                        details: {
+                            errorMessage: 'Updating a subsegment must supply necessary fields explicitly.',
+                            errorStack: 'necessary fields must be provided in the body with valid values',
+                        }
+                    })
+                }
+
+                const {segId,name,lat,lon} = req.body;
+
+                if(segId&&!isNumber(segId)){
+                    error+='A subsegment must has a valid segId field. ';
+                    errorMessage+='Creating a subsegment must explicitly be supplied with a valid segId field. ';
+                    errorStack+='segId must be provided in the body with a valid value. ';
+                }
+
+                const theSegment = await prisma.segments.findUnique({
+                    where:{
+                        id:segId
+                    }
+                })
+
+                if(!theSegment){
+                    error+='A subsegment must has a valid segId field. ';
+                    errorMessage+='Creating a subsegment must explicitly be supplied with a valid segId field. ';
+                    errorStack+='segId must be provided in the body with a valid value. ';
+                }
+
+                if(name&&!isString(name)){
+                    error+='A subsegment must has a valid name field. ';
+                    errorMessage+='Creating a subsegment must explicitly be supplied with a name field. ';
+                    errorStack+='name must be provided in the body with a valid value. ';
+                }
+
+                if(lat&&!isNumber(lat)){
+                    error+='A subsegment must has a lat field with a valid value. ';
+                    errorMessage+='Creating a subsegment must explicitly be supplied with a lat field. ';
+                    errorStack+='lat must be provided in the body with a valid value. ';
+                }
+
+                if(lon&&!isNumber(lon)){
+                    error+='A subsegment must has a lon field with a valid value. ';
+                    errorMessage+='Creating a subsegment must explicitly be supplied with a lon field. ';
+                    errorStack+='lon must be provided in the body with a valid value. ';
+                }
+
+                const result = await prisma.subSegments.update({
+                    where:{id:parsedSubSegmentId},
+                    data:{
+                        segRef:{
+                            connect:{segId:segId}
+                        },
+                        name:name,
+                        lat:lat,
+                        lon:lon
+                    }
+                })
+                
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to add a subsegment!",
+                    details: {
+                      errorMessage: 'In order to create a subsegment, you must be an admin or business user.',
+                      errorStack: 'user must be an admin if they want to create a subsegment',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to update subsegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
