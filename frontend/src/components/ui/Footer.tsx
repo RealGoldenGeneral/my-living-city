@@ -1,5 +1,5 @@
 import { Container, Row } from 'react-bootstrap'
-import AdsSection from '../partials/LandingContent/AdsSection'; //
+import AdsSection from '../partials/LandingContent/AdsSection';
 import React from 'react';
 
 export default function Footer() {

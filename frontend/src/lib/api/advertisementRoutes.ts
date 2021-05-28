@@ -3,14 +3,15 @@ import { format } from "prettier";
 import { API_BASE_URL } from "../constants";
 import { CreateAdvertisementInput } from "../types/input/advertisement.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
+import { IAdvertisement } from "../types/data/advertisement.type";
 
 export const postCreateAdvertisement = async (advertisementData:CreateAdvertisementInput, token: string | null) =>{
-    const {adType,adTitle,adPosition, duration,externalLink, published,adImage} = advertisementData;
+    const {adType,adTitle,adPosition, duration,externalLink, published,imagePath} = advertisementData;
 
     //console.log(advertisementData);
     //if adType is not predifined value or missing 
     if(!adType||!(adType==='BASIC'||adType==='EXTRA')){
-        throw new Error("You must choose a advertisement type, or someting is wrong when accepting adType data.")
+        throw new Error("You must choose a advertisement type, or something is wrong when accepting adType data.")
     }
     //if daTitle size is not correct or missing
     if(!adTitle||adTitle.length<2||adTitle.length>40){
@@ -18,14 +19,14 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
     }
     //if adPosition's size isn't correct or missing
     if(!adPosition||adPosition.length<1||adPosition.length>85){
-        throw new Error("You must provide a target position for advertisemen or your position length is invalid (longer or equal to 1, shorter than 85)");
+        throw new Error("You must provide a target position for advertisement or your position length is invalid (longer or equal to 1, shorter than 85)");
     }
     //if duration is not valid or missing
     if(!duration||duration<=0){
         throw new Error("You must provide a duration for your advertisement or your duration is invalid (must be bigger than 0)");
     }
-    //if adImage is missing
-    if(!adImage){
+    //if imagePath is missing
+    if(!imagePath){
         throw new Error("You must provided a advertisement image for you advertisement.");
     }
     //if published field is invalid
@@ -40,7 +41,7 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
     advertisementForm.append('adDuration', duration.toString());
     advertisementForm.append('externalLink', externalLink);
     advertisementForm.append('published', published ? 'true' : 'false');
-    advertisementForm.append('adImage', adImage[0]);
+    advertisementForm.append('imagePath', imagePath[0]);
     //advertisement api configuration and call
     const res = await axios({
         method: "post",
@@ -54,5 +55,14 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
         throw new Error(res.data);
     }
     //return response data
+    return res.data;
+}
+
+export const getAllAdvertisement = async (token: string) => {
+    const res = await axios.get<IAdvertisement[]>(
+        `${API_BASE_URL}/advertisement/getAll`,
+        getAxiosJwtRequestOption(token!)
+    );
+
     return res.data;
 }
