@@ -5,6 +5,7 @@ import { CreateAdvertisementInput } from "../types/input/advertisement.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 import { IAdvertisement } from "../types/data/advertisement.type";
 
+// POST Create a new advertisement
 export const postCreateAdvertisement = async (advertisementData:CreateAdvertisementInput, token: string | null) =>{
     const {adType,adTitle,adPosition, duration,externalLink, published,imagePath} = advertisementData;
 
@@ -58,6 +59,7 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
     return res.data;
 }
 
+// GET Retrieve all advertisement info
 export const getAllAdvertisement = async (token: string) => {
     const res = await axios.get<IAdvertisement[]>(
         `${API_BASE_URL}/advertisement/getAll`,
@@ -66,3 +68,5 @@ export const getAllAdvertisement = async (token: string) => {
 
     return res.data;
 }
+
+// PUT Update/Replace specific advertisement info

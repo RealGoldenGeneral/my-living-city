@@ -12,9 +12,11 @@ interface AllAdsPageProps extends RouteComponentProps<{}> {
 }
 
 const AllAdsPage: React.FC<AllAdsPageProps> = ({}) => {
-const { token } = useContext(UserProfileContext);
+  const { token } = useContext(UserProfileContext);
+
   const { data, isLoading, error, isError } = useAdvertisements(token!);
-  console.log(data);
+  //console.log(data);
+  
   if (isLoading) {
     <div className="wrapper">
       <LoadingSpinner />

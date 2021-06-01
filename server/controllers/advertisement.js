@@ -189,7 +189,7 @@ advertisementRouter.post(
                     }
                 });
 
-                //sending user the successfull status with created advertisement object
+                //sending user the successful status with created advertisement object
                 res.status(200).json(createAnAdvertisement);
             }else{
                 return res.status(403).json({
