@@ -267,7 +267,18 @@ segmentRouter.get(
         let errorMessage = '';
         let errorStack = '';
         try{
-            const {contry,province,segName} = req.body;
+            //if there's no object in the request body
+            if(isEmpty(req.body)){
+                return res.status(400).json({
+                    message: 'The objects in the request body are missing',
+                    details: {
+                        errorMessage: 'Finding a segment must supply necessary fields explicitly.',
+                        errorStack: 'necessary fields must be provided in the body with valid values',
+                    }
+                })
+            }
+
+            const {country,province,segName} = req.body;
 
             if(!country){
                 error+='Query must has a country field. ';
@@ -275,7 +286,7 @@ segmentRouter.get(
                 errorStack+='cuntry must be provided in the body with a valid value. ';
             }
 
-            if(!isString(contry)||contry.length<2||country.length>40){
+            if(!isString(country)||country.length<2||country.length>40){
                 error+='Country value must be valid ';
                 errorMessage+='Country must be string with 2-40 characters ';
                 errorStack+='Country must be string with 2-40 characters ';
@@ -316,9 +327,9 @@ segmentRouter.get(
                 });
             }
 
-            const result = await prisma.segments.findUnique({
+            const result = await prisma.segments.findFirst({
                 where:{
-                    contry:contry,
+                    country:country,
                     province:province,
                     name:{contains:segName}
                 }
