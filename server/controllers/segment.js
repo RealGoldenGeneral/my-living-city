@@ -124,7 +124,30 @@ segmentRouter.get(
         }
     }
 );
-
+// segmentRouter.get(
+//     '/getByProv',
+//     async(req,res) => {
+//         try{
+//             const {province, country} = req.body;
+//             const result = await prisma.segments.findMany(
+//                 where:{province: province}
+//             );
+//             console.log(result);
+//             res.status(200).send(result);
+//         }catch(error){
+//             console.log(error);
+//             res.status(400).json({
+//                 message: "An error occured while trying to retrieve segments.",
+//                 details: {
+//                     errorMessage: error.message,
+//                     errorStack: error.stack,
+//                 }
+//             });
+//         }finally{
+//             await prisma.$disconnect();
+//         }
+//     }
+// );
 segmentRouter.delete(
     '/delete/:segmentId',
     passport.authenticate('jwt',{session:false}),
