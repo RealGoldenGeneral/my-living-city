@@ -12,7 +12,7 @@ export interface ISubSegment {
     segId: number;
     name: string;
     lat: number;
-    long: number;
+    lon: number;
     createdAt: Date;
     updatedAt: Date;
 }
