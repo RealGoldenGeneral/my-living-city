@@ -71,7 +71,7 @@ const main = async () => {
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
 
-	app.use('/uploads', express.static(__dirname + 'uploads'));
+	app.use(express.static('uploads'));
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

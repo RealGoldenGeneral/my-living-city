@@ -74,11 +74,11 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
     }
   
     return (
-      <Container className='submit-advertisement-page-content'>
+      <Container className='edit-advertisement-page-content'>
         <Row className='justify-content-center'>
-          <h1 className="pb-1 border-bottom display-6">Create Advertisement</h1>
+          <h1 className="pb-1 border-bottom display-6">Edit Advertisement</h1>
         </Row>
-        <Row className='submit-advertisement-form-group justify-content-center'>
+        <Row className='edit-advertisement-form-group justify-content-center'>
         <Col lg={10} >
           <Formik
             initialValues = {initialValues}

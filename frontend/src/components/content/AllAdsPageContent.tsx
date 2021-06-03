@@ -18,7 +18,13 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement 
     
     <Container className='all-ads-page-content w-100'>
       <Row className='justify-content-center'>
-      <h1 className="pb-1 border-bottom display-6 text-center">All Advertisements</h1>
+      <h1 className="pb-1 border-bottom display-6 text-center">Advertisements Manager</h1>
+      </Row>
+
+      <Row className='mb-3'>
+        <a href='/advertisement/submit'>
+          <Button>Create Ads</Button>
+        </a>
       </Row>
 
       <Row>
@@ -41,7 +47,10 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement 
           <tbody>
             {AllAdvertisement?.map(item => (
               <tr key={item.id}>
-                <td><Button block variant="primary">Edit</Button> <Button block variant="danger">Delete</Button></td>
+                <td>
+                  <a href=''><Button className='mb-2' block variant="primary">Edit</Button></a>
+                  <a href=''><Button block variant="danger">Delete</Button></a>
+                </td>
                 <td>{item.adTitle}</td>
                 <td>{item.adType}</td>
                 <td>{item.ownerId}</td>
