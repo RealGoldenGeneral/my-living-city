@@ -18,11 +18,11 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   const {
     setToken,
     setUser,
-    user
+    //user
   } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
-  const [iconName, setIcon] = useState("home");
+  //const [iconName, setIcon] = useState("home");
   const [selectedFile, setSelectedFile] = useState(undefined);
   let [show, setShow] = useState(0);
 
@@ -82,7 +82,9 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     </main>
     )
   }
-  function handleChange(e:any){setIcon(e.target.value);}
+
+  //function handleChange(e:any){setIcon(e.target.value);}
+
   
 
   function customFormikSet(){
