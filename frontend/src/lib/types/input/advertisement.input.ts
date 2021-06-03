@@ -5,7 +5,7 @@ export interface CreateAdvertisementInput {
     adType: AdvertisementType;
     duration: number;
     adPosition: string;
-    adImage: any;
+    imagePath: any;
     externalLink: string;
     published: boolean;
 }

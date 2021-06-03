@@ -7,7 +7,7 @@ import DescriptionSection from '../partials/LandingContent/DescriptionSection';
 import HeroBannerSection from '../partials/LandingContent/HeroBannerSection';
 import NewAndTrendingSection from '../partials/LandingContent/NewAndTrendingSection';
 
-import AdsSection from '../partials/LandingContent/AdsSection'; //
+import AdsSection from '../partials/LandingContent/AdsSection' //
 
 interface LandingPageContentProps {
   topIdeas: IIdeaWithAggregations[] | undefined;
