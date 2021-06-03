@@ -32,7 +32,7 @@ const main = async () => {
 
 	app.get('/', (req, res) => res.send('Welcome the My Living City API V2'));
 
-	// Routing
+	// Routing .js
 	const userRouter = require('./controllers/user');
 	const roleRouter = require('./controllers/role');
 	const reportRouter = require('./controllers/report');
@@ -70,6 +70,8 @@ const main = async () => {
 	apiRouter.use('/reset-password', userRouter);
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
+
+	app.use(express.static('uploads'));
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

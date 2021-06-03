@@ -5,12 +5,14 @@ import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
 import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateAdvertisement } from 'src/lib/api/advertisementRoutes';
-import { IBasicAdvertisement } from '../../lib/types/data/advertisement.type';
+import { IAdvertisement } from '../../lib/types/data/advertisement.type';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 import ImageUploader from 'react-images-upload';
 import * as Yup from 'yup';
 import { values } from 'lodash';
+
+import '../../scss/content/_createAds.scss'
 
 
 
@@ -68,13 +70,13 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         duration: 0,
         published: false,
         externalLink: '',
-        adImage: '',
+        imagePath: '',
     }
   
     return (
       <Container className='submit-advertisement-page-content'>
         <Row className='justify-content-center'>
-          <h1>Create Advertisement</h1>
+          <h1 className="pb-1 border-bottom display-6">Create Advertisement</h1>
         </Row>
         <Row className='submit-advertisement-form-group justify-content-center'>
         <Col lg={10} >
@@ -91,7 +93,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
                   duration: 0,
                   published: false,
                   externalLink: '',
-                  adImage: ''
+                  imagePath: ''
                 }
               });
             })}}
@@ -124,9 +126,10 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Your external link" isInvalid={!!errors.externalLink}/>
               <Form.Control.Feedback type="invalid">{errors.externalLink}</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="validateAdImage">
-              <ImageUploader name="adImage" onChange={(picture) => {setFieldValue('adImage',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
-              <Form.Control.Feedback type="invalid">{errors.adImage}</Form.Control.Feedback>
+            <Form.Group controlId="validateimagePath">
+              {/*Need a specific info for image size here*/}
+              <ImageUploader name="imagePath" onChange={(picture) => {setFieldValue('imagePath',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
+              <Form.Control.Feedback type="invalid">{errors.imagePath}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
               <Form.Check type="checkbox" label="Publish your advertisement" name="published" onChange={handleChange} isInvalid={!!errors.published} feedback={errors.published}/>

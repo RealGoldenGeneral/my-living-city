@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { Form, Button, Alert, Card } from 'react-bootstrap'
+import { ProgressBar, Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IFetchError } from '../../lib/types/types';
@@ -82,7 +82,9 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     </main>
     )
   }
+
   //function handleChange(e:any){setIcon(e.target.value);}
+
   
 
   function customFormikSet(){
