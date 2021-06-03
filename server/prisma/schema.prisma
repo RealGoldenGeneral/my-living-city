@@ -26,10 +26,10 @@ model Report {
 
 // User Entity
 enum UserType {
-  USER
   ADMIN
   BUSINESS
-  DEVELOPER
+  PERSONAL
+  MUNICIPAL
 
   @@map(name: "user_type")
 }
@@ -100,13 +100,13 @@ model User {
   userType   UserType @default(ADMIN) @map("user_type")
 
   // Fields
-  email     String   @unique
-  password  String
-  fname     String?  @map("f_name")
-  lname     String?  @map("l_name")
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-  imagePath String?
+  email               String                @unique
+  password            String
+  fname               String?               @map("f_name")
+  lname               String?               @map("l_name")
+  createdAt           DateTime              @default(now()) @map(name: "created_at")
+  updatedAt           DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+  imagePath           String?
   passCode            String?               @default(cuid())
   // Relationships
   address             UserAddress?
@@ -342,16 +342,16 @@ model Advertisements {
 }
 
 model Segments {
-  segId           Int       @id @default(autoincrement()) @map("seg_id")
+  segId        Int       @id @default(autoincrement()) @map("seg_id")
   country      String
   province     String
   name         String    @map("segment_name")
-  superSegName String?    @map("super_segment_name")
+  superSegName String?   @map("super_segment_name")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @default(now()) @updatedAt @map("update_at")
 
-  @@map(name: "segment")
   SubSegments SubSegments[]
+  @@map(name: "segment")
 }
 
 model SubSegments {
@@ -362,7 +362,7 @@ model SubSegments {
   lon       Decimal?
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @updatedAt @map("update_at")
-  
+
   segRef Segments @relation(fields: [segId], references: [segId])
   @@map(name: "sub_segment")
 }
