@@ -1,6 +1,6 @@
 import React from 'react'
 import {Table, Form, Button, Col, Container, Row, Card, Alert } from 'react-bootstrap';
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 import {ISegment, ISubSegment} from '../../lib/types/data/segment.type';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString } from '../../lib/utilityFunctions';

@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { ProgressBar, Form, Button, Alert, Card } from 'react-bootstrap'
+import { Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IFetchError } from '../../lib/types/types';
@@ -18,11 +18,11 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   const {
     setToken,
     setUser,
-    user
+    //user
   } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
-  const [iconName, setIcon] = useState("home");
+  //const [iconName, setIcon] = useState("home");
   const [selectedFile, setSelectedFile] = useState(undefined);
   let [show, setShow] = useState(0);
 
@@ -82,7 +82,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     </main>
     )
   }
-  function handleChange(e:any){setIcon(e.target.value);}
+  //function handleChange(e:any){setIcon(e.target.value);}
   
 
   function customFormikSet(){
