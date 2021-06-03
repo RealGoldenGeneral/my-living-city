@@ -8,10 +8,8 @@ import {useUserWithJwtVerbose} from 'src/hooks/userHooks';
 
 export default function SegmentManagementPage() {
 
-    // Fetch User Roles
-    
     const { data, isLoading } = useAllSegments();
-    const { token } = useContext(UserProfileContext)
+    const { token } = useContext(UserProfileContext);
     if (isLoading) {
       return (
         <div className="wrapper">
