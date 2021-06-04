@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { NavDropdown, Nav, Navbar, Form, FormControl, Button } from 'react-bootstrap'
 import { useUserWithJwtVerbose } from 'src/hooks/userHooks';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-
+ 
 const UserName: React.FC = () => {
   const { token } = useContext(UserProfileContext)
   const { data: user} = useUserWithJwtVerbose({
