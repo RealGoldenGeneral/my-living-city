@@ -38,7 +38,7 @@ function App() {
           <PrivateRoute path={ROUTES.TEST_PAGE} redirectPath='/ideas/1' component={TestPage} />
           <PrivateRoute path={ROUTES.SUBMIT_ADVERTISEMENT} component={SubmitAdvertisementPage} />
           <PrivateRoute path={ROUTES.ALL_ADVERTISEMENT} component={AllAdsPage} />
-          <PrivateRoute path={ROUTES.UPDATE_ADVERTISEMENT} component={EditAdsPage} />
+          <PrivateRoute path={ROUTES.EDIT_ADVERTISEMENT} component={EditAdsPage} />
           <PrivateRoute path={ROUTES.SEGMENT_MANAGEMENT} component={SegmentManagementPage} />
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>

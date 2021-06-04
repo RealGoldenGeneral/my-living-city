@@ -7,14 +7,28 @@ import { API_BASE_URL } from '../../lib/constants'
 
 // import '../../../../server/uploads'
 import '../../scss/content/_allAds.scss'
+import { url } from 'node:inspector';
+import { deleteAdvertisement } from 'src/lib/api/advertisementRoutes';
 
 interface AllAdsPageContentProps {
   AllAdvertisement: IAdvertisement[] | undefined
+  token: string | null
 }
 
-const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement }) => {
+const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement, token }) => {
   // console.log(AllAdvertisement);
+  const [adsId, setAdsId] = useState<number>();
+  console.log(adsId);
 
+  async function handleDelete() {
+    
+    try {
+      console.log(adsId);
+      await deleteAdvertisement(token, adsId);
+    } catch(err) {
+      console.log(err)
+    }
+  }
   return (
     
     <Container className='all-ads-page-content w-100'>
@@ -49,8 +63,12 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement 
             {AllAdvertisement?.map(item => (
               <tr key={item.id}>
                 <td>
-                  <a href=''><Button className='mb-2' block variant="primary">Edit</Button></a>
-                  <a href=''><Button block variant="danger">Delete</Button></a>
+                  <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a>
+                  <Button block variant="danger" onClick={() => {
+                    setAdsId(item.id);
+                    console.log(adsId);
+                    handleDelete();
+                  }}>Delete</Button>
                 </td>
                 <td>{item.adTitle}</td>
                 <td>{item.adType}</td>
