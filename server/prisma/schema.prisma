@@ -1,9 +1,10 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: https://pris.ly/d/prisma-schem
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  //url      = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
 }
 
 generator client {
@@ -25,11 +26,19 @@ model Report {
 
 // User Entity
 enum UserType {
-  USER
   ADMIN
-  DEVELOPER
+  BUSINESS
+  PERSONAL
+  MUNICIPAL
 
   @@map(name: "user_type")
+}
+
+enum AdType {
+  BASIC
+  EXTRA
+
+  @@map(name: "ad_type")
 }
 
 model UserRole {
@@ -49,10 +58,14 @@ model UserGeo {
   userId String @map("user_id")
 
   // Columns
-  lat       Decimal?
-  lon       Decimal?
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  lat        Decimal?
+  lon        Decimal?
+  work_lat   Decimal?
+  work_lon   Decimal?
+  school_lat Decimal?
+  school_lon Decimal?
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relationships
   user User @relation(fields: [userId], references: [id])
@@ -84,16 +97,17 @@ model User {
   // Keys
   id         String   @id @default(cuid())
   userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(USER) @map("user_type")
+  userType   UserType @default(ADMIN) @map("user_type")
 
   // Fields
-  email     String   @unique
-  password  String
-  fname     String?  @map("f_name")
-  lname     String?  @map("l_name")
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
+  email               String                @unique
+  password            String
+  fname               String?               @map("f_name")
+  lname               String?               @map("l_name")
+  createdAt           DateTime              @default(now()) @map(name: "created_at")
+  updatedAt           DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+  imagePath           String?
+  passCode            String?               @default(cuid())
   // Relationships
   address             UserAddress?
   geo                 UserGeo?
@@ -108,6 +122,7 @@ model User {
 
 
   // Model overwrites
+  Advertisements Advertisements[]
   @@map(name: "user")
 }
 
@@ -305,4 +320,49 @@ model UserCommentDislikes {
   author      User?        @relation(fields: [authorId], references: [id])
 
   @@map(name: "user_comment_dislikes")
+}
+
+model Advertisements {
+  id       Int       @id @default(autoincrement())
+  ownerId  String    @map("owner_id")
+  createAt DateTime  @default(now()) @map("creat_at")
+  updateAt DateTime? @default(now()) @updatedAt @map("update_at")
+
+  adTitle      String   @map("advertisement_title")
+  adType       AdType   @default(BASIC) @map("advertisement_type")
+  duration     DateTime @map("advertisement_duration")
+  adPosition   String   @map("advertisement_position")
+  imagePath    String   @map("advertisement_image_path")
+  externalLink String   @map("advertisement_external_link")
+  published    Boolean  @default(false) @map("published")
+
+  author User? @relation(fields: [ownerId], references: [id])
+
+  @@map(name: "advertisement")
+}
+
+model Segments {
+  segId        Int       @id @default(autoincrement()) @map("seg_id")
+  country      String
+  province     String
+  name         String    @map("segment_name")
+  superSegName String?   @map("super_segment_name")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime? @default(now()) @updatedAt @map("update_at")
+
+  SubSegments SubSegments[]
+  @@map(name: "segment")
+}
+
+model SubSegments {
+  id        Int       @id @default(autoincrement())
+  segId     Int       @map("seg_id")
+  name      String    @map("sub_segment_name")
+  lat       Decimal?
+  lon       Decimal?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @default(now()) @updatedAt @map("update_at")
+
+  segRef Segments @relation(fields: [segId], references: [segId])
+  @@map(name: "sub_segment")
 }

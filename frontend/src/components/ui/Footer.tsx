@@ -1,11 +1,15 @@
-import { Container } from 'react-bootstrap'
+import { Row } from 'react-bootstrap'
+import { AdsSectionPage } from 'src/pages/AdsSectionPage';
 
 export default function Footer() {
   return (
-    <div className="outer-footer">
-      <Container fluid className="inner-footer">
-        <p className='text-center'>COPYRIGHT &#169; MY LIVING CITY {new Date().getFullYear()}</p>
-      </Container>
+    <div className="footer-copyright text-center w-100 ml-0 push">
+      <p className="fluid">COPYRIGHT &#169; MY LIVING CITY {new Date().getFullYear()}</p>
+
+      {/* Mobile View <= 768px */}
+      <Row className='d-md-none'>
+        <AdsSectionPage />
+      </Row>
     </div>
   )
 }

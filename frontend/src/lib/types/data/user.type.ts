@@ -6,7 +6,7 @@ import { IComment } from './comment.type';
 export interface IUser {
 	id: string;
 	userRoleId?: number;
-	userType: 'USER' | 'ADMIN' | 'DEVELOPER';
+	userType: 'ADMIN' | 'BUSINESS' | 'PERSONAL' | 'MUNICIPAL';
 	email: string;
 	password?: string;
 	fname?: string;
@@ -16,6 +16,8 @@ export interface IUser {
 
 	// Relationships can be nullable
 	geo?: IGeo;
+	work_geo?: IGeo;
+	school_geo?: IGeo;
 	address?: IAddress;
 	userRole?: IUserRole;
 

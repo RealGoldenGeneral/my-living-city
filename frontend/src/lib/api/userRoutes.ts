@@ -3,10 +3,14 @@ import { API_BASE_URL } from "../constants";
 import { IUser } from "../types/data/user.type";
 import { IRegisterInput } from "../types/input/register.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
-
 export interface LoginData {
   email: string;
   password: string;
+}
+export interface ResetPassword {
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export interface LoginResponse {
@@ -14,6 +18,15 @@ export interface LoginResponse {
   token: string;
 }
 
+export const resetUserPassword = async (loginData: ResetPassword): Promise<ResetPassword> => {
+  if(loginData.password !== loginData.confirmPassword){
+    throw new Error("Passwords must match");
+  }
+  const queryString = window.location.search;
+  loginData.email = loginData.email.toLowerCase();
+  const res = await axios.post<ResetPassword>(`${API_BASE_URL}/user/reset-password${queryString}`, loginData)
+  return res.data;
+}
 export const getUserWithEmailAndPass = async (loginData: LoginData): Promise<LoginResponse> => {
   const res = await axios.post<LoginResponse>(`${API_BASE_URL}/user/login`, loginData)
   return res.data;

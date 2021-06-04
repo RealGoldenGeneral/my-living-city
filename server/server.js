@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
 const { swaggerSpec } = require('./lib/swaggerConfig');
@@ -25,14 +26,16 @@ const main = async () => {
 		})
 	);
   
+
+app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	// Swagger config
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 	require('./auth/auth');
 
 	app.get('/', (req, res) => res.send('Welcome the My Living City API V2'));
-
-	// Routing
+	//app.use(express.static('/ads', express.static('uploads')));
+	// Routing .js
 	const userRouter = require('./controllers/user');
 	const roleRouter = require('./controllers/role');
 	const reportRouter = require('./controllers/report');
@@ -44,6 +47,11 @@ const main = async () => {
 	const ideaRatingRouter = require('./controllers/rating');
 	const commentInteractRouter = require('./controllers/commentInteract');
 	const championRouter = require('./controllers/champion');
+	const advertisementRouter = require('./controllers/advertisement');
+	const avatarRouter = require('./controllers/avatar');
+	const sendEmailRouter = require('./controllers/sendEmailReset');
+	const segmentRouter = require('./controllers/segment');
+	const subSegmentRouter = require('./controllers/subSegment');
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -58,10 +66,17 @@ const main = async () => {
 	apiRouter.use('/rating', ideaRatingRouter);
 	apiRouter.use('/interact/comment', commentInteractRouter);
 	apiRouter.use('/champion', championRouter);
+	apiRouter.use('/advertisement',advertisementRouter);
+	apiRouter.use('/avatar', avatarRouter);
+	apiRouter.use('/sendEmail',sendEmailRouter);
+	apiRouter.use('/reset-password', userRouter);
+	apiRouter.use('/segment', segmentRouter);
+	apiRouter.use('/subSegment',subSegmentRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
 };
+
 
 main().catch((error) => {
 	console.log(error);
