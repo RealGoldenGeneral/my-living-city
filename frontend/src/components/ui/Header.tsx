@@ -39,14 +39,14 @@ export default function Header() {
                 {/* <Navbar.Text> Fake Name</Navbar.Text> */}
                 <Nav.Link href='/submit'>Submit Idea</Nav.Link>
                 <Nav.Link href='/profile'>Profile</Nav.Link>
-
+                {user.userType ==="ADMIN" &&
                 <NavDropdown title="Admin Tools" id="nav-dropdown">
-                  {/* <Nav.Link href='/advertisement/submit'>Add Ads</Nav.Link>
-                  <Nav.Link href='/advertisement/edit'>Edit Ads</Nav.Link> */}
-                  <Nav.Link href='/advertisement/all'>Ad Management</Nav.Link>
-                  <Nav.Link href='/segment/management'>Segment Management</Nav.Link>
-                  <Nav.Link href=''>User Management</Nav.Link>
-                </NavDropdown>
+                <Nav.Link href='/advertisement/all'>Ad Management</Nav.Link>
+                <Nav.Link href='/segment/management'>Segment Management</Nav.Link>
+                <Nav.Link href=''>User Management</Nav.Link>
+              </NavDropdown>
+                }
+                
 
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
               </>
