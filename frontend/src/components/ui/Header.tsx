@@ -10,7 +10,7 @@ const UserName: React.FC = () => {
     shouldTrigger: token != null
   });
   return (
-    <Nav.Link className="d-inline-block alight-top">{user && (`${user.fname}@${user!.address!.streetAddress}`)}</Nav.Link>
+    <Nav.Link href='/profile' className="d-inline-block alight-top">{user && (`${user.fname}@${user!.address!.streetAddress}`)}</Nav.Link>
   );
 }
 export default function Header() {
