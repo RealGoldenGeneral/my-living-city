@@ -103,10 +103,5 @@ export const deleteAdvertisement = async (token: any, id: any) =>{
         headers: { "x-auth-token": token, "Access-Control-Allow-Origin": "*",},
         withCredentials: true
     })
-    //if not success, throw error which will stop form reset
-    if(!(res.status===201 || res.status===200)){
-        throw new Error(res.data);    
-        //console.log(res.data);
-    }
     return res.data;
 }

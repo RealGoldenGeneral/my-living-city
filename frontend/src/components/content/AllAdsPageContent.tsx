@@ -1,13 +1,11 @@
 import React from 'react'
-import { Col, Container, Row, Table, Image, Button} from 'react-bootstrap';
-import { useState, useEffect } from 'react';
+import { Container, Row, Table, Button} from 'react-bootstrap';
 import { IAdvertisement } from 'src/lib/types/data/advertisement.type';
 import moment from 'moment';
 import { API_BASE_URL } from '../../lib/constants'
 
 // import '../../../../server/uploads'
 import '../../scss/content/_allAds.scss'
-import { url } from 'node:inspector';
 import { deleteAdvertisement } from 'src/lib/api/advertisementRoutes';
 
 interface AllAdsPageContentProps {
@@ -17,14 +15,14 @@ interface AllAdsPageContentProps {
 
 const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement, token }) => {
   // console.log(AllAdvertisement);
-  const [adsId, setAdsId] = useState<number>();
-  console.log(adsId);
+  // const [adsId, setAdsId] = useState<number>();
+  // console.log(adsId);
 
-  async function handleDelete() {
+  async function handleDelete(adsId: number) {
     
     try {
-      console.log(adsId);
       await deleteAdvertisement(token, adsId);
+      window.location.reload();
     } catch(err) {
       console.log(err)
     }
@@ -63,17 +61,15 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
             {AllAdvertisement?.map(item => (
               <tr key={item.id}>
                 <td>
-                  <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a>
+                  {/* <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a> */}
                   <Button block variant="danger" onClick={() => {
-                    setAdsId(item.id);
-                    console.log(adsId);
-                    handleDelete();
+                    handleDelete(item.id);
                   }}>Delete</Button>
                 </td>
                 <td>{item.adTitle}</td>
                 <td>{item.adType}</td>
                 <td>{item.ownerId}</td>
-                <td><img src={`${API_BASE_URL}/ads/${(item.imagePath).substring(7)}`}></img></td>
+                <td><img alt="" src={`${API_BASE_URL}/ads/${(item.imagePath).substring(7)}`}></img></td>
                 <td>{moment(item.duration).format('YYYY-MM-DD HH:mm:ss')}</td>
                 <td>{item.adPosition}</td>
                 <td><a href={item.externalLink}>{item.externalLink}</a></td>
