@@ -1,12 +1,12 @@
 import React from 'react'
-import {Table, Form, Button, Col, Container, Row, Card, Alert } from 'react-bootstrap';
+import {Carousel, Table, Form, Button, Col, Container, Row, Card, Alert } from 'react-bootstrap';
 import {useState} from 'react'
 import {ISegment, ISubSegment} from '../../lib/types/data/segment.type';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import {createSegment, createSubSegment, updateSegment, updateSubSegment} from '../../lib/api/segmentRoutes';
 import {useAllSubSegmentsWithId} from '../../hooks/segmentHooks';
-
+//import {Image} from 'react-native';
 
 interface ShowSubSegmentsProps {
   segId: number;
@@ -57,6 +57,7 @@ const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({segId, segName, token})
   }
     return(
       <Card>
+      {/* <img alt=""src={"http://localhost:3001/static/uploads/1621449457193-SampleAds1.png"} /> */}
       <Card.Header>{capitalizeString(segName!)} Sub-Segments <Button className="float-right" size="sm" onClick={(e)=>{setShowNewSubSeg(true)}}>Add New Sub-Segments</Button></Card.Header>
       <Card.Body>
           <Table bordered hover>

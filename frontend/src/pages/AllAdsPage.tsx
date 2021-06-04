@@ -14,7 +14,7 @@ interface AllAdsPageProps extends RouteComponentProps<{}> {
 const AllAdsPage: React.FC<AllAdsPageProps> = ({}) => {
   const { token } = useContext(UserProfileContext);
 
-  const { data, isLoading, error, isError } = useAdvertisements(token!);
+  const { data, isLoading} = useAdvertisements(token!);
   //console.log(data);
   
   if (isLoading) {
