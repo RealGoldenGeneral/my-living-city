@@ -16,7 +16,11 @@ import LoginPage from './pages/LoginPage';
 import PrivateRoute from './components/utility/PrivateRoute';
 import PublicRoute from './components/utility/PublicRoute';
 import SubmitAdvertisementPage from './pages/SubmitAdvertisementPage';
-import ResetPasswordContent from './pages/ResetPasswordPage'
+import ResetPasswordContent from './pages/ResetPasswordPage';
+import SegmentManagementPage from './pages/SegmentManagementPage';
+import AllAdsPage from './pages/AllAdsPage';
+import EditAdsPage from './pages/EditAdsPage'
+import AdminRoute from './components/utility/AdminRoute';
 function App() {
   return (
     <div className="App">
@@ -33,7 +37,10 @@ function App() {
           <PrivateRoute path={ROUTES.SUBMIT_IDEA} component={SubmitIdeaPage} />
           <PrivateRoute path={ROUTES.USER_PROFILE} component={ProfilePage} />
           <PrivateRoute path={ROUTES.TEST_PAGE} redirectPath='/ideas/1' component={TestPage} />
-          <PrivateRoute path={ROUTES.SUBMIT_ADVERTISEMENT} component={SubmitAdvertisementPage} />
+          <AdminRoute path={ROUTES.SUBMIT_ADVERTISEMENT} component={SubmitAdvertisementPage} />
+          <AdminRoute path={ROUTES.ALL_ADVERTISEMENT} component={AllAdsPage} />
+          <AdminRoute path={ROUTES.EDIT_ADVERTISEMENT} component={EditAdsPage} />
+          <AdminRoute path={ROUTES.SEGMENT_MANAGEMENT} component={SegmentManagementPage} />
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>
       </div>
