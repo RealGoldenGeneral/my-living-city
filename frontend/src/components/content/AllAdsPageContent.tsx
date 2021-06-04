@@ -3,6 +3,7 @@ import { Col, Container, Row, Table, Image, Button} from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { IAdvertisement } from 'src/lib/types/data/advertisement.type';
 import moment from 'moment';
+import { API_BASE_URL } from '../../lib/constants'
 
 // import '../../../../server/uploads'
 import '../../scss/content/_allAds.scss'
@@ -54,7 +55,7 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement 
                 <td>{item.adTitle}</td>
                 <td>{item.adType}</td>
                 <td>{item.ownerId}</td>
-                <td>{item.imagePath.substring(8)}</td>
+                <td><img src={`${API_BASE_URL}/ads/${(item.imagePath).substring(7)}`}></img></td>
                 <td>{moment(item.duration).format('YYYY-MM-DD HH:mm:ss')}</td>
                 <td>{item.adPosition}</td>
                 <td><a href={item.externalLink}>{item.externalLink}</a></td>
