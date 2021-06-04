@@ -18,8 +18,8 @@ const AdsSection: React.FC<AdsSectionProps> = ({ads}) => {
     
                 <Carousel indicators={false} pause={'hover'}>
                 {ads.map(ad => 
-                <Carousel.Item interval={5000}>
-                        <a key={ad.id} href={ad.externalLink}>
+                <Carousel.Item interval={5000} key={ad.id}>
+                        <a href={ad.externalLink}>
                             <img
                             alt="Not found..."
                             className="d-block w-100"
