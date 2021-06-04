@@ -9,7 +9,7 @@ export const AdsSectionPage = () => {
     const { token } = useContext(UserProfileContext);
     const {data} = useAdvertisements(token!);
     return (
-        <div className="wrapper">
+        <div>
             <AdsSection ads={data}/>
         </div>
     )

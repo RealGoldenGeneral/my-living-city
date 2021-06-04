@@ -27,7 +27,7 @@ const AllAdsPage: React.FC<AllAdsPageProps> = ({}) => {
 
   return (
     <div className="wrapper">
-      <AllAdsPageContent AllAdvertisement={data}/>
+      <AllAdsPageContent token={token} AllAdvertisement={data}/>
     </div>
   );
 }
