@@ -1,10 +1,20 @@
 import { useContext, useState } from 'react'
 import { NavDropdown, Nav, Navbar, Form, FormControl, Button } from 'react-bootstrap'
+import { useUserWithJwtVerbose } from 'src/hooks/userHooks';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 
+const UserName: React.FC = () => {
+  const { token } = useContext(UserProfileContext)
+  const { data: user} = useUserWithJwtVerbose({
+    jwtAuthToken: token!,
+    shouldTrigger: token != null
+  });
+  return (
+    <Nav.Link className="d-inline-block alight-top">{user && (`${user.fname}@${user!.address!.streetAddress}`)}</Nav.Link>
+  );
+}
 export default function Header() {
-  const { logout, user } = useContext(UserProfileContext);
-
+  const { logout, user} = useContext(UserProfileContext);
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
@@ -18,6 +28,7 @@ export default function Header() {
             alt="My Living City Logo"
           />
         </Navbar.Brand>
+        <UserName/>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='ml-auto'>
