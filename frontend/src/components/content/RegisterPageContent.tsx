@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ProgressBar, Form, Button, Alert, Card } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
@@ -9,8 +9,57 @@ import { IUserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
 import SimpleMap from '../map/SimpleMap';
 import { postAvatarImage } from '../../lib/api/avatarRoutes';
-import React from 'react'
+import { ISegment } from 'src/lib/types/data/segment.type';
+import SelectSegmentPage from 'src/pages/SelectSegmentPage';
 
+interface SegmentsDropdownProps {
+  segments: ISegment[] | undefined;
+}
+
+export const SegmentsDropdown: React.FC<SegmentsDropdownProps> = ({segments}) => {
+    return (   
+      <>   
+    <Form.Group controlId="registerUserSegment">
+    <Form.Label>Select your Municipality</Form.Label>
+    <Form.Control
+      as="select"
+      name="segment"
+    >
+      {segments && segments.map(segment => (
+        <option
+          key={String(segment.segId)}
+          value={Number(segment.segId)}
+          style={{
+            textTransform: 'capitalize'
+          }}
+        >
+          {capitalizeString(segment.name)}
+        </option>
+      ))}
+    </Form.Control>
+  </Form.Group>
+<Form.Group controlId="registerUserSubSegment">
+    <Form.Label>Select your neighbourhood</Form.Label>
+    <Form.Control
+      as="select"
+      name="sub-segment"
+    >
+      {/* {userRoles && userRoles.map(role => (
+        <option
+          key={String(role.id)}
+          value={Number(role.id)}
+          style={{
+            textTransform: 'capitalize'
+          }}
+        >
+          {capitalizeString(role.name)}
+        </option>
+      ))} */}
+    </Form.Control>
+  </Form.Group>
+  </>
+  );
+};
 interface RegisterPageContentProps {
   userRoles: IUserRole[] | undefined;
 }
@@ -24,7 +73,7 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   const [error, setError] = useState<IFetchError | null>(null);
   //const [iconName, setIcon] = useState("home");
   const [selectedFile, setSelectedFile] = useState(undefined);
-  let [show, setShow] = useState(0);
+  let [show, setShow] = useState(1);
 
   const [markers, sendData]:any = useState({
     home: {lat: null, lon: null},
@@ -43,32 +92,13 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     return(
       <main className='register-page-content'>
       <Card>
-      {/* <Card.Header>Show us where your {name} community is</Card.Header> */}
       <Card.Header>Step 2</Card.Header>
       
       <Card.Body>
         {title}
       {/* <Card.Title>Where is your {name} community?</Card.Title> */}
       <SimpleMap iconName={name} sendData={(markers:any)=>sendData(markers) } />
-        <Form.Group controlId="registerUserType">
-                  <Form.Label>Select your neighbourhood</Form.Label>
-                  <Form.Control
-                    as="select"
-                    name="sub-segment"
-                  >
-                    {/* {userRoles && userRoles.map(role => (
-                      <option
-                        key={String(role.id)}
-                        value={Number(role.id)}
-                        style={{
-                          textTransform: 'capitalize'
-                        }}
-                      >
-                        {capitalizeString(role.name)}
-                      </option>
-                    ))} */}
-                  </Form.Control>
-                </Form.Group>
+      <SelectSegmentPage/>
       
         
         <div className="text-center">

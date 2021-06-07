@@ -17,7 +17,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   // Destructured props
   const { match: { params: { ideaId } } } = props;
 
-  const { data, error, isLoading, isError, status } = useSingleIdea(ideaId);
+  const { data, error, isLoading, isError } = useSingleIdea(ideaId);
 
   if (isError) {
     console.log(error);
