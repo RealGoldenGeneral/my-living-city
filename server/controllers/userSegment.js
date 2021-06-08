@@ -17,7 +17,13 @@ userSegmentRouter.post(
             //get email and user id from request
             const { email, id } = req.user;
 
-            
+            const exist = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(exist){
+                return res.status(409).json("You are not allow to create another user segment!");
+            }
 
             //if there's no object in the request body
             if(isEmpty(req.body)){
@@ -30,13 +36,6 @@ userSegmentRouter.post(
                 })
             }
 
-            const exist = await prisma.userSegments.findFirst({
-                where:{userId:id}
-            })
-
-            if(exist){
-                res.status(409).json("You are not allow to create another user segment!");
-            }
 
             console.log(req.body);
             const {homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = req.body;
@@ -233,6 +232,45 @@ userSegmentRouter.get(
                     errorStack: error.stack,
                 }
             });
+        }
+    }
+)
+
+userSegmentRouter.delete(
+    '/delete',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const exist = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!exist){
+                return res.status(400).json("You don't have a user segment to delete!");
+            }
+
+            const deleteId = exist.id;
+
+            await prisma.userSegments.delete({
+                where:{id:deleteId}
+            })
+
+            res.sendStatus(204);
+            
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to delete a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
         }
     }
 )
