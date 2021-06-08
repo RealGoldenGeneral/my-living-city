@@ -25,18 +25,6 @@ userSegmentRouter.post(
                 return res.status(409).json("You are not allow to create another user segment!");
             }
 
-            //if there's no object in the request body
-            if(isEmpty(req.body)){
-                return res.status(400).json({
-                    message: 'The objects in the request body are missing',
-                    details: {
-                        errorMessage: 'Creating a userSegment must supply necessary fields explicitly.',
-                        errorStack: 'necessary fields must be provided in the body with valid values',
-                    }
-                })
-            }
-
-
             console.log(req.body);
             const {homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = req.body;
 
@@ -106,8 +94,8 @@ userSegmentRouter.post(
                     errorMessage+='homeSubSegment Id must be provided in request body as an integer.';
                     errorStack+='homeSubSegment Id must be provided in request body as an integer.';
                 }else{
-                    const queryResult = await prisma.subSegments.findUnique({
-                        where:{segId:homeSegmentId}
+                    const queryResult = await prisma.subSegments.findFirst({
+                        where:{id:homeSubSegmentId,segId:homeSegmentId}
                     });
 
                     if(!queryResult){
@@ -130,8 +118,8 @@ userSegmentRouter.post(
                     errorMessage+='workSubSegment Id must be provided in request body as an integer.';
                     errorStack+='workSubSegment Id must be provided in request body as an integer.';
                 }else{
-                    const queryResult = await prisma.subSegments.findUnique({
-                        where:{segId:workSegmentId}
+                    const queryResult = await prisma.subSegments.findFirst({
+                        where:{id:workSubSegmentId,segId:workSegmentId}
                     });
 
                     if(!queryResult){
@@ -154,8 +142,8 @@ userSegmentRouter.post(
                     errorMessage+='homeSubSegment Id must be provided in request body as an integer.';
                     errorStack+='homeSubSegment Id must be provided in request body as an integer.';
                 }else{
-                    const queryResult = await prisma.subSegments.findUnique({
-                        where:{segId:schoolSegmentId}
+                    const queryResult = await prisma.subSegments.findFirst({
+                        where:{id:schoolSubSegmentId,segId:schoolSegmentId}
                     });
 
                     if(!queryResult){
@@ -264,6 +252,196 @@ userSegmentRouter.delete(
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to delete a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+)
+
+userSegmentRouter.put(
+    '/update',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            let error = '';
+            let errorMessage = '';
+            let errorStack = '';
+
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const exist = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!exist){
+                return res.status(400).json("You don't have a user segment to update!");
+            }
+
+            const updateId = exist.id;
+
+            const {homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = req.body;
+            
+            if(homeSegmentId){
+                if(!isInteger(homeSegmentId)){
+                    error+='homeSegment Id must be integer.';
+                    errorMessage+='homeSegment Id must be provided in request body as an integer.';
+                    errorStack+='homeSegment Id must be provided in request body as an integer.';
+                }else{
+                    const queryResult = await prisma.segments.findUnique({
+                        where: {segId:homeSegmentId}
+                    });
+
+                    if(!queryResult){
+                        error+='homeSegmend Id doesn\'t exist in the database!';
+                        errorMessage+='homeSegment Id must be provided with a existing segment id in the database.';
+                        errorStack+='homeSegment Id must be provided with a existing segment id in the database.';
+                    }
+                }
+            }
+
+            if(workSegmentId){
+                if(!isInteger(workSegmentId)){
+                    error+='workSegment Id must be integer.';
+                    errorMessage+='workSegment Id must be provided in request body as an integer.';
+                    errorStack+='workSegment Id must be provided in request body as an integer.';
+                }else{
+                    const queryResult = await prisma.segments.findUnique({
+                        where: {segId:workSegmentId}
+                    });
+
+                    if(!queryResult){
+                        error+='workSegmend Id doesn\'t exist in the database!';
+                        errorMessage+='workSegment Id must be provided with a existing segment id in the database.';
+                        errorStack+='workSegment Id must be provided with a existing segment id in the database.';
+                    }
+                }
+            }
+
+            if(schoolSegmentId){
+                if(!isInteger(schoolSegmentId)){
+                    error+='schoolSegment Id must be integer.';
+                    errorMessage+='schoolSegment Id must be provided in request body as an integer.';
+                    errorStack+='schoolSegment Id must be provided in request body as an integer.';
+                }else{
+                    const queryResult = await prisma.segments.findUnique({
+                        where: {segId:schoolSegmentId}
+                    });
+
+                    if(!queryResult){
+                        error+='schoolSegmend Id doesn\'t exist in the database!';
+                        errorMessage+='schoolSegment Id must be provided with a existing segment id in the database.';
+                        errorStack+='schoolSegment Id must be provided with a existing segment id in the database.';
+                    }
+                }
+            }
+
+            if(homeSubSegmentId){
+                if(!homeSegmentId){
+                    error+='homeSegmend Id must be provide if request body contains homeSubSegmentId.';
+                    errorMessage+='In order to assign user a subsegment, segmentId must be provided with sub segment id.';
+                    errorStack+='In order to assign user a subsegment, segmentId must be provided with sub segment id.';
+                }
+
+                if(!isInteger(homeSubSegmentId)){
+                    error+='homeSubSegment Id must be integer.';
+                    errorMessage+='homeSubSegment Id must be provided in request body as an integer.';
+                    errorStack+='homeSubSegment Id must be provided in request body as an integer.';
+                }else{
+                    const queryResult = await prisma.subSegments.findFirst({
+                        where:{id:homeSubSegmentId,segId:homeSegmentId}
+                    });
+
+                    if(!queryResult){
+                        error+='homeSubSegment Id doesn\'t exist in the database!';
+                        errorMessage+='homeSubSegement Id must be provided with a existing segment id in the database.';
+                        errorStack+='homeSubSegment Id must be provided with a existing segment id in the database.';
+                    }
+                }
+            }
+
+            if(workSubSegmentId){
+                if(!workSegmentId){
+                    error+='workSegmend Id must be provide if request body contains homeSubSegmentId.';
+                    errorMessage+='In order to assign user a subsegment, segmentId must be provided with sub segment id.';
+                    errorStack+='In order to assign user a subsegment, segmentId must be provided with sub segment id.';
+                }
+
+                if(!isInteger(workSubSegmentId)){
+                    error+='workSubSegment Id must be integer.';
+                    errorMessage+='workSubSegment Id must be provided in request body as an integer.';
+                    errorStack+='workSubSegment Id must be provided in request body as an integer.';
+                }else{
+                    const queryResult = await prisma.subSegments.findFirst({
+                        where:{id:workSubSegmentId,segId:workSegmentId}
+                    });
+
+                    if(!queryResult){
+                        error+='workSubSegment Id doesn\'t exist in the database!';
+                        errorMessage+='workSubSegement Id must be provided with a existing segment id in the database.';
+                        errorStack+='workSubSegment Id must be provided with a existing segment id in the database.';
+                    }
+                }
+            }
+
+            if(schoolSubSegmentId){
+                if(!schoolSegmentId){
+                    error+='homeSegmend Id must be provide if request body contains homeSubSegmentId.';
+                    errorMessage+='In order to assign user a subsegment, segmentId must be provided with sub segment id.';
+                    errorStack+='In order to assign user a subsegment, segmentId must be provided with sub segment id.';
+                }
+
+                if(!isInteger(schoolSubSegmentId)){
+                    error+='homeSubSegment Id must be integer.';
+                    errorMessage+='homeSubSegment Id must be provided in request body as an integer.';
+                    errorStack+='homeSubSegment Id must be provided in request body as an integer.';
+                }else{
+                    const queryResult = await prisma.subSegments.findFirst({
+                        where:{id:schoolSubSegmentId,segId:schoolSegmentId}
+                    });
+
+                    if(!queryResult){
+                        error+='schoolSubSegment Id doesn\'t exist in the database!';
+                        errorMessage+='schoolSubSegement Id must be provided with a existing segment id in the database.';
+                        errorStack+='schoolSubSegment Id must be provided with a existing segment id in the database.';
+                    }
+                }
+            }
+
+            //If there's error in error holder
+            if(error||errorMessage||errorStack){
+                return res.status(400).json({
+                    message: error,
+                    details: {
+                      errorMessage: errorMessage,
+                      errorStack: errorStack
+                    }
+                });
+            }
+
+            const result = await prisma.userSegments.update({
+                where:{id:updateId},
+                data:{
+                    homeSegmentId:homeSegmentId,
+                    workSegmentId:workSegmentId,
+                    schoolSegmentId:schoolSegmentId,
+                    homeSubsegmentId:homeSubSegmentId,
+                    workSubSegmentId:workSubSegmentId,
+                    schoolSubSegmentId:schoolSubSegmentId
+                }
+            })
+
+            res.status(200).json(result);
+
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to update a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
