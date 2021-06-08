@@ -3,7 +3,8 @@ const express = require('express');
 const userSegmentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 const { isInteger } = require('lodash');
-const { subSegments } = require('../lib/prismaClient');
+const { isEmpty } = require('lodash');
+const { subSegments, user } = require('../lib/prismaClient');
 
 userSegmentRouter.post(
     '/create',
@@ -16,7 +17,7 @@ userSegmentRouter.post(
             //get email and user id from request
             const { email, id } = req.user;
 
-            console.log(req.body);
+            
 
             //if there's no object in the request body
             if(isEmpty(req.body)){
@@ -29,6 +30,7 @@ userSegmentRouter.post(
                 })
             }
 
+            console.log(req.body);
             const {homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = req.body;
 
             if(homeSegmentId){
@@ -193,6 +195,36 @@ userSegmentRouter.post(
             });
         }finally{
             await prisma.$disconnect();
+        }
+    }
+)
+
+userSegmentRouter.get(
+    '/getMySegment',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!result){
+                res.status(404).json("user segment not found!");
+            }
+
+            res.status(200).json(result);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
         }
     }
 )
