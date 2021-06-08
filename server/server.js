@@ -13,6 +13,7 @@ const {
 	PORT, 
 	CORS_ORIGIN 
 } = require('./lib/constants');
+const userSegmentRouter = require('./controllers/userSegment');
 
 const main = async () => {
 	// Initialize dependencies
@@ -72,6 +73,7 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/reset-password', userRouter);
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
+	apiRouter.use('/userSegment',userSegmentRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
