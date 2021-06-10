@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { ProgressBar, Form, Button, Alert, Card } from 'react-bootstrap'
+import { ProgressBar, Form, Button, Alert, Card} from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IFetchError } from '../../lib/types/types';
@@ -9,14 +9,19 @@ import { IUserRole } from '../../lib/types/data/userRole.type';
 import { postRegisterUser } from '../../lib/api/userRoutes';
 import SimpleMap from '../map/SimpleMap';
 import { postAvatarImage } from '../../lib/api/avatarRoutes';
-import { ISegment } from 'src/lib/types/data/segment.type';
-import SelectSegmentPage from 'src/pages/SelectSegmentPage';
+import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
+//import SelectSegmentPage from 'src/pages/SelectSegmentPage';
+import { searchForLocation } from 'src/lib/api/googleMapQuery';
+import { useAllSubSegmentsWithId } from 'src/hooks/segmentHooks';
+import { findSegmentByName } from 'src/lib/api/segmentRoutes';
+
 
 interface SegmentsDropdownProps {
   segments: ISegment[] | undefined;
+  name: string;
 }
 
-export const SegmentsDropdown: React.FC<SegmentsDropdownProps> = ({segments}) => {
+export const SegmentsDropdown: React.FC<SegmentsDropdownProps> = ({segments, name}) => {
     return (   
       <>   
     <Form.Group controlId="registerUserSegment">
@@ -27,8 +32,8 @@ export const SegmentsDropdown: React.FC<SegmentsDropdownProps> = ({segments}) =>
     >
       {segments && segments.map(segment => (
         <option
-          key={String(segment.segId)}
-          value={Number(segment.segId)}
+          key={segment.segId}
+          value={segment.name}
           style={{
             textTransform: 'capitalize'
           }}
@@ -39,7 +44,7 @@ export const SegmentsDropdown: React.FC<SegmentsDropdownProps> = ({segments}) =>
     </Form.Control>
   </Form.Group>
 <Form.Group controlId="registerUserSubSegment">
-    <Form.Label>Select your neighbourhood</Form.Label>
+    <Form.Label>Select your Neighbourhood</Form.Label>
     <Form.Control
       as="select"
       name="sub-segment"
@@ -56,7 +61,10 @@ export const SegmentsDropdown: React.FC<SegmentsDropdownProps> = ({segments}) =>
         </option>
       ))} */}
     </Form.Control>
+    <Button variant="link">Don't see your Municipality or Neighbourhood? 
+    Click here to request it in our system!</Button>
   </Form.Group>
+  
   </>
   );
 };
@@ -69,12 +77,24 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     setUser,
     //user
   } = useContext(UserProfileContext);
+  let [show, setShow] = useState(1);
+  const [nextDisabled, setNextDisabled] = useState(true);
+  const [showMap, setShowMap] = useState(true);
+  //Buttons for page navigation
+  const next = <Button className="float-right mt-2" size="lg" onClick={()=>{
+    setShow(show=show+1);
+    setShowMap(false);
+  }} disabled={nextDisabled}>Next</Button>;
+  const prev = <Button className="float-left mt-2" size="lg" variant="outline-primary"onClick={()=>{setShow(show=show-1)}}>Previous</Button>;
+  const register = <Button type="submit" size="lg" onClick={()=>{customFormikSet(); 
+      submitHandler(formik.values)}} className="float-right mt-1">Register!</Button>;
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   //const [iconName, setIcon] = useState("home");
   const [selectedFile, setSelectedFile] = useState(undefined);
-  let [show, setShow] = useState(1);
-
+  //let segmentList: string[] = [];
+  const [segmentList, setSegmentList] = useState([]);
   const [markers, sendData]:any = useState({
     home: {lat: null, lon: null},
     work: {lat: null, lon: null},
@@ -84,35 +104,72 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
     name: string;
 }
   const NextMap: React.FC<NextMapProps> = ({name}) => {
-    let title: any;
-    if(name==="home") title = <Card.Title>Where is your {name} community?</Card.Title>
-    if(name==="work") title = <Card.Title>Do you {name} in a different municipality?</Card.Title>
-    if(name==="school") title = <Card.Title>Do you study in a different municipality?</Card.Title>
+    //const [count, setCount]=useState(0);
+    // async function handleConfirmLocation (coords: any) {
+    //   try{
+    //     const{country, province, cities} = await searchForLocation(coords);
+    //     //segmentList = cities;
+    //     setSegmentList(cities);
+    //     setShowDropdown(true);
+    //   }catch(err){
+    //     console.log(err);
+    //   }
+    // }
+    const handleConfirmLocation = async (coords: any) => {
+      try{
+        //Search for loaction will return country, city and province, error will be thrown if no location found
+        //const queryResult = await searchForLocation(coords);
+        //const subSegments = await findSegmentByName(queryResult.city,queryResult.province,queryResult.country);
+        const segments = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
+        console.log(segments);
+        return segments
+      }catch(error){
+        console.log(error);
+      }
+    }
 
+    if(markers.home.lon || markers.home.lat){
+      setNextDisabled(false);
+    }
+    let title: any;
+    if(name==="home"){
+      setShowMap(true);
+      title = <>
+      <Card.Title>Show us on the map where your {name} is</Card.Title>
+      <Card.Subtitle className="text-muted mb-3">We use this information to find your community!</Card.Subtitle>
+      </>
+    } 
+    if(name==="work"){
+      title = <>
+        {!showMap ?<Card.Title>Do you {name} in a different municipality or neighbourhood? 
+          <Button variant="outline-primary" onClick={()=>{setShowMap(true)}}>Yes</Button>{' '}
+          <Button onClick={()=>{setShow(show=show+2)}}>No</Button></Card.Title>:
+          <><Card.Title>Show us on the map where your {name} is</Card.Title>
+          <Card.Subtitle className="text-muted mb-3">We use this information to find your community!</Card.Subtitle></>
+          } 
+        </>
+    } 
+    if(name==="school") {
+      title = <>
+      {!showMap ?<Card.Title>Do you study in a different municipality or neighbourhood? 
+      <Button variant="outline-primary" onClick={()=>{setShowMap(true)}}>Yes</Button>{' '}
+      <Button onClick={()=>{setShow(show=show+2)}}>No</Button></Card.Title>:
+      <><Card.Title>Show us on the map where your {name} is</Card.Title>
+      <Card.Subtitle className="text-muted mb-3">We use this information to find your community!</Card.Subtitle></>
+      } 
+      </>
+    } 
     return(
-      <main className='register-page-content'>
-      <Card>
-      <Card.Header>Step 2</Card.Header>
-      
-      <Card.Body>
+      <>
         {title}
-      {/* <Card.Title>Where is your {name} community?</Card.Title> */}
-      <SimpleMap iconName={name} sendData={(markers:any)=>sendData(markers) } />
-      <SelectSegmentPage/>
-      
-        
-        <div className="text-center">
-        {show !== 1 ? <Button className="float-left m-1" size="lg" variant="outline-primary"onClick={()=>{setShow(show=show-1)}}>Previous</Button>:<div/>}{' '}
-        {show !== 3 ?<Button className="float-right m-1" size="lg" onClick={()=>{setShow(show=show+1)}}>Next</Button>:<div/>}{' '}
-        {show === 3 ? <Button type="submit" size="lg" onClick={()=>{customFormikSet(); 
-          submitHandler(formik.values)}} className="float-right mt-1">Register!</Button>:<div/>}
-        </div>
-        </Card.Body>
-    </Card>
-    </main>
+        {showMap && <SimpleMap iconName={name} sendData={(markers:any)=>sendData(markers) } />}
+      </>
+
     )
   }
-
+        {/* {(show === 2 || show === 4 || show === 6) && <><SegmentsDropdown segments={segmentList}/></>} */}
+        {/* {(markers.home.lat && markers.home.lon) && <Button className="m-1" variant="outline-primary"onClick={(e)=>{handleConfirmLocation(markers.home)}}>View Communities!</Button>} */}
+        {/* <SelectSegmentPage googleSegments={segmentList}/> */}
   //function handleChange(e:any){setIcon(e.target.value);}
 
   
@@ -160,7 +217,6 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
       setIsLoading(false);
     }
   }
-  
   const formik = useFormik<IRegisterInput>({
     initialValues: {
       userRoleId: userRoles ? userRoles[0].id : undefined,
@@ -328,19 +384,118 @@ const RegisterPageContent: React.FC<RegisterPageContentProps> = ({ userRoles }) 
   }
   if(show === 1){
     return(
-      <NextMap name="home"/>
+      <main className='register-page-content'>
+        <Card>
+          <Card.Header>Step {show+1}/8</Card.Header>
+            <Card.Body>
+              <NextMap name="home"/>
+              <div className="text-center">
+                {next}
+                {prev}
+              </div>
+          </Card.Body>
+        </Card>
+      </main>
     )
   }
   if(show === 2){
     return(
-      <NextMap name="work"/>
+      <main className='register-page-content'>
+      <Card>
+      <Card.Header>Step {show+1}/8</Card.Header>
+      <Card.Body>
+      <SegmentsDropdown segments={segmentList} name={"home"}/>
+      <div className="text-center">
+        {next}
+        {prev}
+        </div>
+        </Card.Body>
+    </Card>
+    </main>
     )
   }
   if(show === 3){
     return(
-      <NextMap name="school"/>
+      <main className='register-page-content'>
+      <Card>
+      <Card.Header>Step {show+1}/8</Card.Header>
+      <Card.Body>
+      <NextMap name="work"/>
+      <div className="text-center">
+        {next}
+        {prev}
+        </div>
+        </Card.Body>
+    </Card>
+    </main>
     )
   }
+  if(show === 4){
+    return(
+      <main className='register-page-content'>
+      <Card>
+      <Card.Header>Step {show+1}/8</Card.Header>
+      <Card.Body>
+      <SegmentsDropdown segments={segmentList} name={"work"}/>
+      <div className="text-center">
+        {next}
+        {prev}
+        </div>
+        </Card.Body>
+    </Card>
+    </main>
+    )
+  }
+  if(show === 5){
+    return(
+      <main className='register-page-content'>
+      <Card>
+      <Card.Header>Step {show+1}/8</Card.Header>
+      <Card.Body>
+      <NextMap name="school"/>
+      <div className="text-center">
+        {next}
+        {prev}
+        </div>
+        </Card.Body>
+    </Card>
+    </main>
+    )
+  }
+  if(show === 6){
+    return(
+      <main className='register-page-content'>
+      <Card>
+      <Card.Header>Step {show+1}/8</Card.Header>
+      <Card.Body>
+      <SegmentsDropdown segments={segmentList} name={"school"}/>
+      <div className="text-center">
+        {next}
+        {prev}
+        </div>
+        </Card.Body>
+    </Card>
+    </main>
+    )
+  }
+  if(show === 7){
+    return(
+      <main className='register-page-content'>
+      <Card>
+      <Card.Header>Step {show+1}/8</Card.Header>
+      <Card.Body>
+      <div className="text-center">
+        {prev}
+        {register}
+      </div>
+        </Card.Body>
+    </Card>
+    </main>
+    )
+
+  }
+
+  
   
   return(<></>);
   
