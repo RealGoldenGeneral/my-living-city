@@ -123,6 +123,7 @@ model User {
 
   // Model overwrites
   Advertisements Advertisements[]
+  segmentRequest segmentRequest[]
   @@map(name: "user")
 }
 
@@ -365,4 +366,15 @@ model SubSegments {
 
   segRef Segments @relation(fields: [segId], references: [segId])
   @@map(name: "sub_segment")
+}
+
+model segmentRequest {
+  id             Int      @id @default(autoincrement())
+  createAt       DateTime @default(now()) @map("created_at")
+  userId         String   @map("user_id")
+  country        String
+  province       String
+  segmentName    String   @map("segment name")
+  subSegmentName String   @map("sub segment name")
+  requester      User     @relation(fields: [userId], references: [id])
 }
