@@ -203,4 +203,46 @@ userSegmentRequestRouter.delete(
     }
 )
 
+userSegmentRequestRouter.delete(
+    '/deleteByUser/:userId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            const {id} = req.user;
+
+            const theUser = await prisma.user.findUnique({
+                where:{id:id}
+            })
+
+            if(theUser.userType==='ADMIN'){
+                const {userId} = req.params;
+                const targetUser = await prisma.user.findUnique({
+                    where:{id:userId}
+                })
+
+                if(!targetUser){
+                    return res.status(404).json("user not found!");
+                }else{
+                    const result = await prisma.segmentRequest.deleteMany({
+                        where:{userId:userId}
+                    })
+                    res.sendStatus(204);
+                }
+            }else{
+                res.status(403).json("Only admin can access this endpoint!");
+            }
+        }catch(error){
+            res.status(400).json({
+                message: error.message,
+                details: {
+                  errorMessage: error.message,
+                  errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+)
+
 module.exports = userSegmentRequestRouter;
