@@ -83,4 +83,36 @@ userSegmentRequestRouter.post(
     }
 )
 
+userSegmentRequestRouter.get(
+    '/getAll',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            const {id} = req.user;
+
+            const theUser = await prisma.user.findUnique({
+                where:{id:id}
+            })
+
+            if(theUser.userType==='ADMIN'){
+                const result = await prisma.segmentRequest.findMany();
+
+                res.status(200).json(result);
+            }else{
+                res.status(403).json("Only admin can get all segment requests!");
+            }
+        }catch(error){
+            res.status(400).json({
+                message: error.message,
+                details: {
+                  errorMessage: error.message,
+                  errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+)
+
 module.exports = userSegmentRequestRouter;
