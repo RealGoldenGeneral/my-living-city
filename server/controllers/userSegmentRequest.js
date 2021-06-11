@@ -2,7 +2,7 @@ const passport = require('passport');
 const express = require('express');
 const userSegmentRequestRouter = express.Router();
 const prisma = require('../lib/prismaClient');
-const { isString, isEmpty } = require('lodash');
+const { isString, isEmpty, isInteger, toInteger } = require('lodash');
 
 userSegmentRequestRouter.post(
     '/create',
@@ -131,6 +131,64 @@ userSegmentRequestRouter.get(
             }
 
             res.status(200).json(result);
+        }catch(error){
+            res.status(400).json({
+                message: error.message,
+                details: {
+                  errorMessage: error.message,
+                  errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+)
+
+userSegmentRequestRouter.delete(
+    '/deleteById/:deleteId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            const {id} = req.user;
+
+            const theUser = await prisma.user.findUnique({
+                where:{id:id}
+            })
+
+            const {deleteId} = req.params;
+
+            const parsedDeleteId = toInteger(deleteId);
+
+            if(!isInteger(parsedDeleteId)){
+                return res.status(400).json("deleteId must be integer");
+            }
+
+            const theRequest = await prisma.segmentRequest.findUnique({
+                where:{id:parsedDeleteId}
+            })
+
+            if(!theRequest){
+                return res.status(404).json("segment request not found!");
+            }
+
+            if(theUser.userType==='ADMIN'){
+                const result = await prisma.segmentRequest.delete({
+                    where:{id:parsedDeleteId}
+                })
+
+                res.sendStatus(204);
+            }else{
+                if(theRequest.userId==id){
+                    const result = await prisma.segmentRequest.delete({
+                        where:{id:parsedDeleteId}
+                    })
+
+                    res.sendStatus(204);
+                }else{
+                    res.status(403).json("You don't have right to delete this segment request!");
+                }
+            }
         }catch(error){
             res.status(400).json({
                 message: error.message,
