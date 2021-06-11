@@ -115,4 +115,34 @@ userSegmentRequestRouter.get(
     }
 )
 
+userSegmentRequestRouter.get(
+    '/getMine',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            const {id} = req.user;
+
+            const result = await prisma.segmentRequest.findMany({
+                where:{userId:id}
+            });
+
+            if(!result){
+                return res.status(404).json("No segment requests been found!");
+            }
+
+            res.status(200).json(result);
+        }catch(error){
+            res.status(400).json({
+                message: error.message,
+                details: {
+                  errorMessage: error.message,
+                  errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+)
+
 module.exports = userSegmentRequestRouter;
