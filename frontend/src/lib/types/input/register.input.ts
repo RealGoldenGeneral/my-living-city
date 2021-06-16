@@ -10,4 +10,10 @@ export interface IRegisterInput {
   lname?: string;
   address?: IAddressInput;
   geo?: IGeoInput;
+  homeSegmentId?: number;
+  workSegmentId?: number;
+  schoolSegmentId?: number;
+  homeSubSegmentId?: number;
+  workSubSegmentId?: number;
+  schoolSubSegmentId?: number;
 }
