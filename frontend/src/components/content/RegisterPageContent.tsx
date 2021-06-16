@@ -1,4 +1,4 @@
-import {Button, Card} from 'react-bootstrap';
+import {Button, Card, Row} from 'react-bootstrap';
 import {Form as BForm, Image} from 'react-bootstrap';
 import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -108,11 +108,16 @@ return (
                 </FormikStep>
 
                 <FormikStep >
-                    {!map ?<Card.Title>Do you work in a different municipality or neighbourhood? 
-                    <Button variant="outline-primary" onClick={()=>{showMap(true)}}>Yes</Button>{' '}
-                    <Button onClick={()=>{console.log('test button')}}>No</Button></Card.Title>:
-                    <><Card.Title>Show us on the map where your work is</Card.Title>
-                    <Card.Subtitle className="text-muted mb-3">This step is optional*</Card.Subtitle>
+                    {!map 
+                    ?
+                        <Card.Title className="mb-4">Do you work in a different municipality or neighbourhood? 
+                        <div className="float-right">
+                        <BForm.Check inline label="yes" name="group1" type="radio" id="inline-checkbox" onClick={()=>{showMap(true)}}/>
+                        <BForm.Check inline label="no" name="group1" type="radio" id="inline-checkbox"/>
+                        </div>
+                        </Card.Title> 
+                    :
+                    <><Card.Title>Show us on the map where your work is (optional)</Card.Title>
                     <SimpleMap iconName={'work'} sendData={(markers:any)=>sendData(markers) } /></>}
                 </FormikStep>
 
@@ -125,13 +130,18 @@ return (
                     </BForm.Control>
                 </FormikStep>
 
-                <FormikStep>
-                    {!map ?<Card.Title className="text-center">Do you study in a different municipality or neighbourhood? 
-                    <Button variant="outline-primary" onClick={()=>{showMap(true)}}>Yes</Button>{' '}
-                    <Button onClick={()=>{console.log('test button')}}>No</Button></Card.Title>:
-                    <><Card.Title>Show us on the map where your school is</Card.Title>
-                    <Card.Subtitle className="text-muted mb-3">This step is optional*</Card.Subtitle>
-                    <SimpleMap iconName={'school'} sendData={(markers:any)=>sendData(markers) } /></>}
+                <FormikStep >
+                    {!map 
+                    ?
+                        <Card.Title className="mb-4">Do you study in a different municipality or neighbourhood? 
+                        <div className="float-right">
+                        <BForm.Check inline label="yes" name="group1" type="radio" id="inline-checkbox" onClick={()=>{showMap(true)}}/>
+                        <BForm.Check inline label="no" name="group1" type="radio" id="inline-checkbox"/>
+                        </div>
+                        </Card.Title> 
+                    :
+                    <><Card.Title>Show us on the map where your school is (optional)</Card.Title>
+                    <SimpleMap iconName={'work'} sendData={(markers:any)=>sendData(markers) } /></>}
                 </FormikStep>
 
                 <FormikStep>
@@ -274,8 +284,8 @@ return(
     <Stepper steps={ [
         {title: 'Account Info'}, 
         {title: 'Home Location'}, 
-        {title: 'Work Location*'},
-        {title: 'School Location*'},
+        {title: 'Work Location'},
+        {title: 'School Location'},
         {title: 'Register'}] } 
         activeStep={ inferStep }
         circleTop={0}
