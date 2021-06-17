@@ -9,7 +9,7 @@ export const searchForLocation = async (coords: any) =>{
     let country=null;
     let province=null;
     let city=null;
-    //let city2=null;
+    let city2=null;
     //let cities: string[] = [];
     //if lat or lon is not valid
     if(!coords.lat||!coords.lon){
@@ -40,13 +40,13 @@ export const searchForLocation = async (coords: any) =>{
             withCredentials: false
         });
         console.log(detailRes);
-        const {country,province,city} = detailRes.data;
-        if(country.length===0|| city.length===0 ||province.length===0){
+        const {country,province,city,city2} = detailRes.data;
+        if(country.length===0|| (city.length===0 && city2.length===0) ||province.length===0){
             throw new Error("Location search doesn't give enough information")
         }
-        return{country, province, city};
+        return{country, province, city, city2};
     }
 
-    return {country,province,city};
+    return {country,province,city, city2};
     
 }

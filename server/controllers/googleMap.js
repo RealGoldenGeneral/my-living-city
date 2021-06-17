@@ -45,7 +45,7 @@ locationRouter.get(
             let country='';
             let province='';
             let city='';
-            // let city2='';
+            let city2='';
             // let cities=[];
 
             if(!placeId){
@@ -62,16 +62,17 @@ locationRouter.get(
                     if(component.types[0]=="locality"){
                         city = component.long_name.toLowerCase();
                     }
-                    // else if(component.types[0]=="administrative_area_level_3"){
-                    //     cities.push(component.long_name.toLowerCase());
-                    // }
+                    else if(component.types[0]=="administrative_area_level_3"){
+                        city2 = component.long_name.toLowerCase();
+                    }
                     else if(component.types[0]=="administrative_area_level_1"){
-                        province = component.short_name.toLowerCase();
+                        province = component.long_name.toLowerCase();
                     }else if(component.types[0]=="country"){
                         country = component.long_name.toLowerCase();
                     }
                 });
-                res.status(200).json({'country':country,'province':province,'city':city});
+                res.status(200).json({'country':country,'province':province,'city':city, 'city2': city2});
+                // res.status(200).json({data});
             }else{
                 res.status(400).json("placeId search malfunctioned!");
             }

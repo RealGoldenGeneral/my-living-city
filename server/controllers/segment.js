@@ -254,8 +254,8 @@ segmentRouter.post(
                             name:name,
                             superSegName:superSegName
                         }
+                        
                     });
-
                     res.status(200).json(result);
                 }
             }else{
@@ -344,8 +344,8 @@ segmentRouter.post(
                 return res.status(400).json({
                     message: error,
                     details: {
-                      errorMessage: errorMessage,
-                      errorStack: errorStack
+                    errorMessage: errorMessage,
+                    errorStack: errorStack
                     }
                 });
             }
@@ -359,14 +359,14 @@ segmentRouter.post(
             });
 
             if(!result){
-                res.status(404).json("Segment not found!");
+                res.status(404).json("Municipality not found in our system!");
+            }else{
+                res.status(200).json(result);
             }
-
-            res.status(200).json(result);
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to find a segment.",
+                message: "An error occured while trying to find a Municipality.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
