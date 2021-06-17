@@ -273,12 +273,19 @@ export function FormikStepper({ children, markers, showMap, subIds,schoolTransfe
                 default:
             }
             console.log(googleQuery);
-            if(googleQuery.city){
+            if(googleQuery.cities){
                 const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country});
                 const sub = await findSubsegmentsBySegmentId(seg.segId);
                 props.setSegment(seg);
                 props.setSubSegments(sub);
                 refactorSegIds(index, seg.segId);
+                // if(googleQuery.city2){
+                //     const seg = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country});
+                //     const sub = await findSubsegmentsBySegmentId(seg.segId);
+                //     props.setSegment(seg);
+                //     props.setSubSegments(sub);
+                //     refactorSegIds(index, seg.segId);
+                // }
             }
 
             //Temp vars for testing

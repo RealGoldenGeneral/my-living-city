@@ -8,9 +8,9 @@ export const searchForLocation = async (coords: any) =>{
     //variables for location information
     let country=null;
     let province=null;
-    let city=null;
-    let city2=null;
-    //let cities: string[] = [];
+    // let city=null;
+    // let city2=null;
+    let cities: string[] = [];
     //if lat or lon is not valid
     if(!coords.lat||!coords.lon){
         throw new Error("lat or lon variable is missing");
@@ -40,13 +40,13 @@ export const searchForLocation = async (coords: any) =>{
             withCredentials: false
         });
         console.log(detailRes);
-        const {country,province,city,city2} = detailRes.data;
-        if(country.length===0|| (city.length===0 && city2.length===0) ||province.length===0){
+        const {country,province,cities} = detailRes.data;
+        if(country.length===0|| cities.length ===0 ||province.length===0){
             throw new Error("Location search doesn't give enough information")
         }
-        return{country, province, city, city2};
+        return{country, province, cities};
     }
 
-    return {country,province,city, city2};
+    return {country,province,cities};
     
 }
