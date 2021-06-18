@@ -44,9 +44,9 @@ locationRouter.get(
             //variables for location information
             let country='';
             let province='';
-            // let city='';
-            // let city2='';
-            let cities=[];
+            let city='';
+            let city2='';
+            // let cities=[];
 
             if(!placeId){
                 res.status(400).json("placeId is missing!");
@@ -61,10 +61,10 @@ locationRouter.get(
                 addressComponents.forEach((component) => {
                     if(component.types[0]=="locality"){
                         // city = component.long_name.toLowerCase();
-                        cities.push(component.long_name.toLowerCase());
+                        city = component.long_name.toLowerCase();
                     }
                     else if(component.types[0]=="administrative_area_level_3"){
-                        cities.push(component.long_name.toLowerCase());
+                        city2 = component.long_name.toLowerCase();
                     }
                     else if(component.types[0]=="administrative_area_level_1"){
                         province = component.long_name.toLowerCase();
@@ -72,7 +72,7 @@ locationRouter.get(
                         country = component.long_name.toLowerCase();
                     }
                 });
-                res.status(200).json({'country':country,'province':province,'cities': cities});
+                res.status(200).json({'country':country,'province':province,'city': city, 'city2': city2});
                 // res.status(200).json({data});
             }else{
                 res.status(400).json("placeId search malfunctioned!");

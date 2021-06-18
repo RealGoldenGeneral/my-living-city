@@ -1,10 +1,10 @@
-import {Alert, Button, Card, Row} from 'react-bootstrap';
+import {Alert, Button, Card} from 'react-bootstrap';
 import {Form as BForm} from 'react-bootstrap';
 import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { IUserRole } from 'src/lib/types/data/userRole.type';
 import SimpleMap from '../map/SimpleMap';
-import { capitalizeString } from 'src/lib/utilityFunctions';
+import { capitalizeString, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
 import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import * as Yup from 'yup';
@@ -12,26 +12,49 @@ import Stepper from 'react-stepper-horizontal';
 import '../../../src/scss/ui/_other.scss';
 import { IFetchError } from '../../lib/types/types';
 import { searchForLocation } from 'src/lib/api/googleMapQuery';
+import { postRegisterUser } from 'src/lib/api/userRoutes';
+import { UserProfileContext } from '../../contexts/UserProfile.Context';
+import { IRegisterInput } from '../../lib/types/input/register.input';
+
 interface RegisterPageContentProps {
     userRoles: IUserRole[] | undefined;
 }
 
 export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRoles}) => {
+    const {
+        setToken,
+        setUser,
+    } = useContext(UserProfileContext);
     const [markers, sendData]:any = useState({home: {lat: null, lon: null},work: {lat: null, lon: null},school: {lat: null, lon: null}});
     const [map, showMap] = useState(false);
     const [segment, setSegment] = useState<ISegment>();
     const [subSegments, setSubSegments] = useState<ISubSegment[]>();
-    const [subIds, setSubIds] = useState<number[]>([]);
+    const [segment2, setSegment2] = useState<ISegment>();
+    const [subSegments2, setSubSegments2] = useState<ISubSegment[]>();
+    const [subIds, setSubIds] = useState<any[]>([]);
+    const [segIds, setSegIds] = useState<any[]>([]);
     const selectString:string = "Select your Neighbourhood (optional)";
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
     const [schoolTransfer, transferWorkToSchool] = useState(false);
-    const refactorSubIds = (index: number, subId: number) => {
-        console.log('called');
+    const refactorSubIds = (index: number, id: number | null) => {
         let ids = [...subIds];
-        ids[index] = subId;
+        ids[index] = id;
         setSubIds(ids);
+    }
+    const refactorSegIds = (index: number, segId: number) => {
+        let ids = [...segIds];
+        ids[index] = segId;
+        setSegIds(ids);
+    }
+    const displaySubSegList = (id: number) => {
+            if(subSegments && subSegments[0].segId === id){
+                return (subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
+            }
+            if(subSegments2 && subSegments2[0].segId === id){
+                return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
+            }  
     }
     useEffect(()=>{
         //This allows the first click on the map to update the markers variables in the step handler functions.
@@ -53,31 +76,52 @@ return (
                     country: '',
                 },
                 geo: {
-                    lon: null,
-                    lat: null,
-                    work_lat: null,
-                    work_lon: null,
-                    school_lat: null,
-                    school_lon: null,
+                    lon: undefined,
+                    lat: undefined,
+                    work_lat: undefined,
+                    work_lon: undefined,
+                    school_lat: undefined,
+                    school_lon: undefined,
                 },
-                homeSegmentId: null,
-                workSegmentId: null,
-                schoolSegmentId: null,
-                homeSubSegmentId: null,
-                workSubSegmentId: null,
-                schoolSubSegmentId: null,
+                homeSegmentId: undefined,
+                workSegmentId: undefined,
+                schoolSegmentId: undefined,
+                homeSubSegmentId: undefined,
+                workSubSegmentId: undefined,
+                schoolSubSegmentId: undefined,
                 
             }}  markers={markers}
                 setSegment={setSegment}
+                setSegment2={setSegment2}
                 setSubSegments={setSubSegments}
+                setSubSegments2={setSubSegments2}
                 setSubIds={setSubIds}
+                refactorSegIds={refactorSegIds}
+                refactorSubIds={refactorSubIds}
+                segIds={segIds}
                 showMap={showMap}
                 subIds={subIds}
                 workTransfer={workTransfer}
                 schoolTransfer={schoolTransfer}
-                onSubmit={(values,helpers)=>{
+                onSubmit={async(values,helpers)=>{
                     console.log(values);
-                }}
+                    // const {email, password, confirmPassword} = values;
+                    try {
+                        const { token, user } = await postRegisterUser(values);
+                        storeUserAndTokenInLocalStorage(token, user);
+                        storeTokenExpiryInLocalStorage();
+                        setToken(token);
+                        setUser(user);
+                        //PLACEHOLDER//
+                        //For segment request functionality.
+
+                        //await postAvatarImage(selectedFile, token);
+                        } catch (error) {
+                            console.log(error);
+                            wipeLocalStorage();
+                        }
+                }
+            }
             >
                 <FormikStep validationSchema={Yup.object().shape({
                     password: Yup.string().min(8, 'Password is too short, 8 characters minimum'),
@@ -109,12 +153,18 @@ return (
                 </FormikStep>
 
                 <FormikStep >
-                    <BForm.Label>Your Home Municipality is</BForm.Label>
-                    <BForm.Control readOnly name="homeSegName" defaultValue={segment?.name}></BForm.Control>
+                    <BForm.Label>Select your home municipality</BForm.Label>
+                    <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
+                        refactorSegIds(0,parseInt(e.target.value));
+                        refactorSubIds(0, null);
+                        }}>
+                        {segment && <option value={segment?.segId}>{segment?.name}</option>}
+                        {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                    </BForm.Control>
                     <BForm.Label></BForm.Label>
                     <BForm.Control name="homeSubName" as="select" onChange={(e)=>{refactorSubIds(0,parseInt(e.target.value))}}>
                         <option hidden>{selectString}</option>
-                        {subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>))};
+                        {displaySubSegList(segIds[0])}
                     </BForm.Control>
                 </FormikStep>
 
@@ -171,6 +221,11 @@ return (
                 </FormikStep>
 
                 <FormikStep>
+                        <h3>Privacy Policy</h3>
+                        <p>By clicking next you verify that MyLivingCity has the right to store your personal information.</p>
+                </FormikStep>
+
+                <FormikStep>
                     <div className="text-center">
                     <h3 className="mb-4">Press submit to complete registration!</h3>
                     {/* <Image width='50%' src='/banner/MyLivingCity_Logo_Name-Tagline.png' className="mb-2"/> */}
@@ -187,30 +242,36 @@ return (
 
 
 
-export interface FormikStepProps extends Pick<FormikConfig<FormikValues>, 'children' | 'validationSchema' > {
-    setSegmentId?: any;
+export interface FormikStepProps extends Pick<FormikConfig<IRegisterInput>, 'children' | 'validationSchema' > {
+    // setSegmentId?: any;
 }
 
 export function FormikStep({ children }: FormikStepProps) {
     return <>{children}</>;
 }
-export interface FormikStepperProps extends FormikConfig<FormikValues> {
+export interface FormikStepperProps extends FormikConfig<IRegisterInput> {
+    initialValues: IRegisterInput;
     markers: any;
     setSegment: any;
+    setSegment2: any;
     setSubSegments: any;
+    setSubSegments2: any;
+    refactorSubIds: any;
     showMap: any;
     setSubIds: any;
+    refactorSegIds: any;
+    segIds: any;
     subIds: any;
     workTransfer: boolean;
     schoolTransfer: boolean;
 }
-export function FormikStepper({ children, markers, showMap, subIds,schoolTransfer, workTransfer, ...props }: FormikStepperProps) {
+export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, refactorSubIds, workTransfer, refactorSegIds, ...props }: FormikStepperProps) {
     const childrenArray = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[];
     const [step, setStep] = useState(0);
     const [inferStep, setInferStep]=useState(0);
     const currentChild = childrenArray[step] as React.ReactElement<FormikStepProps>;
     const [isLoading, setIsLoading] = useState(false);
-    const [segIds, setSegIds] = useState<number[]>([]);
+    // const [segIds, setSegIds] = useState<number[]>([]);
     const [error, setError] = useState<IFetchError | null>(null);
     //Functions for handling button states.
     const isLastStep = () => { return step === childrenArray.length - 1 };
@@ -222,16 +283,16 @@ export function FormikStepper({ children, markers, showMap, subIds,schoolTransfe
         if(subIds[1]) return subIds[1] 
         else return subIds[0];
     }
-    const isWorkSegIdSet = () => { 
-        if(segIds[1]) return segIds[1] 
-        else return segIds[0];
-    }
+    // const isWorkSegIdSet = () => { 
+    //     if(segIds[1]) return segIds[1] 
+    //     else return segIds[0];
+    // }
     //Handles the refactoring of the state segIds array.
-    const refactorSegIds = (index: number, segId: number) => {
-        let ids = [...segIds];
-        ids[index] = segId;
-        setSegIds(ids);
-    }
+    // const refactorSegIds = (index: number, segId: number) => {
+    //     let ids = [...segIds];
+    //     ids[index] = segId;
+    //     setSegIds(ids);
+    // }
     //This handles the step and inferStep state variables.
     //Step keeps track of the current child to display.
     //InferStep keeps track of the step icons.
@@ -248,54 +309,52 @@ export function FormikStepper({ children, markers, showMap, subIds,schoolTransfe
             setStep(s=>s-1);
         }
     }
+
     //This function calls the google api to receive data on the map location
     //The data is then searched in the back end for a matching segment
     //Then the back end is searched for all the sub-segments of that matching segment.
     async function setSegData(index: number){
         let googleQuery:any;
+        let testMode = true;
         try{
             //PLACEHOLDER for GOOGLE API query
             setError(null);
             setIsLoading(true);
-            switch(index){
-                case 0:
-                    googleQuery = await searchForLocation(markers.home);
-                    console.log('google home query');
-                break;
-                case 1:
-                    googleQuery = await searchForLocation(markers.work);
-                    console.log('google work query');
-                break;
-                case 2:
-                    googleQuery = await searchForLocation(markers.school);
-                    console.log('google school query');
-                break;
-                default:
-            }
-            console.log(googleQuery);
-            if(googleQuery.cities){
-                const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country});
+            // switch(index){
+            //     case 0:
+            //         googleQuery = await searchForLocation(markers.home);
+            //         console.log('google home query');
+            //     break;
+            //     case 1:
+            //         googleQuery = await searchForLocation(markers.work);
+            //         console.log('google work query');
+            //     break;
+            //     case 2:
+            //         googleQuery = await searchForLocation(markers.school);
+            //         console.log('google school query');
+            //     break;
+            //     default:
+            // }
+            if(testMode){
+                const seg = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
                 const sub = await findSubsegmentsBySegmentId(seg.segId);
                 props.setSegment(seg);
                 props.setSubSegments(sub);
-                refactorSegIds(index, seg.segId);
-                // if(googleQuery.city2){
-                //     const seg = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country});
-                //     const sub = await findSubsegmentsBySegmentId(seg.segId);
-                //     props.setSegment(seg);
-                //     props.setSubSegments(sub);
-                //     refactorSegIds(index, seg.segId);
-                // }
+                refactorSegIds(index,seg.segId);
+                //refactorSegIds(index, seg.segId);
+
+                if(testMode){
+                    const seg2 = await findSegmentByName({segName:'saanich', province:'british columbia', country:'canada' });
+                    const sub2 = await findSubsegmentsBySegmentId(seg.segId);
+                    props.setSegment2(seg2);
+                    props.setSubSegments2(sub2);
+                    //refactorSegIds(index, seg.segId);
+                }else{
+                    props.setSegment2(null);
+                    props.setSubSegments2(null);
+                }
             }
 
-            //Temp vars for testing
-            // googleQuery = await searchForLocation(markers.home);
-            // console.log(googleQuery);
-            // const seg = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
-            // const sub = await findSubsegmentsBySegmentId(seg.segId);
-            // let ids = [...subIds];
-            // ids[index] = sub[0].id;
-            props.setSubIds(subIds);
             setStep(s=>s+1);
         }catch(err){
             setError(new Error(err.response.data));
@@ -307,7 +366,7 @@ return(
     validationSchema={currentChild?.props.validationSchema}
     onSubmit={async(values, helpers)=>{
 
-        if(step === childrenArray.length -1){
+        if(isLastStep()){
             setIsLoading(true);
             await new Promise(r => setTimeout(r, 2000));
             await props.onSubmit(values, helpers);
@@ -322,6 +381,7 @@ return(
                 setInferStep(s=>s+1);
                 if(workTransfer){
                     refactorSegIds(1, segIds[0]);
+                    refactorSubIds(1, subIds[0]);
                 }
             }else{
                 const seg = await setSegData(1);
@@ -329,16 +389,21 @@ return(
             }
             showMap(false);
         }else if(step=== 5){
+            console.log(segIds);
             if(markers.school.lat === null){
                 setStep(s=>s+2);
                 setInferStep(s=>s+1);
                 if(schoolTransfer){
                     refactorSegIds(2, segIds[1] || segIds[0]);
+                    refactorSubIds(2, subIds[1] || subIds[0])
                 }
             }else{
                 const seg = await setSegData(2);
                 //setStep(s=>s+1);
             }
+            setIsLoading(false);
+        }else if(step===7){
+            setIsLoading(true);
             //Field setters for the external inputs. Formik can only handle native form elements.
             //These fields must be added manually.
             helpers.setFieldValue('geo.lat', markers.home.lat);
@@ -348,21 +413,21 @@ return(
             helpers.setFieldValue('geo.school_lat', markers.school.lat);
             helpers.setFieldValue('geo.school_lon', markers.school.lon);
 
+            helpers.setFieldValue('homeSegmentId', segIds[0] || null);
             helpers.setFieldValue('homeSubSegmentId', subIds[0] || null);
-            helpers.setFieldValue('workSubSegmentId', subIds[1] || workTransfer ? subIds[0] : null);
-            
 
-            helpers.setFieldValue('homeSegmentId', segIds[0]);
+            helpers.setFieldValue('workSubSegmentId', subIds[1] || null);
             helpers.setFieldValue('workSegmentId', segIds[1] || null);
-            
+            helpers.setFieldValue('schoolSubSegmentId', subIds[2] || null);
+            helpers.setFieldValue('schoolSegmentId', segIds[2] || null);
+            setStep(s=>s+1);
         }else{
             setStep(s=>s+1);
             setInferStep(s=>s+1);
             //helpers.setTouched({});
         }
         //These fields added here due to update reasons. If these fields are in the above section the state is not updated. Due to setFieldValue being async.
-        helpers.setFieldValue('schoolSubSegmentId', subIds[2] || schoolTransfer ? isWorkSubIdSet() : null);
-        helpers.setFieldValue('schoolSegmentId', segIds[2] || null);
+
         setIsLoading(false);
     }}
     >
@@ -388,7 +453,10 @@ return(
         {error && (<Alert variant='danger' className="error-alert">{ error.message }</Alert>)}
         <div className="text-center">
         {step > 0 ? <Button className="float-left mt-3" size="lg" variant="outline-primary" onClick={()=>{handleBackButton()}}>Back</Button> : null}
-        <Button className="float-right mt-3" size="lg" type="submit" disabled={isLoading||isHomeMarkerSet()}>{isLastStep() ? submitOrSubmitting() : nextOrLoading()}</Button>
+        <Button className="float-right mt-3 d-flex align-items-center" size="lg" type="submit" disabled={isLoading||isHomeMarkerSet()}>
+        {isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+        {isLastStep() ? submitOrSubmitting() : nextOrLoading()}
+        </Button>
         </div>
 
     </Form>

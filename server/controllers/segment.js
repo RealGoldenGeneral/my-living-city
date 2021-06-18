@@ -359,7 +359,7 @@ segmentRouter.post(
             });
 
             if(!result){
-                res.status(404).json("Municipality not found in our system!");
+                res.status(404).json(`Municipality "${segName}" not found in our system!`);
             }else{
                 res.status(200).json(result);
             }

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "../constants";
 import { IUser } from "../types/data/user.type";
-import { IRegisterInput } from "../types/input/register.input";
+import { IRegisterInput, IUserRegisterData } from "../types/input/register.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 export interface LoginData {
   email: string;
@@ -58,7 +58,21 @@ export const getUserWithJWTVerbose = async ({ jwtAuthToken }: GetUserWithJWTInpu
 }
 
 export const postRegisterUser = async (registerData: IRegisterInput): Promise<LoginResponse> => {
-  const { email, password, confirmPassword } = registerData;
+  const { 
+    email, 
+    password, 
+    confirmPassword,
+    fname,
+    lname,
+    address,
+    geo,
+    homeSegmentId,
+    workSegmentId,
+    schoolSegmentId,
+    homeSubSegmentId,
+    workSubSegmentId,
+    schoolSubSegmentId,
+  } = registerData;
   // Verify Payload
   if (!email || !password) {
     throw new Error("You must provide an email and password to sign up.")
@@ -68,6 +82,6 @@ export const postRegisterUser = async (registerData: IRegisterInput): Promise<Lo
     throw new Error("Both your passwords must match. Please ensure both passwords match to register.")
   }
 
-  const res = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, registerData);
+  const res = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo});
   return res.data;
 }
