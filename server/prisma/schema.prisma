@@ -95,30 +95,38 @@ model UserAddress {
 
 model User {
   // Keys
-  id         String   @id @default(cuid())
-  userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(ADMIN) @map("user_type")
+  id                     String   @id @default(cuid())
+  userRoleId             Int?     @map("user_role_id")
+  userType               UserType @default(ADMIN) @map("user_type")
+  userSegmentId          Int?     @map("user_segment_id")
+  userHomeSubsegmentId   Int?     @map("user_home_subsegment_id")
+  userSchoolSubsegmentId Int?     @map("user_school_subsegment_id")
+  userWorkSubsegmentId   Int?     @map("user_work_subsegment_id")
 
   // Fields
-  email               String                @unique
-  password            String
-  fname               String?               @map("f_name")
-  lname               String?               @map("l_name")
-  createdAt           DateTime              @default(now()) @map(name: "created_at")
-  updatedAt           DateTime              @default(now()) @updatedAt @map(name: "updated_at")
-  imagePath           String?
-  passCode            String?               @default(cuid())
+  email                String                @unique
+  password             String
+  fname                String?               @map("f_name")
+  lname                String?               @map("l_name")
+  createdAt            DateTime              @default(now()) @map(name: "created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+  imagePath            String?
+  passCode             String?               @default(cuid())
   // Relationships
-  address             UserAddress?
-  geo                 UserGeo?
-  userRole            UserRole?             @relation(fields: [userRoleId], references: [id])
-  ideas               Idea[]                @relation("author")
-  championedIdeas     Idea[]                @relation("champion")
+  address              UserAddress?
+  geo                  UserGeo?
+  userRole             UserRole?             @relation(fields: [userRoleId], references: [id])
+  ideas                Idea[]                @relation("author")
+  championedIdeas      Idea[]                @relation("champion")
+  userSegment          Segments?             @relation(fields: [userSegmentId], references: [segId])
+  userHomeSubsegment   SubSegments?          @relation("HomeSubsegment", fields: [userHomeSubsegmentId], references: [id])
+  userSchoolSubsegment SubSegments?          @relation("SchoolSubsegment", fields: [userSchoolSubsegmentId], references: [id])
+  userWorkSubsegment   SubSegments?          @relation("WorkSubsegment", fields: [userWorkSubsegmentId], references: [id])
   // championedIdeas     Idea[]                @relation("championedIdeas")
-  ideaRatings         IdeaRating[]
-  ideaComments        IdeaComment[]
-  ideaCommentLikes    UserCommentLikes[]
-  ideaCommentDislikes UserCommentDislikes[]
+  ideaRatings          IdeaRating[]
+  ideaComments         IdeaComment[]
+  ideaCommentLikes     UserCommentLikes[]
+  ideaCommentDislikes  UserCommentDislikes[]
 
 
   // Model overwrites
@@ -375,6 +383,7 @@ model Segments {
   workSegments   UserSegments[] @relation("workSegment")
   schoolSegments UserSegments[] @relation("schoolSegment")
   @@map(name: "segment")
+  User User[]
 }
 
 model SubSegments {
@@ -390,5 +399,6 @@ model SubSegments {
   homeSubSegments   UserSegments[] @relation("homeSubSegment")
   workSubSegments   UserSegments[] @relation("workSubSegment")
   schoolSubSegments UserSegments[] @relation("schoolSubSegment")
+
   @@map(name: "sub_segment")
 }
