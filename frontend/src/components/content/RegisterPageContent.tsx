@@ -113,7 +113,8 @@ return (
                         storeTokenExpiryInLocalStorage();
                         setToken(token);
                         setUser(user);
-                        postUserSegmentInfo(values, token);
+                        console.log(token);
+                        await postUserSegmentInfo(values, token);
                         //PLACEHOLDER//
                         //For segment request functionality.
 
@@ -359,7 +360,9 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
 
             setStep(s=>s+1);
         }catch(err){
-            setError(new Error(err.response.data));
+            //placeHolder
+            //Need to do better error handling here.
+            //setError(new Error(err.response.data));
         }
     }
 return(
