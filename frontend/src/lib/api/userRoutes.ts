@@ -66,12 +66,6 @@ export const postRegisterUser = async (registerData: IRegisterInput): Promise<Lo
     lname,
     address,
     geo,
-    homeSegmentId,
-    workSegmentId,
-    schoolSegmentId,
-    homeSubSegmentId,
-    workSubSegmentId,
-    schoolSubSegmentId,
   } = registerData;
   // Verify Payload
   if (!email || !password) {

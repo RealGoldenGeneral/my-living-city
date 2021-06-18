@@ -13,6 +13,7 @@ import '../../../src/scss/ui/_other.scss';
 import { IFetchError } from '../../lib/types/types';
 import { searchForLocation } from 'src/lib/api/googleMapQuery';
 import { postRegisterUser } from 'src/lib/api/userRoutes';
+import { postUserSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 
@@ -112,6 +113,7 @@ return (
                         storeTokenExpiryInLocalStorage();
                         setToken(token);
                         setUser(user);
+                        postUserSegmentInfo(values, token);
                         //PLACEHOLDER//
                         //For segment request functionality.
 
