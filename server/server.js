@@ -53,6 +53,7 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	const sendEmailRouter = require('./controllers/sendEmailReset');
 	const segmentRouter = require('./controllers/segment');
 	const subSegmentRouter = require('./controllers/subSegment');
+	const googleLocationAPI = require('./controllers/googleMap');
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -74,6 +75,8 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
 	apiRouter.use('/userSegment',userSegmentRouter);
+	apiRouter.use('/location', googleLocationAPI);
+
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
