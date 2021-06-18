@@ -131,7 +131,27 @@ model User {
 
   // Model overwrites
   Advertisements Advertisements[]
+  UserSegments   UserSegments[]
   @@map(name: "user")
+}
+
+// user segment entity
+model UserSegments {
+  id                 String       @id @default(cuid())
+  userId             String       @map("user_id")
+  user               User         @relation(fields: [userId], references: [id])
+  homeSegmentId      Int?         @map("home_segment_id")
+  workSegmentId      Int?         @map("work_segment_id")
+  schoolSegmentId    Int?         @map("school_segment_id")
+  homeSubsegmentId   Int?         @map("home_sub_segment")
+  workSubSegmentId   Int?         @map("work_sub_segment")
+  schoolSubSegmentId Int?         @map("school_sub_segment")
+  homeSegment        Segments?    @relation("homeSegment", fields: [homeSegmentId], references: [segId])
+  workSegment        Segments?    @relation("workSegment", fields: [workSegmentId], references: [segId])
+  schoolSegment      Segments?    @relation("schoolSegment", fields: [schoolSegmentId], references: [segId])
+  homeSubSegment     SubSegments? @relation("homeSubSegment", fields: [homeSubsegmentId], references: [id])
+  workSubSegment     SubSegments? @relation("workSubSegment", fields: [workSubSegmentId], references: [id])
+  schoolSubSegment   SubSegments? @relation("schoolSubSegment", fields: [schoolSubSegmentId], references: [id])
 }
 
 // Category entity
@@ -358,7 +378,10 @@ model Segments {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @default(now()) @updatedAt @map("update_at")
 
-  SubSegments SubSegments[]
+  SubSegments    SubSegments[]
+  homeSegments   UserSegments[] @relation("homeSegment")
+  workSegments   UserSegments[] @relation("workSegment")
+  schoolSegments UserSegments[] @relation("schoolSegment")
   @@map(name: "segment")
   User User[]
 }
@@ -372,9 +395,10 @@ model SubSegments {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @updatedAt @map("update_at")
 
-  segRef     Segments @relation(fields: [segId], references: [segId])
-  HomeUser   User[]   @relation("HomeSubsegment")
-  ShcoolUser User[]   @relation("SchoolSubsegment")
-  WorkUser   User[]   @relation("WorkSubsegment")
+  segRef            Segments       @relation(fields: [segId], references: [segId])
+  homeSubSegments   UserSegments[] @relation("homeSubSegment")
+  workSubSegments   UserSegments[] @relation("workSubSegment")
+  schoolSubSegments UserSegments[] @relation("schoolSubSegment")
+
   @@map(name: "sub_segment")
 }
