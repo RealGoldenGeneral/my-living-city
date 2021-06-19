@@ -164,6 +164,32 @@ segmentRouter.get(
 //         }
 //     }
 // );
+
+segmentRouter.get(
+    '/getBySuperSegId/:superSegId',
+    async(req,res) => {
+        const {superSegId} = req.params;
+
+        if(!isInteger(superSegId)){
+            return res.status(400).json("super segment id is invalid. ")
+        }
+
+        const theSuperSegment = await prisma.superSegment.findUnique({
+            where:{superSegId:superSegId}
+        })
+
+        if(!theSuperSegment){
+            return res.status(404).json("super segment id is not in the database! ")
+        }
+
+        const segments = await prisma.segments.findMany({
+            where:{superSegId:superSegId}
+        });
+
+        res.status(200).json(segments);
+    }
+);
+
 segmentRouter.delete(
     '/delete/:segmentId',
     passport.authenticate('jwt',{session:false}),
