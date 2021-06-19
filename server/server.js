@@ -14,6 +14,7 @@ const {
 	CORS_ORIGIN 
 } = require('./lib/constants');
 const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
+const superSegmentRouter = require('./controllers/superSegment');
 
 const main = async () => {
 	// Initialize dependencies
@@ -74,6 +75,7 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
 	apiRouter.use('/userSegmentRequest',userSegmentRequestRouter);
+	apiRouter.use('/superSegment', superSegmentRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
