@@ -108,6 +108,41 @@ superSegmentRouter.get(
             await prisma.$disconnect();
         }
     }
+);
+
+superSegmentRouter.get(
+    '/getById/:superSegmentId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            const {superSegmentId} = req.params;
+
+            if(!isInteger(superSegmentId)){
+                return res.status(400).json("Invalid super segment id! ");
+            }
+
+            const theSuperSegment = await prisma.superSegment.findUnique({
+                where:{superSegId:superSegmentId}
+            });
+
+            if(!theSuperSegment){
+                return res.status(404).json("super segment not found! ");
+            }
+
+            res.status(200).json(theSuperSegment);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to create a segment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
 )
 
 module.exports = superSegmentRouter;
