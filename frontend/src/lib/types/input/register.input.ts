@@ -10,4 +10,30 @@ export interface IRegisterInput {
   lname?: string;
   address?: IAddressInput;
   geo?: IGeoInput;
+  homeSegmentId?: number;
+  workSegmentId?: number;
+  schoolSegmentId?: number;
+  homeSubSegmentId?: number;
+  workSubSegmentId?: number;
+  schoolSubSegmentId?: number;
+}
+export interface IUserRegisterData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  homeSegmentId?: number;
+  workSegmentId?: number;
+  schoolSegmentId?: number;
+  homeSubSegmentId?: number;
+  workSubSegmentId?: number;
+  schoolSubSegmentId?: number;
+}
+
+export interface IUserSegmentRegister {
+  homeSegmentId?: number;
+  workSegmentId?: number;
+  schoolSegmentId?: number;
+  homeSubSegmentId?: number;
+  workSubSegmentId?: number;
+  schoolSubSegmentId?: number;
 }
