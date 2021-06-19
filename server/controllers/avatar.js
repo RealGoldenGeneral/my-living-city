@@ -81,7 +81,7 @@ avatarRouter.get(
               errorMessage: error.message,
               errorStack: error.stack,
             }
-              });
+          });
       }
     }
   )

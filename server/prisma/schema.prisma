@@ -95,35 +95,65 @@ model UserAddress {
 
 model User {
   // Keys
-  id         String   @id @default(cuid())
-  userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(ADMIN) @map("user_type")
+  id                     String   @id @default(cuid())
+  userRoleId             Int?     @map("user_role_id")
+  userType               UserType @default(ADMIN) @map("user_type")
+  userSegmentId          Int?     @map("user_segment_id")
+  userHomeSubsegmentId   Int?     @map("user_home_subsegment_id")
+  userSchoolSubsegmentId Int?     @map("user_school_subsegment_id")
+  userWorkSubsegmentId   Int?     @map("user_work_subsegment_id")
 
   // Fields
-  email               String                @unique
-  password            String
-  fname               String?               @map("f_name")
-  lname               String?               @map("l_name")
-  createdAt           DateTime              @default(now()) @map(name: "created_at")
-  updatedAt           DateTime              @default(now()) @updatedAt @map(name: "updated_at")
-  imagePath           String?
-  passCode            String?               @default(cuid())
+  email                String                @unique
+  password             String
+  fname                String?               @map("f_name")
+  lname                String?               @map("l_name")
+  createdAt            DateTime              @default(now()) @map(name: "created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+  imagePath            String?
+  passCode             String?               @default(cuid())
   // Relationships
+
   address             UserAddress?
   geo                 UserGeo?
   userRole            UserRole?             @relation(fields: [userRoleId], references: [id])
   ideas               Idea[]                @relation("author")
   championedIdeas     Idea[]                @relation("champion")
+  userSegment         UserSegments?
+
   // championedIdeas     Idea[]                @relation("championedIdeas")
-  ideaRatings         IdeaRating[]
-  ideaComments        IdeaComment[]
-  ideaCommentLikes    UserCommentLikes[]
-  ideaCommentDislikes UserCommentDislikes[]
+  ideaRatings          IdeaRating[]
+  ideaComments         IdeaComment[]
+  ideaCommentLikes     UserCommentLikes[]
+  ideaCommentDislikes  UserCommentDislikes[]
 
 
   // Model overwrites
   Advertisements Advertisements[]
+  //Not sure if this one stays
+  segmentRequest segmentRequest[]
+  //Or this one stays
+  UserSegments   UserSegments[]
   @@map(name: "user")
+}
+
+// user segment entity
+model UserSegments {
+  id                 String       @id @default(cuid())
+  userId             String       @map("user_id")
+  user               User         @relation(fields: [userId], references: [id])
+  homeSegmentId      Int?         @map("home_segment_id")
+  workSegmentId      Int?         @map("work_segment_id")
+  schoolSegmentId    Int?         @map("school_segment_id")
+  homeSubsegmentId   Int?         @map("home_sub_segment")
+  workSubSegmentId   Int?         @map("work_sub_segment")
+  schoolSubSegmentId Int?         @map("school_sub_segment")
+  homeSegment        Segments?    @relation("homeSegment", fields: [homeSegmentId], references: [segId])
+  workSegment        Segments?    @relation("workSegment", fields: [workSegmentId], references: [segId])
+  schoolSegment      Segments?    @relation("schoolSegment", fields: [schoolSegmentId], references: [segId])
+  homeSubSegment     SubSegments? @relation("homeSubSegment", fields: [homeSubsegmentId], references: [id])
+  workSubSegment     SubSegments? @relation("workSubSegment", fields: [workSubSegmentId], references: [id])
+  schoolSubSegment   SubSegments? @relation("schoolSubSegment", fields: [schoolSubSegmentId], references: [id])
 }
 
 // Category entity
@@ -350,8 +380,12 @@ model Segments {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @default(now()) @updatedAt @map("update_at")
 
-  SubSegments SubSegments[]
+  SubSegments    SubSegments[]
+  homeSegments   UserSegments[] @relation("homeSegment")
+  workSegments   UserSegments[] @relation("workSegment")
+  schoolSegments UserSegments[] @relation("schoolSegment")
   @@map(name: "segment")
+  User User[]
 }
 
 model SubSegments {
@@ -363,6 +397,21 @@ model SubSegments {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @updatedAt @map("update_at")
 
-  segRef Segments @relation(fields: [segId], references: [segId])
+  segRef            Segments       @relation(fields: [segId], references: [segId])
+  homeSubSegments   UserSegments[] @relation("homeSubSegment")
+  workSubSegments   UserSegments[] @relation("workSubSegment")
+  schoolSubSegments UserSegments[] @relation("schoolSubSegment")
+
   @@map(name: "sub_segment")
+}
+
+model segmentRequest {
+  id             Int      @id @default(autoincrement())
+  createAt       DateTime @default(now()) @map("created_at")
+  userId         String   @map("user_id")
+  country        String
+  province       String
+  segmentName    String   @map("segment name")
+  subSegmentName String?  @map("sub segment name")
+  requester      User     @relation(fields: [userId], references: [id])
 }
