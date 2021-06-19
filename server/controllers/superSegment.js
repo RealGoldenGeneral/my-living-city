@@ -67,7 +67,7 @@ superSegmentRouter.post(
                 return res.status(403).json({
                     message: "You don't have the right to add a super segment!",
                     details: {
-                      errorMessage: 'In order to create super a segment, you must be an admin or business user.',
+                      errorMessage: 'In order to create a super segment, you must be an admin or business user.',
                       errorStack: 'user must be an admin if they want to create a super segment',
                     }
                 });
@@ -75,7 +75,7 @@ superSegmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to create a segment.",
+                message: "An error occured while trying to create a super segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -98,7 +98,7 @@ superSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to create a segment.",
+                message: "An error occured while trying to retrieve super segments. ",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -133,7 +133,68 @@ superSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to create a segment.",
+                message: "An error occured while trying to retrieve a segment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+);
+
+superSegmentRouter.delete(
+    '/delete/:deleteId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res) => {
+        try{
+            let error = '';
+            let errorMessage = '';
+            let errorStack = '';
+            //get email and user id from request
+            const { email, id } = req.user;
+            //find the requesting user in the database
+            const theUser = await prisma.user.findUnique({
+                where:{id:id},
+                select:{userType:true}
+            });
+
+            if(theUser.userType==='ADMIN'){
+                const {deleteId} = req.params;
+
+                if(!isInteger(deleteId)){
+                    return res.status(400).json("Invalid super segment id! ");
+                }
+                
+                const theSuperSegment = await prisma.superSegment.findUnique({
+                    where:{superSegId:deleteId}
+                });
+
+                if(!theSuperSegment){
+                    return res.status(404).json("super segment not found! ");
+                }
+
+                const result = await prisma.superSegment.delete({
+                    where:{superSegId:deleteId}
+                });
+
+                res.sendStatus(204);
+
+            }else{
+                return res.status(403).json({
+                    message: "You don't have the right to delete a super segment!",
+                    details: {
+                      errorMessage: 'In order to delete a super segment, you must be an admin or business user.',
+                      errorStack: 'user must be an admin if they want to delete a super segment',
+                    }
+                });
+            }
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to delete a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,

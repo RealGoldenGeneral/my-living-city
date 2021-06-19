@@ -99,7 +99,7 @@ segmentRouter.post(
                 return res.status(403).json({
                     message: "You don't have the right to add a segment!",
                     details: {
-                      errorMessage: 'In order to create a segment, you must be an admin or business user.',
+                      errorMessage: 'In order to create a segment, you must be an admin user.',
                       errorStack: 'user must be an admin if they want to create a segment',
                     }
                 });
@@ -226,7 +226,7 @@ segmentRouter.delete(
                 return res.status(403).json({
                     message: "You don't have the right to delete a segment!",
                     details: {
-                      errorMessage: 'In order to delete a segment, you must be an admin or business user.',
+                      errorMessage: 'In order to delete a segment, you must be an admin user.',
                       errorStack: 'user must be an admin if they want to delete a segment',
                     }
                 });
@@ -277,7 +277,7 @@ segmentRouter.post(
                     return res.status(400).json({
                         message: 'The objects in the request body are missing',
                         details: {
-                            errorMessage: 'Creating a segment must supply necessary fields explicitly.',
+                            errorMessage: 'Updating a segment must supply necessary fields explicitly.',
                             errorStack: 'necessary fields must be provided in the body with valid values',
                         }
                     })
@@ -295,25 +295,25 @@ segmentRouter.post(
 
                     if(country&&!isString(country)){
                         error+='A segment must has a country field. ';
-                        errorMessage+='Creating a segment must explicitly be supplied with a country field. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a country field. ';
                         errorStack+='cuntry must be provided in the body with a valid value. ';
                     }
     
                     if(province&&!isString(province)){
                         error+='A segment must has a province field. ';
-                        errorMessage+='Creating a segment must explicitly be supplied with a province field. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a province field. ';
                         errorStack+='province must be provided in the body with a valid value. ';
                     }
     
                     if(name&&!isString(name)){
                         error+='A segment must has a name field. ';
-                        errorMessage+='Creating a segment must explicitly be supplied with a name field. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a name field. ';
                         errorStack+='name must be provided in the body with a valid value. ';
                     }
     
                     if(superSegId&&!isInteger(superSegId)){
                         error+='A segment must has a super segment id. ';
-                        errorMessage+='Creating a segment must explicitly be supplied with a super segment id. '
+                        errorMessage+='Updating a segment must explicitly be supplied with a super segment id. '
                         errorStack+='super segment id must be provided in the body with a valid value. '
                     }else if(segmentId&&isInteger(superSegId)){
                         const theSuperSegment = await prisma.superSegment.findUnique({
@@ -322,7 +322,7 @@ segmentRouter.post(
         
                         if(!theSuperSegment){
                             error+='A segment must has a valid super segment id. ';
-                            errorMessage+='Creating a segment must explicitly be supplied with a valid super segment id. '
+                            errorMessage+='Updating a segment must explicitly be supplied with a valid super segment id. '
                             errorStack+='Valid super segment id must be provided in the body. '
                         }
                     }
