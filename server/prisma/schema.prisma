@@ -342,14 +342,28 @@ model Advertisements {
   @@map(name: "advertisement")
 }
 
+model SuperSegment {
+  superSegId Int       @id @default(autoincrement()) @map("super_seg_id")
+  name       String
+  country    String
+  province   String
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @default(now()) @updatedAt @map("updated_at")
+
+  Segments Segments[]
+  @@map("super_segment")
+}
+
 model Segments {
-  segId        Int       @id @default(autoincrement()) @map("seg_id")
+  segId        Int          @id @default(autoincrement()) @map("seg_id")
+  superSegId   Int
   country      String
   province     String
-  name         String    @map("segment_name")
-  superSegName String?   @map("super_segment_name")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime? @default(now()) @updatedAt @map("update_at")
+  name         String       @map("segment_name")
+  superSegName String?      @map("super_segment_name")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime?    @default(now()) @updatedAt @map("update_at")
+  superSegment SuperSegment @relation(references: [superSegId], fields: [superSegId])
 
   SubSegments SubSegments[]
   @@map(name: "segment")
