@@ -19,7 +19,7 @@ userSegmentRouter.post(
 
             const exist = await prisma.userSegments.findFirst({
                 where:{userId:id}
-            })
+            });
 
             if(exist){
                 return res.status(409).json("You are not allow to create another user segment!");

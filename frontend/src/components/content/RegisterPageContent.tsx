@@ -13,6 +13,7 @@ import '../../../src/scss/ui/_other.scss';
 import { IFetchError } from '../../lib/types/types';
 import { searchForLocation } from 'src/lib/api/googleMapQuery';
 import { postRegisterUser } from 'src/lib/api/userRoutes';
+import { postUserSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 
@@ -112,6 +113,8 @@ return (
                         storeTokenExpiryInLocalStorage();
                         setToken(token);
                         setUser(user);
+                        console.log(token);
+                        //await postUserSegmentInfo(values, token);
                         //PLACEHOLDER//
                         //For segment request functionality.
 
@@ -357,7 +360,9 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
 
             setStep(s=>s+1);
         }catch(err){
-            setError(new Error(err.response.data));
+            //placeHolder
+            //Need to do better error handling here.
+            //setError(new Error(err.response.data));
         }
     }
 return(
