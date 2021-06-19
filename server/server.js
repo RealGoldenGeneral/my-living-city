@@ -13,7 +13,8 @@ const {
 	PORT, 
 	CORS_ORIGIN 
 } = require('./lib/constants');
-const userSegmentRouter = require('./controllers/userSegment');
+const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
+const superSegmentRouter = require('./controllers/superSegment');
 
 const main = async () => {
 	// Initialize dependencies
