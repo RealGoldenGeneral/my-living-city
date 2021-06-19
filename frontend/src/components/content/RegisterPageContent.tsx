@@ -114,7 +114,7 @@ return (
                         setToken(token);
                         setUser(user);
                         console.log(token);
-                        await postUserSegmentInfo(values, token);
+                        //await postUserSegmentInfo(values, token);
                         //PLACEHOLDER//
                         //For segment request functionality.
 

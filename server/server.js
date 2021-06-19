@@ -74,8 +74,14 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/reset-password', userRouter);
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
+<<<<<<< HEAD
 	apiRouter.use('/location', googleLocationAPI);
 	apiRouter.use('/userSegment',userSegmentRouter);
+=======
+	apiRouter.use('/userSegment',userSegmentRouter);
+	apiRouter.use('/location', googleLocationAPI);
+
+>>>>>>> 28d811a7280093acb6f340b85da743efc7b4ab7e
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
