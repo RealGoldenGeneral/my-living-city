@@ -3,7 +3,7 @@ const express = require('express');
 const segmentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
-const { isEmpty, isInteger } = require('lodash');
+const { isEmpty, isInteger, isString } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 segmentRouter.post(
@@ -38,20 +38,20 @@ segmentRouter.post(
                     })
                 }
                 //if country field is missing
-                if(!country){
+                if(!country||!isString(country)){
                     error+='A segment must has a country field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a country field. ';
                     errorStack+='cuntry must be provided in the body with a valid value. ';
                 }
 
                 //if province is missing
-                if(!province){
+                if(!province||isString(province)){
                     error+='A segment must has a province field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a province field. ';
                     errorStack+='province must be provided in the body with a valid value. ';
                 }
 
-                if(!name){
+                if(!name||!isString(province)){
                     error+='A segment must has a name field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a name field. ';
                     errorStack+='name must be provided in the body with a valid value. ';
@@ -238,9 +238,13 @@ segmentRouter.post(
 
                 const parsedSegmentId = parseInt(segmentId);
 
-                const {country,province,name,superSegName} = req.body;
+                const {country,province,name,superSegId} = req.body;
 
                 console.log(req.body);
+
+                let error = '';
+                let errorMessage = '';
+                let errorStack = '';
 
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
@@ -262,6 +266,52 @@ segmentRouter.post(
                 if(!theSegment){
                     res.status(404).json("the segment need to be updated not found!");
                 }else{
+
+                    if(country&&!isString(country)){
+                        error+='A segment must has a country field. ';
+                        errorMessage+='Creating a segment must explicitly be supplied with a country field. ';
+                        errorStack+='cuntry must be provided in the body with a valid value. ';
+                    }
+    
+                    if(province&&!isString(province)){
+                        error+='A segment must has a province field. ';
+                        errorMessage+='Creating a segment must explicitly be supplied with a province field. ';
+                        errorStack+='province must be provided in the body with a valid value. ';
+                    }
+    
+                    if(name&&!isString(name)){
+                        error+='A segment must has a name field. ';
+                        errorMessage+='Creating a segment must explicitly be supplied with a name field. ';
+                        errorStack+='name must be provided in the body with a valid value. ';
+                    }
+    
+                    if(superSegId&&!isInteger(superSegId)){
+                        error+='A segment must has a super segment id. ';
+                        errorMessage+='Creating a segment must explicitly be supplied with a super segment id. '
+                        errorStack+='super segment id must be provided in the body with a valid value. '
+                    }else if(segmentId&&isInteger(superSegId)){
+                        const theSuperSegment = await prisma.superSegment.findUnique({
+                            where:{superSegId:superSegId}
+                        });
+        
+                        if(!theSuperSegment){
+                            error+='A segment must has a valid super segment id. ';
+                            errorMessage+='Creating a segment must explicitly be supplied with a valid super segment id. '
+                            errorStack+='Valid super segment id must be provided in the body. '
+                        }
+                    }
+
+                    //If there's error in error holder
+                    if(error||errorMessage||errorStack){
+                        return res.status(400).json({
+                            message: error,
+                            details: {
+                            errorMessage: errorMessage,
+                            errorStack: errorStack
+                            }
+                        });
+                    }
+
                     const result = await prisma.segments.update({
                         where:{segId:parsedSegmentId},
                         data:{
