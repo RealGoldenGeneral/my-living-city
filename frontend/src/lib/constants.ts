@@ -29,6 +29,8 @@ export const ROUTES = {
   TEST_PAGE: '/test',
   TEAM404: '/*',
   SUBMIT_ADVERTISEMENT: '/advertisement/submit',
+  ALL_ADVERTISEMENT: '/advertisement/all', // 
+  EDIT_ADVERTISEMENT: '/advertisement/edit',
   SEND_EMAIL: '/sendEmail',
   RESET_PASSWORD:'/user/reset-password',
   SEGMENT_MANAGEMENT:'/segment/management'

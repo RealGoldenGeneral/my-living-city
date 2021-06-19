@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
 const { swaggerSpec } = require('./lib/swaggerConfig');
@@ -12,6 +13,7 @@ const {
 	PORT, 
 	CORS_ORIGIN 
 } = require('./lib/constants');
+const userSegmentRouter = require('./controllers/userSegment');
 
 const main = async () => {
 	// Initialize dependencies
@@ -25,14 +27,16 @@ const main = async () => {
 		})
 	);
   
+
+app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	// Swagger config
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 	require('./auth/auth');
 
 	app.get('/', (req, res) => res.send('Welcome the My Living City API V2'));
-
-	// Routing
+	//app.use(express.static('/ads', express.static('uploads')));
+	// Routing .js
 	const userRouter = require('./controllers/user');
 	const roleRouter = require('./controllers/role');
 	const reportRouter = require('./controllers/report');
@@ -49,9 +53,9 @@ const main = async () => {
 	const sendEmailRouter = require('./controllers/sendEmailReset');
 	const segmentRouter = require('./controllers/segment');
 	const subSegmentRouter = require('./controllers/subSegment');
+	const googleLocationAPI = require('./controllers/googleMap');
 
 	const apiRouter = express.Router();
-	
 	app.use('/', apiRouter);
 	apiRouter.use('/user', userRouter);
 	apiRouter.use('/role', roleRouter);
@@ -70,6 +74,9 @@ const main = async () => {
 	apiRouter.use('/reset-password', userRouter);
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
+	apiRouter.use('/userSegment',userSegmentRouter);
+	apiRouter.use('/location', googleLocationAPI);
+
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

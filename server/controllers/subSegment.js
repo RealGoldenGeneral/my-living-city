@@ -188,6 +188,7 @@ subSegmentRouter.get(
     '/getAll',
     async(req,res) => {
         try{
+            console.log(req.body);
             const result = await prisma.subSegments.findMany();
 
             res.status(200).json(result);
