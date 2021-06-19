@@ -3,7 +3,7 @@ const express = require('express');
 const segmentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
-const { isEmpty } = require('lodash');
+const { isEmpty, isInteger } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 segmentRouter.post(
@@ -23,7 +23,7 @@ segmentRouter.post(
             });
             //User must be admin to create segment
             if (theUser.userType == 'ADMIN'){
-                const {country,province,name,superSegName} = req.body;
+                const {country,province,name,superSegId} = req.body;
 
                 console.log(req.body);
 
@@ -57,6 +57,22 @@ segmentRouter.post(
                     errorStack+='name must be provided in the body with a valid value. ';
                 }
 
+                if(!superSegId||!isInteger(superSegId)){
+                    error+='A segment must has a super segment id. ';
+                    errorMessage+='Creating a segment must explicitly be supplied with a super segment id. '
+                    errorStack+='super segment id must be provided in the body with a valid value. '
+                }else{
+                    const theSuperSegment = await prisma.superSegment.findUnique({
+                        where:{superSegId:superSegId}
+                    });
+    
+                    if(!theSuperSegment){
+                        error+='A segment must has a valid super segment id. ';
+                        errorMessage+='Creating a segment must explicitly be supplied with a valid super segment id. '
+                        errorStack+='Valid super segment id must be provided in the body. '
+                    }
+                }
+
                 //If there's error in error holder
                 if(error||errorMessage||errorStack){
                     return res.status(400).json({
@@ -74,7 +90,7 @@ segmentRouter.post(
                         country:country,
                         province:province,
                         name:name,
-                        superSegName:superSegName
+                        superSegId:superSegId
                     }
                 })
 
