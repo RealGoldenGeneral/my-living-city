@@ -13,7 +13,7 @@ const {
 	PORT, 
 	CORS_ORIGIN 
 } = require('./lib/constants');
-const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
+const userSegmentRouter = require('./controllers/userSegment');
 
 const main = async () => {
 	// Initialize dependencies
@@ -53,6 +53,7 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	const sendEmailRouter = require('./controllers/sendEmailReset');
 	const segmentRouter = require('./controllers/segment');
 	const subSegmentRouter = require('./controllers/subSegment');
+	const googleLocationAPI = require('./controllers/googleMap');
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -73,7 +74,9 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/reset-password', userRouter);
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
-	apiRouter.use('/userSegmentRequest',userSegmentRequestRouter);
+	apiRouter.use('/userSegment',userSegmentRouter);
+	apiRouter.use('/location', googleLocationAPI);
+
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

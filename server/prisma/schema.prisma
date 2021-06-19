@@ -113,15 +113,14 @@ model User {
   imagePath            String?
   passCode             String?               @default(cuid())
   // Relationships
-  address              UserAddress?
-  geo                  UserGeo?
-  userRole             UserRole?             @relation(fields: [userRoleId], references: [id])
-  ideas                Idea[]                @relation("author")
-  championedIdeas      Idea[]                @relation("champion")
-  userSegment          Segments?             @relation(fields: [userSegmentId], references: [segId])
-  userHomeSubsegment   SubSegments?          @relation("HomeSubsegment", fields: [userHomeSubsegmentId], references: [id])
-  userSchoolSubsegment SubSegments?          @relation("SchoolSubsegment", fields: [userSchoolSubsegmentId], references: [id])
-  userWorkSubsegment   SubSegments?          @relation("WorkSubsegment", fields: [userWorkSubsegmentId], references: [id])
+
+  address             UserAddress?
+  geo                 UserGeo?
+  userRole            UserRole?             @relation(fields: [userRoleId], references: [id])
+  ideas               Idea[]                @relation("author")
+  championedIdeas     Idea[]                @relation("champion")
+  userSegment         UserSegments?
+
   // championedIdeas     Idea[]                @relation("championedIdeas")
   ideaRatings          IdeaRating[]
   ideaComments         IdeaComment[]
