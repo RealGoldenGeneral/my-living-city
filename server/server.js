@@ -13,9 +13,7 @@ const {
 	PORT, 
 	CORS_ORIGIN 
 } = require('./lib/constants');
-const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
-const superSegmentRouter = require('./controllers/superSegment');
-const userSegmentRouter = require('./controllers/userSegment');
+
 
 const main = async () => {
 	// Initialize dependencies
@@ -56,6 +54,9 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	const segmentRouter = require('./controllers/segment');
 	const subSegmentRouter = require('./controllers/subSegment');
 	const googleLocationAPI = require('./controllers/googleMap');
+	const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
+	const superSegmentRouter = require('./controllers/superSegment');
+	const userSegmentRouter = require('./controllers/userSegment');
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -79,7 +80,7 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/location', googleLocationAPI);
 	apiRouter.use('/userSegment',userSegmentRouter);
 	apiRouter.use('/userSegmentRequest',userSegmentRequestRouter);
-	apiRouter.use('/superSegment',subSegmentRouter);
+	apiRouter.use('/superSegment',superSegmentRouter);
 
 
 	// Listen to server
