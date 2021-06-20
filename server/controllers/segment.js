@@ -213,7 +213,7 @@ segmentRouter.delete(
                 });
 
                 if(!theSegment){
-                    res.status(404).json("the segment need to be deleted not found!");
+                    return res.status(404).json("the segment need to be deleted not found!");
                 }else{
                     await prisma.segments.delete({
                         where:{
@@ -452,8 +452,7 @@ segmentRouter.post(
             });
 
             if(!result){
-
-                res.status(404).json("Segment not found!");
+                return res.status(404).json("Segment not found!");
             }
 
             res.status(200).json(result);

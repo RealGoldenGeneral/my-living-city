@@ -15,6 +15,7 @@ const {
 } = require('./lib/constants');
 const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
 const superSegmentRouter = require('./controllers/superSegment');
+const userSegmentRouter = require('./controllers/userSegment');
 
 const main = async () => {
 	// Initialize dependencies
@@ -77,6 +78,8 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/subSegment',subSegmentRouter);
 	apiRouter.use('/location', googleLocationAPI);
 	apiRouter.use('/userSegment',userSegmentRouter);
+	apiRouter.use('/userSegmentRequest',userSegmentRequestRouter);
+	apiRouter.use('/superSegment',subSegmentRouter);
 
 
 	// Listen to server

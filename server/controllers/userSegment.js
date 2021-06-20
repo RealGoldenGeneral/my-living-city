@@ -451,7 +451,7 @@ userSegmentRouter.put(
             await prisma.$disconnect();
         }
     }
-)
+);
 
 
 module.exports = userSegmentRouter;
