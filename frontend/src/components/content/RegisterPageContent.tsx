@@ -144,9 +144,9 @@ return (
                     <BForm.Label>Last Name</BForm.Label>
                     <Field required name="lname" type="text" as={BForm.Control}/>
                     <BForm.Label>Zip / Postal Code</BForm.Label>
-                    <Field required name="address.streetAddress" type="text" as={BForm.Control}/>
+                    <Field required name="address.postalCode" type="text" as={BForm.Control}/>
                     <BForm.Label>Street Name</BForm.Label>
-                    <Field name="address.postalCode" type="text" as={BForm.Control}/>
+                    <Field name="address.streetAddress" type="text" as={BForm.Control}/>
                 </FormikStep>
 
                 <FormikStep>
