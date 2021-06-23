@@ -101,6 +101,52 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 ))}
               </Form.Control>
             </Form.Group>
+
+            <Form.Group controlId="SegmentDropDown">
+              <Form.Label>Select Segment: </Form.Label>
+              <Form.Control
+                as="select"
+                name="categoryId"
+                onChange={formik.handleChange}
+                value={formik.values.categoryId}
+              >
+                {categories && categories.map(cat => (
+                  <option 
+                    key={String(cat.id)} 
+                    value={Number(cat.id)}
+                    style={{
+                      textTransform: 'capitalize'
+                    }}
+                  >
+                    {capitalizeString(cat.title)}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="SubSegmentDropDown">
+              <Form.Label>Select Sub-Segment: </Form.Label>
+              <Form.Control
+                as="select"
+                name="categoryId"
+                onChange={formik.handleChange}
+                value={formik.values.categoryId}
+              >
+                {categories && categories.map(cat => (
+                  <option 
+                    key={String(cat.id)} 
+                    value={Number(cat.id)}
+                    style={{
+                      textTransform: 'capitalize'
+                    }}
+                  >
+                    {capitalizeString(cat.title)}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
+
             <Form.Group>
               <Form.Label>What is the title of your idea?</Form.Label>
               <Form.Control
