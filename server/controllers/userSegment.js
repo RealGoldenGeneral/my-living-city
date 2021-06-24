@@ -14,6 +14,13 @@ userSegmentRouter.post(
             let error = '';
             let errorMessage = '';
             let errorStack = '';
+
+            let homeSegmentName = '';
+            let workSegmentName = '';
+            let schoolSegmentName = '';
+            let homeSubSegmentName = '';
+            let workSubSegmentName = '';
+            let schoolSubSegmentName = '';
             //get email and user id from request
             const { email, id } = req.user;
 
@@ -42,6 +49,8 @@ userSegmentRouter.post(
                         error+='homeSegmend Id doesn\'t exist in the database!';
                         errorMessage+='homeSegment Id must be provided with a existing segment id in the database.';
                         errorStack+='homeSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        homeSegmentName=queryResult.name;
                     }
                 }
             }
@@ -60,6 +69,8 @@ userSegmentRouter.post(
                         error+='workSegmend Id doesn\'t exist in the database!';
                         errorMessage+='workSegment Id must be provided with a existing segment id in the database.';
                         errorStack+='workSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        workSegmentName=queryResult.name;
                     }
                 }
             }
@@ -78,6 +89,8 @@ userSegmentRouter.post(
                         error+='schoolSegmend Id doesn\'t exist in the database!';
                         errorMessage+='schoolSegment Id must be provided with a existing segment id in the database.';
                         errorStack+='schoolSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        schoolSegmentName=queryResult.name;
                     }
                 }
             }
@@ -102,6 +115,8 @@ userSegmentRouter.post(
                         error+='homeSubSegment Id doesn\'t exist in the database!';
                         errorMessage+='homeSubSegement Id must be provided with a existing segment id in the database.';
                         errorStack+='homeSubSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        homeSubSegmentName=queryResult.name;
                     }
                 }
             }
@@ -126,6 +141,8 @@ userSegmentRouter.post(
                         error+='workSubSegment Id doesn\'t exist in the database!';
                         errorMessage+='workSubSegement Id must be provided with a existing segment id in the database.';
                         errorStack+='workSubSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        workSubSegmentName=queryResult.name;
                     }
                 }
             }
@@ -150,6 +167,8 @@ userSegmentRouter.post(
                         error+='schoolSubSegment Id doesn\'t exist in the database!';
                         errorMessage+='schoolSubSegement Id must be provided with a existing segment id in the database.';
                         errorStack+='schoolSubSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        schoolSubSegmentName=queryResult.name;
                     }
                 }
             }
@@ -169,11 +188,17 @@ userSegmentRouter.post(
                 data:{
                     userId:id,
                     homeSegmentId:homeSegmentId,
+                    homeSegmentName:homeSegmentName,
                     workSegmentId:workSegmentId,
+                    workSegmentName:workSegmentName,
                     schoolSegmentId:schoolSegmentId,
+                    schoolSegmentName:schoolSegmentName,
                     homeSubsegmentId:homeSubSegmentId,
+                    homeSubSegmentName:homeSubSegmentName,
                     workSubSegmentId:workSubSegmentId,
-                    schoolSubSegmentId:schoolSubSegmentId
+                    workSubSegmentName:workSubSegmentName,
+                    schoolSubSegmentId:schoolSubSegmentId,
+                    schoolSubSegmentName:schoolSubSegmentName
                 }
             })
 
@@ -286,6 +311,13 @@ userSegmentRouter.put(
             const updateId = exist.id;
 
             const {homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = req.body;
+
+            let homeSegmentName = exist.homeSegmentName;
+            let workSegmentName = exist.workSegmentName;
+            let schoolSegmentName = exist.schoolSegmentName;
+            let homeSubSegmentName = exist.homeSubSegmentName;
+            let workSubSegmentName = exist.workSubSegmentName;
+            let schoolSubSegmentName = exist.schoolSubSegmentName;
             
             if(homeSegmentId){
                 if(!isInteger(homeSegmentId)){
@@ -301,6 +333,8 @@ userSegmentRouter.put(
                         error+='homeSegmend Id doesn\'t exist in the database!';
                         errorMessage+='homeSegment Id must be provided with a existing segment id in the database.';
                         errorStack+='homeSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        homeSegmentName=queryResult.name;
                     }
                 }
             }
@@ -319,6 +353,8 @@ userSegmentRouter.put(
                         error+='workSegmend Id doesn\'t exist in the database!';
                         errorMessage+='workSegment Id must be provided with a existing segment id in the database.';
                         errorStack+='workSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        workSegmentName=queryResult.name;
                     }
                 }
             }
@@ -337,6 +373,8 @@ userSegmentRouter.put(
                         error+='schoolSegmend Id doesn\'t exist in the database!';
                         errorMessage+='schoolSegment Id must be provided with a existing segment id in the database.';
                         errorStack+='schoolSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        schoolSegmentName=queryResult.name;
                     }
                 }
             }
@@ -361,6 +399,8 @@ userSegmentRouter.put(
                         error+='homeSubSegment Id doesn\'t exist in the database!';
                         errorMessage+='homeSubSegement Id must be provided with a existing segment id in the database.';
                         errorStack+='homeSubSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        homeSubSegmentName=queryResult.name;
                     }
                 }
             }
@@ -385,6 +425,8 @@ userSegmentRouter.put(
                         error+='workSubSegment Id doesn\'t exist in the database!';
                         errorMessage+='workSubSegement Id must be provided with a existing segment id in the database.';
                         errorStack+='workSubSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        workSubSegmentName=queryResult.name;
                     }
                 }
             }
@@ -409,6 +451,8 @@ userSegmentRouter.put(
                         error+='schoolSubSegment Id doesn\'t exist in the database!';
                         errorMessage+='schoolSubSegement Id must be provided with a existing segment id in the database.';
                         errorStack+='schoolSubSegment Id must be provided with a existing segment id in the database.';
+                    }else{
+                        schoolSubSegmentName=queryResult.name;
                     }
                 }
             }
@@ -428,11 +472,17 @@ userSegmentRouter.put(
                 where:{id:updateId},
                 data:{
                     homeSegmentId:homeSegmentId,
+                    homeSegmentName:homeSegmentName,
                     workSegmentId:workSegmentId,
+                    workSegmentName:workSegmentName,
                     schoolSegmentId:schoolSegmentId,
+                    schoolSegmentName:schoolSegmentName,
                     homeSubsegmentId:homeSubSegmentId,
+                    homeSubSegmentName:homeSubSegmentName,
                     workSubSegmentId:workSubSegmentId,
-                    schoolSubSegmentId:schoolSubSegmentId
+                    workSubSegmentName:workSubSegmentName,
+                    schoolSubSegmentId:schoolSubSegmentId,
+                    schoolSubSegmentName:schoolSubSegmentName
                 }
             })
 
