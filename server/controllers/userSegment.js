@@ -453,5 +453,4 @@ userSegmentRouter.put(
     }
 );
 
-
 module.exports = userSegmentRouter;
