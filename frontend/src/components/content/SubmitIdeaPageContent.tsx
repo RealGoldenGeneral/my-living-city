@@ -7,9 +7,12 @@ import { ICategory } from '../../lib/types/data/category.type';
 import { ICreateIdeaInput } from '../../lib/types/input/createIdea.input';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
+import { IUserSegments } from '../../lib/types/data/userSegment.type';
+import { useUserSegments } from 'src/hooks/userSegmentsHooks';
 
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
+  userSegments: IUserSegments | undefined
 }
 
 /**
@@ -18,11 +21,21 @@ interface SubmitIdeaPageContentProps {
  */
 const DEFAULT_CAT_ID = 1;
 
-const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories }) => {
+const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, userSegments }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const { token } = useContext(UserProfileContext);
+  // const { data } = useUserSegments(token);
+  // console.log(data);
 
+  // const callSegmentsName = async (values: any) => {
+  //   for (let item in values) {
+  //     console.log(item, values[item])
+  //   }
+  // }
+  
+  // callSegmentsName(data!);
+  console.log(userSegments)
 
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
@@ -106,7 +119,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               <Form.Label>Select Segment: </Form.Label>
               <Form.Control
                 as="select"
-                name="categoryId"
+                name="userSegmentDropdown"
                 onChange={formik.handleChange}
                 value={formik.values.categoryId}
               >
@@ -128,7 +141,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               <Form.Label>Select Sub-Segment: </Form.Label>
               <Form.Control
                 as="select"
-                name="categoryId"
+                name="userSubSegmentDropDown"
                 onChange={formik.handleChange}
                 value={formik.values.categoryId}
               >
