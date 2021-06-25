@@ -503,4 +503,208 @@ userSegmentRouter.put(
     }
 );
 
+userSegmentRouter.get(
+    '/homeSegment',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!result){
+                res.status(404).json("user segment not found!");
+            }
+
+            const homeSeg = await prisma.segments.findUnique({
+                where:{segId:result.homeSegmentId}
+            });
+
+            res.status(200).json(homeSeg);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+);
+
+userSegmentRouter.get(
+    '/workSegment',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!result){
+                res.status(404).json("user segment not found!");
+            }
+
+            const workSeg = await prisma.segments.findUnique({
+                where:{segId:result.workSegmentId}
+            });
+
+            res.status(200).json(workSeg);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+);
+
+userSegmentRouter.get(
+    '/schoolSegment',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!result){
+                res.status(404).json("user segment not found!");
+            }
+
+            const schoolSeg = await prisma.segments.findUnique({
+                where:{segId:result.schoolSegmentId}
+            });
+
+            res.status(200).json(schoolSeg);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+);
+
+userSegmentRouter.get(
+    '/homeSubSegment',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!result){
+                res.status(404).json("user segment not found!");
+            }
+
+            const homeSubSeg = await prisma.subSegments.findUnique({
+                where:{id:result.homeSubSegmentId}
+            });
+
+            res.status(200).json(homeSubSeg);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+);
+
+userSegmentRouter.get(
+    '/workSubSegment',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!result){
+                res.status(404).json("user segment not found!");
+            }
+
+            const workSubSeg = await prisma.subSegments.findUnique({
+                where:{id:result.workSubSegmentId}
+            });
+
+            res.status(200).json(workSubSeg);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+);
+
+userSegmentRouter.get(
+    '/schoolSubSegment',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            //get email and user id from request
+            const { email, id } = req.user;
+
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:id}
+            })
+
+            if(!result){
+                res.status(404).json("user segment not found!");
+            }
+
+            const schoolSubSeg = await prisma.subSegments.findUnique({
+                where:{id:result.schoolSubSegmentId}
+            });
+
+            res.status(200).json(schoolSubSeg);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+);
+
 module.exports = userSegmentRouter;
