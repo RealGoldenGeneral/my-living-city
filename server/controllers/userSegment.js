@@ -572,7 +572,7 @@ userSegmentRouter.get(
 );
 
 userSegmentRouter.get(
-    '/homeSegment',
+    '/schoolSegment',
     passport.authenticate('jwt',{session:false}),
     async(req,res)=>{
         try{
@@ -622,7 +622,7 @@ userSegmentRouter.get(
             }
 
             const homeSubSeg = await prisma.subSegments.findUnique({
-                where:{segId:result.homeSubSegmentId}
+                where:{id:result.homeSubSegmentId}
             });
 
             res.status(200).json(homeSubSeg);
@@ -656,7 +656,7 @@ userSegmentRouter.get(
             }
 
             const workSubSeg = await prisma.subSegments.findUnique({
-                where:{segId:result.workSubSegmentId}
+                where:{id:result.workSubSegmentId}
             });
 
             res.status(200).json(workSubSeg);
@@ -690,7 +690,7 @@ userSegmentRouter.get(
             }
 
             const schoolSubSeg = await prisma.subSegments.findUnique({
-                where:{segId:result.schoolSubSegmentId}
+                where:{id:result.schoolSubSegmentId}
             });
 
             res.status(200).json(schoolSubSeg);
