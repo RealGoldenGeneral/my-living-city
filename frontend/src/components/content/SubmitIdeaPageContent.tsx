@@ -65,6 +65,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
       title: '',
       description: '',
+      userSegment: '',
+      userSubSegment: '',
       artsImpact: '',
       communityImpact: '',
       energyImpact: '',
@@ -141,7 +143,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               <Form.Label>Select Sub-Segment: </Form.Label>
               <Form.Control
                 as="select"
-                name="userSubSegmentDropDown"
+                name="SubSegmentDropDown"
                 onChange={formik.handleChange}
                 value={formik.values.categoryId}
               >

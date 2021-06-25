@@ -14,8 +14,8 @@ interface SubmitIdeaPageProps extends RouteComponentProps<{}> {
 
 const SubmitIdeaPage: React.FC<SubmitIdeaPageProps> = ({}) => {
   const { data, isLoading, error, isError } = useCategories();
-  const { token } = useContext(UserProfileContext);
-  const userData = useUserSegments(token);
+  const { token } = useContext(UserProfileContext); // tick
+  const userData = useUserSegments(token); // tick
   // console.log(userData);
 
   if (isLoading || userData.isLoading) {

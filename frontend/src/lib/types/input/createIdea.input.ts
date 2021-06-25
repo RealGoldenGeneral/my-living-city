@@ -3,6 +3,8 @@ import { IGeoInput } from "./geo.input";
 
 export interface ICreateIdeaInput {
 	categoryId: number;
+	userSegment: string;
+	userSubSegment: string;
 	title: string;
 	description: string;
 	communityImpact?: string;
@@ -10,6 +12,6 @@ export interface ICreateIdeaInput {
 	artsImpact?: string;
 	energyImpact?: string;
 	manufacturingImpact?: string;
-  address?: IAddressInput;
-  geo?: IGeoInput;
+  	address?: IAddressInput;
+  	geo?: IGeoInput;
 }

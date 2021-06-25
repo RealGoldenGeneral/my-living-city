@@ -236,6 +236,8 @@ model Idea {
   // Values
   title               String
   description         String
+  userSegment         String?   @map("idea_user_segment")
+  userSubSegment      String?   @map("idea_user")
   communityImpact     String?   @map("community_impact")
   natureImpact        String?   @map("nature_impact")
   artsImpact          String?   @map("arts_impact")
