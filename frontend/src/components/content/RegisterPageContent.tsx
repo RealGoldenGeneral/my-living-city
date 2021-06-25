@@ -16,6 +16,7 @@ import { postRegisterUser } from 'src/lib/api/userRoutes';
 import { postUserSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
+import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 
 interface RegisterPageContentProps {
     userRoles: IUserRole[] | undefined;
@@ -28,12 +29,14 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     } = useContext(UserProfileContext);
     const [markers, sendData]:any = useState({home: {lat: null, lon: null},work: {lat: null, lon: null},school: {lat: null, lon: null}});
     const [map, showMap] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [segment, setSegment] = useState<ISegment>();
     const [subSegments, setSubSegments] = useState<ISubSegment[]>();
     const [segment2, setSegment2] = useState<ISegment>();
     const [subSegments2, setSubSegments2] = useState<ISubSegment[]>();
     const [subIds, setSubIds] = useState<any[]>([]);
     const [segIds, setSegIds] = useState<any[]>([]);
+    const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
     const selectString:string = "Select your Neighbourhood (optional)";
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
@@ -60,6 +63,7 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     useEffect(()=>{
         //This allows the first click on the map to update the markers variables in the step handler functions.
     },[markers])
+    console.log(segmentRequests);
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
@@ -105,7 +109,6 @@ return (
                 workTransfer={workTransfer}
                 schoolTransfer={schoolTransfer}
                 onSubmit={async(values,helpers)=>{
-                    console.log(values);
                     // const {email, password, confirmPassword} = values;
                     try {
                         const { token, user } = await postRegisterUser(values);
@@ -114,7 +117,10 @@ return (
                         setToken(token);
                         setUser(user);
                         console.log(token);
-                        //await postUserSegmentInfo(values, token);
+                        await postUserSegmentInfo(values, token);
+                        segmentRequests.forEach(seg => {
+                            
+                        });
                         //PLACEHOLDER//
                         //For segment request functionality.
 
@@ -130,23 +136,39 @@ return (
                     password: Yup.string().min(8, 'Password is too short, 8 characters minimum'),
                     confirmPassword: Yup.string()
                     .oneOf([Yup.ref('password'), null], 'Passwords must match')})}>
-                    <h1>Create An Account</h1>
-                    <BForm.Label>Email address</BForm.Label> 
-                    <Field required name="email" type="email" as={BForm.Control}/>
-                    <BForm.Label>Password</BForm.Label>
-                    <Field required name="password" type="password" as={BForm.Control}/>
-                    <ErrorMessage name="password">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
-                    <BForm.Label>Confirm Password</BForm.Label>
-                    <Field required name="confirmPassword" type="password" as={BForm.Control}/>
-                    <ErrorMessage name="confirmPassword">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
-                    <BForm.Label>First Name</BForm.Label>
-                    <Field required name="fname" type="text" as={BForm.Control}/>
-                    <BForm.Label>Last Name</BForm.Label>
-                    <Field required name="lname" type="text" as={BForm.Control}/>
-                    <BForm.Label>Zip / Postal Code</BForm.Label>
-                    <Field required name="address.streetAddress" type="text" as={BForm.Control}/>
-                    <BForm.Label>Street Name</BForm.Label>
-                    <Field name="address.postalCode" type="text" as={BForm.Control}/>
+                    <BForm.Group>
+                        <h1>Create An Account</h1>
+                        <BForm.Label>Email address</BForm.Label> 
+                        <Field required name="email" type="email" as={BForm.Control}/>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Password</BForm.Label>
+                        <Field required name="password" type="password" as={BForm.Control}/>
+                        <ErrorMessage name="password">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Confirm Password</BForm.Label>
+                        <Field required name="confirmPassword" type="password" as={BForm.Control}/>
+                        <ErrorMessage name="confirmPassword">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>First Name</BForm.Label>
+                        <Field required name="fname" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Last Name</BForm.Label>
+                        <Field required name="lname" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Street Name</BForm.Label>
+                        <Field required name="address.streetAddress" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>ZIP / Postal Code</BForm.Label>
+                        <Field name="address.postalCode" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+
+                    
                 </FormikStep>
 
                 <FormikStep>
@@ -156,19 +178,25 @@ return (
                 </FormikStep>
 
                 <FormikStep >
-                    <BForm.Label>Select your home municipality</BForm.Label>
-                    <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
-                        refactorSegIds(0,parseInt(e.target.value));
-                        refactorSubIds(0, null);
-                        }}>
-                        {segment && <option value={segment?.segId}>{segment?.name}</option>}
-                        {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
-                    </BForm.Control>
-                    <BForm.Label></BForm.Label>
-                    <BForm.Control name="homeSubName" as="select" onChange={(e)=>{refactorSubIds(0,parseInt(e.target.value))}}>
-                        <option hidden>{selectString}</option>
-                        {displaySubSegList(segIds[0])}
-                    </BForm.Control>
+                    <BForm.Group>
+                        <BForm.Label>Select your home municipality</BForm.Label>
+                        <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
+                            refactorSegIds(0,parseInt(e.target.value));
+                            refactorSubIds(0, null);
+                            }}>
+                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
+                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                        </BForm.Control>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Select your Neighbourhood (optional)</BForm.Label>
+                        <BForm.Control name="homeSubName" as="select" onChange={(e)=>{refactorSubIds(0,parseInt(e.target.value))}}>
+                            <option hidden></option>
+                            {displaySubSegList(segIds[0])}
+                        </BForm.Control>
+                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                    </BForm.Group>
+                    <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests} />
                 </FormikStep>
 
                 <FormikStep >
@@ -188,13 +216,25 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                    <BForm.Label>Your Work Municipality is</BForm.Label>
-                    <BForm.Control readOnly name="workSegName" defaultValue={segment?.name}></BForm.Control>
-                    <BForm.Label></BForm.Label>
-                    <BForm.Control name="workSubName" as="select" onChange={(e)=>{refactorSubIds(1,parseInt(e.target.value))}}>
-                        <option hidden>{selectString}</option>
-                    {subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>))};
-                    </BForm.Control>
+                    <BForm.Group>
+                        <BForm.Label>Your Work Municipality is</BForm.Label>
+                        <BForm.Control name="workSegmentId" as="select" onChange={(e)=>{
+                            refactorSegIds(1,parseInt(e.target.value));
+                            refactorSubIds(1, null);
+                            }}>
+                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
+                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                        </BForm.Control>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Select your Neighbourhood</BForm.Label>
+                        <BForm.Control name="workSubName" as="select" onChange={(e)=>{refactorSubIds(1,parseInt(e.target.value))}}>
+                            <option hidden></option>
+                            {displaySubSegList(segIds[1])}
+                        </BForm.Control>
+                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                    </BForm.Group>
+                    <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={1} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
                 </FormikStep>
 
                 <FormikStep >
@@ -214,23 +254,40 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                    <BForm.Label>Your School Municipality is</BForm.Label>
-                    <BForm.Control readOnly name="schoolSegName" defaultValue={segment?.name}></BForm.Control>
-                    <BForm.Label></BForm.Label>
-                    <BForm.Control name="schoolSubName" as="select" onChange={(e)=>{refactorSubIds(2,parseInt(e.target.value))}}>
-                    <option hidden>{selectString}</option>
-                    {subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>))};
-                    </BForm.Control>
+                    <BForm.Group>   
+                        <BForm.Label>Your School Municipality is</BForm.Label>
+                        <BForm.Control name="schoolSegmentId" as="select" onChange={(e)=>{
+                            refactorSegIds(2,parseInt(e.target.value));
+                            refactorSubIds(2, null);
+                            }}>
+                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
+                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                        </BForm.Control>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Select your Neighbourhood</BForm.Label>
+                        <BForm.Control name="schoolSubName" as="select" onChange={(e)=>{refactorSubIds(2,parseInt(e.target.value))}}>
+                            <option hidden></option>
+                            {displaySubSegList(segIds[2])}
+                        </BForm.Control>
+                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                    </BForm.Group>
+                    <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={2} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>                   
                 </FormikStep>
 
                 <FormikStep>
-                        <h3>Privacy Policy</h3>
+                        <h3>Privacy Policy (temp test page)</h3>
                         <p>By clicking next you verify that MyLivingCity has the right to store your personal information.</p>
                 </FormikStep>
 
                 <FormikStep>
                     <div className="text-center">
+                    <h3 className="mb-4">Summary</h3>
                     <h3 className="mb-4">Press submit to complete registration!</h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15%" height="15%" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
+                    <path style={{fill:"#98cc74"}}d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path style={{fill:"#98cc74"}} d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                    </svg>
                     {/* <Image width='50%' src='/banner/MyLivingCity_Logo_Name-Tagline.png' className="mb-2"/> */}
                     </div>
 
@@ -348,9 +405,10 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
 
                 if(testMode){
                     const seg2 = await findSegmentByName({segName:'saanich', province:'british columbia', country:'canada' });
-                    const sub2 = await findSubsegmentsBySegmentId(seg.segId);
+                    const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
                     props.setSegment2(seg2);
                     props.setSubSegments2(sub2);
+                    console.log(sub2);
                     //refactorSegIds(index, seg.segId);
                 }else{
                     props.setSegment2(null);

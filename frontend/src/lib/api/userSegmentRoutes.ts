@@ -14,28 +14,22 @@ export const postUserSegmentInfo = async (registerData: IRegisterInput, token:st
     } = registerData;
     // Verify Payload
     if (!homeSegmentId) {
-        throw new Error("You must provide an email and password to sign up.")
+        throw new Error("You must have at least home segment to sign up!")
     }
-
-    const res = await axios.post(`${API_BASE_URL}/userSegment/create`, {
-        homeSegmentId,
-        workSegmentId,
-        schoolSegmentId,
-        homeSubSegmentId,
-        workSubSegmentId,
-        schoolSubSegmentId
-    }, getAxiosJwtRequestOption(token));
-    // const res = await axios({
-    //     method: "post",
-    //     url: `${API_BASE_URL}/userSegment/create`,
-    //     data: { 
-    //         homeSegmentId,
-    //         workSegmentId,
-    //         schoolSegmentId,
-    //         homeSubSegmentId,
-    //         workSubSegmentId,
-    //         schoolSubSegmentId
-    //     },getAxiosJwtRequestOption(token),
-    // })
+    const res = await axios({
+        method: "post",
+        url: `${API_BASE_URL}/userSegment/create`,
+        data: { 
+            homeSegmentId,
+            workSegmentId,
+            schoolSegmentId,
+            homeSubSegmentId,
+            workSubSegmentId,
+            schoolSubSegmentId
+        },
+        headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": token},
+        withCredentials: true
+    })
+    console.log(res.data);
     return res.data;
 }
