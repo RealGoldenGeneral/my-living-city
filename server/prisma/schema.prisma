@@ -232,12 +232,12 @@ model Idea {
   authorId   String  @map("author_id")
   championId String? @map("champion_id")
   categoryId Int     @map("category_id")
+  // SegmentId       Int      @map("user_segment_id")
+  // SubSegmentId    Int      @map("user_sub_segemtn_id")
 
   // Values
   title               String
   description         String
-  userSegment         String?   @map("idea_user_segment")
-  userSubSegment      String?   @map("idea_user")
   communityImpact     String?   @map("community_impact")
   natureImpact        String?   @map("nature_impact")
   artsImpact          String?   @map("arts_impact")
@@ -261,6 +261,8 @@ model Idea {
   author   User     @relation("author", fields: [authorId], references: [id])
   champion User?    @relation("champion", fields: [championId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
+  // segment  Segments  @relation(fields: [SegmentId], references: [segId])
+  // subSegment SubSegments @relation(fields: [SubSegmentId], references: [segId])
 
   @@map(name: "idea")
 }

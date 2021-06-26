@@ -9,10 +9,13 @@ import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 import { IUserSegments } from '../../lib/types/data/userSegment.type';
 import { useUserSegments } from 'src/hooks/userSegmentsHooks';
+import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
-  userSegments: IUserSegments | undefined
+  // userSegments: IUserSegments | undefined
+  segment: (ISegment | undefined)[]
+  subSegment: (ISubSegment | undefined)[]
 }
 
 /**
@@ -20,8 +23,10 @@ interface SubmitIdeaPageContentProps {
  * default will be used if categories can't be fetched from server
  */
 const DEFAULT_CAT_ID = 1;
+const DEFAULT_SEG_ID = 1;
+const DEFAULT_SUBSEG_ID = 1;
 
-const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, userSegments }) => {
+const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, segment, subSegment }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const { token } = useContext(UserProfileContext);
@@ -35,9 +40,24 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   // }
   
   // callSegmentsName(data!);
-  console.log(userSegments)
+  // console.log(userSegments)
+
+  console.log(categories);
+  // console.log(categories?.map(cat => cat.id))
+  // console.log(categories?.map(cat => cat.title))
+
+  // console.log(segment);
+  // console.log(segment.map(seg => seg?.segId))
+  // console.log(segment.map(seg => seg?.name))
+
+  // console.log(subSegment);
+  // console.log(subSegment.map(subSeg => subSeg?.segId))
+  // console.log(subSegment.map(subSeg => subSeg?.name))
+
+  // console.log(subSegment);
 
   const submitHandler = async (values: ICreateIdeaInput) => {
+    console.log(values);
     try {
       // Set loading and error state
       setError(null);
@@ -65,8 +85,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
       title: '',
       description: '',
-      userSegment: '',
-      userSubSegment: '',
+      // segmentId: segment ? segment[0]?.segId : DEFAULT_SEG_ID,
+      // subSegmentId: subSegment ? subSegment[0]?.segId : DEFAULT_SUBSEG_ID,
       artsImpact: '',
       communityImpact: '',
       energyImpact: '',
@@ -117,49 +137,49 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               </Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="SegmentDropDown">
+            {/* <Form.Group controlId="SegmentDropDown">
               <Form.Label>Select Segment: </Form.Label>
               <Form.Control
                 as="select"
-                name="userSegmentDropdown"
+                name="segmentId"
                 onChange={formik.handleChange}
-                value={formik.values.categoryId}
+                value={formik.values.segmentId}
               >
-                {categories && categories.map(cat => (
-                  <option 
-                    key={String(cat.id)} 
-                    value={Number(cat.id)}
+                {segment && segment.map(seg => (
+                  <option
+                    key={String(seg?.segId)}
+                    value={Number(seg?.segId)}
                     style={{
                       textTransform: 'capitalize'
                     }}
                   >
-                    {capitalizeString(cat.title)}
+                    {seg?.name && capitalizeString(seg?.name)}
                   </option>
                 ))}
               </Form.Control>
             </Form.Group>
 
             <Form.Group controlId="SubSegmentDropDown">
-              <Form.Label>Select Sub-Segment: </Form.Label>
+              <Form.Label>Select Segment: </Form.Label>
               <Form.Control
                 as="select"
-                name="SubSegmentDropDown"
+                name="subSegmentId"
                 onChange={formik.handleChange}
-                value={formik.values.categoryId}
+                value={formik.values.subSegmentId}
               >
-                {categories && categories.map(cat => (
-                  <option 
-                    key={String(cat.id)} 
-                    value={Number(cat.id)}
+                {subSegment && subSegment.map(subSeg => (
+                  <option
+                    key={String(subSeg?.segId)}
+                    value={Number(subSeg?.segId)}
                     style={{
                       textTransform: 'capitalize'
                     }}
                   >
-                    {capitalizeString(cat.title)}
+                    {subSeg?.name && capitalizeString(subSeg?.name)}
                   </option>
                 ))}
               </Form.Control>
-            </Form.Group>
+            </Form.Group> */}
 
 
             <Form.Group>

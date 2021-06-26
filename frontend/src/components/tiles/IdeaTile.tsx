@@ -28,6 +28,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       {/* <Card.Img variant="top" src="https://via.placeholder.com/300x150" /> */}
       <Card.Body>
         <Card.Title>{truncateString(title, 50)}</Card.Title>
+        <Card.Subtitle>Segment and Subsegment</Card.Subtitle>
         <Card.Text>{truncateString(description, 100)}</Card.Text>
         <div className="button-breakdown mt-3 d-flex justify-content-between align-items-center">
           <Card.Link href={`/ideas/${id}`}>
