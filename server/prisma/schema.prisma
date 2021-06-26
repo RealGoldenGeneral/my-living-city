@@ -228,12 +228,12 @@ model IdeaAddress {
 
 model Idea {
   // Keys
-  id         Int     @id @default(autoincrement())
-  authorId   String  @map("author_id")
-  championId String? @map("champion_id")
-  categoryId Int     @map("category_id")
-  // SegmentId       Int      @map("user_segment_id")
-  // SubSegmentId    Int      @map("user_sub_segemtn_id")
+  id           Int     @id @default(autoincrement())
+  authorId     String  @map("author_id")
+  championId   String? @map("champion_id")
+  categoryId   Int     @map("category_id")
+  segmentId    Int     @map("segment_id")
+  subSegmentId Int     @map("sub_segment_id")
 
   // Values
   title               String
@@ -258,11 +258,11 @@ model Idea {
 
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
-  author   User     @relation("author", fields: [authorId], references: [id])
-  champion User?    @relation("champion", fields: [championId], references: [id])
-  category Category @relation(fields: [categoryId], references: [id])
-  // segment  Segments  @relation(fields: [SegmentId], references: [segId])
-  // subSegment SubSegments @relation(fields: [SubSegmentId], references: [segId])
+  author     User        @relation("author", fields: [authorId], references: [id])
+  champion   User?       @relation("champion", fields: [championId], references: [id])
+  category   Category    @relation(fields: [categoryId], references: [id])
+  segment    Segments    @relation(fields: [segmentId], references: [segId])
+  subSegment SubSegments @relation(fields: [subSegmentId], references: [id])
 
   @@map(name: "idea")
 }
@@ -410,6 +410,7 @@ model Segments {
   workSegments   UserSegments[] @relation("workSegment")
   schoolSegments UserSegments[] @relation("schoolSegment")
   User           User[]
+  Idea           Idea[]
   @@map(name: "segment")
 }
 
@@ -428,6 +429,7 @@ model SubSegments {
   schoolSubSegments UserSegments[] @relation("schoolSubSegment")
 
   @@map(name: "sub_segment")
+  Idea Idea[]
 }
 
 model segmentRequest {
