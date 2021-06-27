@@ -6,7 +6,7 @@ import { postCreateIdea } from '../../lib/api/ideaRoutes';
 import { ICategory } from '../../lib/types/data/category.type';
 import { ICreateIdeaInput } from '../../lib/types/input/createIdea.input';
 import { IFetchError } from '../../lib/types/types';
-import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
+import { capitalizeFirstLetter, capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 import { IUserSegments } from '../../lib/types/data/userSegment.type';
 import { useUserSegments } from 'src/hooks/userSegmentsHooks';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
@@ -151,7 +151,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                       textTransform: 'capitalize'
                     }}
                   >
-                    {seg?.name && capitalizeString(seg?.name)}
+                    {seg?.name && capitalizeFirstLetter(seg?.name)}
                   </option>
                 ))}
               </Form.Control>
@@ -173,7 +173,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                       textTransform: 'capitalize'
                     }}
                   >
-                    {subSeg?.name && capitalizeString(subSeg?.name)}
+                    {subSeg?.name && capitalizeFirstLetter(subSeg?.name)}
                   </option>
                 ))}
               </Form.Control>
