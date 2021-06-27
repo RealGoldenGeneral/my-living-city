@@ -60,8 +60,8 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, token: string |
   const parsedPayload = {
     ...ideaData,
     categoryId: parsedCatId,
-    // segmentId: parsedSegId,
-    // subSegmentId: parsedSubSegId
+    segmentId: parsedSegId,
+    subSegmentId: parsedSubSegId
   }
 
   // console.log(parsedPayload);

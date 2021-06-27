@@ -16,7 +16,7 @@ export interface IIdea {
 	authorId: string;
 	championId: string;
 	categoryId: number;
-	// segmentId: number;
+	// segmentId: number; // uncomment those will have post 400 error
 	// subSegmentId: number;
 	title: string;
 	description: string;
@@ -37,8 +37,8 @@ export interface IIdeaWithRelationship extends IIdea {
   geo?: IGeo;
   address?: IAddress;
   category?: ICategory;
-//   segment?: ISegment;
-//   subSegment?: ISubSegment;
+  segment?: ISegment;
+  subSegment?: ISubSegment;
   author?: IUser;
 	champion?: IUser | null;
   proposalInfo?: IProposal | null;
@@ -57,8 +57,10 @@ export interface IIdeaWithAggregations {
 	id: number;
 	authorId: string;
 	categoryId: number;
-	// segmentId: number;
-	// subSegmentId: number;
+	segmentId: number; //
+	subSegmentId: number; //
+	segmentName: string; //
+	subSegmentName: string; //
 	title: string;
 	description: string;
 	state: IdeaState;

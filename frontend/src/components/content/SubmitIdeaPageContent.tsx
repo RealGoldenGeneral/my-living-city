@@ -42,19 +42,17 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   // callSegmentsName(data!);
   // console.log(userSegments)
 
-  console.log(categories);
+  // console.log(categories);
   // console.log(categories?.map(cat => cat.id))
   // console.log(categories?.map(cat => cat.title))
 
-  // console.log(segment);
+  console.log(segment);
   // console.log(segment.map(seg => seg?.segId))
   // console.log(segment.map(seg => seg?.name))
 
-  // console.log(subSegment);
+  console.log(subSegment);
   // console.log(subSegment.map(subSeg => subSeg?.segId))
   // console.log(subSegment.map(subSeg => subSeg?.name))
-
-  // console.log(subSegment);
 
   const submitHandler = async (values: ICreateIdeaInput) => {
     console.log(values);
@@ -137,7 +135,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               </Form.Control>
             </Form.Group>
 
-            {/* <Form.Group controlId="SegmentDropDown">
+            <Form.Group controlId="SegmentDropDown">
               <Form.Label>Select Segment: </Form.Label>
               <Form.Control
                 as="select"
@@ -179,7 +177,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                   </option>
                 ))}
               </Form.Control>
-            </Form.Group> */}
+            </Form.Group>
 
 
             <Form.Group>
