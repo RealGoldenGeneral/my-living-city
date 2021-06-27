@@ -1,6 +1,6 @@
 import { Button, Col, Row } from 'react-bootstrap';
 import { IIdeaWithRelationship } from '../../lib/types/data/idea.type';
-import { capitalizeString } from '../../lib/utilityFunctions';
+import { capitalizeFirstLetter, capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
 import RatingsSection from '../partials/SingleIdeaContent/RatingsSection';
 import {
@@ -95,8 +95,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
           {/* {capitalizeString(segTitle)} */}
           {/* {capitalizeString(subSegTitle)} */}
-          <h4 className='h5'>Segment: {capitalizeString(segTitle)}</h4>
-          <h4 className='h5'>Sub-Segment: {capitalizeString(subSegTitle)}</h4>
+          <h4 className='h5'>Segment: {capitalizeFirstLetter(segTitle)}</h4>
+          <h4 className='h5'>Sub-Segment: {capitalizeFirstLetter(subSegTitle)}</h4>
           <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
           {!!ideaData.champion && (
             <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
@@ -104,7 +104,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5>
           <br />
           <p>{description}</p>
-          <p><strong>Community and place:</strong> {communityImpact}</p>
+          <p><strong>Community and Place:</strong> {communityImpact}</p>
           <p><strong>Nature and Food Security:</strong> {natureImpact}</p>
           <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p>
           <p><strong>Water and Energy:</strong> {energyImpact}</p>
