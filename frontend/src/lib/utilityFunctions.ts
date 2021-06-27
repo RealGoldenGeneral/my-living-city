@@ -61,6 +61,17 @@ export const capitalizeString = (s: string) => {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
+// Capitalize the first letter of string on each word
+export const capitalizeFirstLetter = (str: string) => {
+	let s = str.split(" ");
+	
+    for (var i = 0, x = s.length; i < x; i++) {
+        s[i] = s[i][0].toUpperCase() + s[i].substr(1);
+    }
+
+    return s.join(" ");
+}
+
 /**
  * Error handling function that parses a potential Axios error that may be thrown when submitting 
  * new data.
