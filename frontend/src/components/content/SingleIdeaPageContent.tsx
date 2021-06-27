@@ -44,7 +44,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     projectInfo,
   } = ideaData;
 
-  console.log(ideaData);
+  // console.log(ideaData);
 
   const { title: catTitle } = category!;
   const { name: segTitle} = segment!;

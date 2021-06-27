@@ -344,7 +344,7 @@ userRouter.post(
 						res.status(400);
 						return res.json({
 							error: err,
-							message: "An Error occured."
+							message: "An Error occurred."
 						});
 					}
 
@@ -380,7 +380,7 @@ userRouter.post(
 					)
 				} catch (error) {
 					res.status(400).json({
-						message: "An error occured while trying to login a user.",
+						message: "An error occurred while trying to login a user.",
 						details: {
 							errorMessage: error.message,
 							errorStack: error.stack,
@@ -430,7 +430,7 @@ userRouter.post(
 			});
 		} catch (error) {
 			res.status(400).json({
-        message: `An Error occured while trying to change the password for the email.`,
+        message: `An Error occurred while trying to change the password for the email.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -479,7 +479,7 @@ userRouter.get(
 			res.json(allUsers);
 		} catch (error) {
 			res.status(400).json({
-        message: "An error occured while trying to fetch all the users.",
+        message: "An error occurred while trying to fetch all the users.",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -564,7 +564,7 @@ userRouter.put(
 			});
 		} catch (error) {
 			res.status(400).json({
-        message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
+        message: `An Error occurred while trying to change the password for the email ${req.user.email}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -648,7 +648,7 @@ userRouter.put(
 			});
 		} catch (error) {
 			res.status(400).json({
-        message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
+        message: `An Error occurred while trying to change the password for the email ${req.user.email}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,

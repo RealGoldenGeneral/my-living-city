@@ -46,11 +46,11 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   // console.log(categories?.map(cat => cat.id))
   // console.log(categories?.map(cat => cat.title))
 
-  console.log(segment);
+  // console.log(segment);
   // console.log(segment.map(seg => seg?.segId))
   // console.log(segment.map(seg => seg?.name))
 
-  console.log(subSegment);
+  // console.log(subSegment);
   // console.log(subSegment.map(subSeg => subSeg?.segId))
   // console.log(subSegment.map(subSeg => subSeg?.name))
 
@@ -69,7 +69,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setError(null);
       formik.resetForm();
     } catch (error) {
-      const genericMessage = 'An error occured while trying to create an Idea.';
+      const genericMessage = 'An error occurred while trying to create an Idea.';
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {
@@ -258,7 +258,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               { error.message}
             </Alert>
           )}
-          {/* TODO: Add ui alert flash to inform user that idea has succesfully been created */}
+          {/* TODO: Add ui alert flash to inform user that idea has successfully been created */}
         </Col>
       </Row>
     </Container>

@@ -32,7 +32,7 @@ categoryRouter.get(
       res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all categories",
+        message: "An error occurred while trying to fetch all categories",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -70,7 +70,7 @@ categoryRouter.get(
       res.status(200).json(foundCategory);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all categories",
+        message: "An error occurred while trying to fetch all categories",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,

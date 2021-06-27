@@ -27,7 +27,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     negRatings
   } = ideaData;
 
-  console.log(ideaData);
+  // console.log(ideaData);
 
   return (
     // <Card style={{ width: '18rem' }}>

@@ -39,7 +39,7 @@ ideaRouter.get(
       res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all ideas",
+        message: "An error occurred while trying to fetch all ideas",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -62,7 +62,7 @@ ideaRouter.post(
       res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all ideas",
+        message: "An error occurred while trying to fetch all ideas",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -141,10 +141,12 @@ ideaRouter.post(
             where rating > 0
             group by idea_id
         ) pr on	i.id = pr.idea_id
+        -- Aggregate idea segment name
         left join (
             select seg_id, segment_name
             from segment
             ) sn on i.segment_id = sn.seg_id
+        -- Aggregate idea sub segment name
         left join (
             select seg_id, sub_segment_name
             from sub_segment
@@ -161,7 +163,7 @@ ideaRouter.post(
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: "An error occured while trying to fetch all ideas",
+        message: "An error occurred while trying to fetch all ideas",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -240,7 +242,7 @@ ideaRouter.get(
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: `An Error occured while trying to fetch idea with id ${req.params.ideaId}.`,
+        message: `An Error occurred while trying to fetch idea with id ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -286,7 +288,7 @@ ideaRouter.put(
 
       if (!ideaId || !parsedIdeaId) {
         return res.status(400).json({
-          message: `A valid ideaId must be specified in the route paramater.`,
+          message: `A valid ideaId must be specified in the route parameter.`,
         });
       }
 
@@ -345,12 +347,12 @@ ideaRouter.put(
 
       console.log("Returns here")
       res.status(200).json({
-        message: "Idea succesfully updated",
+        message: "Idea successfully updated",
         idea: updatedIdea,
       })
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while to update an Idea",
+        message: "An error occurred while to update an Idea",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -463,7 +465,7 @@ ideaRouter.post(
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: "An error occured while trying to create an Idea.",
+        message: "An error occurred while trying to create an Idea.",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -487,7 +489,7 @@ ideaRouter.delete(
       // check if id is valid
       if (!parsedIdeaId) {
         return res.status(400).json({
-          message: `A valid ideaId must be specified in the route paramater.`,
+          message: `A valid ideaId must be specified in the route parameter.`,
         });
       }
 
@@ -510,12 +512,12 @@ ideaRouter.delete(
       const deletedIdea = await prisma.idea.delete({ where: { id: parsedIdeaId }});
 
       res.status(200).json({
-        message: "Idea succesfully deleted",
+        message: "Idea successfully deleted",
         deletedIdea: deletedIdea,
       });
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while to delete an Idea",
+        message: "An error occurred while to delete an Idea",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,

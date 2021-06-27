@@ -299,7 +299,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     //This handles the step and inferStep state variables.
     //Step keeps track of the current child to display.
     //InferStep keeps track of the step icons.
-    //Since some steps will have multiple "steps" the infer step decreases dependant on if map selections have occured.
+    //Since some steps will have multiple "steps" the infer step decreases dependant on if map selections have occurred.
     const handleBackButton = () => {
         if(step % 2 !== 0){
             setInferStep(s=>s-1);

@@ -36,7 +36,7 @@ commentRouter.get(
       res.status(200).json(allIdeaComments);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all Idea Comments.",
+        message: "An error occurred while trying to fetch all Idea Comments.",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -131,7 +131,7 @@ commentRouter.get(
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: `An error occured while trying to fetch all comments under idea ${req.params.ideaId}.`,
+        message: `An error occurred while trying to fetch all comments under idea ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -187,7 +187,7 @@ commentRouter.post(
       res.status(200).json(createdComment);
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to create a comment for idea ${req.params.ideaId}.`,
+        message: `An error occurred while trying to create a comment for idea ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -248,7 +248,7 @@ commentRouter.put(
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to edit comment ${req.params.commentId}.`,
+        message: `An error occurred while trying to edit comment ${req.params.commentId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -300,7 +300,7 @@ commentRouter.delete(
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to delete comment ${req.params.commentId}.`,
+        message: `An error occurred while trying to delete comment ${req.params.commentId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -330,7 +330,7 @@ commentRouter.get(
       res.status(200).json(result);
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to check the comments of idea #${req.params.ideaId}.`,
+        message: `An error occurred while trying to check the comments of idea #${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,

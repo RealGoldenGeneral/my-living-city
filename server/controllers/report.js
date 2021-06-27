@@ -44,7 +44,7 @@ reportRouter.get(
       res.status(200).json(allReports);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all reports",
+        message: "An error occurred while trying to fetch all reports",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -79,7 +79,7 @@ reportRouter.post(
       })
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to create a report.",
+        message: "An error occurred while trying to create a report.",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -123,7 +123,7 @@ reportRouter.delete(
       })
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to delete a report.",
+        message: "An error occurred while trying to delete a report.",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
