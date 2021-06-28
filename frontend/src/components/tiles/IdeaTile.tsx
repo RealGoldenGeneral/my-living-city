@@ -19,6 +19,8 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     subSegmentId,
     segmentName,
     subSegmentName,
+    firstName,
+    streetAddress,
     updatedAt,
     ratingAvg,
     ratingCount,
@@ -27,7 +29,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     negRatings
   } = ideaData;
 
-  // console.log(ideaData);
+  console.log(ideaData);
 
   return (
     // <Card style={{ width: '18rem' }}>
@@ -35,7 +37,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       {/* <Card.Img variant="top" src="https://via.placeholder.com/300x150" /> */}
       <Card.Body>
         <Card.Title>{truncateString(title, 50)}</Card.Title>
-        {/* <Card.Subtitle>{segmentName} at {subSegmentName}</Card.Subtitle> */}
+        {/* <Card.Subtitle>{firstName}@{streetAddress}</Card.Subtitle> */}
         <Card.Text>{truncateString(description, 100)}</Card.Text>
         <div className="button-breakdown mt-3 d-flex justify-content-between align-items-center">
           <Card.Link href={`/ideas/${id}`}>
@@ -66,7 +68,8 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       {showFooter && (
         <Card.Footer>
           <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small><br></br>
-          <small className='text-muted'>{capitalizeFirstLetter(segmentName)} at {capitalizeFirstLetter(subSegmentName)}</small>
+          <small className='text-muted'>{capitalizeFirstLetter(segmentName)} at {capitalizeFirstLetter(subSegmentName)}</small><br></br>
+          <small className='text-muted'>-- {firstName}@{streetAddress}</small>
         </Card.Footer>
       )}
     </Card>

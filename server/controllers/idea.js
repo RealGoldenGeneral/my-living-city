@@ -101,6 +101,8 @@ ideaRouter.post(
       coalesce(nr.neg_rating, 0) as "negRatings",
       coalesce(sn.segment_name, '') as "segmentName",
       coalesce(sbn.sub_segment_name, '') as "subSegmentName",
+      coalesce(userfname.f_name, '') as "firstName",
+      coalesce(userStreetAddress.street_address, '') as "streetAddress",
       i.state,
       i.active,
       i.updated_at as "updatedAt",
@@ -151,6 +153,16 @@ ideaRouter.post(
             select seg_id, sub_segment_name
             from sub_segment
             ) sbn on i.sub_segment_id = sbn.seg_id
+        -- Aggregate author's first name
+        left join  (
+            select id, f_name
+            from "user"
+            ) userfname on i.author_id = userfname.id
+        -- Aggregate author's address
+        left join (
+            select user_id, street_address
+            from user_address
+            ) userStreetAddress on i.author_id = userStreetAddress.user_id
         order by
           "ratingCount" desc,
           "ratingAvg" desc,

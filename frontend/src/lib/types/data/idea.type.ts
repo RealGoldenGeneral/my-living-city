@@ -61,6 +61,8 @@ export interface IIdeaWithAggregations {
 	subSegmentId: number; //
 	segmentName: string; //
 	subSegmentName: string; //
+	firstName: string; //
+	streetAddress: string; //
 	title: string;
 	description: string;
 	state: IdeaState;
