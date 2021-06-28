@@ -60,10 +60,11 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
             }  
     }
-    useEffect(()=>{
-        //This allows the first click on the map to update the markers variables in the step handler functions.
-    },[markers])
-    console.log(segmentRequests);
+    // useEffect(()=>{
+    //     //This allows the first click on the map to update the markers variables in the step handler functions.
+    // },[markers])
+    console.log(segment);
+    console.log(segment2);
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
@@ -282,12 +283,7 @@ return (
 
                 <FormikStep>
                     <div className="text-center">
-                    <h3 className="mb-4">Summary</h3>
                     <h3 className="mb-4">Press submit to complete registration!</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15%" height="15%" fill="currentColor" className="bi bi-check-circle" viewBox="0 0 16 16">
-                    <path style={{fill:"#98cc74"}}d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                    <path style={{fill:"#98cc74"}} d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                    </svg>
                     {/* <Image width='50%' src='/banner/MyLivingCity_Logo_Name-Tagline.png' className="mb-2"/> */}
                     </div>
 
@@ -347,12 +343,6 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     //     if(segIds[1]) return segIds[1] 
     //     else return segIds[0];
     // }
-    //Handles the refactoring of the state segIds array.
-    // const refactorSegIds = (index: number, segId: number) => {
-    //     let ids = [...segIds];
-    //     ids[index] = segId;
-    //     setSegIds(ids);
-    // }
     //This handles the step and inferStep state variables.
     //Step keeps track of the current child to display.
     //InferStep keeps track of the step icons.
@@ -380,48 +370,77 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             //PLACEHOLDER for GOOGLE API query
             setError(null);
             setIsLoading(true);
-            // switch(index){
-            //     case 0:
-            //         googleQuery = await searchForLocation(markers.home);
-            //         console.log('google home query');
-            //     break;
-            //     case 1:
-            //         googleQuery = await searchForLocation(markers.work);
-            //         console.log('google work query');
-            //     break;
-            //     case 2:
-            //         googleQuery = await searchForLocation(markers.school);
-            //         console.log('google school query');
-            //     break;
-            //     default:
-            // }
-            if(testMode){
-                const seg = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
-                const sub = await findSubsegmentsBySegmentId(seg.segId);
-                props.setSegment(seg);
-                props.setSubSegments(sub);
-                refactorSegIds(index,seg.segId);
-                //refactorSegIds(index, seg.segId);
-
-                if(testMode){
-                    const seg2 = await findSegmentByName({segName:'saanich', province:'british columbia', country:'canada' });
-                    const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
+            console.log(markers);
+            switch(index){
+                case 0:
+                    googleQuery = await searchForLocation(markers.home);
+                    console.log('google home query');
+                break;
+                case 1:
+                    googleQuery = await searchForLocation(markers.work);
+                    console.log('google work query');
+                break;
+                case 2:
+                    googleQuery = await searchForLocation(markers.school);
+                    console.log('google school query');
+                break;
+                default:
+            }
+            if(googleQuery){
+                const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
+                const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
+                if(seg){
+                    props.setSegment(seg);
+                    refactorSegIds(index,seg.segId);
+                    const sub = await findSubsegmentsBySegmentId(seg.segId);
+                    props.setSubSegments(sub);
+                }else{
+                    props.setSegment(null);
+                    props.setSubSegments(null);
+                }
+                if(seg2){
+                    console.log('here');
                     props.setSegment2(seg2);
+                    refactorSegIds(index,seg2.segId);
+                    const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
                     props.setSubSegments2(sub2);
-                    console.log(sub2);
-                    //refactorSegIds(index, seg.segId);
                 }else{
                     props.setSegment2(null);
                     props.setSubSegments2(null);
                 }
             }
-
             setStep(s=>s+1);
+            // if(googleQuery){
+            //     console.log('hello');
+            //     // const seg = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
+            //     const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
+            //     const sub = await findSubsegmentsBySegmentId(seg.segId);
+            //     props.setSegment(seg);
+            //     props.setSubSegments(sub);
+            //     refactorSegIds(index,seg.segId);
+            //     //refactorSegIds(index, seg.segId);
+
+            //     if(googleQuery){
+            //         // const seg2 = await findSegmentByName({segName:'saanich', province:'british columbia', country:'canada' });
+            //         const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
+            //         const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
+            //         props.setSegment2(seg2);
+            //         props.setSubSegments2(sub2);
+            //         //refactorSegIds(index, seg.segId);
+            //     }else{
+            //         props.setSegment2(null);
+            //         props.setSubSegments2(null);
+            //     }
+            // }
+
         }catch(err){
+            console.log(err);
             //placeHolder
             //Need to do better error handling here.
             //setError(new Error(err.response.data));
+        } finally {
         }
+        
     }
 return(
     <Formik

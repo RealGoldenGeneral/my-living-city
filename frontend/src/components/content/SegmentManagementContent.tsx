@@ -7,6 +7,7 @@ import { capitalizeString } from '../../lib/utilityFunctions';
 import {createSegment, createSubSegment, updateSegment, updateSubSegment} from '../../lib/api/segmentRoutes';
 import {useAllSubSegmentsWithId} from '../../hooks/segmentHooks';
 import { ShowSubSegmentsPage } from 'src/pages/ShowSubSegmentsPage';
+import { UserSegmentCard } from '../partials/UserSegmentCard';
 //import {Image} from 'react-native';
 
 export interface ShowSubSegmentsProps {
@@ -264,6 +265,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token}) => 
       {(showSub && segId) &&
         <ShowSubSegmentsPage segId={segId} segName={segName}token={token}/>
     }
+    <UserSegmentCard/>
 
       </Col>
       
