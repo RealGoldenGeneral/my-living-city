@@ -4,6 +4,7 @@ const express = require('express');
 const ideaRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 const { checkIdeaThresholds } = require('../lib/prismaFunctions');
+const { isInteger } = require('lodash');
 
 ideaRouter.get(
   '/',
@@ -353,19 +354,61 @@ ideaRouter.post(
   passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
+      let error = '';
+      let errorMessage = '';
+      let errorStack = '';
       // passport middleware provides this based on JWT
       const { email, id } = req.user;
-      const { categoryId } = req.body;
+      const { categoryId , segmentId, subSegmentId} = req.body;
 
       // Check if category id is added
-      if (!categoryId) {
+      if (!categoryId||!isInteger(categoryId)) {
+        error+='An Idea must be under a specific category.';
+        errorMessage+='Creating an idea must explicitly be supplied with a "categoryId" field.';
+        errorStack+='"CategoryId" must be defined in the body with a valid id found in the database.';
+      }
+
+      if(!segmentId||!isInteger(segmentId)){
+        error+='An Idea must belongs to a segment.';
+        errorMessage+='Creating an idea must explicitly be supplied with a "segmentId" field.';
+        errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
+      }else{
+        const result = await prisma.segments.findUnique({
+          where:{segId:segmentId}
+        });
+
+        if(!result){
+          error+='An Idea must belongs to a segment.';
+          errorMessage+='Creating an idea must explicitly be supplied with a "segmentId" field.';
+          errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
+        }
+      }
+
+      if(!subSegmentId||!isInteger(subSegmentId)){
+        error+='An Idea must belongs to a subsegment.';
+        errorMessage+='Creating an idea must explicitly be supplied with a "subSegmentId" field.';
+        errorStack+='"subSegmentId" must be defined in the body with a valid id found in the database.';
+      }else{
+        const result = await prisma.subSegments.findUnique({
+          where:{id:subSegmentId}
+        });
+
+        if(!result){
+          error+='An Idea must belongs to a subsegment.';
+          errorMessage+='Creating an idea must explicitly be supplied with a "subSegmentId" field.';
+          errorStack+='"subSegmentId" must be defined in the body with a valid id found in the database.';
+        }
+      }
+
+      //If there's error in error holder
+      if(error||errorMessage||errorStack){
         return res.status(400).json({
-          message: 'An Idea must be under a specific category.',
-          details: {
-            errorMessage: 'Creating an idea must explicitly be supplied with a "categoryId" field.',
-            errorStack: '"CategoryId" must be defined in the body with a valid id found in the database.',
-          }
-        })
+            message: error,
+            details: {
+              errorMessage: errorMessage,
+              errorStack: errorStack
+            }
+        });
       }
 
       // Parse data

@@ -13,9 +13,15 @@ export const UserSegmentCard: React.FC<UserSegmentCardProps> = ({}) => {
             <thead>
                 <tr>
                 <th scope="col">#</th>
+<<<<<<< HEAD
                 <th scope="col">Name</th>
                 <th scope="col">Last</th>
                 <th scope="col">Handle</th>
+=======
+                <th scope="col">Country</th>
+                <th scope="col">Canada</th>
+                <th scope="col">Province</th>
+>>>>>>> Capstone-Dev
                 </tr>
             </thead>
             <tbody>
