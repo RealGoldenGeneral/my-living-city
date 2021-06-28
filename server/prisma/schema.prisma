@@ -27,9 +27,10 @@ model Report {
 // User Entity
 enum UserType {
   ADMIN
-  BUSINESS
-  PERSONAL
-  MUNICIPAL
+  MOD
+  SEG_ADMIN
+  SEG_MOD
+  MUNICIPAL_SEG_ADMIN
 
   @@map(name: "user_type")
 }
@@ -428,8 +429,8 @@ model SubSegments {
   workSubSegments   UserSegments[] @relation("workSubSegment")
   schoolSubSegments UserSegments[] @relation("schoolSubSegment")
 
-  @@map(name: "sub_segment")
   Idea Idea[]
+  @@map(name: "sub_segment")
 }
 
 model segmentRequest {
