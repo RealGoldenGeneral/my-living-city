@@ -93,8 +93,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
             <h4 className='text-center my-auto text-muted'>Status: <span>{state}</span></h4>
           </div>
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
-          <h4 className='h5'>Segment: {capitalizeFirstLetter(segTitle)}</h4>
-          <h4 className='h5'>Sub-Segment: {capitalizeFirstLetter(subSegTitle)}</h4>
+          <h4 className='h5'>Municipality: {capitalizeFirstLetter(segTitle)}</h4>
+          <h4 className='h5'>Neighborhood: {capitalizeFirstLetter(subSegTitle)}</h4>
           <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
           {!!ideaData.champion && (
             <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>

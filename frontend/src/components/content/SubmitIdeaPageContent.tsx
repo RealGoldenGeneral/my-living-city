@@ -136,7 +136,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             </Form.Group>
 
             <Form.Group controlId="SegmentDropDown">
-              <Form.Label>Select Segment: </Form.Label>
+              <Form.Label>Select Municipality: </Form.Label>
               <Form.Control
                 as="select"
                 name="segmentId"
@@ -158,7 +158,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             </Form.Group>
 
             <Form.Group controlId="SubSegmentDropDown">
-              <Form.Label>Select Segment: </Form.Label>
+              <Form.Label>Select Neighborhood: </Form.Label>
               <Form.Control
                 as="select"
                 name="subSegmentId"
