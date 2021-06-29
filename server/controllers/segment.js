@@ -451,9 +451,9 @@ segmentRouter.post(
                 }
             });
 
-            if(!result){
-                return res.status(404).json("Segment not found!");
-            }
+            // if(!result){
+            //     return res.status(404).json("Segment not found!");
+            // }
 
             res.status(200).json(result);
         }catch(error){

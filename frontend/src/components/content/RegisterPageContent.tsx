@@ -12,10 +12,12 @@ import Stepper from 'react-stepper-horizontal';
 import '../../../src/scss/ui/_other.scss';
 import { IFetchError } from '../../lib/types/types';
 import { searchForLocation } from 'src/lib/api/googleMapQuery';
-import { postRegisterUser } from 'src/lib/api/userRoutes';
+import { getUserWithEmail, postRegisterUser } from 'src/lib/api/userRoutes';
 import { postUserSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
+import { RequestSegmentModal } from '../partials/RequestSegmentModal';
+import { postUserSegmentRequest } from 'src/lib/api/userSegmentRequestRoutes';
 
 interface RegisterPageContentProps {
     userRoles: IUserRole[] | undefined;
@@ -27,13 +29,16 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
         setUser,
     } = useContext(UserProfileContext);
     const [markers, sendData]:any = useState({home: {lat: null, lon: null},work: {lat: null, lon: null},school: {lat: null, lon: null}});
+    const [isLoading, setIsLoading] = useState(false);
     const [map, showMap] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [segment, setSegment] = useState<ISegment>();
     const [subSegments, setSubSegments] = useState<ISubSegment[]>();
     const [segment2, setSegment2] = useState<ISegment>();
     const [subSegments2, setSubSegments2] = useState<ISubSegment[]>();
     const [subIds, setSubIds] = useState<any[]>([]);
     const [segIds, setSegIds] = useState<any[]>([]);
+    const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
     const selectString:string = "Select your Neighbourhood (optional)";
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
@@ -57,9 +62,15 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
             }  
     }
-    useEffect(()=>{
-        //This allows the first click on the map to update the markers variables in the step handler functions.
-    },[markers])
+    // useEffect(()=>{
+    //     //This allows the first click on the map to update the markers variables in the step handler functions.
+    // },[markers])
+    async function test(){
+        const num = await getUserWithEmail("stevddasdfasdfasdfasdfgasdfe@gmail.com");
+        console.log(num);
+    }
+    test();
+    console.log(segmentRequests);
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
@@ -105,16 +116,21 @@ return (
                 workTransfer={workTransfer}
                 schoolTransfer={schoolTransfer}
                 onSubmit={async(values,helpers)=>{
-                    console.log(values);
                     // const {email, password, confirmPassword} = values;
                     try {
+                        setIsLoading(true);
                         const { token, user } = await postRegisterUser(values);
+                        if(segmentRequests.length > 0){
+                            segmentRequests.forEach(seg => {
+                                postUserSegmentRequest(seg, token);
+                            });
+                        }
+                        await postUserSegmentInfo(values, token);
                         storeUserAndTokenInLocalStorage(token, user);
                         storeTokenExpiryInLocalStorage();
                         setToken(token);
                         setUser(user);
                         console.log(token);
-                        //await postUserSegmentInfo(values, token);
                         //PLACEHOLDER//
                         //For segment request functionality.
 
@@ -122,31 +138,56 @@ return (
                         } catch (error) {
                             console.log(error);
                             wipeLocalStorage();
+                        }finally{
+                            setIsLoading(false);
                         }
                 }
             }
             >
                 <FormikStep validationSchema={Yup.object().shape({
                     password: Yup.string().min(8, 'Password is too short, 8 characters minimum'),
-                    confirmPassword: Yup.string()
-                    .oneOf([Yup.ref('password'), null], 'Passwords must match')})}>
-                    <h1>Create An Account</h1>
-                    <BForm.Label>Email address</BForm.Label> 
-                    <Field required name="email" type="email" as={BForm.Control}/>
-                    <BForm.Label>Password</BForm.Label>
-                    <Field required name="password" type="password" as={BForm.Control}/>
-                    <ErrorMessage name="password">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
-                    <BForm.Label>Confirm Password</BForm.Label>
-                    <Field required name="confirmPassword" type="password" as={BForm.Control}/>
-                    <ErrorMessage name="confirmPassword">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
-                    <BForm.Label>First Name</BForm.Label>
-                    <Field required name="fname" type="text" as={BForm.Control}/>
-                    <BForm.Label>Last Name</BForm.Label>
-                    <Field required name="lname" type="text" as={BForm.Control}/>
-                    <BForm.Label>Zip / Postal Code</BForm.Label>
-                    <Field required name="address.streetAddress" type="text" as={BForm.Control}/>
-                    <BForm.Label>Street Name</BForm.Label>
-                    <Field name="address.postalCode" type="text" as={BForm.Control}/>
+                    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
+                    email: Yup.string().email('Invalid email')
+                    .test('Unique Email','Email already in use', 
+                        function(value){return new Promise((resolve, reject) => {
+                            getUserWithEmail(value)
+                            .then(res => {res === 200 ? resolve(false) : resolve(true)})
+                        })})
+                    })}>
+                    <BForm.Group>
+                        <h1>Create An Account</h1>
+                        <BForm.Label>Email address</BForm.Label> 
+                        <Field required name="email" type="email" as={BForm.Control}/>
+                        <ErrorMessage name="email">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Password</BForm.Label>
+                        <Field required name="password" type="password" as={BForm.Control}/>
+                        <ErrorMessage name="password">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Confirm Password</BForm.Label>
+                        <Field required name="confirmPassword" type="password" as={BForm.Control}/>
+                        <ErrorMessage name="confirmPassword">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>First Name</BForm.Label>
+                        <Field required name="fname" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Last Name</BForm.Label>
+                        <Field required name="lname" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Street Name</BForm.Label>
+                        <Field required name="address.streetAddress" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>ZIP / Postal Code</BForm.Label>
+                        <Field name="address.postalCode" type="text" as={BForm.Control}/>
+                    </BForm.Group>
+
+                    
                 </FormikStep>
 
                 <FormikStep>
@@ -156,19 +197,25 @@ return (
                 </FormikStep>
 
                 <FormikStep >
-                    <BForm.Label>Select your home municipality</BForm.Label>
-                    <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
-                        refactorSegIds(0,parseInt(e.target.value));
-                        refactorSubIds(0, null);
-                        }}>
-                        {segment && <option value={segment?.segId}>{segment?.name}</option>}
-                        {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
-                    </BForm.Control>
-                    <BForm.Label></BForm.Label>
-                    <BForm.Control name="homeSubName" as="select" onChange={(e)=>{refactorSubIds(0,parseInt(e.target.value))}}>
-                        <option hidden>{selectString}</option>
-                        {displaySubSegList(segIds[0])}
-                    </BForm.Control>
+                    <BForm.Group>
+                        <BForm.Label>Select your home municipality</BForm.Label>
+                        <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
+                            refactorSegIds(0,parseInt(e.target.value));
+                            refactorSubIds(0, null);
+                            }}>
+                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
+                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                        </BForm.Control>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Select your Neighbourhood (optional)</BForm.Label>
+                        <BForm.Control name="homeSubName" as="select" onChange={(e)=>{refactorSubIds(0,parseInt(e.target.value))}}>
+                            <option hidden></option>
+                            {displaySubSegList(segIds[0])}
+                        </BForm.Control>
+                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                    </BForm.Group>
+                    <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests} />
                 </FormikStep>
 
                 <FormikStep >
@@ -188,13 +235,25 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                    <BForm.Label>Your Work Municipality is</BForm.Label>
-                    <BForm.Control readOnly name="workSegName" defaultValue={segment?.name}></BForm.Control>
-                    <BForm.Label></BForm.Label>
-                    <BForm.Control name="workSubName" as="select" onChange={(e)=>{refactorSubIds(1,parseInt(e.target.value))}}>
-                        <option hidden>{selectString}</option>
-                    {subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>))};
-                    </BForm.Control>
+                    <BForm.Group>
+                        <BForm.Label>Your Work Municipality is</BForm.Label>
+                        <BForm.Control name="workSegmentId" as="select" onChange={(e)=>{
+                            refactorSegIds(1,parseInt(e.target.value));
+                            refactorSubIds(1, null);
+                            }}>
+                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
+                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                        </BForm.Control>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Select your Neighbourhood</BForm.Label>
+                        <BForm.Control name="workSubName" as="select" onChange={(e)=>{refactorSubIds(1,parseInt(e.target.value))}}>
+                            <option hidden></option>
+                            {displaySubSegList(segIds[1])}
+                        </BForm.Control>
+                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                    </BForm.Group>
+                    <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={1} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
                 </FormikStep>
 
                 <FormikStep >
@@ -214,17 +273,29 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                    <BForm.Label>Your School Municipality is</BForm.Label>
-                    <BForm.Control readOnly name="schoolSegName" defaultValue={segment?.name}></BForm.Control>
-                    <BForm.Label></BForm.Label>
-                    <BForm.Control name="schoolSubName" as="select" onChange={(e)=>{refactorSubIds(2,parseInt(e.target.value))}}>
-                    <option hidden>{selectString}</option>
-                    {subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>))};
-                    </BForm.Control>
+                    <BForm.Group>   
+                        <BForm.Label>Your School Municipality is</BForm.Label>
+                        <BForm.Control name="schoolSegmentId" as="select" onChange={(e)=>{
+                            refactorSegIds(2,parseInt(e.target.value));
+                            refactorSubIds(2, null);
+                            }}>
+                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
+                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                        </BForm.Control>
+                    </BForm.Group>
+                    <BForm.Group>
+                        <BForm.Label>Select your Neighbourhood</BForm.Label>
+                        <BForm.Control name="schoolSubName" as="select" onChange={(e)=>{refactorSubIds(2,parseInt(e.target.value))}}>
+                            <option hidden></option>
+                            {displaySubSegList(segIds[2])}
+                        </BForm.Control>
+                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                    </BForm.Group>
+                    <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={2} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>                   
                 </FormikStep>
 
                 <FormikStep>
-                        <h3>Privacy Policy</h3>
+                        <h3>Privacy Policy (temp test page)</h3>
                         <p>By clicking next you verify that MyLivingCity has the right to store your personal information.</p>
                 </FormikStep>
 
@@ -290,12 +361,6 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     //     if(segIds[1]) return segIds[1] 
     //     else return segIds[0];
     // }
-    //Handles the refactoring of the state segIds array.
-    // const refactorSegIds = (index: number, segId: number) => {
-    //     let ids = [...segIds];
-    //     ids[index] = segId;
-    //     setSegIds(ids);
-    // }
     //This handles the step and inferStep state variables.
     //Step keeps track of the current child to display.
     //InferStep keeps track of the step icons.
@@ -323,47 +388,79 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             //PLACEHOLDER for GOOGLE API query
             setError(null);
             setIsLoading(true);
-            // switch(index){
-            //     case 0:
-            //         googleQuery = await searchForLocation(markers.home);
-            //         console.log('google home query');
-            //     break;
-            //     case 1:
-            //         googleQuery = await searchForLocation(markers.work);
-            //         console.log('google work query');
-            //     break;
-            //     case 2:
-            //         googleQuery = await searchForLocation(markers.school);
-            //         console.log('google school query');
-            //     break;
-            //     default:
-            // }
-            if(testMode){
-                const seg = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
-                const sub = await findSubsegmentsBySegmentId(seg.segId);
-                props.setSegment(seg);
-                props.setSubSegments(sub);
-                refactorSegIds(index,seg.segId);
-                //refactorSegIds(index, seg.segId);
-
-                if(testMode){
-                    const seg2 = await findSegmentByName({segName:'saanich', province:'british columbia', country:'canada' });
-                    const sub2 = await findSubsegmentsBySegmentId(seg.segId);
+            console.log(markers);
+            switch(index){
+                case 0:
+                    googleQuery = await searchForLocation(markers.home);
+                    console.log('google home query');
+                break;
+                case 1:
+                    googleQuery = await searchForLocation(markers.work);
+                    console.log('google work query');
+                break;
+                case 2:
+                    googleQuery = await searchForLocation(markers.school);
+                    console.log('google school query');
+                break;
+                default:
+            }
+            if(googleQuery.city){
+                const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
+                if(seg){
+                    props.setSegment(seg);
+                    refactorSegIds(index,seg.segId);
+                    const sub = await findSubsegmentsBySegmentId(seg.segId);
+                    props.setSubSegments(sub);
+                }else{
+                    props.setSegment(null);
+                    props.setSubSegments(null);
+                }
+            }
+            if(googleQuery.city2){
+                const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
+                if(seg2){
+                    console.log('here');
                     props.setSegment2(seg2);
+                    refactorSegIds(index,seg2.segId);
+                    const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
                     props.setSubSegments2(sub2);
-                    //refactorSegIds(index, seg.segId);
                 }else{
                     props.setSegment2(null);
                     props.setSubSegments2(null);
                 }
             }
-
             setStep(s=>s+1);
+            // if(googleQuery){
+            //     console.log('hello');
+            //     // const seg = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
+            //     const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
+            //     const sub = await findSubsegmentsBySegmentId(seg.segId);
+            //     props.setSegment(seg);
+            //     props.setSubSegments(sub);
+            //     refactorSegIds(index,seg.segId);
+            //     //refactorSegIds(index, seg.segId);
+
+            //     if(googleQuery){
+            //         // const seg2 = await findSegmentByName({segName:'saanich', province:'british columbia', country:'canada' });
+            //         const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
+            //         const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
+            //         props.setSegment2(seg2);
+            //         props.setSubSegments2(sub2);
+            //         //refactorSegIds(index, seg.segId);
+            //     }else{
+            //         props.setSegment2(null);
+            //         props.setSubSegments2(null);
+            //     }
+            // }
+
         }catch(err){
+            console.log(err);
             //placeHolder
             //Need to do better error handling here.
             //setError(new Error(err.response.data));
+        } finally {
         }
+        
     }
 return(
     <Formik
