@@ -14,11 +14,14 @@ async function main() {
 	];
 
 	const defaultUserRoles = [
-		'resident', 
-		'guest', 
-		'associate', 
-		'worker' 
+		'resident', //Basic user account
+		'guest', //Here for later implementation
+		'associate', //Here for later implementation
+		'worker', //Work location
+		'business', //For business accounts
+		'municipal' //For city/municipal accounts
 	];
+	
 
 	const defaultSuperSegment = [{
 		superSegId:1,

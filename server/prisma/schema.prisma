@@ -27,9 +27,11 @@ model Report {
 // User Entity
 enum UserType {
   ADMIN
+	MOD
+	SEG_ADMIN
+	SEG_MOD
+	MUNICIPAL_SEG_ADMIN
   BUSINESS
-  PERSONAL
-  MUNICIPAL
 
   @@map(name: "user_type")
 }

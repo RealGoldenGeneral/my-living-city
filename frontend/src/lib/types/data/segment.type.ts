@@ -16,3 +16,11 @@ export interface ISubSegment {
     createdAt: Date;
     updatedAt: Date;
 }
+export interface ISegmentRequest {
+    id: number;
+    userId: string;
+    country: string;
+    province: string;
+    segmentName: string;
+    subSegmentName: string;
+}

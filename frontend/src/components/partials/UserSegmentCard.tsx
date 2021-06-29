@@ -1,51 +1,42 @@
-import React from 'react'
-import {Button, Card} from 'react-bootstrap';
+import React, { useState } from 'react'
+import {Button, Card, Table} from 'react-bootstrap';
+import { findSegmentRequests } from 'src/lib/api/segmentRoutes';
+import { ISegmentRequest } from 'src/lib/types/data/segment.type';
 interface UserSegmentCardProps {
-
+    segReq: ISegmentRequest[] | undefined;
 }
 
-export const UserSegmentCard: React.FC<UserSegmentCardProps> = ({}) => {
+export const UserSegmentCard: React.FC<UserSegmentCardProps> = ({segReq}) => {
+    const [showReq, setShowReq] = useState(false);
         return (
         <Card>
-            <Card.Header>Segment and SubSegment Requests<Button className="float-right" size="sm">View Requests</Button></Card.Header>
+            <Card.Header>Segment and SubSegment Requests<Button onClick={()=>{setShowReq(b=>!b)}}className="float-right" size="sm">{showReq ? "Hide Requests": "View Requests"}</Button></Card.Header>
+            {showReq && 
             <Card.Body>
-            <table className="table table-striped">
+            <Table bordered hover>
             <thead>
                 <tr>
-                <th scope="col">#</th>
-<<<<<<< HEAD
-                <th scope="col">Name</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-=======
+                <th scope="col">UserId</th>
                 <th scope="col">Country</th>
-                <th scope="col">Canada</th>
                 <th scope="col">Province</th>
->>>>>>> Capstone-Dev
+                <th scope="col">Segment Name</th>
+                <th scope="col">Sub-Segment Name</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
+            {segReq?.map((req: ISegmentRequest) => (
+                <tr key={req.id}>
+                    <td>{req.userId}</td>
+                    <td>{req.country}</td>
+                    <td>{req.province}</td>
+                    <td>{req.segmentName}</td>
+                    <td>{req.subSegmentName}</td>
                 </tr>
-                <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                </tr>
-                <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-                </tr>
+                ))}
             </tbody>
-            </table>
-            </Card.Body>
+            </Table>
+            </Card.Body>}
+            
         </Card>
         );
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import {Table, Form, Button, Col, Container, Row, Card, Alert } from 'react-bootstrap';
 import {useState} from 'react'
-import {ISegment, ISubSegment} from '../../lib/types/data/segment.type';
+import {ISegment, ISubSegment, ISegmentRequest} from '../../lib/types/data/segment.type';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import {createSegment, createSubSegment, updateSegment, updateSubSegment} from '../../lib/api/segmentRoutes';
@@ -121,12 +121,13 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
 interface ShowSegmentsProps {
   segments: ISegment[] | undefined;
   token: string;
+  segReq: ISegmentRequest[] | undefined;
 }
 //NOTES
 //Currently requesting all segments from the database. In future only request the segments that are needed.
 //Segments are filtered on the front-end by country/province. Will need to query by these params to limit the amount of segments returned.
 //Only handling Canadian Provinces, will need to be able to add other countries as well in the future.
-export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token}) => {
+export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segReq}) => {
   const provinces: string[] = ['British Columbia', 'Alberta', 'Manitoba', 'New Brunswick', 'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia', 'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec', 'Saskatchewan', 'Yukon']
   const countries: string[] = ['Canada'];
   const [showNewSeg, setShowNewSeg] = useState(false);
@@ -265,7 +266,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token}) => 
       {(showSub && segId) &&
         <ShowSubSegmentsPage segId={segId} segName={segName}token={token}/>
     }
-    <UserSegmentCard/>
+    <UserSegmentCard segReq={segReq}/>
 
       </Col>
       
@@ -278,15 +279,16 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token}) => 
 interface SegmentPageContentProps {
   segments: ISegment[] | undefined;
   token: any;
+  segReq: ISegmentRequest[] | undefined;
 }
 //Country isnt reflected in the form data, need to implement when more countries are being used.
 //Enter location to manage only checks for the segments with the province name selected.
 //Passing all the segments to the segmentmanagementContent component, in the future only get the api data that is needed.
-const SegmentManagementContent: React.FC<SegmentPageContentProps> = ({segments, token}) => {
+const SegmentManagementContent: React.FC<SegmentPageContentProps> = ({segments, token, segReq}) => {
   return (
     <Container className='conversations-page-content'>
       <h2 className="pb-2 pt-2 display-6">Segmentation Manager</h2>
-          <ShowSegments segments={segments} token={token}/>
+          <ShowSegments segments={segments} token={token} segReq={segReq}/>
     </Container>
   );
 }

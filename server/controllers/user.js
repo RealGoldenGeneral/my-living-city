@@ -150,18 +150,18 @@ userRouter.get(
 	}
 )
 userRouter.get(
-	'/email',
+	'/email/:email',
 	async (req, res, next) => {
 		try {
-			const { email } = req.email;
+			const { email } = req.params;
 			const foundUser = await prisma.user.findUnique({
 				where: { email }
 			});
 
 			if (!foundUser) {
-				return res.status(400).json({
+				return res.status(201).json({
 					message: "User could not be found or does not exist in the database."
-				})
+				});
 			}
 			res.status(200);
 			res.json({
@@ -172,8 +172,8 @@ userRouter.get(
 			res.json({
 				message: error.message,
         details: {
-          errorMessage: error.message,
-          errorStack: error.stack,
+          	errorMessage: error.message,
+          	errorStack: error.stack,
         }
 			})
 		} finally {
@@ -181,6 +181,7 @@ userRouter.get(
 		}
 	}
 )
+
 userRouter.get(
 	'/me-verbose',
 	passport.authenticate('jwt', { session: false }),
