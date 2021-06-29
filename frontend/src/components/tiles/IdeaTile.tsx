@@ -1,6 +1,6 @@
 import { Button, Card } from 'react-bootstrap';
 import { IIdeaWithAggregations } from '../../lib/types/data/idea.type';
-import { capitalizeFirstLetter, timeDifference, truncateString } from '../../lib/utilityFunctions'
+import { capitalizeFirstLetterEachWord, timeDifference, truncateString } from '../../lib/utilityFunctions'
 import { BsPeople, BsHeartHalf } from 'react-icons/bs'
 import { AiOutlinePercentage } from 'react-icons/ai'
 import { FaRegThumbsUp, FaRegThumbsDown } from 'react-icons/fa'
@@ -68,7 +68,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       {showFooter && (
         <Card.Footer>
           <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small><br></br>
-          <small className='text-muted'>{capitalizeFirstLetter(segmentName)} at {capitalizeFirstLetter(subSegmentName)}</small><br></br>
+          <small className='text-muted'>{capitalizeFirstLetterEachWord(segmentName)} at {capitalizeFirstLetterEachWord(subSegmentName)}</small><br></br>
           <small className='text-muted'>-- {firstName}@{streetAddress}</small>
         </Card.Footer>
       )}

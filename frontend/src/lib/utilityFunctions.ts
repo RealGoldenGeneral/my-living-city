@@ -62,7 +62,7 @@ export const capitalizeString = (s: string) => {
 };
 
 // Capitalize the first letter of string on each word
-export const capitalizeFirstLetter = (str: string) => {
+export const capitalizeFirstLetterEachWord = (str: string) => {
 	let s = str.split(" ");
 	
     for (var i = 0, x = s.length; i < x; i++) {
