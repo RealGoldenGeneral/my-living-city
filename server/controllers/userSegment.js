@@ -293,31 +293,42 @@ userSegmentRouter.put(
     passport.authenticate('jwt',{session:false}),
     async(req,res)=>{
         try{
+            let exists = true;
+            let updateId;
             let error = '';
             let errorMessage = '';
             let errorStack = '';
 
+            let homeSegmentName = '';
+            let workSegmentName = '';
+            let schoolSegmentName = '';
+            let homeSubSegmentName = '';
+            let workSubSegmentName = '';
+            let schoolSubSegmentName = '';
+
             //get email and user id from request
             const { email, id } = req.user;
+
+            const {homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = req.body;
 
             const exist = await prisma.userSegments.findFirst({
                 where:{userId:id}
             })
 
             if(!exist){
-                return res.status(400).json("You don't have a user segment to update!");
+                exists = false;
             }
 
-            const updateId = exist.id;
+            if(exists){
+                updateId = exist.id;
 
-            const {homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = req.body;
-
-            let homeSegmentName = exist.homeSegmentName;
-            let workSegmentName = exist.workSegmentName;
-            let schoolSegmentName = exist.schoolSegmentName;
-            let homeSubSegmentName = exist.homeSubSegmentName;
-            let workSubSegmentName = exist.workSubSegmentName;
-            let schoolSubSegmentName = exist.schoolSubSegmentName;
+                homeSegmentName = exist.homeSegmentName;
+                workSegmentName = exist.workSegmentName;
+                schoolSegmentName = exist.schoolSegmentName;
+                homeSubSegmentName = exist.homeSubSegmentName;
+                workSubSegmentName = exist.workSubSegmentName;
+                schoolSubSegmentName = exist.schoolSubSegmentName;
+            }
             
             if(homeSegmentId){
                 if(!isInteger(homeSegmentId)){
@@ -456,35 +467,58 @@ userSegmentRouter.put(
                     }
                 }
             }
+        
 
             //If there's error in error holder
             if(error||errorMessage||errorStack){
                 return res.status(400).json({
                     message: error,
                     details: {
-                      errorMessage: errorMessage,
-                      errorStack: errorStack
+                    errorMessage: errorMessage,
+                    errorStack: errorStack
                     }
                 });
             }
 
-            const result = await prisma.userSegments.update({
-                where:{id:updateId},
-                data:{
-                    homeSegmentId:homeSegmentId,
-                    homeSegmentName:homeSegmentName,
-                    workSegmentId:workSegmentId,
-                    workSegmentName:workSegmentName,
-                    schoolSegmentId:schoolSegmentId,
-                    schoolSegmentName:schoolSegmentName,
-                    homeSubSegmentId:homeSubSegmentId,
-                    homeSubSegmentName:homeSubSegmentName,
-                    workSubSegmentId:workSubSegmentId,
-                    workSubSegmentName:workSubSegmentName,
-                    schoolSubSegmentId:schoolSubSegmentId,
-                    schoolSubSegmentName:schoolSubSegmentName
-                }
-            })
+            let result;
+
+            if(exists){
+                result = await prisma.userSegments.update({
+                    where:{id:updateId},
+                    data:{
+                        homeSegmentId:homeSegmentId,
+                        homeSegmentName:homeSegmentName,
+                        workSegmentId:workSegmentId,
+                        workSegmentName:workSegmentName,
+                        schoolSegmentId:schoolSegmentId,
+                        schoolSegmentName:schoolSegmentName,
+                        homeSubSegmentId:homeSubSegmentId,
+                        homeSubSegmentName:homeSubSegmentName,
+                        workSubSegmentId:workSubSegmentId,
+                        workSubSegmentName:workSubSegmentName,
+                        schoolSubSegmentId:schoolSubSegmentId,
+                        schoolSubSegmentName:schoolSubSegmentName
+                    }
+                })
+            }else{
+                result = await prisma.userSegments.create({
+                    data:{
+                        userId:id,
+                        homeSegmentId:homeSegmentId,
+                        homeSegmentName:homeSegmentName,
+                        workSegmentId:workSegmentId,
+                        workSegmentName:workSegmentName,
+                        schoolSegmentId:schoolSegmentId,
+                        schoolSegmentName:schoolSegmentName,
+                        homeSubSegmentId:homeSubSegmentId,
+                        homeSubSegmentName:homeSubSegmentName,
+                        workSubSegmentId:workSubSegmentId,
+                        workSubSegmentName:workSubSegmentName,
+                        schoolSubSegmentId:schoolSubSegmentId,
+                        schoolSubSegmentName:schoolSubSegmentName
+                    }
+                })
+            }
 
             res.status(200).json(result);
 
