@@ -244,8 +244,9 @@ export const delay = (
 	return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-// export const refactorStateArray = (stateArray: any, index: number, newVal: any, stateSetter: any) => {
-// 	let newArr = [stateArray];
-// 	newArr[index] = newVal;
-// 	stateSetter(newArr);
-// }
+export const refactorStateArray = (stateArray: any, index: number, newVal: any, stateSetter: any) => {
+	let newArr = [...stateArray];
+	newArr[index] = newVal;
+	console.log(stateArray);
+	stateSetter(newArr);
+}

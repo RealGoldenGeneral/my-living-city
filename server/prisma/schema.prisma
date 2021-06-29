@@ -27,18 +27,11 @@ model Report {
 // User Entity
 enum UserType {
   ADMIN
-<<<<<<< HEAD
 	MOD
 	SEG_ADMIN
 	SEG_MOD
 	MUNICIPAL_SEG_ADMIN
   BUSINESS
-=======
-  MOD
-  SEG_ADMIN
-  SEG_MOD
-  MUNICIPAL_SEG_ADMIN
->>>>>>> Capstone-Dev
 
   @@map(name: "user_type")
 }

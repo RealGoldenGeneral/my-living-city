@@ -4,7 +4,7 @@ import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'f
 import React, { useContext, useEffect, useState } from 'react';
 import { IUserRole } from 'src/lib/types/data/userRole.type';
 import SimpleMap from '../map/SimpleMap';
-import { capitalizeString, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
+import { capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
 import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import * as Yup from 'yup';
@@ -44,16 +44,16 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
     const [schoolTransfer, transferWorkToSchool] = useState(false);
-    const refactorSubIds = (index: number, id: number | null) => {
-        let ids = [...subIds];
-        ids[index] = id;
-        setSubIds(ids);
-    }
-    const refactorSegIds = (index: number, segId: number) => {
-        let ids = [...segIds];
-        ids[index] = segId;
-        setSegIds(ids);
-    }
+    // const refactorSubIds = (index: number, id: number | null) => {
+    //     let ids = [...subIds];
+    //     ids[index] = id;
+    //     setSubIds(ids);
+    // }
+    // const refactorSegIds = (index: number, segId: number) => {
+    //     let ids = [...segIds];
+    //     ids[index] = segId;
+    //     setSegIds(ids);
+    // }
     const displaySubSegList = (id: number) => {
             if(subSegments && subSegments[0].segId === id){
                 return (subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
@@ -65,12 +65,21 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     // useEffect(()=>{
     //     //This allows the first click on the map to update the markers variables in the step handler functions.
     // },[markers])
-    async function test(){
-        const num = await getUserWithEmail("stevddasdfasdfasdfasdfgasdfe@gmail.com");
-        console.log(num);
-    }
-    test();
-    console.log(segmentRequests);
+    // async function test(){
+    //     const data = {
+    //         userId: "ckqiefm5x0003zcv19le44ywr",
+    //         country: "canada",
+    //         province: "british columbia",
+    //         segmentName: "victoriatest",
+    //         subSegmentName: "testtesttest"
+    //     }
+    //     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiY2txaWVmbTV4MDAwM3pjdjE5bGU0NHl3ciIsImVtYWlsIjoidGVzdHlAZ21haWwuY29tIn0sImlhdCI6MTYyNDk5MjI1NywiZXhwIjoxNjI3NTg0MjU3fQ.CaFPL8XzKIeu6wKUY9mQWjYBLRVFBY7ohQPe0belDx8";
+    //     postUserSegmentRequest(data, token);
+    // }
+    // test();
+    // console.log(segmentRequests);
+    console.log(segIds);
+    console.log(subIds);
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
@@ -108,8 +117,7 @@ return (
                 setSubSegments={setSubSegments}
                 setSubSegments2={setSubSegments2}
                 setSubIds={setSubIds}
-                refactorSegIds={refactorSegIds}
-                refactorSubIds={refactorSubIds}
+                setSegIds={setSegIds}
                 segIds={segIds}
                 showMap={showMap}
                 subIds={subIds}
@@ -200,8 +208,10 @@ return (
                     <BForm.Group>
                         <BForm.Label>Select your home municipality</BForm.Label>
                         <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
-                            refactorSegIds(0,parseInt(e.target.value));
-                            refactorSubIds(0, null);
+                            refactorStateArray(segIds, 0, parseInt(e.target.value), setSegIds);
+                            refactorStateArray(subIds, 0, null, setSubIds);
+                            // refactorSegIds(0,parseInt(e.target.value));
+                            // refactorSubIds(0, null);
                             }}>
                             {segment && <option value={segment?.segId}>{segment?.name}</option>}
                             {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
@@ -209,7 +219,7 @@ return (
                     </BForm.Group>
                     <BForm.Group>
                         <BForm.Label>Select your Neighbourhood (optional)</BForm.Label>
-                        <BForm.Control name="homeSubName" as="select" onChange={(e)=>{refactorSubIds(0,parseInt(e.target.value))}}>
+                        <BForm.Control name="homeSubName" as="select" onChange={(e)=>{refactorStateArray(subIds, 0,parseInt(e.target.value), setSubIds)}}>
                             <option hidden></option>
                             {displaySubSegList(segIds[0])}
                         </BForm.Control>
@@ -238,8 +248,8 @@ return (
                     <BForm.Group>
                         <BForm.Label>Your Work Municipality is</BForm.Label>
                         <BForm.Control name="workSegmentId" as="select" onChange={(e)=>{
-                            refactorSegIds(1,parseInt(e.target.value));
-                            refactorSubIds(1, null);
+                            refactorStateArray(segIds, 1, parseInt(e.target.value), setSegIds);
+                            refactorStateArray(subIds, 1, null, setSubIds);
                             }}>
                             {segment && <option value={segment?.segId}>{segment?.name}</option>}
                             {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
@@ -247,7 +257,7 @@ return (
                     </BForm.Group>
                     <BForm.Group>
                         <BForm.Label>Select your Neighbourhood</BForm.Label>
-                        <BForm.Control name="workSubName" as="select" onChange={(e)=>{refactorSubIds(1,parseInt(e.target.value))}}>
+                        <BForm.Control name="workSubName" as="select" onChange={(e)=>{refactorStateArray(subIds, 1,parseInt(e.target.value), setSubIds)}}>
                             <option hidden></option>
                             {displaySubSegList(segIds[1])}
                         </BForm.Control>
@@ -276,8 +286,8 @@ return (
                     <BForm.Group>   
                         <BForm.Label>Your School Municipality is</BForm.Label>
                         <BForm.Control name="schoolSegmentId" as="select" onChange={(e)=>{
-                            refactorSegIds(2,parseInt(e.target.value));
-                            refactorSubIds(2, null);
+                            refactorStateArray(segIds, 2, parseInt(e.target.value), setSegIds);
+                            refactorStateArray(subIds, 2, null, setSubIds);
                             }}>
                             {segment && <option value={segment?.segId}>{segment?.name}</option>}
                             {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
@@ -285,7 +295,7 @@ return (
                     </BForm.Group>
                     <BForm.Group>
                         <BForm.Label>Select your Neighbourhood</BForm.Label>
-                        <BForm.Control name="schoolSubName" as="select" onChange={(e)=>{refactorSubIds(2,parseInt(e.target.value))}}>
+                        <BForm.Control name="schoolSubName" as="select" onChange={(e)=>{refactorStateArray(subIds, 2,parseInt(e.target.value), setSubIds)}}>
                             <option hidden></option>
                             {displaySubSegList(segIds[2])}
                         </BForm.Control>
@@ -330,16 +340,15 @@ export interface FormikStepperProps extends FormikConfig<IRegisterInput> {
     setSegment2: any;
     setSubSegments: any;
     setSubSegments2: any;
-    refactorSubIds: any;
     showMap: any;
     setSubIds: any;
-    refactorSegIds: any;
+    setSegIds: any;
     segIds: any;
     subIds: any;
     workTransfer: boolean;
     schoolTransfer: boolean;
 }
-export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, refactorSubIds, workTransfer, refactorSegIds, ...props }: FormikStepperProps) {
+export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, ...props }: FormikStepperProps) {
     const childrenArray = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[];
     const [step, setStep] = useState(0);
     const [inferStep, setInferStep]=useState(0);
@@ -357,10 +366,6 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
         if(subIds[1]) return subIds[1] 
         else return subIds[0];
     }
-    // const isWorkSegIdSet = () => { 
-    //     if(segIds[1]) return segIds[1] 
-    //     else return segIds[0];
-    // }
     //This handles the step and inferStep state variables.
     //Step keeps track of the current child to display.
     //InferStep keeps track of the step icons.
@@ -408,7 +413,8 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                 const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
                 if(seg){
                     props.setSegment(seg);
-                    refactorSegIds(index,seg.segId);
+                    refactorStateArray(segIds, index, seg.segId, setSegIds);
+                    //refactorSegIds(index,seg.segId);
                     const sub = await findSubsegmentsBySegmentId(seg.segId);
                     props.setSubSegments(sub);
                 }else{
@@ -421,7 +427,8 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                 if(seg2){
                     console.log('here');
                     props.setSegment2(seg2);
-                    refactorSegIds(index,seg2.segId);
+                    refactorStateArray(segIds, index, seg2.segId, setSegIds);
+                    //refactorSegIds(index,seg2.segId);
                     const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
                     props.setSubSegments2(sub2);
                 }else{
@@ -482,8 +489,10 @@ return(
                 setStep(s=>s+2);
                 setInferStep(s=>s+1);
                 if(workTransfer){
-                    refactorSegIds(1, segIds[0]);
-                    refactorSubIds(1, subIds[0]);
+                    refactorStateArray(segIds, 1, segIds[0], setSegIds);
+                    refactorStateArray(subIds, 1, subIds[0], setSubIds);
+                    //refactorSegIds(1, segIds[0]);
+                    //refactorSubIds(1, subIds[0]);
                 }
             }else{
                 const seg = await setSegData(1);
@@ -496,8 +505,10 @@ return(
                 setStep(s=>s+2);
                 setInferStep(s=>s+1);
                 if(schoolTransfer){
-                    refactorSegIds(2, segIds[1] || segIds[0]);
-                    refactorSubIds(2, subIds[1] || subIds[0])
+                    refactorStateArray(segIds, 2, segIds[1] || segIds[0], setSegIds);
+                    refactorStateArray(subIds, 2, subIds[1] || subIds[0], setSubIds);
+                    //refactorSegIds(2, segIds[1] || segIds[0]);
+                    //refactorSubIds(2, subIds[1] || subIds[0])
                 }
             }else{
                 const seg = await setSegData(2);
