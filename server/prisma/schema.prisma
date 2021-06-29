@@ -96,13 +96,9 @@ model UserAddress {
 
 model User {
   // Keys
-  id                     String   @id @default(cuid())
-  userRoleId             Int?     @map("user_role_id")
-  userType               UserType @default(ADMIN) @map("user_type")
-  userSegmentId          Int?     @map("user_segment_id")
-  userHomeSubsegmentId   Int?     @map("user_home_subsegment_id")
-  userSchoolSubsegmentId Int?     @map("user_school_subsegment_id")
-  userWorkSubsegmentId   Int?     @map("user_work_subsegment_id")
+  id         String   @id @default(cuid())
+  userRoleId Int?     @map("user_role_id")
+  userType   UserType @default(ADMIN) @map("user_type")
 
   // Fields
   email     String   @unique
@@ -134,8 +130,6 @@ model User {
   segmentRequest segmentRequest[]
   //Or this one stays
   UserSegments   UserSegments[]
-  Segments       Segments?        @relation(fields: [segmentsSegId], references: [segId])
-  segmentsSegId  Int?
   @@map(name: "user")
 }
 
@@ -410,7 +404,6 @@ model Segments {
   homeSegments   UserSegments[] @relation("homeSegment")
   workSegments   UserSegments[] @relation("workSegment")
   schoolSegments UserSegments[] @relation("schoolSegment")
-  User           User[]
   Idea           Idea[]
   @@map(name: "segment")
 }
