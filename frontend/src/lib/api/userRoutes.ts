@@ -48,7 +48,12 @@ export const getUserWithJWT = async ({ jwtAuthToken }: GetUserWithJWTInput): Pro
   );
   return res.data;
 }
-
+export const getUserWithEmail = async (email: string | undefined) => {
+  const res = await axios.get(
+    `${API_BASE_URL}/user/email/${email}`
+  );
+  return res.status;
+}
 export const getUserWithJWTVerbose = async ({ jwtAuthToken }: GetUserWithJWTInput): Promise<IUser> => {
   const res = await axios.get<IUser>(
     `${API_BASE_URL}/user/me-verbose`, 

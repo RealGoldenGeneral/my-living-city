@@ -111,3 +111,14 @@ export const findSubsegmentsBySegmentId = async (segId:number) => {
 
   return result.data;
 }
+
+export const findSegmentRequests = async (token: string | null) => {
+  const result = await axios({
+    method: "get",
+    url: `${API_BASE_URL}/userSegmentRequest/getAll`,
+    headers: { "x-auth-token": token, "Access-Control-Allow-Origin": "*",},
+    withCredentials: true
+  });
+
+  return result.data;
+}

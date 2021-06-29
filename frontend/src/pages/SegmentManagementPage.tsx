@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useAllSegments } from 'src/hooks/segmentHooks';
+import { useAllSegmentRequests, useAllSegments } from 'src/hooks/segmentHooks';
 import { UserProfileContext } from '../contexts/UserProfile.Context';
 import SegmentManagementContent from '../components/content/SegmentManagementContent';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -9,8 +9,11 @@ import {useUserWithJwtVerbose} from 'src/hooks/userHooks';
 export default function SegmentManagementPage() {
 
     const { data, isLoading } = useAllSegments();
-    const { token } = useContext(UserProfileContext);
-    if (isLoading) {
+    const { token,user } = useContext(UserProfileContext);
+    console.log(user);
+    const segReq = useAllSegmentRequests(token);
+    console.log(segReq.data);
+    if (isLoading || segReq.isLoading) {
       return (
         <div className="wrapper">
           <LoadingSpinner />
@@ -20,7 +23,7 @@ export default function SegmentManagementPage() {
   
     return (
       <div className="wrapper">
-        <SegmentManagementContent segments={ data } token = {token}/>
+        <SegmentManagementContent segments={ data } token = {token} segReq={segReq.data}/>
       </div>
     )
   }

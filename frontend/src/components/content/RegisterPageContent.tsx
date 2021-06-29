@@ -12,11 +12,12 @@ import Stepper from 'react-stepper-horizontal';
 import '../../../src/scss/ui/_other.scss';
 import { IFetchError } from '../../lib/types/types';
 import { searchForLocation } from 'src/lib/api/googleMapQuery';
-import { postRegisterUser } from 'src/lib/api/userRoutes';
+import { getUserWithEmail, postRegisterUser } from 'src/lib/api/userRoutes';
 import { postUserSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
+import { postUserSegmentRequest } from 'src/lib/api/userSegmentRequestRoutes';
 
 interface RegisterPageContentProps {
     userRoles: IUserRole[] | undefined;
@@ -28,6 +29,7 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
         setUser,
     } = useContext(UserProfileContext);
     const [markers, sendData]:any = useState({home: {lat: null, lon: null},work: {lat: null, lon: null},school: {lat: null, lon: null}});
+    const [isLoading, setIsLoading] = useState(false);
     const [map, showMap] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [segment, setSegment] = useState<ISegment>();
@@ -63,8 +65,12 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     // useEffect(()=>{
     //     //This allows the first click on the map to update the markers variables in the step handler functions.
     // },[markers])
-    console.log(segment);
-    console.log(segment2);
+    async function test(){
+        const num = await getUserWithEmail("stevddasdfasdfasdfasdfgasdfe@gmail.com");
+        console.log(num);
+    }
+    test();
+    console.log(segmentRequests);
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
@@ -112,16 +118,19 @@ return (
                 onSubmit={async(values,helpers)=>{
                     // const {email, password, confirmPassword} = values;
                     try {
+                        setIsLoading(true);
                         const { token, user } = await postRegisterUser(values);
+                        if(segmentRequests.length > 0){
+                            segmentRequests.forEach(seg => {
+                                postUserSegmentRequest(seg, token);
+                            });
+                        }
+                        await postUserSegmentInfo(values, token);
                         storeUserAndTokenInLocalStorage(token, user);
                         storeTokenExpiryInLocalStorage();
                         setToken(token);
                         setUser(user);
                         console.log(token);
-                        await postUserSegmentInfo(values, token);
-                        segmentRequests.forEach(seg => {
-                            
-                        });
                         //PLACEHOLDER//
                         //For segment request functionality.
 
@@ -129,18 +138,27 @@ return (
                         } catch (error) {
                             console.log(error);
                             wipeLocalStorage();
+                        }finally{
+                            setIsLoading(false);
                         }
                 }
             }
             >
                 <FormikStep validationSchema={Yup.object().shape({
                     password: Yup.string().min(8, 'Password is too short, 8 characters minimum'),
-                    confirmPassword: Yup.string()
-                    .oneOf([Yup.ref('password'), null], 'Passwords must match')})}>
+                    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
+                    email: Yup.string().email('Invalid email')
+                    .test('Unique Email','Email already in use', 
+                        function(value){return new Promise((resolve, reject) => {
+                            getUserWithEmail(value)
+                            .then(res => {res === 200 ? resolve(false) : resolve(true)})
+                        })})
+                    })}>
                     <BForm.Group>
                         <h1>Create An Account</h1>
                         <BForm.Label>Email address</BForm.Label> 
                         <Field required name="email" type="email" as={BForm.Control}/>
+                        <ErrorMessage name="email">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
                     </BForm.Group>
                     <BForm.Group>
                         <BForm.Label>Password</BForm.Label>
@@ -386,9 +404,8 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                 break;
                 default:
             }
-            if(googleQuery){
+            if(googleQuery.city){
                 const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
-                const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
                 if(seg){
                     props.setSegment(seg);
                     refactorSegIds(index,seg.segId);
@@ -398,6 +415,9 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                     props.setSegment(null);
                     props.setSubSegments(null);
                 }
+            }
+            if(googleQuery.city2){
+                const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
                 if(seg2){
                     console.log('here');
                     props.setSegment2(seg2);

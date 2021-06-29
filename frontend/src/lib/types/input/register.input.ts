@@ -37,3 +37,11 @@ export interface IUserSegmentRegister {
   workSubSegmentId?: number;
   schoolSubSegmentId?: number;
 }
+
+export interface IUserSegmentRequest {
+  userId: string;
+  country: string;
+  province: string;
+  segmentName: string;
+  subSegmentName: string;
+}
