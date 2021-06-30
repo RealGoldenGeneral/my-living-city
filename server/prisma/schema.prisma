@@ -31,6 +31,7 @@ enum UserType {
   SEG_ADMIN
   SEG_MOD
   MUNICIPAL_SEG_ADMIN
+  DEFAULT
 
   @@map(name: "user_type")
 }
@@ -98,7 +99,7 @@ model User {
   // Keys
   id         String   @id @default(cuid())
   userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(ADMIN) @map("user_type")
+  userType   UserType @default(DEFAULT) @map("user_type")
 
   // Fields
   email     String   @unique
