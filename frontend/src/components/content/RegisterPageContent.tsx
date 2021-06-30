@@ -18,6 +18,8 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import { postUserSegmentRequest } from 'src/lib/api/userSegmentRequestRoutes';
+import { BsForwardFill } from 'react-icons/bs';
+import { postAvatarImage } from 'src/lib/api/avatarRoutes';
 
 interface RegisterPageContentProps {
     userRoles: IUserRole[] | undefined;
@@ -38,8 +40,8 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     const [subSegments2, setSubSegments2] = useState<ISubSegment[]>();
     const [subIds, setSubIds] = useState<any[]>([]);
     const [segIds, setSegIds] = useState<any[]>([]);
+    const [selectedFile, setSelectedFile] = useState();
     const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
-    const selectString:string = "Select your Neighbourhood (optional)";
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
@@ -68,22 +70,20 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     // async function test(){
     //     const data = {
     //         userId: "ckqiefm5x0003zcv19le44ywr",
-    //         country: "canada",
-    //         province: "british columbia",
-    //         segmentName: "victoriatest",
-    //         subSegmentName: "testtesttest"
+    //         country: "Canada",
+    //         province: "British Columbia",
+    //         segmentName: "Victoriatest",
+    //         subSegmentName: "Vesttesttest"
     //     }
     //     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiY2txaWVmbTV4MDAwM3pjdjE5bGU0NHl3ciIsImVtYWlsIjoidGVzdHlAZ21haWwuY29tIn0sImlhdCI6MTYyNDk5MjI1NywiZXhwIjoxNjI3NTg0MjU3fQ.CaFPL8XzKIeu6wKUY9mQWjYBLRVFBY7ohQPe0belDx8";
     //     postUserSegmentRequest(data, token);
     // }
     // test();
     // console.log(segmentRequests);
-    console.log(segIds);
-    console.log(subIds);
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
-                userRoleId: 2,
+                userRoleId: userRoles ? userRoles[0].id : undefined,
                 email: '',
                 password: '',
                 confirmPassword: '',
@@ -127,22 +127,19 @@ return (
                     // const {email, password, confirmPassword} = values;
                     try {
                         setIsLoading(true);
-                        const { token, user } = await postRegisterUser(values);
-                        if(segmentRequests.length > 0){
-                            segmentRequests.forEach(seg => {
-                                postUserSegmentRequest(seg, token);
-                            });
-                        }
-                        await postUserSegmentInfo(values, token);
+                        const { token, user } = await postRegisterUser(values, segmentRequests);
+                        // console.log(token);
+                        // if(segmentRequests.length > 0){
+                        //     postUserSegmentRequest(segmentRequests, token);
+                        // }
+                        //await postUserSegmentInfo(values, token);
                         storeUserAndTokenInLocalStorage(token, user);
                         storeTokenExpiryInLocalStorage();
                         setToken(token);
                         setUser(user);
-                        console.log(token);
+                        // await postAvatarImage(selectedFile, token);
                         //PLACEHOLDER//
                         //For segment request functionality.
-
-                        //await postAvatarImage(selectedFile, token);
                         } catch (error) {
                             console.log(error);
                             wipeLocalStorage();
@@ -190,11 +187,15 @@ return (
                         <BForm.Label>Street Name</BForm.Label>
                         <Field required name="address.streetAddress" type="text" as={BForm.Control}/>
                     </BForm.Group>
+                    {/* <BForm.Group>
+                        <BForm.Label>Profile Image Upload</BForm.Label>
+                        <BForm.Control type="file" name="image" onChange={(e:any)=> setSelectedFile(e.target.files[0])}/>
+                    </BForm.Group> */}
                     <BForm.Group>
                         <BForm.Label>ZIP / Postal Code</BForm.Label>
                         <Field name="address.postalCode" type="text" as={BForm.Control}/>
                     </BForm.Group>
-
+                    
                     
                 </FormikStep>
 
@@ -311,8 +312,7 @@ return (
 
                 <FormikStep>
                     <div className="text-center">
-                    <h3 className="mb-4">Press submit to complete registration!</h3>
-                    {/* <Image width='50%' src='/banner/MyLivingCity_Logo_Name-Tagline.png' className="mb-2"/> */}
+                        <h3>Submit!</h3>
                     </div>
 
                 </FormikStep>
@@ -393,7 +393,6 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             //PLACEHOLDER for GOOGLE API query
             setError(null);
             setIsLoading(true);
-            console.log(markers);
             switch(index){
                 case 0:
                     googleQuery = await searchForLocation(markers.home);
@@ -409,6 +408,21 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                 break;
                 default:
             }
+            if(googleQuery.city2){
+                const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
+                if(seg2){
+                    console.log('here');
+                    props.setSegment2(seg2);
+                    refactorStateArray(segIds, index, seg2.segId, setSegIds);
+                    
+                    //refactorSegIds(index,seg2.segId);
+                    const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
+                    props.setSubSegments2(sub2);
+                }else{
+                    props.setSegment2(null);
+                    props.setSubSegments2(null);
+                }
+            }
             if(googleQuery.city){
                 const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
                 if(seg){
@@ -422,20 +436,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                     props.setSubSegments(null);
                 }
             }
-            if(googleQuery.city2){
-                const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
-                if(seg2){
-                    console.log('here');
-                    props.setSegment2(seg2);
-                    refactorStateArray(segIds, index, seg2.segId, setSegIds);
-                    //refactorSegIds(index,seg2.segId);
-                    const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
-                    props.setSubSegments2(sub2);
-                }else{
-                    props.setSegment2(null);
-                    props.setSubSegments2(null);
-                }
-            }
+
             setStep(s=>s+1);
             // if(googleQuery){
             //     console.log('hello');
@@ -465,7 +466,6 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             //placeHolder
             //Need to do better error handling here.
             //setError(new Error(err.response.data));
-        } finally {
         }
         
     }
@@ -557,7 +557,10 @@ return(
         lineMarginOffset={8}
         activeColor={'#98cc74'}
         activeTitleColor={'#98cc74'}
-        completeColor={"#98cc74"}/>
+        completeColor={"#98cc74"}
+        completeBarColor={"#98cc74"}
+        titleFontSize={19}
+        />
     </div>
     <Card>
     <Card.Body>   

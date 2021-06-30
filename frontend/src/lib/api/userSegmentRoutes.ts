@@ -33,3 +33,4 @@ export const postUserSegmentInfo = async (registerData: IRegisterInput, token:st
     console.log(res.data);
     return res.data;
 }
+

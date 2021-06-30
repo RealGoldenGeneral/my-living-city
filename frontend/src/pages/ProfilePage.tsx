@@ -14,6 +14,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ }) => {
     jwtAuthToken: token!,
     shouldTrigger: token != null
   });
+  
 
   if (isLoading) {
     return (
@@ -34,7 +35,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ }) => {
   return (
     <div className="wrapper">
       {user ? (
-        <ProfileContent user={user!} />
+        <ProfileContent user={user!} token={token!} />
       ) : (
         // TODO: Create dedicated error page
         <p>Error trying to load personal profile. Please relogin and try again.</p>

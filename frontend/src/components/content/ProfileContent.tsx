@@ -1,13 +1,17 @@
-import React from 'react'
-import { Col, Container, Row, Card, Image, ListGroup, ListGroupItem} from 'react-bootstrap';
+import React, { useEffect, useState } from 'react'
+import { Col, Container, Row, Card, Image, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+import { postUserSegmentRequest } from 'src/lib/api/userSegmentRequestRoutes';
+import { API_BASE_URL } from 'src/lib/constants';
 import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
+import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 
 interface ProfileContentProps {
-  user: IUser
+  user: IUser;
+  token: string;
 }
 
-const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
+const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
   const {
     email,
     fname,
@@ -22,7 +26,14 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
     postalCode,
     country,
   } = address!;
-  
+  const [show, setShow] = useState(false);
+  const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
+  useEffect(()=>{
+    if(segmentRequests.length > 0){
+      postUserSegmentRequest(segmentRequests, token);
+      console.log('called');
+    }
+  },[segmentRequests])
   return (
     <Container className='user-profile-content w-100'>
       <Row className='justify-content-center'>
@@ -50,6 +61,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
                 <ListGroup.Item><strong>Street Address 2</strong></ListGroup.Item>
                 <ListGroup.Item><strong>City</strong></ListGroup.Item>
                 <ListGroup.Item><strong>Postal Code / Zip</strong></ListGroup.Item>
+                <ListGroup.Item><strong>Community Request</strong></ListGroup.Item>
               </ListGroup>
             
               <ListGroup variant='flush' className=''>
@@ -59,7 +71,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user }) => {
                 <ListGroup.Item>{ streetAddress2 ? capitalizeString(streetAddress2) : "Unknown" }</ListGroup.Item>
                 <ListGroup.Item>{ city ? capitalizeString(city) : "Unknown" }</ListGroup.Item>
                 <ListGroup.Item>{ postalCode ? postalCode.toUpperCase() : "Unknown" }</ListGroup.Item>
+                <ListGroup.Item><Button variant="link" onClick={()=>setShow(b=>!b)}>Request your Community!</Button></ListGroup.Item>
               </ListGroup>
+              <RequestSegmentModal showModal={show} setShowModal={setShow} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
           </Row>
         </Card>
       </Row>
