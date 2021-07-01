@@ -36,7 +36,7 @@ ideaRatingRouter.get(
       res.status(200).json(allIdeaRating);
     } catch (error) {
       res.status(400).json({
-        message: "An error occured while trying to fetch all Idea Ratings",
+        message: "An error occurred while trying to fetch all Idea Ratings",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -102,7 +102,7 @@ ideaRatingRouter.get(
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to fetch all ratings under idea ${req.params.ideaId}.`,
+        message: `An error occurred while trying to fetch all ratings under idea ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -133,7 +133,7 @@ ideaRatingRouter.get(
       res.status(200).json(ratings);
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to fetch all ratings under idea ${req.params.ideaId}.`,
+        message: `An error occurred while trying to fetch all ratings under idea ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -239,7 +239,7 @@ ideaRatingRouter.post(
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to create a rating for idea ${req.params.ideaId}.`,
+        message: `An error occurred while trying to create a rating for idea ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -301,7 +301,7 @@ ideaRatingRouter.put(
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to edit rating ${req.params.ratingId}.`,
+        message: `An error occurred while trying to edit rating ${req.params.ratingId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -353,7 +353,7 @@ ideaRatingRouter.delete(
       });
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to delete rating ${req.params.ratingId}.`,
+        message: `An error occurred while trying to delete rating ${req.params.ratingId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -427,7 +427,7 @@ ideaRatingRouter.get(
       res.status(200).json(result);
     } catch (error) {
       res.status(400).json({
-        message: `An error occured while trying to check the ratings of idea #${req.params.ideaId}.`,
+        message: `An error occurred while trying to check the ratings of idea #${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,

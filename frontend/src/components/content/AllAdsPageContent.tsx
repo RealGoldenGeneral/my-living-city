@@ -61,7 +61,7 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
             {AllAdvertisement?.map(item => (
               <tr key={item.id}>
                 <td>
-                  {/* <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a> */}
+                  <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a>
                   <Button block variant="danger" onClick={() => {
                     handleDelete(item.id);
                   }}>Delete</Button>

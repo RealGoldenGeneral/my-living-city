@@ -68,7 +68,7 @@ const UserProfileProvider: React.FC = ({ children }) => {
 
   /**
    * Determines if the user should be fetched. If there is a token but no
-   * user object then the user should be refetched. Any errors occured during this refetch
+   * user object then the user should be refetched. Any errors occurred during this refetch
    * will be caught in the use effect and will automatically log user out if token is invalid.
    * @returns {boolean} True if user should be refetched false if not
    */
@@ -112,8 +112,8 @@ const UserProfileProvider: React.FC = ({ children }) => {
   }, [])
 
   /**
-   * Checks to see if an error has occured upon retrieving user using JWT
-   * and destroys localstorage state and user auth if error has occured.
+   * Checks to see if an error has occurred upon retrieving user using JWT
+   * and destroys localstorage state and user auth if error has occurred.
    * If User is fetched using React query reupdates global state variable
    * to store newly fetched user. 
    */
