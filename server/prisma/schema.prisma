@@ -31,7 +31,6 @@ enum UserType {
   SEG_ADMIN
   SEG_MOD
   MUNICIPAL_SEG_ADMIN
-  BUSINESS
   NORMAL
 
   @@map(name: "user_type")
