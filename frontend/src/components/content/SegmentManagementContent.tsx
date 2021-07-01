@@ -240,8 +240,8 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
                     setSegId(segment.segId);
                     setSegName(segment.name);
                     setShowNewSeg(false);
-                    setShowSub(true);
-                    }} size="sm">View Sub-Segs</Button>
+                    setShowSub(b=>!b);
+                    }} size="sm">{showSub ? "Hide Sub-Segs" : "View Sub-Segs"}</Button>
                 </td>
               </tr>)
               )
@@ -266,11 +266,11 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
       {(showSub && segId) &&
         <ShowSubSegmentsPage segId={segId} segName={segName}token={token}/>
     }
-    <UserSegmentCard segReq={segReq}/>
-
+      <UserSegmentCard segReq={segReq} token={token}/>
       </Col>
       
       </Row>
+
       
     </>
     );

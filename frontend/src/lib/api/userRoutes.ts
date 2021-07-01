@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "../constants";
 import { IUser } from "../types/data/user.type";
-import { IRegisterInput, IUserRegisterData } from "../types/input/register.input";
+import { IRegisterInput, IUserRegisterData, IUserSegmentRequest } from "../types/input/register.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 export interface LoginData {
   email: string;
@@ -61,8 +61,7 @@ export const getUserWithJWTVerbose = async ({ jwtAuthToken }: GetUserWithJWTInpu
   );
   return res.data;
 }
-
-export const postRegisterUser = async (registerData: IRegisterInput): Promise<LoginResponse> => {
+export const postRegisterUser = async(registerData: IRegisterInput, requestData:IUserSegmentRequest[]): Promise<LoginResponse> => {
   const { 
     email, 
     password, 
@@ -71,7 +70,16 @@ export const postRegisterUser = async (registerData: IRegisterInput): Promise<Lo
     lname,
     address,
     geo,
+    homeSegmentId,
+    workSegmentId,
+    schoolSegmentId,
+    homeSubSegmentId,
+    workSubSegmentId,
+    schoolSubSegmentId,
   } = registerData;
+  let request3 = null;
+  let request4 = null;
+  let request5 = null;
   // Verify Payload
   if (!email || !password) {
     throw new Error("You must provide an email and password to sign up.")
@@ -81,6 +89,68 @@ export const postRegisterUser = async (registerData: IRegisterInput): Promise<Lo
     throw new Error("Both your passwords must match. Please ensure both passwords match to register.")
   }
 
-  const res = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo});
-  return res.data;
+  const request = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo});
+  const request2 = await axios({
+    method: "post",
+    url: `${API_BASE_URL}/userSegment/create`,
+    data: { 
+        homeSegmentId,
+        workSegmentId,
+        schoolSegmentId,
+        homeSubSegmentId,
+        workSubSegmentId,
+        schoolSubSegmentId
+    },
+    headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+    withCredentials: true
+})
+if(requestData){
+  if(requestData[0]){
+    request3 = await axios({
+        method: "post",
+        url: `${API_BASE_URL}/userSegmentRequest/create`,
+        data: requestData[0],
+        headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+        withCredentials: true
+    })
+}if(requestData[1]){
+    request4 = await axios({
+        method: "post",
+        url: `${API_BASE_URL}/userSegmentRequest/create`,
+        data: requestData[1],
+        headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+        withCredentials: true
+    })
+}if(requestData[2]){
+    request5 = await axios({
+        method: "post",
+        url: `${API_BASE_URL}/userSegmentRequest/create`,
+        data: requestData[2],
+        headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+        withCredentials: true
+    })
+}
+}
+    
+axios.all([request, request2, request3, request4, request5]).then((...responses)=>{
+  console.log(responses);
+})
+return request.data;
+  
+    // .then(res=> (
+    //   axios({
+    //     method: "post",
+    //     url: `${API_BASE_URL}/userSegment/create`,
+    //     data: { 
+            // homeSegmentId,
+            // workSegmentId,
+            // schoolSegmentId,
+            // homeSubSegmentId,
+            // workSubSegmentId,
+            // schoolSubSegmentId
+    //     },
+    //     headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": res.data.token},
+    //     withCredentials: true
+    // }))
+  
 }
