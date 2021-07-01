@@ -18,12 +18,12 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   const { match: { params: { ideaId } } } = props;
 
   const { data, error, isLoading, isError } = useSingleIdea(ideaId);
-  // console.log(data);
+
   if (isError) {
     console.log(error);
     return (
       <div className="wrapper">
-        <p>Error occurred while trying to retrieve idea. Please try again later.</p>
+        <p>Error occured while trying to retrieve idea. Please try again later.</p>
       </div>
     )
   }

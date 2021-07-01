@@ -6,7 +6,6 @@ import { IProject } from "./project.type";
 import { IRating } from "./rating.type";
 import { IComment } from "./comment.type";
 import { IUser } from "./user.type";
-import { ISegment, ISubSegment } from "./segment.type";
 
 export type IdeaState = 'IDEA' | 'PROPOSAL' | 'PROJECT';
 
@@ -16,8 +15,6 @@ export interface IIdea {
 	authorId: string;
 	championId: string;
 	categoryId: number;
-	// segmentId: number; // uncomment those will have post 400 error
-	// subSegmentId: number;
 	title: string;
 	description: string;
 	communityImpact?: string;
@@ -37,14 +34,12 @@ export interface IIdeaWithRelationship extends IIdea {
   geo?: IGeo;
   address?: IAddress;
   category?: ICategory;
-  segment?: ISegment;
-  subSegment?: ISubSegment;
   author?: IUser;
 	champion?: IUser | null;
   proposalInfo?: IProposal | null;
   projectInfo?: IProject | null;
 	
-	// Comments and Ratings are fetched separately but could be fetched
+	// Comments and Ratings are fetched seperately but could be fetched
 	comments?: IComment[];
 	ratings?: IRating[]
 
@@ -57,12 +52,6 @@ export interface IIdeaWithAggregations {
 	id: number;
 	authorId: string;
 	categoryId: number;
-	segmentId: number; //
-	subSegmentId: number; //
-	segmentName: string; //
-	subSegmentName: string; //
-	firstName: string; //
-	streetAddress: string; //
 	title: string;
 	description: string;
 	state: IdeaState;

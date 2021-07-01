@@ -41,7 +41,7 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({ }) => {
 
   if ((error && isError) || (aggregateIsError && aggregateError)) {
     return (
-      <p>An error occurred while fetching comments</p>
+      <p>An error occured while fetching comments</p>
     )
   }
 

@@ -59,7 +59,7 @@ const CommentsSection: React.FC<CommentsSection> = () => {
 
   if (error && isError) {
     return (
-      <p>An error occurred while fetching comments</p>
+      <p>An error occured while fetching comments</p>
     )
   }
 
@@ -101,7 +101,7 @@ const CommentsSection: React.FC<CommentsSection> = () => {
           dismissible
           variant='danger'
         >
-          {commentError?.message ?? "An Error occurred while trying to create your comment."}
+          {commentError?.message ?? "An Error occured while trying to create your comment."}
         </Alert>
       )}
       <Button

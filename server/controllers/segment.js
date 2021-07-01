@@ -107,7 +107,7 @@ segmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to create a segment.",
+                message: "An error occured while trying to create a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -129,7 +129,7 @@ segmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve segments.",
+                message: "An error occured while trying to retrieve segments.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -153,7 +153,7 @@ segmentRouter.get(
 //         }catch(error){
 //             console.log(error);
 //             res.status(400).json({
-//                 message: "An error occurred while trying to retrieve segments.",
+//                 message: "An error occured while trying to retrieve segments.",
 //                 details: {
 //                     errorMessage: error.message,
 //                     errorStack: error.stack,
@@ -234,7 +234,7 @@ segmentRouter.delete(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to delete a segment.",
+                message: "An error occured while trying to delete a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -362,7 +362,7 @@ segmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to update a segment.",
+                message: "An error occured while trying to update a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -459,7 +459,7 @@ segmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to find a segment.",
+                message: "An error occured while trying to find a segment.",
 
                 details: {
                     errorMessage: error.message,

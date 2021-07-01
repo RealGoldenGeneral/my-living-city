@@ -39,7 +39,7 @@ ideaRouter.get(
       res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
-        message: "An error occurred while trying to fetch all ideas",
+        message: "An error occured while trying to fetch all ideas",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -62,7 +62,7 @@ ideaRouter.post(
       res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
-        message: "An error occurred while trying to fetch all ideas",
+        message: "An error occured while trying to fetch all ideas",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -85,32 +85,26 @@ ideaRouter.post(
     try {
       // TODO: if rating is adjusted raw query will break
       const data = await prisma.$queryRaw(`
-      select
-      i.id,
-      i.author_id as "authorId",
-      i.category_id as "categoryId",
-      i.title,
-      i.description,
-      i.segment_id,
-      i.sub_segment_id,
-      coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
-      coalesce(ir.avg_rating, 0) as "ratingAvg",
-      coalesce(ic.total_comments, 0) as "commentCount",
-      coalesce(ir.total_ratings, 0) as "ratingCount",
-      coalesce(pr.pos_rating, 0) as "posRatings",
-      coalesce(nr.neg_rating, 0) as "negRatings",
-      coalesce(sn.segment_name, '') as "segmentName",
-      coalesce(sbn.sub_segment_name, '') as "subSegmentName",
-      coalesce(userfname.f_name, '') as "firstName",
-      coalesce(userStreetAddress.street_address, '') as "streetAddress",
-      i.state,
-      i.active,
-      i.updated_at as "updatedAt",
-      i.created_at as "createdAt"
+        select		
+          i.id,
+          i.author_id as "authorId",
+          i.category_id as "categoryId",
+          i.title,
+          i.description,
+          coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
+          coalesce(ir.avg_rating, 0) as "ratingAvg",			
+          coalesce(ic.total_comments, 0) as "commentCount",
+          coalesce(ir.total_ratings, 0) as "ratingCount",
+          coalesce(pr.pos_rating, 0) as "posRatings",
+          coalesce(nr.neg_rating, 0) as "negRatings",
+          i.state,
+          i.active,
+          i.updated_at as "updatedAt",
+          i.created_at as "createdAt"
         from idea i
         -- Aggregate total comments
         left join (
-            select
+            select		
               idea_id,
               count(id) as total_comments
             from idea_comment
@@ -118,16 +112,16 @@ ideaRouter.post(
         ) ic on i.id = ic.idea_id
         -- Aggregate total ratings and rating avg
         left join (
-            select
+            select		
               idea_id,
               count(id) as total_ratings,
-              avg(rating) as avg_rating
+              avg(rating) as avg_rating 
             from idea_rating
             group by idea_rating.idea_id
         ) ir on	i.id = ir.idea_id
         -- Aggregate total neg ratings
         left join (
-            select
+            select 		
               idea_id,
               count(id) as neg_rating
             from idea_rating
@@ -136,33 +130,13 @@ ideaRouter.post(
         ) nr on	i.id = nr.idea_id
         -- Aggregate total pos ratings
         left join (
-            select
+            select 		
               idea_id,
               count(id) as pos_rating
             from idea_rating
             where rating > 0
             group by idea_id
         ) pr on	i.id = pr.idea_id
-        -- Aggregate idea segment name
-        left join (
-            select seg_id, segment_name
-            from segment
-            ) sn on i.segment_id = sn.seg_id
-        -- Aggregate idea sub segment name
-        left join (
-            select seg_id, sub_segment_name
-            from sub_segment
-            ) sbn on i.sub_segment_id = sbn.seg_id
-        -- Aggregate author's first name
-        left join  (
-            select id, f_name
-            from "user"
-            ) userfname on i.author_id = userfname.id
-        -- Aggregate author's address
-        left join (
-            select user_id, street_address
-            from user_address
-            ) userStreetAddress on i.author_id = userStreetAddress.user_id
         order by
           "ratingCount" desc,
           "ratingAvg" desc,
@@ -175,7 +149,7 @@ ideaRouter.post(
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: "An error occurred while trying to fetch all ideas",
+        message: "An error occured while trying to fetch all ideas",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -212,9 +186,7 @@ ideaRouter.get(
           geo: true,
           address: true,
           category: true,
-          segment:true, //
-          subSegment: true, // worked, GET retrieve table 
-          projectInfo: true, // worked, GET retrieve table 
+          projectInfo: true,
           proposalInfo: true,
           champion: {
             include: {
@@ -254,7 +226,7 @@ ideaRouter.get(
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: `An Error occurred while trying to fetch idea with id ${req.params.ideaId}.`,
+        message: `An Error occured while trying to fetch idea with id ${req.params.ideaId}.`,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -300,7 +272,7 @@ ideaRouter.put(
 
       if (!ideaId || !parsedIdeaId) {
         return res.status(400).json({
-          message: `A valid ideaId must be specified in the route parameter.`,
+          message: `A valid ideaId must be specified in the route paramater.`,
         });
       }
 
@@ -359,12 +331,12 @@ ideaRouter.put(
 
       console.log("Returns here")
       res.status(200).json({
-        message: "Idea successfully updated",
+        message: "Idea succesfully updated",
         idea: updatedIdea,
       })
     } catch (error) {
       res.status(400).json({
-        message: "An error occurred while to update an Idea",
+        message: "An error occured while to update an Idea",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -442,12 +414,8 @@ ideaRouter.post(
       // Parse data
       const geoData = { ...req.body.geo };
       const addressData = { ...req.body.address };
-      // const segmentData = { ...req.body.segment}; //
-      // const subSegmentData = { ...req.body.subSegment}; //
       delete req.body.geo;
       delete req.body.address;
-      // delete req.body.segment; // 
-      // delete req.body.subSegment; //
 
 
       const ideaData = {
@@ -460,16 +428,12 @@ ideaRouter.post(
         data: {
           geo: { create: geoData },
           address: { create: addressData },
-          // segment: { create: segmentData}, //
-          // subSegment: { create: subSegmentData}, //
           ...ideaData
         },
         include: {
           geo: true,
           address: true,
           category: true,
-          segment: true, // post retrieve work
-          subSegment: true // post retrieve work
         }
       });
 
@@ -477,7 +441,7 @@ ideaRouter.post(
     } catch (error) {
       console.error(error);
       res.status(400).json({
-        message: "An error occurred while trying to create an Idea.",
+        message: "An error occured while trying to create an Idea.",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
@@ -501,7 +465,7 @@ ideaRouter.delete(
       // check if id is valid
       if (!parsedIdeaId) {
         return res.status(400).json({
-          message: `A valid ideaId must be specified in the route parameter.`,
+          message: `A valid ideaId must be specified in the route paramater.`,
         });
       }
 
@@ -524,12 +488,12 @@ ideaRouter.delete(
       const deletedIdea = await prisma.idea.delete({ where: { id: parsedIdeaId }});
 
       res.status(200).json({
-        message: "Idea successfully deleted",
+        message: "Idea succesfully deleted",
         deletedIdea: deletedIdea,
       });
     } catch (error) {
       res.status(400).json({
-        message: "An error occurred while to delete an Idea",
+        message: "An error occured while to delete an Idea",
         details: {
           errorMessage: error.message,
           errorStack: error.stack,

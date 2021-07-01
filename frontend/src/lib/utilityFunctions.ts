@@ -61,17 +61,6 @@ export const capitalizeString = (s: string) => {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-// Capitalize the first letter of string on each word
-export const capitalizeFirstLetterEachWord = (str: string) => {
-	let s = str.split(" ");
-	
-    for (var i = 0, x = s.length; i < x; i++) {
-        s[i] = s[i][0].toUpperCase() + s[i].substr(1);
-    }
-
-    return s.join(" ");
-}
-
 /**
  * Error handling function that parses a potential Axios error that may be thrown when submitting 
  * new data.
@@ -134,11 +123,11 @@ export const timeDifference = (current: Date, previous: Date): string => {
 	} else if (elapsed < msPerDay) {
 		return Math.round(elapsed / msPerHour) + ' hours ago';
 	} else if (elapsed < msPerMonth) {
-		return Math.round(elapsed / msPerDay) + ' days ago';
+		return 'approximately ' + Math.round(elapsed / msPerDay) + ' days ago';
 	} else if (elapsed < msPerYear) {
-		return Math.round(elapsed / msPerMonth) + ' months ago';
+		return 'approximately ' + Math.round(elapsed / msPerMonth) + ' months ago';
 	} else {
-		return Math.round(elapsed / msPerYear) + ' years ago';
+		return 'approximately ' + Math.round(elapsed / msPerYear) + ' years ago';
 	}
 }
 

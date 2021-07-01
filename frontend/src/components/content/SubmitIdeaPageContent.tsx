@@ -6,16 +6,10 @@ import { postCreateIdea } from '../../lib/api/ideaRoutes';
 import { ICategory } from '../../lib/types/data/category.type';
 import { ICreateIdeaInput } from '../../lib/types/input/createIdea.input';
 import { IFetchError } from '../../lib/types/types';
-import { capitalizeFirstLetterEachWord, capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
-import { IUserSegments } from '../../lib/types/data/userSegment.type';
-import { useUserSegments } from 'src/hooks/userSegmentsHooks';
-import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
+import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
-  // userSegments: IUserSegments | undefined
-  segment: (ISegment | undefined)[]
-  subSegment: (ISubSegment | undefined)[]
 }
 
 /**
@@ -23,39 +17,14 @@ interface SubmitIdeaPageContentProps {
  * default will be used if categories can't be fetched from server
  */
 const DEFAULT_CAT_ID = 1;
-const DEFAULT_SEG_ID = 1;
-const DEFAULT_SUBSEG_ID = 1;
 
-const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, segment, subSegment }) => {
+const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const { token } = useContext(UserProfileContext);
-  // const { data } = useUserSegments(token);
-  // console.log(data);
 
-  // const callSegmentsName = async (values: any) => {
-  //   for (let item in values) {
-  //     console.log(item, values[item])
-  //   }
-  // }
-  
-  // callSegmentsName(data!);
-  // console.log(userSegments)
-
-  // console.log(categories);
-  // console.log(categories?.map(cat => cat.id))
-  // console.log(categories?.map(cat => cat.title))
-
-  // console.log(segment);
-  // console.log(segment.map(seg => seg?.segId))
-  // console.log(segment.map(seg => seg?.name))
-
-  // console.log(subSegment);
-  // console.log(subSegment.map(subSeg => subSeg?.segId))
-  // console.log(subSegment.map(subSeg => subSeg?.name))
 
   const submitHandler = async (values: ICreateIdeaInput) => {
-    console.log(values);
     try {
       // Set loading and error state
       setError(null);
@@ -69,7 +38,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setError(null);
       formik.resetForm();
     } catch (error) {
-      const genericMessage = 'An error occurred while trying to create an Idea.';
+      const genericMessage = 'An error occured while trying to create an Idea.';
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {
@@ -83,8 +52,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
       title: '',
       description: '',
-      // segmentId: segment ? segment[0]?.segId : DEFAULT_SEG_ID,
-      // subSegmentId: subSegment ? subSegment[0]?.segId : DEFAULT_SUBSEG_ID,
       artsImpact: '',
       communityImpact: '',
       energyImpact: '',
@@ -134,52 +101,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 ))}
               </Form.Control>
             </Form.Group>
-
-            <Form.Group controlId="SegmentDropDown">
-              <Form.Label>Select Municipality: </Form.Label>
-              <Form.Control
-                as="select"
-                name="segmentId"
-                onChange={formik.handleChange}
-                value={formik.values.segmentId}
-              >
-                {segment && segment.map(seg => (
-                  <option
-                    key={String(seg?.segId)}
-                    value={Number(seg?.segId)}
-                    style={{
-                      textTransform: 'capitalize'
-                    }}
-                  >
-                    {seg?.name && capitalizeFirstLetterEachWord(seg?.name)}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="SubSegmentDropDown">
-              <Form.Label>Select Neighborhood: </Form.Label>
-              <Form.Control
-                as="select"
-                name="subSegmentId"
-                onChange={formik.handleChange}
-                value={formik.values.subSegmentId}
-              >
-                {subSegment && subSegment.map(subSeg => (
-                  <option
-                    key={String(subSeg?.segId)}
-                    value={Number(subSeg?.segId)}
-                    style={{
-                      textTransform: 'capitalize'
-                    }}
-                  >
-                    {subSeg?.name && capitalizeFirstLetterEachWord(subSeg?.name)}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-
-
             <Form.Group>
               <Form.Label>What is the title of your idea?</Form.Label>
               <Form.Control
@@ -258,7 +179,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               { error.message}
             </Alert>
           )}
-          {/* TODO: Add ui alert flash to inform user that idea has successfully been created */}
+          {/* TODO: Add ui alert flash to inform user that idea has succesfully been created */}
         </Col>
       </Row>
     </Container>

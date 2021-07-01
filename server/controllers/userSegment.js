@@ -207,7 +207,7 @@ userSegmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to create a userSegment.",
+                message: "An error occured while trying to create a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -239,7 +239,7 @@ userSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a userSegment.",
+                message: "An error occured while trying to retrieve a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -276,7 +276,7 @@ userSegmentRouter.delete(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to delete a userSegment.",
+                message: "An error occured while trying to delete a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -525,7 +525,7 @@ userSegmentRouter.put(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to update a userSegment.",
+                message: "An error occured while trying to update a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -561,7 +561,7 @@ userSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a userSegment.",
+                message: "An error occured while trying to retrieve a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -595,7 +595,7 @@ userSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a userSegment.",
+                message: "An error occured while trying to retrieve a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -629,7 +629,7 @@ userSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a userSegment.",
+                message: "An error occured while trying to retrieve a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -663,7 +663,7 @@ userSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a userSegment.",
+                message: "An error occured while trying to retrieve a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -697,7 +697,7 @@ userSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a userSegment.",
+                message: "An error occured while trying to retrieve a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -731,7 +731,7 @@ userSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a userSegment.",
+                message: "An error occured while trying to retrieve a userSegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,

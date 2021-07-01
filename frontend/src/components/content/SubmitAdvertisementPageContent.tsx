@@ -55,7 +55,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         setError(null);
         //reset the form
       } catch (error) {
-        const genericMessage = 'An error occurred while trying to create an Idea.';
+        const genericMessage = 'An error occured while trying to create an Idea.';
         const errorObj = handlePotentialAxiosError(genericMessage, error);
         setError(errorObj);
       } finally {

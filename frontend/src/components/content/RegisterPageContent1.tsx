@@ -271,7 +271,7 @@ interface NextMapProps {
   //     setError(null);
   //     // formik.resetForm();
   //   } catch (error) {
-  //     const genericMessage = 'An error occurred while trying to create a new account.';
+  //     const genericMessage = 'An error occured while trying to create a new account.';
   //     const errorObj = handlePotentialAxiosError(genericMessage, error);
   //     setError(errorObj);
   //     wipeLocalStorage();

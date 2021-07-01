@@ -123,7 +123,7 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
               dismissible
               variant='danger'
             >
-              {error?.message ?? "An Error occurred while trying to submit your rating."}
+              {error?.message ?? "An Error occured while trying to submit your rating."}
             </Alert>
           )}
           <Button

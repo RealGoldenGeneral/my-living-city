@@ -203,7 +203,7 @@ advertisementRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to create an Advertisement.",
+                message: "An error occured while trying to create an Advertisement.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -249,7 +249,7 @@ advertisementRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to get advertisements.",
+                message: "An error occured while trying to get advertisements.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -428,7 +428,7 @@ advertisementRouter.put(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to update an Advertisement.",
+                message: "An error occured while trying to update an Advertisement.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -499,7 +499,7 @@ advertisementRouter.delete(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to delete advertisement.",
+                message: "An error occured while trying to delete advertisement.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,

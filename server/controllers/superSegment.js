@@ -75,7 +75,7 @@ superSegmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to create a super segment.",
+                message: "An error occured while trying to create a super segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -98,7 +98,7 @@ superSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve super segments. ",
+                message: "An error occured while trying to retrieve super segments. ",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -133,7 +133,7 @@ superSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to retrieve a segment.",
+                message: "An error occured while trying to retrieve a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -194,7 +194,7 @@ superSegmentRouter.delete(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to delete a segment.",
+                message: "An error occured while trying to delete a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -285,7 +285,7 @@ superSegmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occurred while trying to update a segment.",
+                message: "An error occured while trying to update a segment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,

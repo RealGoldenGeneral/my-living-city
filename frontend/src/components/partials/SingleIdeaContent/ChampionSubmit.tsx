@@ -41,8 +41,8 @@ const ChampionSubmit = (props: ChampionSubmitProps) => {
           dismissible
           variant='danger'
         >
-          {/* {'An error occurred while trying to champion an idea'} */}
-          {error?.message ?? "An error occurred while trying to champion an idea."}
+          {/* {'An error occured while trying to champion an idea'} */}
+          {error?.message ?? "An error occured while trying to champion an idea."}
         </Alert>
       )}
       <Button 
