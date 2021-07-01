@@ -3,7 +3,7 @@ import {Table, Form, Button, Col, Container, Row, Card, Alert } from 'react-boot
 import {useState} from 'react'
 import {ISegment, ISubSegment, ISegmentRequest} from '../../lib/types/data/segment.type';
 import { IFetchError } from '../../lib/types/types';
-import { capitalizeString } from '../../lib/utilityFunctions';
+import { capitalizeFirstLetterEachWord, capitalizeString } from '../../lib/utilityFunctions';
 import {createSegment, createSubSegment, updateSegment, updateSubSegment} from '../../lib/api/segmentRoutes';
 import {useAllSubSegmentsWithId} from '../../hooks/segmentHooks';
 import { ShowSubSegmentsPage } from 'src/pages/ShowSubSegmentsPage';
@@ -64,7 +64,7 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
     return(
       <Card>
       {/* <img alt=""src={"http://localhost:3001/static/uploads/1621449457193-SampleAds1.png"} /> */}
-      <Card.Header>{capitalizeString(segName!)} Sub-Segments <Button className="float-right" size="sm" onClick={(e)=>{setShowNewSubSeg(true)}}>Add New Sub-Segments</Button></Card.Header>
+      <Card.Header>{capitalizeFirstLetterEachWord(segName!)} Sub-Segments <Button className="float-right" size="sm" onClick={(e)=>{setShowNewSubSeg(true)}}>Add New Sub-Segments</Button></Card.Header>
       <Card.Body>
           <Table bordered hover>
             <thead>
@@ -81,7 +81,7 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
                 {/* <td><Form.Control type="text" value={String(segment.segId)} readOnly/></td> */}
                 <td><Form.Control 
                   type="text" 
-                  defaultValue={capitalizeString(segment.name)}
+                  defaultValue={capitalizeFirstLetterEachWord(segment.name)}
                   onChange={(e)=>{segment.name = e.target.value}}
                   /></td>
                   <td><Form.Control 
@@ -207,7 +207,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
       </Col>
       <Col>
       <Card>
-      <Card.Header>{capitalizeString(provName!)} segments <Button className="float-right"size="sm"onClick={(e)=>{setShowNewSeg(true)}}>Create New Segment</Button></Card.Header>
+      <Card.Header>{capitalizeFirstLetterEachWord(provName!)} segments <Button className="float-right"size="sm"onClick={(e)=>{setShowNewSeg(true)}}>Create New Segment</Button></Card.Header>
         <Card.Body>
           <Table bordered hover>
             <thead>
@@ -223,7 +223,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
                 <tr key={segment.segId}>
                 <td><Form.Control
                   type="text" 
-                  defaultValue={capitalizeString(segment.name)}
+                  defaultValue={capitalizeFirstLetterEachWord(segment.name)}
                   onChange={(e)=>{segment.name = e.target.value}}
                   /></td>
                 <td><Form.Control 

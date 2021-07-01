@@ -44,11 +44,13 @@ export const getSingleIdea = async (ideaId: string) => {
 
 export const postCreateIdea = async (ideaData: ICreateIdeaInput, token: string | null) => {
   // Parse data and data checking
-  const { categoryId, title, description} = ideaData;
+  const { categoryId, segmentId, subSegmentId, title, description} = ideaData;
   const parsedCatId = Number(categoryId);
-
+  const parsedSegId = Number(segmentId);
+  const parsedSubSegId = Number(subSegmentId);
+  // if (!parsedCatId || !title || !description || !parsedSegId || !parsedSubSegId) {
   if (!parsedCatId || !title || !description) {
-    throw new Error('You must choose a category, define a title, and description of your idea.');
+    throw new Error('You must choose a category, a segment, a sub-segment, define a title, and description of your idea.');
   }
 
   if (!token) {
@@ -58,7 +60,11 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, token: string |
   const parsedPayload = {
     ...ideaData,
     categoryId: parsedCatId,
+    segmentId: parsedSegId,
+    subSegmentId: parsedSubSegId
   }
+
+  // console.log(parsedPayload);
 
   const res = await axios.post<IIdeaWithRelationship>(
     `${API_BASE_URL}/idea/create`, 

@@ -1,6 +1,6 @@
 import { Button, Col, Row } from 'react-bootstrap';
 import { IIdeaWithRelationship } from '../../lib/types/data/idea.type';
-import { capitalizeString } from '../../lib/utilityFunctions';
+import { capitalizeFirstLetterEachWord, capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
 import RatingsSection from '../partials/SingleIdeaContent/RatingsSection';
 import {
@@ -34,6 +34,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     manufacturingImpact,
     createdAt,
     category,
+    segment,
+    subSegment,
     author,
     state,
 
@@ -42,7 +44,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     projectInfo,
   } = ideaData;
 
+  // console.log(ideaData);
+
   const { title: catTitle } = category!;
+  const { name: segTitle} = segment!;
+  const { name: subSegTitle} = subSegment!;
   const parsedDate = new Date(createdAt);
 
   // Social Media share for this Idea page
@@ -87,6 +93,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
             <h4 className='text-center my-auto text-muted'>Status: <span>{state}</span></h4>
           </div>
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
+          <h4 className='h5'>Municipality: {capitalizeFirstLetterEachWord(segTitle)}</h4>
+          <h4 className='h5'>Neighborhood: {capitalizeFirstLetterEachWord(subSegTitle)}</h4>
           <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
           {!!ideaData.champion && (
             <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
@@ -94,7 +102,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5>
           <br />
           <p>{description}</p>
-          <p><strong>Community and place:</strong> {communityImpact}</p>
+          <p><strong>Community and Place:</strong> {communityImpact}</p>
           <p><strong>Nature and Food Security:</strong> {natureImpact}</p>
           <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p>
           <p><strong>Water and Energy:</strong> {energyImpact}</p>
