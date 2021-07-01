@@ -84,3 +84,41 @@ export const updateSubSegment = async (segData: any, token:any) =>{
   }
   return res.data;
 }
+
+export const findSegmentByName = async (segData: any) => {
+  if(!segData.segName||!segData.province||!segData.country){
+    throw new Error("location parameters are needed");
+  }
+  const parsedPayload = {...segData};
+  const result = await axios({
+    method: "post",
+    url: `${API_BASE_URL}/segment/getByName`,
+    data: parsedPayload
+  });
+
+  return result.data;
+}
+
+export const findSubsegmentsBySegmentId = async (segId:number) => {
+  if(segId<0){
+    throw new Error("SegId is invalid!");
+  }
+
+  const result = await axios({
+    method: "get",
+    url: `${API_BASE_URL}/subSegment/getBySegmentId/${segId}`
+  })
+
+  return result.data;
+}
+
+export const findSegmentRequests = async (token: string | null) => {
+  const result = await axios({
+    method: "get",
+    url: `${API_BASE_URL}/userSegmentRequest/getAll`,
+    headers: { "x-auth-token": token, "Access-Control-Allow-Origin": "*",},
+    withCredentials: true
+  });
+
+  return result.data;
+}

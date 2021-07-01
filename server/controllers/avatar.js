@@ -35,8 +35,14 @@ const upload = multer({
 //make this get the userId and add it to the image name;
 avatarRouter.get(
     '/',
+    passport.authenticate('jwt',{session:false}),
     async (req, res, next) => {
       try {
+        const { id } = req.user;
+        //find the requesting user in the database
+        const foundUser = await prisma.user.findUnique({
+            where:{id:id}
+        });
         res.json({
           route: 'welcome to Avatar Router'
         })
@@ -51,6 +57,7 @@ avatarRouter.get(
       }
     }
   )
+
   avatarRouter.post(
     '/image',
     passport.authenticate('jwt',{session:false}),
@@ -81,7 +88,7 @@ avatarRouter.get(
               errorMessage: error.message,
               errorStack: error.stack,
             }
-              });
+          });
       }
     }
   )

@@ -3,7 +3,7 @@ const express = require('express');
 const segmentRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
-const { isEmpty } = require('lodash');
+const { isEmpty, isInteger, isString } = require('lodash');
 const { UserType } = require('@prisma/client');
 
 segmentRouter.post(
@@ -23,7 +23,7 @@ segmentRouter.post(
             });
             //User must be admin to create segment
             if (theUser.userType == 'ADMIN'){
-                const {country,province,name,superSegName} = req.body;
+                const {country,province,name,superSegId} = req.body;
 
                 console.log(req.body);
 
@@ -38,23 +38,39 @@ segmentRouter.post(
                     })
                 }
                 //if country field is missing
-                if(!country){
+                if(!country||!isString(country)){
                     error+='A segment must has a country field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a country field. ';
                     errorStack+='cuntry must be provided in the body with a valid value. ';
                 }
 
                 //if province is missing
-                if(!province){
+                if(!province||isString(province)){
                     error+='A segment must has a province field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a province field. ';
                     errorStack+='province must be provided in the body with a valid value. ';
                 }
 
-                if(!name){
+                if(!name||!isString(province)){
                     error+='A segment must has a name field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a name field. ';
                     errorStack+='name must be provided in the body with a valid value. ';
+                }
+
+                if(!superSegId||!isInteger(superSegId)){
+                    error+='A segment must has a super segment id. ';
+                    errorMessage+='Creating a segment must explicitly be supplied with a super segment id. '
+                    errorStack+='super segment id must be provided in the body with a valid value. '
+                }else{
+                    const theSuperSegment = await prisma.superSegment.findUnique({
+                        where:{superSegId:superSegId}
+                    });
+    
+                    if(!theSuperSegment){
+                        error+='A segment must has a valid super segment id. ';
+                        errorMessage+='Creating a segment must explicitly be supplied with a valid super segment id. '
+                        errorStack+='Valid super segment id must be provided in the body. '
+                    }
                 }
 
                 //If there's error in error holder
@@ -74,7 +90,7 @@ segmentRouter.post(
                         country:country,
                         province:province,
                         name:name,
-                        superSegName:superSegName
+                        superSegId:superSegId
                     }
                 })
 
@@ -83,7 +99,7 @@ segmentRouter.post(
                 return res.status(403).json({
                     message: "You don't have the right to add a segment!",
                     details: {
-                      errorMessage: 'In order to create a segment, you must be an admin or business user.',
+                      errorMessage: 'In order to create a segment, you must be an admin user.',
                       errorStack: 'user must be an admin if they want to create a segment',
                     }
                 });
@@ -148,6 +164,32 @@ segmentRouter.get(
 //         }
 //     }
 // );
+
+segmentRouter.get(
+    '/getBySuperSegId/:superSegId',
+    async(req,res) => {
+        const {superSegId} = req.params;
+
+        if(!isInteger(superSegId)){
+            return res.status(400).json("super segment id is invalid. ")
+        }
+
+        const theSuperSegment = await prisma.superSegment.findUnique({
+            where:{superSegId:superSegId}
+        })
+
+        if(!theSuperSegment){
+            return res.status(404).json("super segment id is not in the database! ")
+        }
+
+        const segments = await prisma.segments.findMany({
+            where:{superSegId:superSegId}
+        });
+
+        res.status(200).json(segments);
+    }
+);
+
 segmentRouter.delete(
     '/delete/:segmentId',
     passport.authenticate('jwt',{session:false}),
@@ -171,7 +213,7 @@ segmentRouter.delete(
                 });
 
                 if(!theSegment){
-                    res.status(404).json("the segment need to be deleted not found!");
+                    return res.status(404).json("the segment need to be deleted not found!");
                 }else{
                     await prisma.segments.delete({
                         where:{
@@ -184,7 +226,7 @@ segmentRouter.delete(
                 return res.status(403).json({
                     message: "You don't have the right to delete a segment!",
                     details: {
-                      errorMessage: 'In order to delete a segment, you must be an admin or business user.',
+                      errorMessage: 'In order to delete a segment, you must be an admin user.',
                       errorStack: 'user must be an admin if they want to delete a segment',
                     }
                 });
@@ -222,16 +264,20 @@ segmentRouter.post(
 
                 const parsedSegmentId = parseInt(segmentId);
 
-                const {country,province,name,superSegName} = req.body;
+                const {country,province,name,superSegId} = req.body;
 
                 console.log(req.body);
+
+                let error = '';
+                let errorMessage = '';
+                let errorStack = '';
 
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
                     return res.status(400).json({
                         message: 'The objects in the request body are missing',
                         details: {
-                            errorMessage: 'Creating a segment must supply necessary fields explicitly.',
+                            errorMessage: 'Updating a segment must supply necessary fields explicitly.',
                             errorStack: 'necessary fields must be provided in the body with valid values',
                         }
                     })
@@ -246,6 +292,52 @@ segmentRouter.post(
                 if(!theSegment){
                     res.status(404).json("the segment need to be updated not found!");
                 }else{
+
+                    if(country&&!isString(country)){
+                        error+='A segment must has a country field. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a country field. ';
+                        errorStack+='cuntry must be provided in the body with a valid value. ';
+                    }
+    
+                    if(province&&!isString(province)){
+                        error+='A segment must has a province field. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a province field. ';
+                        errorStack+='province must be provided in the body with a valid value. ';
+                    }
+    
+                    if(name&&!isString(name)){
+                        error+='A segment must has a name field. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a name field. ';
+                        errorStack+='name must be provided in the body with a valid value. ';
+                    }
+    
+                    if(superSegId&&!isInteger(superSegId)){
+                        error+='A segment must has a super segment id. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a super segment id. '
+                        errorStack+='super segment id must be provided in the body with a valid value. '
+                    }else if(segmentId&&isInteger(superSegId)){
+                        const theSuperSegment = await prisma.superSegment.findUnique({
+                            where:{superSegId:superSegId}
+                        });
+        
+                        if(!theSuperSegment){
+                            error+='A segment must has a valid super segment id. ';
+                            errorMessage+='Updating a segment must explicitly be supplied with a valid super segment id. '
+                            errorStack+='Valid super segment id must be provided in the body. '
+                        }
+                    }
+
+                    //If there's error in error holder
+                    if(error||errorMessage||errorStack){
+                        return res.status(400).json({
+                            message: error,
+                            details: {
+                            errorMessage: errorMessage,
+                            errorStack: errorStack
+                            }
+                        });
+                    }
+
                     const result = await prisma.segments.update({
                         where:{segId:parsedSegmentId},
                         data:{
@@ -254,8 +346,8 @@ segmentRouter.post(
                             name:name,
                             superSegName:superSegName
                         }
+                        
                     });
-
                     res.status(200).json(result);
                 }
             }else{
@@ -271,6 +363,104 @@ segmentRouter.post(
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to update a segment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }finally{
+            await prisma.$disconnect();
+        }
+    }
+);
+
+//get segment by name endpoint
+
+segmentRouter.post(
+    '/getByName',
+    async(req,res) => {
+        let error = '';
+        let errorMessage = '';
+        let errorStack = '';
+        try{
+            //if there's no object in the request body
+            if(isEmpty(req.body)){
+                return res.status(400).json({
+                    message: 'The objects in the request body are missing',
+                    details: {
+                        errorMessage: 'Finding a segment must supply necessary fields explicitly.',
+                        errorStack: 'necessary fields must be provided in the body with valid values',
+                    }
+                })
+            }
+
+            const {country,province,segName} = req.body;
+
+            if(!country){
+                error+='Query must has a country field. ';
+                errorMessage+='Query must explicitly be supplied with a country field. ';
+                errorStack+='cuntry must be provided in the body with a valid value. ';
+            }
+
+            if(!isString(country)||country.length<2||country.length>40){
+                error+='Country value must be valid ';
+                errorMessage+='Country must be string with 2-40 characters ';
+                errorStack+='Country must be string with 2-40 characters ';
+            }
+
+            if(!province){
+                error+='Query must has a province field. ';
+                errorMessage+='Query must explicitly be supplied with a province field. ';
+                errorStack+='Province must be provided in the body with a valid value. ';
+            }
+
+            if(!isString(province)||province.length<2||province.length>40){
+                error+='Province value must be valid ';
+                errorMessage+='Province must be string with 2-40 characters ';
+                errorStack+='Province must be string with 2-40 characters ';
+            }
+
+            if(!segName){
+                error+='Query must has a segName field. ';
+                errorMessage+='Query must explicitly be supplied with a segName field. ';
+                errorStack+='segName must be provided in the body with a valid value. ';
+            }
+
+            if(!isString(segName)||segName.length<2||segName.length>40){
+                error+='segName value must be valid ';
+                errorMessage+='segName must be string with 2-40 characters ';
+                errorStack+='segName must be string with 2-40 characters ';
+            }
+
+            //If there's error in error holder
+            if(error||errorMessage||errorStack){
+                return res.status(400).json({
+                    message: error,
+                    details: {
+                    errorMessage: errorMessage,
+                    errorStack: errorStack
+                    }
+                });
+            }
+
+            const result = await prisma.segments.findFirst({
+                where:{
+                    country:country,
+                    province:province,
+                    name:{contains:segName}
+                }
+            });
+
+            // if(!result){
+            //     return res.status(404).json("Segment not found!");
+            // }
+
+            res.status(200).json(result);
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to find a segment.",
+
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
