@@ -1,6 +1,6 @@
 import { Button, Card } from 'react-bootstrap';
 import { IIdeaWithAggregations } from '../../lib/types/data/idea.type';
-import { timeDifference, truncateString } from '../../lib/utilityFunctions'
+import { capitalizeFirstLetterEachWord, timeDifference, truncateString } from '../../lib/utilityFunctions'
 import { BsPeople, BsHeartHalf } from 'react-icons/bs'
 import { AiOutlinePercentage } from 'react-icons/ai'
 import { FaRegThumbsUp, FaRegThumbsDown } from 'react-icons/fa'
@@ -15,6 +15,12 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     id,
     title,
     description,
+    segmentId,
+    subSegmentId,
+    segmentName,
+    subSegmentName,
+    firstName,
+    streetAddress,
     updatedAt,
     ratingAvg,
     ratingCount,
@@ -22,12 +28,16 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     posRatings,
     negRatings
   } = ideaData;
+
+  console.log(ideaData);
+
   return (
     // <Card style={{ width: '18rem' }}>
     <Card>
       {/* <Card.Img variant="top" src="https://via.placeholder.com/300x150" /> */}
       <Card.Body>
         <Card.Title>{truncateString(title, 50)}</Card.Title>
+        {/* <Card.Subtitle>{firstName}@{streetAddress}</Card.Subtitle> */}
         <Card.Text>{truncateString(description, 100)}</Card.Text>
         <div className="button-breakdown mt-3 d-flex justify-content-between align-items-center">
           <Card.Link href={`/ideas/${id}`}>
@@ -57,7 +67,9 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       </Card.Body>
       {showFooter && (
         <Card.Footer>
-          <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small>
+          <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small><br></br>
+          <small className='text-muted'>{capitalizeFirstLetterEachWord(segmentName)} at {capitalizeFirstLetterEachWord(subSegmentName)}</small><br></br>
+          <small className='text-muted'>-- {firstName}@{streetAddress}</small>
         </Card.Footer>
       )}
     </Card>

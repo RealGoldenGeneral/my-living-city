@@ -113,7 +113,7 @@ subSegmentRouter.post(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to create a subsegment.",
+                message: "An error occurred while trying to create a subsegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -172,7 +172,7 @@ subSegmentRouter.delete(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to delete a subsegment.",
+                message: "An error occurred while trying to delete a subsegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -195,7 +195,7 @@ subSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to get all subsegments.",
+                message: "An error occurred while trying to get all subsegments.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -229,7 +229,7 @@ subSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to get that subsegment.",
+                message: "An error occurred while trying to get that subsegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -267,7 +267,7 @@ subSegmentRouter.get(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to get that subsegment.",
+                message: "An error occurred while trying to get that subsegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -392,7 +392,7 @@ subSegmentRouter.put(
         }catch(error){
             console.log(error);
             res.status(400).json({
-                message: "An error occured while trying to update subsegment.",
+                message: "An error occurred while trying to update subsegment.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
