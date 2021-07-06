@@ -34,9 +34,9 @@ export const UserMangementContent: React.FC<UserMangementContentProps> = ({users
                     <td>{req.lname}</td>
                     <td>
                     <DropdownButton id="dropdown-basic-button" title="Controls">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Modify</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Ban</Dropdown.Item>
+                    <Dropdown.Item href="#/action-1" onClick={()=>console.log('hello')}>Action</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2" onClick={()=>console.log('hello')}>Modify</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3" onClick={()=>console.log('hello')}>Ban</Dropdown.Item>
                     </DropdownButton>
                     </td>
                 </tr>
