@@ -466,16 +466,7 @@ userRouter.get(
 	'/getall',
 	async (req, res, next) => {
 		try {
-			const allUsers = await prisma.user.findMany({
-				select: {
-					id: true,
-					email: true,
-					fname: true,
-					lname: true,
-					createdAt: true,
-					updatedAt: true,
-				}
-			});
+			const allUsers = await prisma.user.findMany();
 
 			res.json(allUsers);
 		} catch (error) {
