@@ -33,5 +33,6 @@ export const ROUTES = {
   EDIT_ADVERTISEMENT: '/advertisement/edit',
   SEND_EMAIL: '/sendEmail',
   RESET_PASSWORD:'/user/reset-password',
-  SEGMENT_MANAGEMENT:'/segment/management'
+  SEGMENT_MANAGEMENT:'/segment/management',
+  USER_MANAGEMENT:'/user/management'
 }

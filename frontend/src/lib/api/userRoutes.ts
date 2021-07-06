@@ -17,7 +17,10 @@ export interface LoginResponse {
   user: IUser;
   token: string;
 }
-
+export const getAllUsers = async () => {
+  const res = await axios.get(`${API_BASE_URL}/user/getall`);
+  return res.data;
+}
 export const resetUserPassword = async (loginData: ResetPassword): Promise<ResetPassword> => {
   if(loginData.password !== loginData.confirmPassword){
     throw new Error("Passwords must match");

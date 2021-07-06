@@ -43,7 +43,7 @@ export default function Header() {
                 <NavDropdown title="Admin Tools" id="nav-dropdown">
                 <Nav.Link href='/advertisement/all'>Ad Management</Nav.Link>
                 <Nav.Link href='/segment/management'>Segment Management</Nav.Link>
-                <Nav.Link href=''>User Management</Nav.Link>
+                <Nav.Link href='/user/management'>User Management</Nav.Link>
               </NavDropdown>
                 }
                 

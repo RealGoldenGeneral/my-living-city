@@ -286,7 +286,7 @@ interface SegmentPageContentProps {
 //Passing all the segments to the segmentmanagementContent component, in the future only get the api data that is needed.
 const SegmentManagementContent: React.FC<SegmentPageContentProps> = ({segments, token, segReq}) => {
   return (
-    <Container className='conversations-page-content'>
+    <Container className='mb-4 mt-4'>
       <h2 className="pb-2 pt-2 display-6">Segmentation Manager</h2>
           <ShowSegments segments={segments} token={token} segReq={segReq}/>
     </Container>
