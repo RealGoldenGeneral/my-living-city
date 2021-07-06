@@ -21,6 +21,7 @@ import SegmentManagementPage from './pages/SegmentManagementPage';
 import AllAdsPage from './pages/AllAdsPage';
 import EditAdsPage from './pages/EditAdsPage'
 import AdminRoute from './components/utility/AdminRoute';
+import UserManagementPage from './pages/UserManagementPage';
 function App() {
   return (
     <div className="App">
@@ -41,6 +42,7 @@ function App() {
           <AdminRoute path={ROUTES.ALL_ADVERTISEMENT} component={AllAdsPage} />
           <AdminRoute path={ROUTES.EDIT_ADVERTISEMENT} component={EditAdsPage} />
           <AdminRoute path={ROUTES.SEGMENT_MANAGEMENT} component={SegmentManagementPage} />
+          <AdminRoute path={ROUTES.USER_MANAGEMENT} component={UserManagementPage} />
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>
       </div>
