@@ -580,7 +580,7 @@ userRouter.put(
 			const {
         fname,
         lname,
-				userRoleId,
+				//userRoleId,
 				geo: {
 					lat,
 					lon
@@ -599,7 +599,7 @@ userRouter.put(
       const updateData = {
 					...fname && { fname },
 					...lname && { lname },
-					... userRoleId && { userRoleId }
+					//... userRoleId && { userRoleId }
       }
 
 			const updateGeoData = {

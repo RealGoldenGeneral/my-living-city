@@ -16,7 +16,7 @@ passport.use(
       try {
         const { 
           confirmPassword, 
-          userRoleId,
+          //userRoleId,
         } = req.body;
         if (!email) {
           return done({ message: "You must supply an email." })
@@ -51,9 +51,9 @@ passport.use(
         const addressData = { ...req.body.address };
         const parsedMainData = { 
           ...req.body,
-          ...userRoleId && { userRoleId: Number(userRoleId) }
+          //...userRoleId && { userRoleId: Number(userRoleId) }
         };
-        if (userRoleId == null) delete parsedMainData.userRoleId;
+        //if (userRoleId == null) delete parsedMainData.userRoleId;
         delete parsedMainData.geo;
         delete parsedMainData.address;
         delete parsedMainData.confirmPassword;
@@ -74,7 +74,7 @@ passport.use(
           include: {
             geo: true,
             address: true,
-            userRole: true,
+            //userRole: true,
           }
         });
 
@@ -106,7 +106,7 @@ passport.use(
           include: {
             geo: true,
             address: true,
-            userRole: true,
+            //userRole: true,
           }
         });
 

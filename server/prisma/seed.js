@@ -13,14 +13,14 @@ async function main() {
 		{ title: 'other', description: '' },
 	];
 
-	const defaultUserRoles = [
+	/* const defaultUserRoles = [
 		'resident', //Basic user account
 		'guest', //Here for later implementation
 		'associate', //Here for later implementation
 		'worker', //Work location
 		'business', //For business accounts
 		'municipal' //For city/municipal accounts
-	];
+	]; */
 	
 
 	const defaultSuperSegment = [{
@@ -64,7 +64,7 @@ async function main() {
 		))
 	);
 
-	const resolvedUserRoles = await Promise.all(
+	/* const resolvedUserRoles = await Promise.all(
 		defaultUserRoles.map((role) => (
 			prisma.userRole.upsert({
 				where: {
@@ -78,7 +78,7 @@ async function main() {
 				}
 			})
     ))
-	);
+	); */
 
 	const createSuperSegment = await Promise.all(
 		defaultSuperSegment.map(({superSegId,name,country,province}) => (
@@ -149,7 +149,7 @@ async function main() {
 	
 
 	console.log('Resolved populated Categories', resolvedCategories);
-	console.log('Resolved populated UserRoles', resolvedUserRoles);
+	//console.log('Resolved populated UserRoles', resolvedUserRoles);
 	console.log('Resolved populated Super Segment', createSuperSegment);
 	console.log('Resolved populated segments', createSegments);
 	console.log('Resolved populated sub segments', createSubSegments);

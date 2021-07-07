@@ -3,7 +3,7 @@ const express = require('express');
 const prisma = require('../lib/prismaClient');
 const roleRouter = express.Router();
 
-roleRouter.get(
+/* roleRouter.get(
 	'/getall',
 	async (req, res, next) => {
 		try {
@@ -20,6 +20,6 @@ roleRouter.get(
 			})
 		}
 	}
-)
+) */
 
 module.exports = roleRouter;
