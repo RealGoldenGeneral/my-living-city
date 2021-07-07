@@ -93,7 +93,7 @@ model UserAddress {
   postalCode     String?  @map("postal_code")
   createdAt      DateTime @default(now()) @map(name: "created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
-  banned         Boolean  @default(false)
+  
 
   // relationships
   user User @relation(fields: [userId], references: [id])
@@ -116,6 +116,7 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
   imagePath String?
   passCode  String?  @default(cuid())
+  banned         Boolean  @default(false)
   // Relationships
 
   address         UserAddress?
