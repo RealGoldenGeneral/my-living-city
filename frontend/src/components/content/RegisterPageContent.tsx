@@ -22,10 +22,9 @@ import { BsForwardFill } from 'react-icons/bs';
 import { postAvatarImage } from 'src/lib/api/avatarRoutes';
 
 interface RegisterPageContentProps {
-    userRoles: IUserRole[] | undefined;
 }
 
-export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRoles}) => {
+export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const {
         setToken,
         setUser,
@@ -83,7 +82,6 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
-                userRoleId: userRoles ? userRoles[0].id : undefined,
                 email: '',
                 password: '',
                 confirmPassword: '',
