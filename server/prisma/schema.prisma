@@ -105,7 +105,7 @@ model User {
   // Keys
   id         String   @id @default(cuid())
   userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(ADMIN) @map("user_type")
+  userType   UserType @default(RESIDENTIAL) @map("user_type")
 
   // Fields
   email     String   @unique
