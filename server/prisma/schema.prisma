@@ -94,7 +94,6 @@ model UserAddress {
   createdAt      DateTime @default(now()) @map(name: "created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
-
   // relationships
   user User @relation(fields: [userId], references: [id])
 
