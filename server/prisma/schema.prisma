@@ -31,7 +31,12 @@ enum UserType {
   SEG_ADMIN
   SEG_MOD
   MUNICIPAL_SEG_ADMIN
-  NORMAL
+  BUSINESS
+  RESIDENTIAL
+  MUNICIPAL
+  WORKER
+  ASSOCIATE
+  DEVELOPER
 
   @@map(name: "user_type")
 }
@@ -88,6 +93,7 @@ model UserAddress {
   postalCode     String?  @map("postal_code")
   createdAt      DateTime @default(now()) @map(name: "created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  banned         Boolean  @default(false)
 
   // relationships
   user User @relation(fields: [userId], references: [id])
@@ -99,7 +105,7 @@ model User {
   // Keys
   id         String   @id @default(cuid())
   userRoleId Int?     @map("user_role_id")
-  userType   UserType @default(NORMAL) @map("user_type")
+  userType   UserType @default(RESIDENTIAL) @map("user_type")
 
   // Fields
   email     String   @unique
