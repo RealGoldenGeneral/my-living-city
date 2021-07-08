@@ -464,11 +464,20 @@ userRouter.post(
 */
 userRouter.get(
 	'/getAll',
+	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
 		try {
-			const allUsers = await prisma.user.findMany();
+			const {email,id} = req.user
 
-			res.json(allUsers);
+			const theUser = await prisma.user.findUnique({where:{id:id}});
+
+			if(theUser.userType === 'ADMIN'){
+				const allUsers = await prisma.user.findMany();
+
+				res.json(allUsers);
+			}else{
+				res.status(401).json("You are not allowed to pull all users!");
+			}
 		} catch (error) {
 			res.status(400).json({
         message: "An error occured while trying to fetch all the users.",
@@ -575,7 +584,7 @@ userRouter.put(
 	'/update-profile',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
-		try {
+	try {
 			const { id, email } = req.user;
 			const {
 				fname,
@@ -593,64 +602,64 @@ userRouter.put(
 					postalCode,
 				},
 				banned
-      } = req.body;
+      		} = req.body;
 
       // Conditional add params to update only fields passed in 
       // https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
       const updateData = {
-					...fname && { fname },
-					...lname && { lname },
-					//... userRoleId && { userRoleId }
-					...banned&& { banned }
+		...fname && { fname },
+		...lname && { lname },
+		//... userRoleId && { userRoleId }
+		...banned&& { banned }
       }
 
-			const updateGeoData = {
-				...lat && { lat },
-				...lon && { lon }
-			}
-
-			const updateAddressData = {
-				...streetAddress && { streetAddress },
-				...streetAddress2 && { streetAddress2 },
-				...city && { city },
-				...country && { country },
-				...postalCode && { postalCode },
-			}
-
-			const updatedUser = await prisma.user.update({
-				where: { id },
-				data: {
-					...updateData,
-					geo: {
-						update: updateGeoData
-					},
-					address: {
-						update: updateAddressData
-					}
-				},
-				include: {
-					geo: true,
-					address: true
-				}
-			});
-
-			const parsedUser = { ...updatedUser, password: null };
-
-			res.status(200).json({
-				message: "User succesfully updated",
-				user: parsedUser,
-			});
-		} catch (error) {
-			res.status(400).json({
-        message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
-        details: {
-          errorMessage: error.message,
-          errorStack: error.stack,
-        }
-      });
-		} finally {
-			await prisma.$disconnect();
+		const updateGeoData = {
+			...lat && { lat },
+			...lon && { lon }
 		}
+
+		const updateAddressData = {
+			...streetAddress && { streetAddress },
+			...streetAddress2 && { streetAddress2 },
+			...city && { city },
+			...country && { country },
+			...postalCode && { postalCode },
+		}
+
+		const updatedUser = await prisma.user.update({
+			where: { id },
+			data: {
+				...updateData,
+				geo: {
+					update: updateGeoData
+				},
+				address: {
+					update: updateAddressData
+				}
+			},
+			include: {
+				geo: true,
+				address: true
+			}
+		});
+
+		const parsedUser = { ...updatedUser, password: null };
+
+		res.status(200).json({
+			message: "User succesfully updated",
+			user: parsedUser,
+		});
+	} catch (error) {
+		res.status(400).json({
+		message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
+		details: {
+			errorMessage: error.message,
+			errorStack: error.stack,
+		}
+    });
+	} finally {
+		await prisma.$disconnect();
+	}
 	}
 )
 
