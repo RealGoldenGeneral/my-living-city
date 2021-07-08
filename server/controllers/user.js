@@ -463,7 +463,7 @@ userRouter.post(
  *        description: A set of users could not be fetched properly
 */
 userRouter.get(
-	'/getall',
+	'/getAll',
 	async (req, res, next) => {
 		try {
 			const allUsers = await prisma.user.findMany();
