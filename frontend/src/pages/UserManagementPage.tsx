@@ -23,7 +23,7 @@ const UserManagementPage: React.FC<UserManagementProps> = ({}) => {
 
   return (
     <div className="wrapper">
-      <UserManagementContent users={data} token={token!}/>
+      <UserManagementContent users={data} token={token}/>
     </div>
   );
 }
