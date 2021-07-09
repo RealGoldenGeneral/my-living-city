@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRY } = require('../lib/constants');
 const { argon2ConfirmHash, argon2Hash } = require('../lib/utilityFunctions');
 const prisma = require('../lib/prismaClient');
+const { authenticate } = require('passport');
 
 /**
  * @swagger
@@ -631,15 +632,130 @@ userRouter.put(
 		});
 	} catch (error) {
 		res.status(400).json({
-		message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
-		details: {
-			errorMessage: error.message,
-			errorStack: error.stack,
-		}
-	});
+			message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+			details: {
+				errorMessage: error.message,
+				errorStack: error.stack,
+			}
+		});
 	} finally {
 		await prisma.$disconnect();
 	}
+	}
+);
+
+userRouter.put(
+	'/admin-update-profile',
+	passport.authenticate('jwt', { session: false }),
+	async(req,res) => {
+		try{
+			const {id , email} = req.user;
+
+			const theUser = await prisma.user.findUnique({where:{id:id}});
+
+			const userTypes = ['ADMIN',
+				'MOD',
+				'SEG_ADMIN',
+				'SEG_MOD',
+				'MUNICIPAL_SEG_ADMIN',
+				'BUSINESS',
+				'RESIDENTIAL',
+				'MUNICIPAL',
+				'WORKER',
+				'ASSOCIATE',
+				'DEVELOPER'
+			];
+
+			if(theUser.userType==='ADMIN'){
+				const {
+					userId,
+					fname,
+					lname,
+					userType,
+					address: {
+						streetAddress,
+						streetAddress2,
+						city,
+						country,
+						postalCode,
+					},
+					banned
+				} = req.body;
+
+				const targetUser = await prisma.user.findUnique({where:{id:userId}});
+
+				if(!targetUser){
+					return res.status(404).json({
+						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+						details: {
+							errorMessage: "User can't be find by user id provided in the request body.",
+							errorStack: "User can't be find by user id provided in the request body."
+						}
+					});
+				}
+
+				if(!userType in userTypes){
+					return res.status(400).json({
+						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+						details: {
+							errorMessage: "User type must be predfined value",
+							errorStack: "User type must be predfined value"
+						}
+					});
+				}
+
+				const updateData = {
+					...fname && { fname },
+					...lname && { lname },
+					...userType && {userType},
+					...banned && {banned}
+				}
+		
+				const updateAddressData = {
+					...streetAddress && { streetAddress },
+					...streetAddress2 && { streetAddress2 },
+					...city && { city },
+					...country && { country },
+					...postalCode && { postalCode },
+				}
+
+				const updatedUser = await prisma.user.update({
+					where: { id:userId },
+					data: {
+						...updateData,
+						address: {
+							update: updateAddressData
+						}
+					}
+				});
+
+				const parsedUser = { ...updatedUser, password: null };
+
+				res.status(200).json({
+					message: "User succesfully updated",
+					user: parsedUser,
+				});
+
+			}else{
+				return res.status(403).json({
+                    message: "You don't have the right to use this endpoint!",
+                    details: {
+                      errorMessage: 'In order to use this endpoint, you must be an admin.',
+                      errorStack: 'user must be an admin if they want to use this endpoint.',
+                    }
+                });
+			}
+		}catch(error){
+			res.status(400).json({
+				message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+				details: {
+					errorMessage: error.message,
+					errorStack: error.stack,
+				}
+			});
+		}finally{
+			await prisma.$disconnect();
+		}
 	}
 )
 
