@@ -666,9 +666,12 @@ userRouter.put(
 				'DEVELOPER'
 			];
 
+			let theUserId;
+
 			if(theUser.userType==='ADMIN'){
 				const {
 					userId,
+					userEmail,
 					fname,
 					lname,
 					userType,
@@ -682,19 +685,7 @@ userRouter.put(
 					banned
 				} = req.body;
 
-				const targetUser = await prisma.user.findUnique({where:{id:userId}});
-
-				if(!targetUser){
-					return res.status(404).json({
-						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
-						details: {
-							errorMessage: "User can't be find by user id provided in the request body.",
-							errorStack: "User can't be find by user id provided in the request body."
-						}
-					});
-				}
-
-				if(!userType in userTypes){
+				if(userType && !userTypes.includes(userType)){
 					return res.status(400).json({
 						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
 						details: {
@@ -702,6 +693,54 @@ userRouter.put(
 							errorStack: "User type must be predfined value"
 						}
 					});
+				}
+
+				if(!userId && !userEmail){
+					theUserId = id;
+				}else{
+					if(userId && !userEmail){
+						const targetUser = await prisma.user.findUnique({where:{id:userId}});
+
+						if(!targetUser){
+							return res.status(404).json({
+								message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+								details: {
+									errorMessage: "User can't be find by user id provided in the request body.",
+									errorStack: "User can't be find by user id provided in the request body."
+								}
+							});
+						}
+
+						theUserId = userId;
+					}else if(userEmail && !userId){
+						const targetUser = await prisma.user.findUnique({where:{email:userEmail}});
+
+						if(!targetUser){
+							return res.status(404).json({
+								message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+								details: {
+									errorMessage: "User can't be find by user email provided in the request body.",
+									errorStack: "User can't be find by user email provided in the request body."
+								}
+							});
+						};
+
+						theUserId = targetUser.id;
+					}else{
+						const targetUser = await prisma.user.findUnique({where:{id:userId}});
+
+						if(!targetUser){
+							return res.status(404).json({
+								message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+								details: {
+									errorMessage: "User can't be find by user email provided in the request body.",
+									errorStack: "User can't be find by user email provided in the request body."
+								}
+							});
+						};
+
+						theUserId = userId;
+					}
 				}
 
 				const updateData = {
@@ -720,7 +759,7 @@ userRouter.put(
 				}
 
 				const updatedUser = await prisma.user.update({
-					where: { id:userId },
+					where: { id : theUserId },
 					data: {
 						...updateData,
 						address: {
@@ -746,6 +785,7 @@ userRouter.put(
                 });
 			}
 		}catch(error){
+			console.log(error);
 			res.status(400).json({
 				message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
 				details: {
