@@ -589,11 +589,6 @@ userRouter.put(
 			const {
 				fname,
 				lname,
-				//userRoleId,
-				geo: {
-					lat,
-					lon
-				},
 				address: {
 					streetAddress,
 					streetAddress2,
@@ -613,35 +608,23 @@ userRouter.put(
 		...banned&& { banned }
       }
 
-		const updateGeoData = {
-			...lat && { lat },
-			...lon && { lon }
-		}
+	const updateAddressData = {
+		...streetAddress && { streetAddress },
+		...streetAddress2 && { streetAddress2 },
+		...city && { city },
+		...country && { country },
+		...postalCode && { postalCode },
+	}
 
-		const updateAddressData = {
-			...streetAddress && { streetAddress },
-			...streetAddress2 && { streetAddress2 },
-			...city && { city },
-			...country && { country },
-			...postalCode && { postalCode },
-		}
-
-		const updatedUser = await prisma.user.update({
-			where: { id },
-			data: {
-				...updateData,
-				geo: {
-					update: updateGeoData
-				},
-				address: {
-					update: updateAddressData
-				}
-			},
-			include: {
-				geo: true,
-				address: true
+	const updatedUser = await prisma.user.update({
+		where: { id },
+		data: {
+			...updateData,
+			address: {
+				update: updateAddressData
 			}
-		});
+		}
+	});
 
 		const parsedUser = { ...updatedUser, password: null };
 
