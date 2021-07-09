@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { RouteComponentProps } from 'react-router-dom';
-import { UserMangementContent } from 'src/components/content/UserMangementContent';
+import { UserManagementContent } from 'src/components/content/UserManagementContent';
+import { UserProfileContext } from '../contexts/UserProfile.Context';
 import { useAllUsers } from 'src/hooks/userHooks';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useCategories } from '../hooks/categoryHooks';
@@ -10,9 +11,8 @@ interface UserManagementProps extends RouteComponentProps<{}> {
 }
 
 const UserManagementPage: React.FC<UserManagementProps> = ({}) => {
-  const { data, isLoading} = useAllUsers();
-  console.log(data);
-
+  const { token } = useContext(UserProfileContext);
+  const { data, isLoading} = useAllUsers(token);
   if (isLoading) {
     <div className="wrapper">
       <LoadingSpinner />
@@ -23,7 +23,7 @@ const UserManagementPage: React.FC<UserManagementProps> = ({}) => {
 
   return (
     <div className="wrapper">
-      <UserMangementContent users={data}/>
+      <UserManagementContent users={data} token={token!}/>
     </div>
   );
 }

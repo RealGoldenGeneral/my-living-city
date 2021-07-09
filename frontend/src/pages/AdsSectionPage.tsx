@@ -1,13 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import AdsSection from 'src/components/partials/LandingContent/AdsSection';
-import LoadingSpinner from 'src/components/ui/LoadingSpinner';
 import { useAdvertisements } from 'src/hooks/advertisementHooks';
-import { UserProfileContext } from '../contexts/UserProfile.Context';
+
 
 
 export const AdsSectionPage = () => {
-    const { token } = useContext(UserProfileContext);
-    const {data} = useAdvertisements(token!);
+    // const { token } = useContext(UserProfileContext);
+    const {data} = useAdvertisements();
     return (
         <div>
             <AdsSection ads={data}/>
