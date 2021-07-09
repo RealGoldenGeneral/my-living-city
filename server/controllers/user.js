@@ -610,7 +610,6 @@ userRouter.put(
 		...userType && {userType}
       }
 
-<<<<<<< HEAD
 	const updateAddressData = {
 		...streetAddress && { streetAddress },
 		...streetAddress2 && { streetAddress2 },
@@ -618,20 +617,6 @@ userRouter.put(
 		...country && { country },
 		...postalCode && { postalCode },
 	}
-=======
-		const updateGeoData = {
-			...lat && { lat },
-			...lon && { lon }
-		}
-
-		const updateAddressData = {
-			...streetAddress && { streetAddress },
-			...streetAddress2 && { streetAddress2 },
-			...city && { city },
-			...country && { country },
-			...postalCode && { postalCode }
-		}
->>>>>>> Mac-work-branch
 
 	const updatedUser = await prisma.user.update({
 		where: { id },
