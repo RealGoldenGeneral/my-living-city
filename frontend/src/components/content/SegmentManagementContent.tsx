@@ -186,7 +186,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
               setShowSub(false);
               setShowNewSeg(false);
               }}>
-            {countries.map(country => <option>{country}</option>)}
+            {countries.map(country => <option key={country}>{country}</option>)}
           </Form.Control>
             <br />
           <Form.Label>Province</Form.Label>
@@ -199,7 +199,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
               setShowSub(false);
               setShowNewSeg(false);
               }}>
-            {provinces.map(prov => <option>{prov}</option>)}
+            {provinces.map(prov => <option key={prov}>{prov}</option>)}
           </Form.Control>
         </Card.Body>
       </Card>
@@ -219,7 +219,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
               </tr>
             </thead>
             <tbody>
-              {filteredSegments?.map(segment => (
+              {filteredSegments?.map(segment=> (
                 <tr key={segment.segId}>
                 <td><Form.Control
                   type="text" 
