@@ -17,8 +17,20 @@ export interface LoginResponse {
   user: IUser;
   token: string;
 }
-export const getAllUsers = async () => {
-  const res = await axios.get(`${API_BASE_URL}/user/getall`);
+export const getAllUsers = async (token: string | null) => {
+  const res = await axios.get(`${API_BASE_URL}/user/getAll`,getAxiosJwtRequestOption(token!));
+  return res.data;
+}
+export const updateUser = async (userData: IUser, token: string | null) => {
+  console.log(userData);
+  // const res = await axios.post(`${API_BASE_URL}/user/update-profile`,userData, getAxiosJwtRequestOption(token!),)
+  const res = await axios({
+    method: "put",
+    url: `${API_BASE_URL}/user/update-profile`,
+    data: userData,
+    headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": token},
+    withCredentials: true
+})
   return res.data;
 }
 export const resetUserPassword = async (loginData: ResetPassword): Promise<ResetPassword> => {

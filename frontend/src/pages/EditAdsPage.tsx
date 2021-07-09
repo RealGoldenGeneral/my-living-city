@@ -12,9 +12,9 @@ interface EditAdsPageProps extends RouteComponentProps<{}> {
 }
 
 const EditAdsPage: React.FC<EditAdsPageProps> = ({}) => {
-  const { token } = useContext(UserProfileContext);
+  // const { token } = useContext(UserProfileContext);
 
-  const { data, isLoading, error, isError } = useAdvertisements(token!);
+  const { data, isLoading, error, isError } = useAdvertisements();
   //console.log(data);
   
   if (isLoading) {

@@ -467,7 +467,7 @@ userRouter.get(
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
 		try {
-			const {email,id} = req.user
+			const {email,id} = req.user;
 
 			const theUser = await prisma.user.findUnique({where:{id:id}});
 
@@ -596,7 +596,8 @@ userRouter.put(
 					country,
 					postalCode,
 				},
-				banned
+				banned,
+				userType
       		} = req.body;
 
       // Conditional add params to update only fields passed in 
@@ -605,9 +606,11 @@ userRouter.put(
 		...fname && { fname },
 		...lname && { lname },
 		//... userRoleId && { userRoleId }
-		...banned&& { banned }
+		...banned && { banned },
+		...userType && {userType}
       }
 
+<<<<<<< HEAD
 	const updateAddressData = {
 		...streetAddress && { streetAddress },
 		...streetAddress2 && { streetAddress2 },
@@ -615,6 +618,20 @@ userRouter.put(
 		...country && { country },
 		...postalCode && { postalCode },
 	}
+=======
+		const updateGeoData = {
+			...lat && { lat },
+			...lon && { lon }
+		}
+
+		const updateAddressData = {
+			...streetAddress && { streetAddress },
+			...streetAddress2 && { streetAddress2 },
+			...city && { city },
+			...country && { country },
+			...postalCode && { postalCode }
+		}
+>>>>>>> Mac-work-branch
 
 	const updatedUser = await prisma.user.update({
 		where: { id },

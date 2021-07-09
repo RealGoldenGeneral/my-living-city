@@ -16,7 +16,18 @@ export const MLC_COLOUR_THEME = {
 
 // Token expiry in minutes
 export const TOKEN_EXPIRY = Number(process.env.REACT_APP_TOKEN_EXPIRY || 60);
-
+export enum USER_TYPES {
+  ADMIN = 'ADMIN',
+  MOD = 'MOD',
+  SEG_ADMIN = 'SEG_ADMIN',
+  SEG_MOD = 'SEG_MOD',
+  MUNICIPAL_SEG_ADMIN = 'MUNICIPAL_SEG_ADMIN',
+  BUSINESS = 'BUSINESS',
+  MUNICIPAL = 'MUNICIPAL',
+  ASSOCIATE = 'ASSOCIATE',
+  DEVELOPER = 'DEVELOPER',
+  RESIDENTIAL = 'RESIDENTIAL'
+} 
 // Routes should be placed here and called into "path" in Route component
 export const ROUTES = {
   LANDING: '/',
