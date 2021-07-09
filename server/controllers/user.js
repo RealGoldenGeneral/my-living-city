@@ -585,46 +585,43 @@ userRouter.put(
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
 	try {
-			const { id, email } = req.user;
-			const {
-				fname,
-				lname,
-				address: {
-					streetAddress,
-					streetAddress2,
-					city,
-					country,
-					postalCode,
-				},
-				banned
-      		} = req.body;
-
-      // Conditional add params to update only fields passed in 
-      // https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
-      const updateData = {
-		...fname && { fname },
-		...lname && { lname },
-		//... userRoleId && { userRoleId }
-		...banned&& { banned }
-      }
-
-	const updateAddressData = {
-		...streetAddress && { streetAddress },
-		...streetAddress2 && { streetAddress2 },
-		...city && { city },
-		...country && { country },
-		...postalCode && { postalCode },
-	}
-
-	const updatedUser = await prisma.user.update({
-		where: { id },
-		data: {
-			...updateData,
+		const { id, email } = req.user;
+		const {
+			fname,
+			lname,
 			address: {
-				update: updateAddressData
+				streetAddress,
+				streetAddress2,
+				city,
+				country,
+				postalCode,
 			}
+		} = req.body;
+
+		// Conditional add params to update only fields passed in 
+		// https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
+		const updateData = {
+			...fname && { fname },
+			...lname && { lname },
 		}
-	});
+
+		const updateAddressData = {
+			...streetAddress && { streetAddress },
+			...streetAddress2 && { streetAddress2 },
+			...city && { city },
+			...country && { country },
+			...postalCode && { postalCode },
+		}
+
+		const updatedUser = await prisma.user.update({
+			where: { id:id },
+			data: {
+				...updateData,
+				address: {
+					update: updateAddressData
+				}
+			}
+		});
 
 		const parsedUser = { ...updatedUser, password: null };
 
@@ -639,7 +636,7 @@ userRouter.put(
 			errorMessage: error.message,
 			errorStack: error.stack,
 		}
-    });
+	});
 	} finally {
 		await prisma.$disconnect();
 	}
