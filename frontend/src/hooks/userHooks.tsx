@@ -7,8 +7,8 @@ import { IUser } from '../lib/types/data/user.type';
 export const useUserLoginWithEmailAndPass = (loginData: LoginData) => {
   return useQuery<LoginResponse, IFetchError>('userLogin', () => getUserWithEmailAndPass(loginData));
 }
-export const useAllUsers = () => {
-  return useQuery(`users`, () => getAllUsers());
+export const useAllUsers = (token: string | null) => {
+  return useQuery<IUser[], IFetchError>(`users`, () => getAllUsers(token));
 }
 export const useUserWithJwt = ({ jwtAuthToken, shouldTrigger}: UseUserWithJwtInput) => {
   return useQuery<IUser, AxiosError>(
