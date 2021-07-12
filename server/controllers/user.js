@@ -675,13 +675,13 @@ userRouter.put(
 					fname,
 					lname,
 					userType,
-					address: {
-						streetAddress,
-						streetAddress2,
-						city,
-						country,
-						postalCode,
-					},
+					// address: {
+					// 	streetAddress,
+					// 	streetAddress2,
+					// 	city,
+					// 	country,
+					// 	postalCode,
+					// },
 					banned
 				} = req.body;
 
@@ -749,22 +749,22 @@ userRouter.put(
 					...userType && {userType},
 					...banned && {banned}
 				}
-		
-				const updateAddressData = {
-					...streetAddress && { streetAddress },
-					...streetAddress2 && { streetAddress2 },
-					...city && { city },
-					...country && { country },
-					...postalCode && { postalCode },
-				}
+				
+				// const updateAddressData = {
+				// 	...streetAddress && { streetAddress },
+				// 	...streetAddress2 && { streetAddress2 },
+				// 	...city && { city },
+				// 	...country && { country },
+				// 	...postalCode && { postalCode },
+				// }
 
 				const updatedUser = await prisma.user.update({
 					where: { id : theUserId },
 					data: {
-						...updateData,
-						address: {
-							update: updateAddressData
-						}
+						...updateData
+						// address: {
+						// 	update: updateAddressData
+						// }
 					}
 				});
 

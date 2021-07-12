@@ -13,9 +13,12 @@ const SubmitAdvertisementPage: React.FC<SubmitAdvertisementPageProps> = ({}) => 
     const { data, isLoading, error, isError } = useCategories();
   
     if (isLoading) {
-      <div className="wrapper">
+      return(
+        <div className="wrapper">
         <LoadingSpinner />
-      </div>
+        </div>
+      )
+
     }
   
     // TODO: Create non blocking error handling

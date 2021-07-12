@@ -26,7 +26,7 @@ export const updateUser = async (userData: IUser, token: string | null) => {
   console.log(token);
   const res = await axios({
     method: "put",
-    url: `${API_BASE_URL}/user/update-profile`,
+    url: `${API_BASE_URL}/user/admin-update-profile`,
     data: userData,
     headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": token},
     withCredentials: true

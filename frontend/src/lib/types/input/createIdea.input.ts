@@ -10,6 +10,8 @@ export interface ICreateIdeaInput {
 	artsImpact?: string;
 	energyImpact?: string;
 	manufacturingImpact?: string;
-  address?: IAddressInput;
-  geo?: IGeoInput;
+  	address?: IAddressInput;
+  	geo?: IGeoInput;
+	segment: string;
+	subSegment: string;
 }
