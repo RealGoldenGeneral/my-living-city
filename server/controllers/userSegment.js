@@ -560,7 +560,7 @@ userSegmentRouter.get(
 
                 return res.status(200).json(homeSeg);
             }else{
-                return res.status(404).json("User doesn't have home segment!");
+                return res.sendStatus(204);
             }
 
         }catch(error){
@@ -599,7 +599,7 @@ userSegmentRouter.get(
 
                 return res.status(200).json(workSeg);
             }else{
-                return res.status(404).json("User doesn't have work segment!");
+                return res.sendStatus(204);
             }
         }catch(error){
             console.log(error);
@@ -637,7 +637,7 @@ userSegmentRouter.get(
 
                 return res.status(200).json(schoolSeg);
             }else{
-                return res.status(404).json("User doesn't have school segment!");
+                return res.sendStatus(204);
             }
         }catch(error){
             console.log(error);
@@ -676,7 +676,7 @@ userSegmentRouter.get(
 
                 return res.status(200).json(homeSubSeg);
             }else{
-                return res.status(404).json("User doesn't have home sub-segment!");
+                return res.sendStatus(204);
             }            
         }catch(error){
             console.log(error);
@@ -714,7 +714,7 @@ userSegmentRouter.get(
 
                 return res.status(200).json(workSubSeg);
             }else{
-                return res.status(404).json("User doesn't have work sub-segment!");
+                return res.sendStatus(204);
             }
         }catch(error){
             console.log(error);
@@ -752,7 +752,7 @@ userSegmentRouter.get(
 
                 return res.status(200).json(schoolSubSeg);
             }else{
-                return res.status(404).json("User doesn't have school sub-segment!");
+                return res.sendStatus(204);
             }
         }catch(error){
             console.log(error);
