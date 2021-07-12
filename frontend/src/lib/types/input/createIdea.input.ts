@@ -12,6 +12,6 @@ export interface ICreateIdeaInput {
 	manufacturingImpact?: string;
   	address?: IAddressInput;
   	geo?: IGeoInput;
-	segment: string;
-	subSegment: string;
+	segmentId?: number;
+	subSegmentId?: number;
 }
