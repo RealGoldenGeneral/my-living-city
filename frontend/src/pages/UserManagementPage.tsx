@@ -14,9 +14,12 @@ const UserManagementPage: React.FC<UserManagementProps> = ({}) => {
   const { token } = useContext(UserProfileContext);
   const { data, isLoading} = useAllUsers(token);
   if (isLoading) {
-    <div className="wrapper">
+    return(
+      <div className="wrapper">
       <LoadingSpinner />
-    </div>
+      </div>
+    )
+
   }
 
   // TODO: Create non blocking error handling
