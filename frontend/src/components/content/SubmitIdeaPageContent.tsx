@@ -145,9 +145,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               <Form.Control
                 as='select'
                 name='segmentId'//Change this
-                defaultValue={segment.name}
-                value={segment.segId}
                 onChange={formik.handleChange}
+                value={formik.values.segmentId}
               ><option value={segment.id}>{capitalizeString(segment.name)}</option></Form.Control>
             </Form.Group>
             <Form.Group>
