@@ -1,6 +1,8 @@
 import { useFormik } from 'formik';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
+import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateIdea } from '../../lib/api/ideaRoutes';
 import { ICategory } from '../../lib/types/data/category.type';
@@ -10,6 +12,7 @@ import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFu
 
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
+  segData: any;
 }
 
 /**
@@ -18,12 +21,35 @@ interface SubmitIdeaPageContentProps {
  */
 const DEFAULT_CAT_ID = 1;
 
-const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories }) => {
+const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, segData}) => {
+  const { token } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
-  const { token } = useContext(UserProfileContext);
-
-
+  const [location, setLocation] = useState('Home');
+  const [segment, setSegment] = useState(segData.segment);
+  const [subSegment, setSubSegment] = useState(segData.subSegment);
+  const getSegData = async (location: string) => {
+    let data: any;
+    if(location === 'Home'){
+      data = await getUserHomeSegmentInfo(token);
+    }else if(location === 'Work'){
+      data = await getUserWorkSegmentInfo(token);
+    }else if (location === 'School'){
+      data = await getUserSchoolSegmentInfo(token);
+    }
+    
+    if(data.segment){
+      setSegment(data.segment)
+    }else{
+      setSegment(null);
+    }
+    if(data.subSegment){
+      setSubSegment(data.subSegment);
+    }else{
+      setSubSegment(null);
+    }
+  }
+  
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
       // Set loading and error state
@@ -67,7 +93,9 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       geo: {
         lat: undefined,
         lon: undefined,
-      }
+      },
+      segment: '',
+      subSegment: ''
     },
     onSubmit: submitHandler
   })
@@ -100,6 +128,36 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                   </option>
                 ))}
               </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>This idea pertains to which area of interest?</Form.Label>
+              <Form.Control
+                as='select'
+                name='location'
+                onChange={(e)=>getSegData(e.target.value)}
+              > <option>Home</option>
+                <option>Work</option>
+                <option>School</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Municipality</Form.Label>
+              <Form.Control
+                type='text'
+                name='segment'//Change this
+                value={capitalizeString(segment.name)}
+                onChange={formik.handleChange}
+                readOnly
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Neighbourhood (optional)</Form.Label>
+              <Form.Control
+                as='select'
+                name='subSegment'
+                onChange={formik.handleChange}
+                value={formik.values.title}
+              ><option>{subSegment.name}</option></Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>What is the title of your idea?</Form.Label>
