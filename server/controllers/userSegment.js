@@ -557,6 +557,10 @@ userSegmentRouter.get(
                 where:{segId:result.homeSegmentId}
             });
 
+            if(!homeSeg){
+                return res.status(404).json("User doesn't have home segment!");
+            }
+
             res.status(200).json(homeSeg);
         }catch(error){
             console.log(error);
@@ -590,6 +594,10 @@ userSegmentRouter.get(
             const workSeg = await prisma.segments.findUnique({
                 where:{segId:result.workSegmentId}
             });
+
+            if(!workSeg){
+                return res.status(404).json("User doesn't have work segment!");
+            }
 
             res.status(200).json(workSeg);
         }catch(error){
@@ -625,6 +633,10 @@ userSegmentRouter.get(
                 where:{segId:result.schoolSegmentId}
             });
 
+            if(!schoolSeg){
+                return res.status(404).json("User doesn't have school segment!");
+            }
+
             res.status(200).json(schoolSeg);
         }catch(error){
             console.log(error);
@@ -658,6 +670,10 @@ userSegmentRouter.get(
             const homeSubSeg = await prisma.subSegments.findUnique({
                 where:{id:result.homeSubSegmentId}
             });
+
+            if(!homeSubSeg){
+                return res.status(404).json("User doesn't have home sub-segment!");
+            }
 
             res.status(200).json(homeSubSeg);
         }catch(error){
@@ -693,6 +709,10 @@ userSegmentRouter.get(
                 where:{id:result.workSubSegmentId}
             });
 
+            if(!workSubSeg){
+                return res.status(404).json("User doesn't have work sub-segment!");
+            }
+
             res.status(200).json(workSubSeg);
         }catch(error){
             console.log(error);
@@ -726,6 +746,10 @@ userSegmentRouter.get(
             const schoolSubSeg = await prisma.subSegments.findUnique({
                 where:{id:result.schoolSubSegmentId}
             });
+
+            if(!schoolSubSeg){
+                return res.status(404).json("User doesn't have school sub-segment!");
+            }
 
             res.status(200).json(schoolSubSeg);
         }catch(error){
