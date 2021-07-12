@@ -7,7 +7,7 @@ import { capitalizeString } from 'src/lib/utilityFunctions';
 
 interface UserManagementContentProps {
     users: IUser[] | undefined;
-    token: string;
+    token: string | null;
 }
 
 export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token}) => {
@@ -48,7 +48,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     <td><Form.Control type="text" defaultValue={req.email} onChange={(e)=>req.email = e.target.value}/></td>
                     <td><Form.Control type="text" defaultValue={req.fname} onChange={(e)=>req.fname = e.target.value}/></td>
                     <td><Form.Control type="text" defaultValue={req.lname} onChange={(e)=>req.lname = e.target.value}/></td>
-                    <td><Form.Control as="select">
+                    <td><Form.Control as="select" onChange={(e)=>{(req.userType as String) = e.target.value}}>
                         <option>{req.userType}</option>
                         {userTypes.filter(type => type !== req.userType).map(item =>
                             <option key={item}>{item}</option>

@@ -23,7 +23,7 @@ export const getAllUsers = async (token: string | null) => {
 }
 export const updateUser = async (userData: IUser, token: string | null) => {
   console.log(userData);
-  // const res = await axios.post(`${API_BASE_URL}/user/update-profile`,userData, getAxiosJwtRequestOption(token!),)
+  console.log(token);
   const res = await axios({
     method: "put",
     url: `${API_BASE_URL}/user/update-profile`,
