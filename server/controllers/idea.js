@@ -359,8 +359,7 @@ ideaRouter.post(
       let errorStack = '';
       // passport middleware provides this based on JWT
       const { email, id } = req.user;
-      const { categoryId , segmentId, subSegmentId} = req.body;
-
+      let { categoryId , segmentId, subSegmentId} = req.body;
       // Check if category id is added
       if (!categoryId||!isInteger(categoryId)) {
         error+='An Idea must be under a specific category.';
@@ -384,21 +383,21 @@ ideaRouter.post(
         }
       }
 
-      if(!subSegmentId||!isInteger(subSegmentId)){
-        error+='An Idea must belongs to a subsegment.';
-        errorMessage+='Creating an idea must explicitly be supplied with a "subSegmentId" field.';
-        errorStack+='"subSegmentId" must be defined in the body with a valid id found in the database.';
-      }else{
-        const result = await prisma.subSegments.findUnique({
-          where:{id:subSegmentId}
-        });
+      // if(!subSegmentId||!isInteger(subSegmentId)){
+      //   error+='An Idea must belongs to a subsegment.';
+      //   errorMessage+='Creating an idea must explicitly be supplied with a "subSegmentId" field.';
+      //   errorStack+='"subSegmentId" must be defined in the body with a valid id found in the database.';
+      // }else{
+      //   const result = await prisma.subSegments.findUnique({
+      //     where:{id:subSegmentId}
+      //   });
 
-        if(!result){
-          error+='An Idea must belongs to a subsegment.';
-          errorMessage+='Creating an idea must explicitly be supplied with a "subSegmentId" field.';
-          errorStack+='"subSegmentId" must be defined in the body with a valid id found in the database.';
-        }
-      }
+      //   if(!result){
+      //     error+='An Idea must belongs to a subsegment.';
+      //     errorMessage+='Creating an idea must explicitly be supplied with a "subSegmentId" field.';
+      //     errorStack+='"subSegmentId" must be defined in the body with a valid id found in the database.';
+      //   }
+      // }
 
       //If there's error in error holder
       if(error||errorMessage||errorStack){
