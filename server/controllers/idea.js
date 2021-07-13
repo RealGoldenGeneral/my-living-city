@@ -368,7 +368,7 @@ ideaRouter.post(
       }
 
       if(!segmentId||!isInteger(segmentId)){
-        error+='An Idea must belongs to a segment.';
+        error+='An Idea must belong to a municipality.';
         errorMessage+='Creating an idea must explicitly be supplied with a "segmentId" field.';
         errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
       }else{
@@ -377,7 +377,7 @@ ideaRouter.post(
         });
 
         if(!result){
-          error+='An Idea must belongs to a segment.';
+          error+='An Idea must belong to a municipality.';
           errorMessage+='Creating an idea must explicitly be supplied with a "segmentId" field.';
           errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
         }
