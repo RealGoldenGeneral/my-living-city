@@ -26,8 +26,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [location, setLocation] = useState('Home');
-  const [segment, setSegment] = useState(segData.segment);
-  const [subSegment, setSubSegment] = useState(segData.subSegment);
+  const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
+  const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
   const getSegData = async (location: string) => {
     let data: any;
     if(location === 'Home'){
@@ -41,21 +41,21 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
     if(data.segment){
       setSegment(data.segment)
     }else{
-      setSegment(null);
+      setSegment(undefined);
     }
     if(data.subSegment){
       setSubSegment(data.subSegment);
     }else{
-      setSubSegment(null);
+      setSubSegment(undefined);
     }
   }
   
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
+      console.log(values);
       // Set loading and error state
       setError(null);
       setIsLoading(true);
-
       setTimeout(() => console.log("timeout"), 5000);
 
       const res = await postCreateIdea(values, token);
@@ -71,7 +71,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setIsLoading(false)
     }
   }
-
+  // console.log(segment);
+  // console.log(subSegment);
   const formik = useFormik<ICreateIdeaInput>({
     initialValues: {
       // TODO: CatId when chosen is a string
@@ -94,8 +95,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
         lat: undefined,
         lon: undefined,
       },
-      segmentId: segData.segment ? segData.segment.segId : undefined,
-      subSegmentId: segData.subSegment ? segData.subSegment.segId : undefined
+      segmentId: undefined,
+      subSegmentId: undefined
     },
     onSubmit: submitHandler
   })
@@ -144,10 +145,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               <Form.Label>Municipality</Form.Label>
               <Form.Control
                 as='select'
+                type='number'
                 name='segmentId'//Change this
                 onChange={formik.handleChange}
                 value={formik.values.segmentId}
-              ><option value={segment.id}>{capitalizeString(segment.name)}</option></Form.Control>
+              ><option>Select your Idea's municipality</option>
+                {segment &&<option value={segment ? (Number(segment.segId)) : undefined}>{segment ? segment.name : ''}</option>}
+                </Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>Neighbourhood (optional)</Form.Label>
@@ -156,7 +160,9 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 name='subSegmentId'
                 onChange={formik.handleChange}
                 value={formik.values.subSegmentId}
-              ><option value={subSegment.id}>{capitalizeString(subSegment.name)}</option></Form.Control>
+              ><option>Select your Idea's neighbourhood</option>
+                {subSegment && <option value={subSegment ? (Number(subSegment.id)) : undefined}>{subSegment ? subSegment.name : ''}</option>}
+              </Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>What is the title of your idea?</Form.Label>
