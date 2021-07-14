@@ -56,9 +56,18 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData,
   console.log(segmentData);
   console.log(subSegmentData);
 
+  // const [subSegData, setSubSegData] = useState(subSegmentData);
+  // console.log(subSegData);
+
+  // if(subSegData){
+  //   setSubSegData(subSegmentData);
+  // } else {
+  //   setSubSegData(undefined);
+  // }
+
   const { title: catTitle } = category!;
   const { name: SegmentName } = segmentData;
-  const { name: SubSegmentName } = subSegmentData;
+  // const { name: SubSegmentName } = subSegmentData;
   
   // const [subSegmentName, setSubSegmentName] = useState(subSegmentData.name);
 
@@ -115,7 +124,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData,
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
           <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
           <h4 className='h5'>Municipality: {capitalizeFirstLetterEachWord(SegmentName)}</h4>
-          <h4 className='h5'>Neighborhood: {capitalizeFirstLetterEachWord(SubSegmentName)}</h4>
+          <h4 className='h5'>Neighborhood: {subSegmentData ? capitalizeFirstLetterEachWord(subSegmentData.name): 'N/A'}</h4>
           {!!ideaData.champion && (
             <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
           )}

@@ -49,6 +49,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setSubSegment(undefined);
     }
   }
+
+  console.log(segData);
   
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
