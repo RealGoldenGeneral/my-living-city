@@ -122,3 +122,13 @@ export const findSegmentRequests = async (token: string | null) => {
 
   return result.data;
 }
+
+export const getSingleSegmentBySegmentId = async (segmentId: number) => {
+  const res = await axios.get<ISegment>(`${API_BASE_URL}/segment/getBySegmentId/${segmentId}`);
+  return res.data;
+}
+
+export const getSingleSubSegmentBySubSegmentId = async (SubSegmentId: number | undefined) => {
+  const res = await axios.get<ISubSegment>(`${API_BASE_URL}/segment/getBySubSegmentId/${SubSegmentId}`);
+  return res.data;
+}

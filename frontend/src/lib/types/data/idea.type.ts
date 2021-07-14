@@ -16,6 +16,8 @@ export interface IIdea {
 	authorId: string;
 	championId: string;
 	categoryId: number;
+	segmentId: number; //
+	subSegmentId?: number; //
 	title: string;
 	description: string;
 	communityImpact?: string;
@@ -35,8 +37,8 @@ export interface IIdeaWithRelationship extends IIdea {
   geo?: IGeo;
   address?: IAddress;
   category?: ICategory;
-  segment?: ISegment;
-  subSegment?: ISubSegment;
+  segment: ISegment; // 
+  subSegment?: ISubSegment; //
   author?: IUser;
 	champion?: IUser | null;
   proposalInfo?: IProposal | null;
@@ -55,10 +57,10 @@ export interface IIdeaWithAggregations {
 	id: number;
 	authorId: string;
 	categoryId: number;
-	segmentId: number;
-	subSegmentId: number;
-	segmentName: string;
-	subSegment: string;
+	segmentId: number; //
+	subSegmentId?: number; // 
+	segmentName: string; //
+	subSegmentName?: string; //
 	title: string;
 	description: string;
 	state: IdeaState;
