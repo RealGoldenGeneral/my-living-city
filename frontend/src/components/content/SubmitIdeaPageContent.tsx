@@ -94,8 +94,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
         lat: undefined,
         lon: undefined,
       },
-      segment: '',
-      subSegment: ''
+      segmentId: segData.segment ? segData.segment.segId : undefined,
+      subSegmentId: segData.subSegment ? segData.subSegment.segId : undefined
     },
     onSubmit: submitHandler
   })
@@ -143,21 +143,20 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             <Form.Group>
               <Form.Label>Municipality</Form.Label>
               <Form.Control
-                type='text'
-                name='segment'//Change this
-                value={capitalizeString(segment.name)}
+                as='select'
+                name='segmentId'//Change this
                 onChange={formik.handleChange}
-                readOnly
-              />
+                value={formik.values.segmentId}
+              ><option value={segment.id}>{capitalizeString(segment.name)}</option></Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>Neighbourhood (optional)</Form.Label>
               <Form.Control
                 as='select'
-                name='subSegment'
+                name='subSegmentId'
                 onChange={formik.handleChange}
-                value={formik.values.title}
-              ><option>{subSegment.name}</option></Form.Control>
+                value={formik.values.subSegmentId}
+              ><option value={subSegment.id}>{capitalizeString(subSegment.name)}</option></Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>What is the title of your idea?</Form.Label>
