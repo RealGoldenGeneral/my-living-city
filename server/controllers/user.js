@@ -669,6 +669,8 @@ userRouter.put(
 			let theUserId;
 
 			if(theUser.userType==='ADMIN'){
+				console.log(req.body.banned);
+
 				const {
 					userId,
 					userEmail,
@@ -685,6 +687,10 @@ userRouter.put(
 					banned
 				} = req.body;
 
+				if(!userId && !userEmail){
+					return res.status(400).json("User id or user email is missing!");
+				}
+
 				if(userType && !userTypes.includes(userType)){
 					return res.status(400).json({
 						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
@@ -695,76 +701,65 @@ userRouter.put(
 					});
 				}
 
-				if(!userId && !userEmail){
-					theUserId = id;
-				}else{
-					if(userId && !userEmail){
-						const targetUser = await prisma.user.findUnique({where:{id:userId}});
+				if(userId && !userEmail){
+					const targetUser = await prisma.user.findUnique({where:{id:userId}});
 
-						if(!targetUser){
-							return res.status(404).json({
-								message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
-								details: {
-									errorMessage: "User can't be find by user id provided in the request body.",
-									errorStack: "User can't be find by user id provided in the request body."
-								}
-							});
-						}
-
-						theUserId = userId;
-					}else if(userEmail && !userId){
-						const targetUser = await prisma.user.findUnique({where:{email:userEmail}});
-
-						if(!targetUser){
-							return res.status(404).json({
-								message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
-								details: {
-									errorMessage: "User can't be find by user email provided in the request body.",
-									errorStack: "User can't be find by user email provided in the request body."
-								}
-							});
-						};
-
-						theUserId = targetUser.id;
-					}else{
-						const targetUser = await prisma.user.findUnique({where:{id:userId}});
-
-						if(!targetUser){
-							return res.status(404).json({
-								message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
-								details: {
-									errorMessage: "User can't be find by user email provided in the request body.",
-									errorStack: "User can't be find by user email provided in the request body."
-								}
-							});
-						};
-
-						theUserId = userId;
+					if(!targetUser){
+						return res.status(404).json({
+							message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+							details: {
+								errorMessage: "User can't be find by user id provided in the request body.",
+								errorStack: "User can't be find by user id provided in the request body."
+							}
+						});
 					}
-				}
 
-				const updateData = {
-					...fname && { fname },
-					...lname && { lname },
-					...userType && {userType},
-					...banned && {banned}
+					theUserId = userId;
+				}else if(userEmail && !userId){
+					const targetUser = await prisma.user.findUnique({where:{email:userEmail}});
+
+					if(!targetUser){
+						return res.status(404).json({
+							message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+							details: {
+								errorMessage: "User can't be find by user email provided in the request body.",
+								errorStack: "User can't be find by user email provided in the request body."
+							}
+						});
+					};
+
+					theUserId = targetUser.id;
+				}else{
+					const targetUser = await prisma.user.findUnique({where:{id:userId}});
+
+					if(!targetUser){
+						return res.status(404).json({
+							message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+							details: {
+								errorMessage: "User can't be find by user email provided in the request body.",
+								errorStack: "User can't be find by user email provided in the request body."
+							}
+						});
+					};
+
+					theUserId = userId;
 				}
 				
-				// const updateAddressData = {
-				// 	...streetAddress && { streetAddress },
-				// 	...streetAddress2 && { streetAddress2 },
-				// 	...city && { city },
-				// 	...country && { country },
-				// 	...postalCode && { postalCode },
-				// }
+				/* const updateAddressData = {
+				 	...streetAddress && { streetAddress },
+				 	...streetAddress2 && { streetAddress2 },
+				 	...city && { city },
+				 	...country && { country },
+				 	...postalCode && { postalCode },
+				} */
 
 				const updatedUser = await prisma.user.update({
 					where: { id : theUserId },
 					data: {
-						...updateData
-						// address: {
-						// 	update: updateAddressData
-						// }
+						fname:fname,
+						lname:lname,
+						userType:userType,
+						banned:banned
 					}
 				});
 
