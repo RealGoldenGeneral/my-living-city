@@ -200,20 +200,28 @@ segmentRouter.get(
             if (!parsedSegId) {
                 return res.status(400).json({
                 message: `A valid segmentId must be specified in the route parameter`
-                })
+                });
             }
-
-            const foundSegment = await prisma.segments.findUnique({
-                where: { segId: parsedSegId }
-            })
-
-            if (!foundSegment) {
-                return res.status(400).json({
-                message: `The segment with listed ID (${parsedSegId}) does not exist.`,
-                })
+            if (parsedSegId){
+                const foundSegment = await prisma.segments.findUnique({
+                    where: { segId: parsedSegId }
+                });
+                if(foundSegment){
+                    res.status(200).json(foundSegment);
+                }
+                if (!foundSegment) {
+                    return res.status(400).json({
+                    message: `The segment with listed ID (${parsedSegId}) does not exist.`,
+                    });
+                }
+            } else {
+                res.status(404).json("segmentId is not found!");
             }
+            
 
-            res.status(200).json(foundSegment);
+            
+
+            
             } catch (error) {
             res.status(400).json({
                 message: "An error occured while trying to fetch all segments",
@@ -243,17 +251,18 @@ segmentRouter.get(
         if(parsedSubSegId) {
             const foundSubSegment = await prisma.subSegments.findUnique({
                 where: { id: parsedSubSegId }
-            })
-
-            res.status(200).json(foundSubSegment);
+            });
+            if(foundSubSegment){
+                res.status(200).json(foundSubSegment);
+            }
+            if (!foundSubSegment) {
+                return res.status(404).json({
+                message: `The subSegment with listed ID (${parsedSubSegId}) does not exist.`,
+                });
+            }
+            
         } else {
-            return res.sendStatus(204);
-        }
-
-        if (!foundSubSegment) {
-            return res.status(404).json({
-            message: `The subSegment with listed ID (${parsedSubSegId}) does not exist.`,
-            })
+            res.status(404).json("subSegmentId is not found!");
         }
 
         

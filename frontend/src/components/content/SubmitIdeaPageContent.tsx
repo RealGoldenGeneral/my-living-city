@@ -22,7 +22,7 @@ interface SubmitIdeaPageContentProps {
 const DEFAULT_CAT_ID = 1;
 
 const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, segData}) => {
-  const { token } = useContext(UserProfileContext);
+  const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [location, setLocation] = useState('Home');
@@ -49,18 +49,19 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setSubSegment(undefined);
     }
   }
-
-  console.log(segData);
-  
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
-      console.log(values);
       // Set loading and error state
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
-
-      const res = await postCreateIdea(values, token);
+      // if(user){
+      //   if(user.banned === true){
+      //     setError({message:'You have been banned'});
+      //     throw error;
+      //   }
+      // }
+      const res = await postCreateIdea(values, user!.banned, token);
       console.log(res);
 
       setError(null);

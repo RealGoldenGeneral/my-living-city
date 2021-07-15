@@ -42,7 +42,7 @@ export const getSingleIdea = async (ideaId: string) => {
   return res.data;
 }
 
-export const postCreateIdea = async (ideaData: ICreateIdeaInput, token: string | null) => {
+export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean, token: string | null) => {
   // Parse data and data checking
   const { categoryId, title, description, segmentId, subSegmentId} = ideaData;
   const parsedCatId = Number(categoryId);
@@ -61,7 +61,8 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, token: string |
     ...ideaData,
     categoryId: parsedCatId,
     segmentId: parsedSegId,
-    subSegmentId: parsedSubId
+    subSegmentId: parsedSubId,
+    banned: banned
   }
 
   const res = await axios.post<IIdeaWithRelationship>(

@@ -384,8 +384,13 @@ ideaRouter.post(
       let errorMessage = '';
       let errorStack = '';
       // passport middleware provides this based on JWT
-      const { email, id } = req.user;
-      let { categoryId , segmentId, subSegmentId} = req.body;
+      const { email, id} = req.user;
+      let { categoryId , segmentId, subSegmentId, banned} = req.body;
+      if (banned === true){
+        error+='You are banned';
+        errorMessage+='You must be un-banned before you can post ideas';
+        errorStack+='Users can not post ideas with a pending ban status of true';
+      }
       // Check if category id is added
       if (!categoryId||!isInteger(categoryId)) {
         error+='An Idea must be under a specific category.';
@@ -441,7 +446,7 @@ ideaRouter.post(
       const addressData = { ...req.body.address };
       delete req.body.geo;
       delete req.body.address;
-
+      delete req.body.banned;
 
       const ideaData = {
         ...req.body,
