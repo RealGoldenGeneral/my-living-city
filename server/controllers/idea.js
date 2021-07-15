@@ -85,62 +85,88 @@ ideaRouter.post(
     try {
       // TODO: if rating is adjusted raw query will break
       const data = await prisma.$queryRaw(`
-        select		
-          i.id,
-          i.author_id as "authorId",
-          i.category_id as "categoryId",
-          i.title,
-          i.description,
-          coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
-          coalesce(ir.avg_rating, 0) as "ratingAvg",			
-          coalesce(ic.total_comments, 0) as "commentCount",
-          coalesce(ir.total_ratings, 0) as "ratingCount",
-          coalesce(pr.pos_rating, 0) as "posRatings",
-          coalesce(nr.neg_rating, 0) as "negRatings",
-          i.state,
-          i.active,
-          i.updated_at as "updatedAt",
-          i.created_at as "createdAt"
-        from idea i
-        -- Aggregate total comments
-        left join (
-            select		
-              idea_id,
-              count(id) as total_comments
-            from idea_comment
-            group by idea_comment.idea_id
-        ) ic on i.id = ic.idea_id
-        -- Aggregate total ratings and rating avg
-        left join (
-            select		
-              idea_id,
-              count(id) as total_ratings,
-              avg(rating) as avg_rating 
-            from idea_rating
-            group by idea_rating.idea_id
-        ) ir on	i.id = ir.idea_id
-        -- Aggregate total neg ratings
-        left join (
-            select 		
-              idea_id,
-              count(id) as neg_rating
-            from idea_rating
-            where rating < 0
-            group by idea_id
-        ) nr on	i.id = nr.idea_id
-        -- Aggregate total pos ratings
-        left join (
-            select 		
-              idea_id,
-              count(id) as pos_rating
-            from idea_rating
-            where rating > 0
-            group by idea_id
-        ) pr on	i.id = pr.idea_id
-        order by
-          "ratingCount" desc,
-          "ratingAvg" desc,
-          engagements desc
+      select
+        i.id,
+        i.author_id as "authorId",
+        i.category_id as "categoryId",
+        i.title,
+        i.description,
+        i.segment_id,
+        i.sub_segment_id,
+        coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
+        coalesce(ir.avg_rating, 0) as "ratingAvg",
+        coalesce(ic.total_comments, 0) as "commentCount",
+        coalesce(ir.total_ratings, 0) as "ratingCount",
+        coalesce(pr.pos_rating, 0) as "posRatings",
+        coalesce(nr.neg_rating, 0) as "negRatings",
+        coalesce(sn.segment_name, '') as "segmentName",
+        coalesce(sbn.sub_segment_name, '') as "subSegmentName",
+        coalesce(userfname.f_name, '') as "firstName",
+        coalesce(userStreetAddress.street_address, '') as "streetAddress",
+        i.state,
+        i.active,
+        i.updated_at as "updatedAt",
+        i.created_at as "createdAt"
+          from idea i
+          -- Aggregate total comments
+          left join (
+              select
+                idea_id,
+                count(id) as total_comments
+              from idea_comment
+              group by idea_comment.idea_id
+          ) ic on i.id = ic.idea_id
+          -- Aggregate total ratings and rating avg
+          left join (
+              select
+                idea_id,
+                count(id) as total_ratings,
+                avg(rating) as avg_rating
+              from idea_rating
+              group by idea_rating.idea_id
+          ) ir on	i.id = ir.idea_id
+          -- Aggregate total neg ratings
+          left join (
+              select
+                idea_id,
+                count(id) as neg_rating
+              from idea_rating
+              where rating < 0
+              group by idea_id
+          ) nr on	i.id = nr.idea_id
+          -- Aggregate total pos ratings
+          left join (
+              select
+                idea_id,
+                count(id) as pos_rating
+              from idea_rating
+              where rating > 0
+              group by idea_id
+          ) pr on	i.id = pr.idea_id
+          -- Aggregate idea segment name
+          left join (
+              select seg_id, segment_name
+              from segment
+              ) sn on i.segment_id = sn.seg_id
+          -- Aggregate idea sub segment name
+          left join (
+              select seg_id, sub_segment_name
+              from sub_segment
+              ) sbn on i.sub_segment_id = sbn.seg_id
+          -- Aggregate author's first name
+          left join  (
+              select id, f_name
+              from "user"
+              ) userfname on i.author_id = userfname.id
+          -- Aggregate author's address
+          left join (
+              select user_id, street_address
+              from user_address
+              ) userStreetAddress on i.author_id = userStreetAddress.user_id
+          order by
+            "ratingCount" desc,
+            "ratingAvg" desc,
+            engagements desc
         ${takeClause}
         ;
       `);

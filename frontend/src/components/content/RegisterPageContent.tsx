@@ -4,7 +4,7 @@ import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'f
 import React, { useContext, useEffect, useState } from 'react';
 import { IUserRole } from 'src/lib/types/data/userRole.type';
 import SimpleMap from '../map/SimpleMap';
-import { capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
+import { capitalizeFirstLetterEachWord, capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
 import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import * as Yup from 'yup';
@@ -57,10 +57,10 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     // }
     const displaySubSegList = (id: number) => {
             if(subSegments && subSegments[0].segId === id){
-                return (subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
+                return (subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }
             if(subSegments2 && subSegments2[0].segId === id){
-                return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
+                return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }  
     }
     // useEffect(()=>{
@@ -211,8 +211,8 @@ return (
                             // refactorSegIds(0,parseInt(e.target.value));
                             // refactorSubIds(0, null);
                             }}>
-                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
-                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                            {segment && <option value={segment?.segId}>{capitalizeFirstLetterEachWord(segment?.name)}</option>}
+                            {segment2 && <option value={segment2?.segId}>{capitalizeFirstLetterEachWord(segment2?.name)}</option>}
                         </BForm.Control>
                     </BForm.Group>
                     <BForm.Group>
@@ -248,8 +248,8 @@ return (
                             refactorStateArray(segIds, 1, parseInt(e.target.value), setSegIds);
                             refactorStateArray(subIds, 1, null, setSubIds);
                             }}>
-                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
-                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                            {segment && <option value={segment?.segId}>{capitalizeFirstLetterEachWord(segment?.name)}</option>}
+                            {segment2 && <option value={segment2?.segId}>{capitalizeFirstLetterEachWord(segment2?.name)}</option>}
                         </BForm.Control>
                     </BForm.Group>
                     <BForm.Group>

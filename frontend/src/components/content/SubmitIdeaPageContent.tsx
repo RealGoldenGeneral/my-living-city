@@ -8,7 +8,7 @@ import { postCreateIdea } from '../../lib/api/ideaRoutes';
 import { ICategory } from '../../lib/types/data/category.type';
 import { ICreateIdeaInput } from '../../lib/types/input/createIdea.input';
 import { IFetchError } from '../../lib/types/types';
-import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
+import { capitalizeFirstLetterEachWord, capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
@@ -49,6 +49,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setSubSegment(undefined);
     }
   }
+
+  console.log(segData);
   
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
@@ -150,7 +152,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 onChange={formik.handleChange}
                 value={formik.values.segmentId}
               ><option>Select your Idea's municipality</option>
-                {segment &&<option value={segment ? (Number(segment.segId)) : undefined}>{segment ? segment.name : ''}</option>}
+                {segment &&<option value={segment ? (Number(segment.segId)) : undefined}>{segment ? capitalizeFirstLetterEachWord(segment.name) : ''}</option>}
                 </Form.Control>
             </Form.Group>
             <Form.Group>
@@ -161,7 +163,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 onChange={formik.handleChange}
                 value={formik.values.subSegmentId}
               ><option>Select your Idea's neighbourhood</option>
-                {subSegment && <option value={subSegment ? (Number(subSegment.id)) : undefined}>{subSegment ? subSegment.name : ''}</option>}
+                {subSegment && <option value={subSegment ? (Number(subSegment.id)) : undefined}>{subSegment ? capitalizeFirstLetterEachWord(subSegment.name) : ''}</option>}
               </Form.Control>
             </Form.Group>
             <Form.Group>
