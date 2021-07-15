@@ -3,6 +3,7 @@ import {Button, Card, Table} from 'react-bootstrap';
 import { findSegmentRequests } from 'src/lib/api/segmentRoutes';
 import { deleteUserSegmentById } from 'src/lib/api/userSegmentRequestRoutes';
 import { ISegmentRequest } from 'src/lib/types/data/segment.type';
+import { capitalizeFirstLetterEachWord } from 'src/lib/utilityFunctions';
 interface UserSegmentCardProps {
     segReq: ISegmentRequest[] | undefined;
     token: string;
@@ -34,8 +35,8 @@ export const UserSegmentCard: React.FC<UserSegmentCardProps> = ({segReq, token})
                     <td>{req.userId}</td>
                     <td>{req.country}</td>
                     <td>{req.province}</td>
-                    <td>{req.segmentName}</td>
-                    <td>{req.subSegmentName}</td>
+                    <td>{capitalizeFirstLetterEachWord(req.segmentName)}</td>
+                    <td>{capitalizeFirstLetterEachWord(req.subSegmentName)}</td>
                     <td><Button size="sm" variant="outline-danger" onClick={()=>{
                         deleteUserSegmentById(String(req.id), token);
                         segReq.splice(index,1);
