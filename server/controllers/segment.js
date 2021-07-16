@@ -354,7 +354,7 @@ segmentRouter.post(
 
                 const parsedSegmentId = parseInt(segmentId);
 
-                const {country,province,name,superSegId} = req.body;
+                const {country,province,name,superSegId,superSegName} = req.body;
 
                 console.log(req.body);
 
@@ -417,6 +417,12 @@ segmentRouter.post(
                         }
                     }
 
+                    if(superSegName&&!isString(superSegName)){
+                        error+='A segment must has a super segment name as string. ';
+                        errorMessage+='Updating a segment must explicitly be supplied with a super segment name as string. '
+                        errorStack+='super segment id must be provided in the body with a valid value and type. '
+                    }
+
                     //If there's error in error holder
                     if(error||errorMessage||errorStack){
                         return res.status(400).json({
@@ -434,6 +440,7 @@ segmentRouter.post(
                             country:country,
                             province:province,
                             name:name,
+                            superSegId:superSegId,
                             superSegName:superSegName
                         }
                         
