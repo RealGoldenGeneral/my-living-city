@@ -23,9 +23,11 @@ segmentRouter.post(
             });
             //User must be admin to create segment
             if (theUser.userType == 'ADMIN'){
-                const {country,province,name,superSegId} = req.body;
+                const {country,province,name,superSegName} = req.body;
 
                 console.log(req.body);
+
+                let theSuperSegId;
 
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
@@ -45,7 +47,7 @@ segmentRouter.post(
                 }
 
                 //if province is missing
-                if(!province||isString(province)){
+                if(!province||!isString(province)){
                     error+='A segment must has a province field. ';
                     errorMessage+='Creating a segment must explicitly be supplied with a province field. ';
                     errorStack+='province must be provided in the body with a valid value. ';
@@ -57,19 +59,19 @@ segmentRouter.post(
                     errorStack+='name must be provided in the body with a valid value. ';
                 }
 
-                if(!superSegId||!isInteger(superSegId)){
-                    error+='A segment must has a super segment id. ';
-                    errorMessage+='Creating a segment must explicitly be supplied with a super segment id. '
-                    errorStack+='super segment id must be provided in the body with a valid value. '
+                if(!superSegName||!isString(superSegName)){
+                    error+='A segment must has a super segment name field. ';
+                    errorMessage+='Creating a segment must explicitly be supplied with a super segment name field. ';
+                    errorStack+='Super segment name must be provided in the body with a valid value. ';
                 }else{
-                    const theSuperSegment = await prisma.superSegment.findUnique({
-                        where:{superSegId:superSegId}
-                    });
-    
-                    if(!theSuperSegment){
-                        error+='A segment must has a valid super segment id. ';
-                        errorMessage+='Creating a segment must explicitly be supplied with a valid super segment id. '
-                        errorStack+='Valid super segment id must be provided in the body. '
+                    theSuperSeg = await prisma.superSegment.findFirst({where:{name:superSegName.toUpperCase()}});
+
+                    if(!theSuperSeg){
+                        error+='A segment must has a valid super segment name field. ';
+                        errorMessage+='Creating a segment must explicitly be supplied with a valid super segment name field. ';
+                        errorStack+='Super segment name must be provided in the body with a valid value, which can match a super segment in the database. ';
+                    }else{
+                        theSuperSegId = theSuperSeg.superSegId;
                     }
                 }
 
@@ -90,7 +92,7 @@ segmentRouter.post(
                         country:country,
                         province:province,
                         name:name,
-                        superSegId:superSegId
+                        superSegId:theSuperSegId
                     }
                 })
 
@@ -353,7 +355,6 @@ segmentRouter.post(
                             superSegId:superSegId,
                             superSegName:superSegName
                         }
-                        
                     });
                     res.status(200).json(result);
                 }

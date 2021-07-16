@@ -38,11 +38,11 @@ async function main() {
 
 	const defaultSubSegments = [
 		//victoria
-		{id:1,segId:1,name:'fairfield', lat: 0, lon: 0},
+		{segId:1,name:'fairfield', lat: 0, lon: 0},
 		//saanich
-		{id:2,segId:2,name:'rutledge park', lat: 0, lon: 0},
+		{segId:2,name:'rutledge park', lat: 0, lon: 0},
 		//esquimalt
-		{id:3,segId:3,name:'saxe point', lat: 0, lon: 0},
+		{segId:3,name:'saxe point', lat: 0, lon: 0},
 		
 	];
 
@@ -128,7 +128,7 @@ async function main() {
 	const createSubSegments = await Promise.all(
 		defaultSubSegments.map(({id,segId,name,lat,lon}) => (
 			prisma.subSegments.upsert({
-				where:{id:id},
+				where:{id:-1},
 				update:{
 					id:id,
 					segId:segId,
