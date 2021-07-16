@@ -65,9 +65,10 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       </Card.Body>
       {showFooter && (
         <Card.Footer>
-          <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small><br></br>
-          <small className='text-muted'>{capitalizeFirstLetterEachWord(segmentName)}{subSegmentName ? ` at ${capitalizeFirstLetterEachWord(subSegmentName)}`: ""}</small><br></br>
-          <small className='text-muted'>-- {firstName}@{streetAddress}</small>
+          <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small>
+          <small className='text-muted float-right'>{capitalizeFirstLetterEachWord(segmentName)}{subSegmentName ? ` at ${capitalizeFirstLetterEachWord(subSegmentName)}`: ""}</small>
+          
+          {/* <small className='text-muted'>-- {firstName}@{streetAddress}</small> */}
         </Card.Footer>
       )}
     </Card>

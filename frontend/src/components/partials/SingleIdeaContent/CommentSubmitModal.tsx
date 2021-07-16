@@ -10,7 +10,8 @@ interface CommentSubmitModalProps {
   buttonTextOutput: () => string;
   submitComment: (newComment: ICreateCommentInput) => void;
   show: boolean;
-  comments?: IComment[]
+  comments?: IComment[];
+  banned?: boolean;
 }
 
 const CommentSubmitModal = ({
@@ -20,11 +21,13 @@ const CommentSubmitModal = ({
   submitComment,
   show,
   comments,
+  banned,
 }: CommentSubmitModalProps) => {
   const handleClose = () => setShow(false);
   const [commentText, setCommentText] = useState('');
 
   const submitHandler = (values: ICreateCommentInput) => {
+    console.log(banned);
     submitComment(values);
     setCommentText('');
     handleClose();
@@ -53,7 +56,7 @@ const CommentSubmitModal = ({
           <p className='text-center'>There are no Feedback Comments for this idea yet. Try posting one!</p>
         ) : null}
         {comments && comments?.map(comment => (
-          <IdeaCommentTile commentData={comment} />
+          <div key={comment.id}><IdeaCommentTile commentData={comment} /></div>
         ))}
       </Modal.Body>
       <Modal.Footer className='d-flex flex-column'>
