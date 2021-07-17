@@ -20,6 +20,8 @@ export interface ShowSubSegmentsProps {
 }
 export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, segName, token}) => {
   // const {data} = useAllSubSegmentsWithId(String(segId!));
+  console.log(segId);
+  const [hideControls, setHideControls] = useState('');
   const [showNewSubSeg, setShowNewSubSeg] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   let createData = {} as ISubSegment;
@@ -68,7 +70,7 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
       {/* <img alt=""src={"http://localhost:3001/static/uploads/1621449457193-SampleAds1.png"} /> */}
       <Card.Header>{capitalizeString(segName!)} Sub-Segments <Button className="float-right" size="sm" onClick={(e)=>{setShowNewSubSeg(true)}}>Add New Sub-Segments</Button></Card.Header>
       <Card.Body>
-          <Table bordered hover>
+          <Table bordered hover size="sm">
             <thead>
               <tr>
                 <th>Name</th>
@@ -80,25 +82,41 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
             <tbody>
               {data?.map((segment: ISubSegment) => (
               <tr key={segment.id}>
-                {/* <td><Form.Control type="text" value={String(segment.segId)} readOnly/></td> */}
-                <td><Form.Control 
-                  type="text" 
-                  defaultValue={capitalizeString(segment.name)}
-                  onChange={(e)=>{segment.name = e.target.value}}
-                  /></td>
-                  <td><Form.Control 
-                  type="text" 
-                  defaultValue={segment.lat}
-                  onChange={(e)=>{segment.lat = parseFloat(e.target.value)}}
-                  /></td>
-                  <td><Form.Control 
-                  type="text" 
-                  defaultValue={segment.lon}
-                  onChange={(e)=>{segment.lon = parseFloat(e.target.value)}}
-                  /></td>
+                {String(segment.id) !== hideControls
+                ?
+                <>
+                <td>{segment.name ? capitalizeString(segment.name) : ''}</td>
+                <td>{segment.lat}</td>
+                <td>{segment.lon}</td>
                 <td>
-                  <Button onClick={()=>handleSubSegSubmit({name:segment.name, lat: segment.lat, lon: segment.lon, id:segment.id})}size="sm">Update</Button>{' '}
+                  <NavDropdown title="Controls" id="nav-dropdown">
+                    <Dropdown.Item onClick={()=>setHideControls(String(segment.id))}>Edit</Dropdown.Item>
+                  </NavDropdown>
                 </td>
+                </>
+                :
+                <>
+                <td><Form.Control 
+                type="text" 
+                defaultValue={capitalizeString(segment.name)}
+                onChange={(e)=>{segment.name = e.target.value}}
+                /></td>
+                <td><Form.Control 
+                type="text" 
+                defaultValue={segment.lat}
+                onChange={(e)=>{segment.lat = parseFloat(e.target.value)}}
+                /></td>
+                <td><Form.Control 
+                type="text" 
+                defaultValue={segment.lon}
+                onChange={(e)=>{segment.lon = parseFloat(e.target.value)}}
+                /></td>
+                <td>
+                  <Button variant="outline-danger" className="mr-2" onClick={()=>setHideControls('')}>Cancel</Button>
+                  <Button onClick={()=>handleSubSegSubmit(segment)}>Save</Button>
+                </td>
+                </>
+                }
               </tr>))}
               {showNewSubSeg && 
               <tr>
@@ -164,7 +182,6 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
     }
     setShowNewSeg(false);
     setError(null);
-    window.location.reload();
   }catch(error){
     console.log(error);
   }
@@ -233,6 +250,17 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
                 <>
                   <td>{segment.name ? capitalizeFirstLetterEachWord(segment.name) : ''}</td>
                   <td>{segment.superSegName ? capitalizeFirstLetterEachWord(segment.superSegName) : ''}</td>
+                  <td>
+                    <NavDropdown title="Controls" id="nav-dropdown">
+                    <Dropdown.Item onClick={()=>setHideControls(String(segment.segId))}>Edit</Dropdown.Item>
+                    <Dropdown.Item onClick={()=>{
+                    setSegId(segment.segId);
+                    setSegName(segment.name);
+                    setShowNewSeg(false);
+                    setShowSub(b=>!b);
+                    }}>Show Sub Segments</Dropdown.Item>
+                    </NavDropdown>
+                  </td>
                 </>
                 :
                 <>
@@ -240,32 +268,17 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
                   <Form.Control type="text" defaultValue={capitalizeString(segment.name)} onChange={(e)=>{segment.name = e.target.value}}/>
                 </td>
               <td>
-                <Form.Control type="text" defaultValue={segment.superSegName!} onChange={(e)=>{segment.superSegName = e.target.value}}/>
+                <Form.Control type="text" defaultValue={segment.superSegName ? capitalizeString(segment.superSegName) : ''} onChange={(e)=>{segment.superSegName = e.target.value}}/>
+              </td>
+              <td>
+              <Button size="sm" className="mr-2" variant="outline-danger" onClick={()=>setHideControls('')}>Cancel</Button>
+              <Button size="sm" onClick={()=>{
+                  handleSegSubmit(segment);
+                  setHideControls('')
+                  }}>Save</Button>
               </td>
               </>
               }
-              <td>
-
-                {String(segment.segId)!==hideControls ?
-                  <NavDropdown title="Controls" id="nav-dropdown">
-                  <Dropdown.Item onClick={()=>setHideControls(String(segment.segId))}>Edit</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>{
-                  setSegId(segment.segId);
-                  setSegName(segment.name);
-                  setShowNewSeg(false);
-                  setShowSub(b=>!b);
-                  }}>Show Sub Segments</Dropdown.Item>
-                </NavDropdown>
-                :
-                <>
-                <Button size="sm" className="mr-2" variant="outline-danger" onClick={()=>setHideControls('')}>Cancel</Button>
-                <Button size="sm" onClick={()=>{
-                  handleSegSubmit(segment);
-                  }}>Save</Button>
-                </>
-              }
-                
-              </td>
               </tr>)
               )
             }
