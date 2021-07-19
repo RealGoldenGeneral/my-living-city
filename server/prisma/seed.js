@@ -31,9 +31,9 @@ async function main() {
 	}];
 
 	const defaultSegments = [
-		{segId:1,superSegId:1,country: 'canada', province: 'british columbia', name: 'victoria', superSegName: 'crd'},
-		{segId:2,superSegId:1,country: 'canada', province: 'british columbia', name: 'saanich', superSegName: 'crd'},
-		{segId:3,superSegId:1,country: 'canada', province: 'british columbia', name: 'esquimalt', superSegName: 'crd'},
+		{superSegId:1,country: 'canada', province: 'british columbia', name: 'victoria', superSegName: 'crd'},
+		{superSegId:1,country: 'canada', province: 'british columbia', name: 'saanich', superSegName: 'crd'},
+		{superSegId:1,country: 'canada', province: 'british columbia', name: 'esquimalt', superSegName: 'crd'},
 	];
 
 	const defaultSubSegments = [
@@ -103,9 +103,9 @@ async function main() {
 	);
 	
 	const createSegments = await Promise.all(
-		defaultSegments.map(({segId,superSegId,country,province,name,superSegName}) => (
+		defaultSegments.map(({superSegId,country,province,name,superSegName}) => (
 			prisma.segments.upsert({
-				where:{segId:segId},
+				where:{segId:-1},
 				update:{
 					superSegId:superSegId,
 					country:country,
@@ -114,7 +114,6 @@ async function main() {
 					superSegName:superSegName
 				},
 				create:{
-					segId:segId,
 					superSegId:superSegId,
 					country:country,
 					province:province,
@@ -126,18 +125,16 @@ async function main() {
 	);
 	
 	const createSubSegments = await Promise.all(
-		defaultSubSegments.map(({id,segId,name,lat,lon}) => (
+		defaultSubSegments.map(({segId,name,lat,lon}) => (
 			prisma.subSegments.upsert({
 				where:{id:-1},
 				update:{
-					id:id,
 					segId:segId,
 					name:name,
 					lat:lat,
 					lon:lon
 				},
 				create:{
-					id:id,
 					segId:segId,
 					name:name,
 					lat:lat,
