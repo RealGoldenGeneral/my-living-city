@@ -37,6 +37,7 @@ export interface IIdeaWithRelationship extends IIdea {
   geo?: IGeo;
   address?: IAddress;
   category?: ICategory;
+  userType: string;
   segment: ISegment; // 
   subSegment?: ISubSegment; //
   author?: IUser;
@@ -57,8 +58,6 @@ export interface IIdeaWithAggregations {
 	id: number;
 	authorId: string;
 	categoryId: number;
-	segmentId: number; //
-	subSegmentId?: number; // 
 	segmentName: string; //
 	subSegmentName?: string; //
 	firstName: string; //

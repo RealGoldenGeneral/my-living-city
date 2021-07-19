@@ -30,11 +30,11 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
   const getSegData = async (location: string) => {
     let data: any;
-    if(location === 'Home'){
+    if(location === 'Resident'){
       data = await getUserHomeSegmentInfo(token);
-    }else if(location === 'Work'){
+    }else if(location === 'Worker'){
       data = await getUserWorkSegmentInfo(token);
-    }else if (location === 'School'){
+    }else if (location === 'Student'){
       data = await getUserSchoolSegmentInfo(token);
     }
     
@@ -52,6 +52,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
       // Set loading and error state
+      console.log(values);
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -81,6 +82,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       // TODO: CatId when chosen is a string
       categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
       title: '',
+      userType: 'Resident',
       description: '',
       artsImpact: '',
       communityImpact: '',
@@ -137,11 +139,15 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               <Form.Label>This idea pertains to which area of interest?</Form.Label>
               <Form.Control
                 as='select'
-                name='location'
-                onChange={(e)=>getSegData(e.target.value)}
-              > <option>Home</option>
-                <option>Work</option>
-                <option>School</option>
+                name='userType'
+                onChange={(e)=>{
+                  getSegData(e.target.value);
+                  formik.handleChange(e);
+                }}
+                value={formik.values.userType}
+              > <option value={"Resident"}>Resident</option>
+                <option value={"Worker"}>Worker</option>
+                <option value={"Student"}>Student</option>
               </Form.Control>
             </Form.Group>
             <Form.Group>

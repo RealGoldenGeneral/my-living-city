@@ -105,7 +105,7 @@ async function main() {
 	const createSegments = await Promise.all(
 		defaultSegments.map(({segId,superSegId,country,province,name,superSegName}) => (
 			prisma.segments.upsert({
-				where:{segId:segId},
+				where:{segId:-1},
 				update:{
 					superSegId:superSegId,
 					country:country,

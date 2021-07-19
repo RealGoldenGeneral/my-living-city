@@ -12,11 +12,13 @@ interface CommentSubmitModalProps {
   show: boolean;
   comments?: IComment[];
   banned?: boolean;
+  setShowCommentSubmitError: any;
 }
 
 const CommentSubmitModal = ({
   setShow,
   shouldButtonBeDisabled,
+  setShowCommentSubmitError,
   buttonTextOutput,
   submitComment,
   show,
@@ -25,12 +27,24 @@ const CommentSubmitModal = ({
 }: CommentSubmitModalProps) => {
   const handleClose = () => setShow(false);
   const [commentText, setCommentText] = useState('');
-
+  const [error, setError] = useState<string | null>(null);
   const submitHandler = (values: ICreateCommentInput) => {
-    console.log(banned);
-    submitComment(values);
-    setCommentText('');
-    handleClose();
+    console.log(banned, 'banned');
+    setError(null);
+    try{
+      if(banned === true){
+        setShowCommentSubmitError(true);
+        setError('You are banned');
+        throw error;
+      }
+      submitComment(values);
+      setCommentText('');
+    }catch(error){
+      console.log(error);
+    }finally{
+      handleClose();
+    }
+    
   };
 
   return (
@@ -39,6 +53,7 @@ const CommentSubmitModal = ({
       onHide={handleClose}
       centered
       size='lg'
+      animation={false}
     >
       <Modal.Header closeButton>
         <Container>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Card, Table, DropdownButton, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
+import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { USER_TYPES } from 'src/lib/constants';
 import { IUser } from 'src/lib/types/data/user.type';
-import { capitalizeString } from 'src/lib/utilityFunctions';
+import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
+
 
 interface UserManagementContentProps {
     users: IUser[] | undefined;
@@ -12,7 +13,15 @@ interface UserManagementContentProps {
 
 export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token}) => {
     const [hideControls, setHideControls] = useState('');
+    const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
+    const [email, setEmail] = useState('');
+    const [id, setId] = useState('');
     const [ban ,setBan] = useState<boolean>(false);
+    const UserSegmentHandler = (email: string, id: string) => {
+        setShowUserSegmentCard(true);
+        setEmail(email);
+        setId(id);
+    }
     const userTypes = Object.keys(USER_TYPES);
         return (
             <Container>
@@ -69,7 +78,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                                 setHideControls(req.id);
                                 setBan(req.banned);
                                 }}>Edit</Dropdown.Item>
-                            <Dropdown.Item onClick={()=>console.log(req)}>View Segments</Dropdown.Item>
+                            <Dropdown.Item onClick={()=>UserSegmentHandler(req.email, req.id)}>View Segments</Dropdown.Item>
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
@@ -89,6 +98,9 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
             </Card.Body>
         </Card>
         </Form>
+        <br></br>
+        {/* <UserSegmentHandler/> */}
+        {showUserSegmentCard && <UserSegmentInfoCard email={email} id={id} token={token}/>}
         </Container>
         );
 }

@@ -92,7 +92,8 @@ segmentRouter.post(
                         country:country,
                         province:province,
                         name:name,
-                        superSegId:theSuperSegId
+                        superSegId:theSuperSegId,
+                        superSegName:superSegName
                     }
                 })
 

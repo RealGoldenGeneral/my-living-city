@@ -6,7 +6,7 @@ import { IFetchError } from '../../lib/types/types';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import {createSegment, createSubSegment, updateSegment, updateSubSegment} from '../../lib/api/segmentRoutes';
 import { ShowSubSegmentsPage } from 'src/pages/ShowSubSegmentsPage';
-import { UserSegmentCard } from '../partials/UserSegmentCard';
+import { UserSegmentRequestCard } from '../partials/UserSegmentRequestCard';
 import { COUNTRIES, PROVINCES } from 'src/lib/constants';
 import { Dropdown } from 'react-bootstrap';
 //import {Image} from 'react-native';
@@ -56,6 +56,7 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
 
           createData.segId = segId;
           await createSubSegment(createData,token);
+          if(data) data.push(createData);
 
       }
       setShowNewSubSeg(false);
@@ -179,6 +180,8 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
       createData.country = countryName;
       createData.province = provName;
       await createSegment(createData,token);
+      if(segments) segments.push(createData);
+      
     }
     setShowNewSeg(false);
     setError(null);
@@ -257,7 +260,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
                     setSegId(segment.segId);
                     setSegName(segment.name);
                     setShowNewSeg(false);
-                    setShowSub(b=>!b);
+                    setShowSub(true);
                     }}>Show Sub Segments</Dropdown.Item>
                     </NavDropdown>
                   </td>
@@ -300,7 +303,7 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
       </Card>
       <br/>
       {(showSub && segId) && <ShowSubSegmentsPage segId={segId} segName={segName}token={token}/>} <br/>
-      <UserSegmentCard segReq={segReq} token={token}/>
+      <UserSegmentRequestCard segReq={segReq} token={token}/>
       </Col>
       </Row> 
     </div>

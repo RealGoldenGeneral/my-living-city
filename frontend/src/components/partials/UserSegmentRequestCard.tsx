@@ -4,12 +4,12 @@ import { findSegmentRequests } from 'src/lib/api/segmentRoutes';
 import { deleteUserSegmentById } from 'src/lib/api/userSegmentRequestRoutes';
 import { ISegmentRequest } from 'src/lib/types/data/segment.type';
 import { capitalizeFirstLetterEachWord } from 'src/lib/utilityFunctions';
-interface UserSegmentCardProps {
+interface UserSegmentCardRequestProps {
     segReq: ISegmentRequest[] | undefined;
     token: string;
 }
 
-export const UserSegmentCard: React.FC<UserSegmentCardProps> = ({segReq, token}) => {
+export const UserSegmentRequestCard: React.FC<UserSegmentCardRequestProps> = ({segReq, token}) => {
 
     const [showReq, setShowReq] = useState(false);
     const [update, setUpdate] = useState(false);

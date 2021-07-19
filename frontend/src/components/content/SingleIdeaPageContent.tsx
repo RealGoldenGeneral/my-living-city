@@ -25,14 +25,13 @@ import { useState } from 'react';
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship
-  segmentData: any
-  subSegmentData?: any
 }
 
-const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData, segmentData, subSegmentData }) => {
+const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData }) => {
   const {
     title,
     description,
+    userType,
     communityImpact,
     natureImpact,
     artsImpact,
@@ -40,8 +39,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData,
     manufacturingImpact,
     createdAt,
     category,
-    // segment,
-    // subSegment,
+    segment,
+    subSegment,
     author,
     state,
     // segmentId,
@@ -53,8 +52,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData,
   } = ideaData;
 
   console.log(ideaData);
-  console.log(segmentData);
-  console.log(subSegmentData);
 
   // const [subSegData, setSubSegData] = useState(subSegmentData);
   // console.log(subSegData);
@@ -66,7 +63,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData,
   // }
 
   const { title: catTitle } = category!;
-  const { name: SegmentName } = segmentData;
+  // const { name: SegmentName } = segmentData;
   // const { name: SubSegmentName } = subSegmentData;
   
   // const [subSegmentName, setSubSegmentName] = useState(subSegmentData.name);
@@ -123,8 +120,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData,
           </div>
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
           <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
-          <h4 className='h5'>Municipality: {capitalizeFirstLetterEachWord(SegmentName)}</h4>
-          <h4 className='h5'>Neighborhood: {subSegmentData ? capitalizeFirstLetterEachWord(subSegmentData.name): 'N/A'}</h4>
+          <h4 className='h5'>As: {userType}</h4>
+          <h4 className='h5'>Municipality: {segment ? capitalizeFirstLetterEachWord(segment.name) : 'N/A'}</h4>
+          <h4 className='h5'>Neighborhood: {subSegment ? capitalizeFirstLetterEachWord(subSegment.name): 'N/A'}</h4>
           {!!ideaData.champion && (
             <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
           )}

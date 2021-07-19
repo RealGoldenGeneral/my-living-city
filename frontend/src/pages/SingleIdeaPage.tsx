@@ -21,7 +21,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   const { match: { params: { ideaId } } } = props;
 
   const { data, error, isLoading, isError } = useSingleIdea(ideaId);  
-  const segmentData = useSingleSegmentBySegmentId(data?.segmentId!);
+  // const segmentData = useSingleSegmentBySegmentId(data?.segmentId!);
 
   // const [subSegmentId, setSubSegmentId] = useState(data?.subSegmentId);
 
@@ -30,7 +30,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   // } else {
 
   // }
-  const subSegmentData = useSingleSubSegmentBySubSegmentId(data?.subSegmentId!);
+  // const subSegmentData = useSingleSubSegmentBySubSegmentId(data?.subSegmentId!);
 
   if (isError) {
     console.log(error);
@@ -41,7 +41,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
     )
   }
 
-  if (isLoading || segmentData.isLoading || subSegmentData.isLoading) {
+  if (isLoading) {
     return (
       <div className="wrapper">
         <LoadingSpinner />
@@ -52,7 +52,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   return (
     <div className="wrapper">
       {data && (
-        <SingleIdeaPageContent ideaData={data} segmentData={segmentData.data} subSegmentData={subSegmentData.data}/>
+        <SingleIdeaPageContent ideaData={data}/>
       )}
     </div>
   )

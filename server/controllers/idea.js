@@ -150,9 +150,9 @@ ideaRouter.post(
               ) sn on i.segment_id = sn.seg_id
           -- Aggregate idea sub segment name
           left join (
-              select seg_id, sub_segment_name
+              select id, sub_segment_name
               from sub_segment
-              ) sbn on i.sub_segment_id = sbn.seg_id
+              ) sbn on i.sub_segment_id = sbn.id
           -- Aggregate author's first name
           left join  (
               select id, f_name
@@ -233,7 +233,9 @@ ideaRouter.get(
                 }
               }
             }
-          }
+          },
+          segment: true,
+          subSegment:true
         }
       });
       if (!foundIdea) {

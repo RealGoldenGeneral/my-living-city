@@ -240,6 +240,7 @@ model Idea {
   // Values
   title               String
   description         String
+  userType            String    @default("Resident")
   communityImpact     String?   @map("community_impact")
   natureImpact        String?   @map("nature_impact")
   artsImpact          String?   @map("arts_impact")
