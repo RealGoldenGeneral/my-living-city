@@ -31,18 +31,18 @@ async function main() {
 	}];
 
 	const defaultSegments = [
-		{superSegId:1,country: 'canada', province: 'british columbia', name: 'victoria', superSegName: 'crd'},
-		{superSegId:1,country: 'canada', province: 'british columbia', name: 'saanich', superSegName: 'crd'},
-		{superSegId:1,country: 'canada', province: 'british columbia', name: 'esquimalt', superSegName: 'crd'},
+		{segId:1,superSegId:1,country: 'canada', province: 'british columbia', name: 'victoria', superSegName: 'crd'},
+		{segId:2,superSegId:1,country: 'canada', province: 'british columbia', name: 'saanich', superSegName: 'crd'},
+		{segId:3,superSegId:1,country: 'canada', province: 'british columbia', name: 'esquimalt', superSegName: 'crd'},
 	];
 
 	const defaultSubSegments = [
 		//victoria
-		{segId:1,name:'fairfield', lat: 0, lon: 0},
+		{id:1,segId:1,name:'fairfield', lat: 0, lon: 0},
 		//saanich
-		{segId:2,name:'rutledge park', lat: 0, lon: 0},
+		{id:2,segId:2,name:'rutledge park', lat: 0, lon: 0},
 		//esquimalt
-		{segId:3,name:'saxe point', lat: 0, lon: 0},
+		{id:3,segId:3,name:'saxe point', lat: 0, lon: 0},
 		
 	];
 
@@ -102,54 +102,119 @@ async function main() {
 		))
 	);
 	
-	const createSegments = await Promise.all(
-		defaultSegments.map(({superSegId,country,province,name,superSegName}) => (
-			prisma.segments.upsert({
-				where:{segId:-1},
-				update:{
-					superSegId:superSegId,
-					country:country,
-					province:province,
-					name:name,
-					superSegName:superSegName
-				},
-				create:{
-					superSegId:superSegId,
-					country:country,
-					province:province,
-					name:name,
-					superSegName:superSegName
-				}
-			})
-		))
-	);
+	const victoriaSegment = await prisma.segments.upsert({
+		where:{segId:defaultSegments[0].segId},
+		update:{
+			superSegId:defaultSegments[0].superSegId,
+			country:defaultSegments[0].country,
+			province:defaultSegments[0].province,
+			name:defaultSegments[0].name,
+			superSegName:defaultSegments[0].superSegName
+		},
+		create:{
+			superSegId:defaultSegments[0].superSegId,
+			country:defaultSegments[0].country,
+			province:defaultSegments[0].province,
+			name:defaultSegments[0].name,
+			superSegName:defaultSegments[0].superSegName
+		}
+	});
+
+	const sannichSegment = await prisma.segments.upsert({
+		where:{segId:defaultSegments[1].segId},
+		update:{
+			superSegId:defaultSegments[1].superSegId,
+			country:defaultSegments[1].country,
+			province:defaultSegments[1].province,
+			name:defaultSegments[1].name,
+			superSegName:defaultSegments[1].superSegName
+		},
+		create:{
+			superSegId:defaultSegments[1].superSegId,
+			country:defaultSegments[1].country,
+			province:defaultSegments[1].province,
+			name:defaultSegments[1].name,
+			superSegName:defaultSegments[1].superSegName
+		}
+	});
+
+	const esquimaltSegment = await prisma.segments.upsert({
+		where:{segId:defaultSegments[2].segId},
+		update:{
+			superSegId:defaultSegments[2].superSegId,
+			country:defaultSegments[2].country,
+			province:defaultSegments[2].province,
+			name:defaultSegments[2].name,
+			superSegName:defaultSegments[2].superSegName
+		},
+		create:{
+			superSegId:defaultSegments[2].superSegId,
+			country:defaultSegments[2].country,
+			province:defaultSegments[2].province,
+			name:defaultSegments[2].name,
+			superSegName:defaultSegments[2].superSegName
+		}
+	});
+
+	const fairfieldSubSegment = await prisma.subSegments.upsert({
+		where:{id:defaultSubSegments[0].id},
+		update:{
+			segId:victoriaSegment.segId,
+			name:defaultSubSegments[0].name,
+			lat:defaultSubSegments[0].lat,
+			lon:defaultSubSegments[0].lon
+		},
+		create:{
+			segId:victoriaSegment.segId,
+			name:defaultSubSegments[0].name,
+			lat:defaultSubSegments[0].lat,
+			lon:defaultSubSegments[0].lon
+		}
+	});
+
+	const rutledge_parkSubSegment = await prisma.subSegments.upsert({
+		where:{id:defaultSubSegments[1].id},
+		update:{
+			segId:sannichSegment.segId,
+			name:defaultSubSegments[1].name,
+			lat:defaultSubSegments[1].lat,
+			lon:defaultSubSegments[1].lon
+		},
+		create:{
+			segId:sannichSegment.segId,
+			name:defaultSubSegments[1].name,
+			lat:defaultSubSegments[1].lat,
+			lon:defaultSubSegments[1].lon
+		}
+	});
+
+	const saxe_pointSubSegment = await prisma.subSegments.upsert({
+		where:{id:defaultSubSegments[2].id},
+		update:{
+			segId:esquimaltSegment.segId,
+			name:defaultSubSegments[2].name,
+			lat:defaultSubSegments[2].lat,
+			lon:defaultSubSegments[2].lon
+		},
+		create:{
+			segId:esquimaltSegment.segId,
+			name:defaultSubSegments[2].name,
+			lat:defaultSubSegments[2].lat,
+			lon:defaultSubSegments[2].lon
+		}
+	});
 	
-	const createSubSegments = await Promise.all(
-		defaultSubSegments.map(({segId,name,lat,lon}) => (
-			prisma.subSegments.upsert({
-				where:{id:-1},
-				update:{
-					segId:segId,
-					name:name,
-					lat:lat,
-					lon:lon
-				},
-				create:{
-					segId:segId,
-					name:name,
-					lat:lat,
-					lon:lon
-				}
-			})
-		))
-	);
 	
 
 	console.log('Resolved populated Categories', resolvedCategories);
 	//console.log('Resolved populated UserRoles', resolvedUserRoles);
 	console.log('Resolved populated Super Segment', createSuperSegment);
-	console.log('Resolved populated segments', createSegments);
-	console.log('Resolved populated sub segments', createSubSegments);
+	console.log('Resolved populated segments', victoriaSegment);
+	console.log('Resolved populated segments', sannichSegment);
+	console.log('Resolved populated segments', esquimaltSegment);
+	console.log('Resolved populated sub segments', fairfieldSubSegment);
+	console.log('Resolved populated sub segments', rutledge_parkSubSegment);
+	console.log('Resolved populated sub segments', saxe_pointSubSegment);
 }
 
 main()
