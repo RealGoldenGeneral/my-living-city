@@ -153,6 +153,14 @@ commentRouter.post(
       const { content } = req.body;
       const parsedIdeaId = parseInt(req.params.ideaId);
 
+      const theUserSegment = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
+
+      if(!theUserSegment){
+        return res.status(400).json({
+          message: `user segment information not found.`
+        })
+      }
+
       // check if id is valid
       if (!parsedIdeaId) {
         return res.status(400).json({
@@ -167,11 +175,15 @@ commentRouter.post(
         });
       }
 
+      let segmentId = foundIdea.segmentId;
+
       const createdComment = await prisma.ideaComment.create({
         data: {
           content,
           authorId: loggedInUserId,
           ideaId: parsedIdeaId,
+          userSegId:theUserSegment.id,
+          segmentId:segmentId
         },
         include: {
           author: {

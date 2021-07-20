@@ -135,8 +135,7 @@ model User {
   Advertisements Advertisements[]
   //Not sure if this one stays
   segmentRequest segmentRequest[]
-  //Or this one stays
-  UserSegments   UserSegments[]
+  UserSegments   UserSegments?
   @@map(name: "user")
 }
 
@@ -144,7 +143,7 @@ model User {
 model UserSegments {
   id                   String        @id @default(cuid())
   userId               String        @map("user_id")
-  user                 User          @relation(fields: [userId], references: [id])
+  user                 User?         @relation(fields: [userId], references: [id])
   homeSegmentId        Int?          @map("home_segment_id")
   homeSegmentName      String?       @map("home_segment_name")
   workSegmentId        Int?          @map("work_segment_id")
