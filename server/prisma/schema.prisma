@@ -135,34 +135,34 @@ model User {
   Advertisements Advertisements[]
   //Not sure if this one stays
   segmentRequest segmentRequest[]
-  //Or this one stays
-  UserSegments   UserSegments[]
+  userSegments   UserSegments?
   @@map(name: "user")
 }
 
 // user segment entity
 model UserSegments {
-  id                   String       @id @default(cuid())
-  userId               String       @map("user_id")
-  user                 User         @relation(fields: [userId], references: [id])
-  homeSegmentId        Int?         @map("home_segment_id")
-  homeSegmentName      String?      @map("home_segment_name")
-  workSegmentId        Int?         @map("work_segment_id")
-  workSegmentName      String?      @map("work_segment_name")
-  schoolSegmentId      Int?         @map("school_segment_id")
-  schoolSegmentName    String?      @map("school_segment_name")
-  homeSubSegmentId     Int?         @map("home_sub_segment")
-  homeSubSegmentName   String?      @map("home_sub_segment_name")
-  workSubSegmentId     Int?         @map("work_sub_segment")
-  workSubSegmentName   String?      @map("work_sub_segment_name")
-  schoolSubSegmentId   Int?         @map("school_sub_segment")
-  schoolSubSegmentName String?      @map("school_sub_segment_name")
-  homeSegment          Segments?    @relation("homeSegment", fields: [homeSegmentId], references: [segId])
-  workSegment          Segments?    @relation("workSegment", fields: [workSegmentId], references: [segId])
-  schoolSegment        Segments?    @relation("schoolSegment", fields: [schoolSegmentId], references: [segId])
-  homeSubSegment       SubSegments? @relation("homeSubSegment", fields: [homeSubSegmentId], references: [id])
-  workSubSegment       SubSegments? @relation("workSubSegment", fields: [workSubSegmentId], references: [id])
-  schoolSubSegment     SubSegments? @relation("schoolSubSegment", fields: [schoolSubSegmentId], references: [id])
+  id                   String        @id @default(cuid())
+  userId               String        @map("user_id")
+  user                 User?         @relation(fields: [userId], references: [id])
+  homeSegmentId        Int?          @map("home_segment_id")
+  homeSegmentName      String?       @map("home_segment_name")
+  workSegmentId        Int?          @map("work_segment_id")
+  workSegmentName      String?       @map("work_segment_name")
+  schoolSegmentId      Int?          @map("school_segment_id")
+  schoolSegmentName    String?       @map("school_segment_name")
+  homeSubSegmentId     Int?          @map("home_sub_segment")
+  homeSubSegmentName   String?       @map("home_sub_segment_name")
+  workSubSegmentId     Int?          @map("work_sub_segment")
+  workSubSegmentName   String?       @map("work_sub_segment_name")
+  schoolSubSegmentId   Int?          @map("school_sub_segment")
+  schoolSubSegmentName String?       @map("school_sub_segment_name")
+  homeSegment          Segments?     @relation("homeSegment", fields: [homeSegmentId], references: [segId])
+  workSegment          Segments?     @relation("workSegment", fields: [workSegmentId], references: [segId])
+  schoolSegment        Segments?     @relation("schoolSegment", fields: [schoolSegmentId], references: [segId])
+  homeSubSegment       SubSegments?  @relation("homeSubSegment", fields: [homeSubSegmentId], references: [id])
+  workSubSegment       SubSegments?  @relation("workSubSegment", fields: [workSubSegmentId], references: [id])
+  schoolSubSegment     SubSegments?  @relation("schoolSubSegment", fields: [schoolSubSegmentId], references: [id])
+  IdeaComment          IdeaComment[]
 }
 
 // Category entity
@@ -330,6 +330,8 @@ model IdeaComment {
 
   // Fields
   authorId  String   @map("author_id")
+  userSegId String   @map("user_segment_id")
+  segmentId Int      @map("segment_id")
   content   String
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map(name: "created_at")
@@ -338,6 +340,7 @@ model IdeaComment {
   // relations
   author   User                  @relation(fields: [authorId], references: [id])
   idea     Idea                  @relation(fields: [ideaId], references: [id])
+  userSeg  UserSegments          @relation(fields: [userSegId], references: [id])
   likes    UserCommentLikes[]
   dislikes UserCommentDislikes[]
 

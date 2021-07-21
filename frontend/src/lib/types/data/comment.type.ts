@@ -17,7 +17,17 @@ export interface IParsedCommentAuthor {
     postalCode: string;
   }
 }
-
+export interface IParsedIdea {
+  id: string;
+  segId: number;
+  subSegId?:number;
+}
+export interface IParsedSegData {
+  id: string;
+  homeSegId: number;
+  workSegId: number;
+  schoolSegId: number;
+}
 export interface ICommentLikeDislike {
   id: number;
   ideaCommentId: number;
@@ -32,6 +42,8 @@ export interface IComment {
   active:    boolean;
   createdAt: string;
   updatedAt: string;
+  // idea: IParsedIdea;
+  // userSeg: IParsedSegData;
   author: IParsedCommentAuthor;
   likes: ICommentLikeDislike[];
   dislikes: ICommentLikeDislike[];

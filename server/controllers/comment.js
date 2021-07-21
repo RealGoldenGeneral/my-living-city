@@ -97,6 +97,14 @@ commentRouter.get(
               email: true,
               fname: true,
               lname: true,
+              userSegments: {
+                select: {
+                  id: true,
+                  homeSegmentId: true,
+                  workSegmentId: true,
+                  schoolSegmentId: true,
+                }
+              },
               address: {
                 select: {
                   streetAddress: true,
@@ -105,6 +113,28 @@ commentRouter.get(
               }
             }
           },
+          // userSeg: {
+          //   select: {
+          //     id: true,
+          //     homeSegmentId: true,
+          //     workSegmentId: true,
+          //     schoolSegmentId: true,
+          //   }
+          // },
+          idea: {
+            select: {
+              id: true,
+              segmentId: true,
+              subSegmentId: true
+            }
+          },
+          // userSeg: {
+          //   select: {
+          //     id: true,
+          //     homeSegmentId: true
+          //   }
+          // },
+
           ...loggedInUser && { ...prismaLikesAndDislikesQuery }
         },
         orderBy: [
@@ -153,6 +183,14 @@ commentRouter.post(
       const { content } = req.body;
       const parsedIdeaId = parseInt(req.params.ideaId);
 
+      const theUserSegment = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
+
+      if(!theUserSegment){
+        return res.status(400).json({
+          message: `user segment information not found.`
+        })
+      }
+
       // check if id is valid
       if (!parsedIdeaId) {
         return res.status(400).json({
@@ -167,11 +205,15 @@ commentRouter.post(
         });
       }
 
+      let segmentId = foundIdea.segmentId;
+
       const createdComment = await prisma.ideaComment.create({
         data: {
           content,
           authorId: loggedInUserId,
           ideaId: parsedIdeaId,
+          userSegId:theUserSegment.id,
+          segmentId:segmentId
         },
         include: {
           author: {
