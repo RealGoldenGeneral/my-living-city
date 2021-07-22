@@ -32,7 +32,7 @@ const theFileFilter = (req,file,cb) =>{
 //const variable for 10MB max file size in bytes
 const maxFileSize = 10485760;
 //multer upload project, setting receiving mode and which key components to use
-const upload = multer({storage:storage,limits:{fileSize:maxFileSize},fileFilter:theFileFilter}).single('adImage');
+const upload = multer({storage:storage,limits:{fileSize:maxFileSize},fileFilter:theFileFilter}).single('imagePath');
 //Error information holder
 let error = '';
 let errorMessage = '';
