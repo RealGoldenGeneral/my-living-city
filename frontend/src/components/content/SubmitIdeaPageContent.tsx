@@ -108,8 +108,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
 
   return (
     <Container className='submit-idea-page-content'>
-      <Row className='justify-content-center'>
-        <h1 className='pb-1 border-bottom display-6'>Submit Idea</h1>
+      <Row className='mb-4 mt-4 justify-content-center'>
+          <h2 className="pb-2 pt-2 display-6">Submit Idea</h2>
       </Row>
       <Row className='submit-idea-form-group justify-content-center'>
         <Col lg={10} >

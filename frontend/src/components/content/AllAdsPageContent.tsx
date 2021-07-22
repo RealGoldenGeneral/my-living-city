@@ -5,7 +5,6 @@ import moment from 'moment';
 import { API_BASE_URL } from '../../lib/constants'
 
 // import '../../../../server/uploads'
-import '../../scss/content/_allAds.scss'
 import { deleteAdvertisement } from 'src/lib/api/advertisementRoutes';
 
 interface AllAdsPageContentProps {
@@ -30,10 +29,10 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
   return (
     
     <Container className='all-ads-page-content w-100'>
-      <Row className='justify-content-center'>
-      <h1 className="pb-1 border-bottom display-6 text-center">Advertisements Manager</h1>
+      <Row className='mb-4 mt-4'>
+          <h2 className="pb-2 pt-2 display-6">Advertisements Manager</h2>
       </Row>
-
+      
       <Row className='mb-3'>
         <a href='/advertisement/submit'>
           <Button>Create Ads</Button>
@@ -61,8 +60,8 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
             {AllAdvertisement?.map(item => (
               <tr key={item.id}>
                 <td>
-                  {/* <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a> */}
-                  <Button block variant="danger" onClick={() => {
+                  <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a>
+                  <Button block variant="outline-danger" onClick={() => {
                     handleDelete(item.id);
                   }}>Delete</Button>
                 </td>
