@@ -5,8 +5,7 @@ import moment from 'moment';
 import { API_BASE_URL } from '../../lib/constants'
 
 // import '../../../../server/uploads'
-import { deleteAdvertisement } from 'src/lib/api/advertisementRoutes';
-
+import { deleteAdvertisement, getAdvertisementById } from 'src/lib/api/advertisementRoutes';
 interface AllAdsPageContentProps {
   AllAdvertisement: IAdvertisement[] | undefined
   token: string | null
@@ -26,6 +25,15 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
       console.log(err)
     }
   }
+
+  // async function handleEdit(adsId: number) {
+  //   try {
+  //     await getAdvertisementById(adsId);
+  //   } catch(err) {
+  //     console.log(err);
+  //   }
+  // }
+
   return (
     
     <Container className='all-ads-page-content w-100'>
@@ -60,7 +68,10 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
             {AllAdvertisement?.map(item => (
               <tr key={item.id}>
                 <td>
-                  <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a>
+                  <Button className='mb-2' block variant="primary" href={`/advertisement/edit/?id=${item.id}`}>Edit</Button>
+                  {/* <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary" onClick={() => {
+                    handleEdit(item.id);
+                  }}>Edit</Button></a> */}
                   <Button block variant="outline-danger" onClick={() => {
                     handleDelete(item.id);
                   }}>Delete</Button>

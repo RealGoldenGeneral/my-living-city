@@ -14,10 +14,8 @@ import { values } from 'lodash';
 
 import '../../scss/content/_createAds.scss'
 
-
-
 interface EditAdsPageContentProps {
-    
+  adsData: any;
 };
 //formik form input validation schema
 const schema = Yup.object().shape({
@@ -29,7 +27,7 @@ const schema = Yup.object().shape({
   externalLink: Yup.string().url('please type in a valid url').required('external link is needed!')
 });
 
-const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
+const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState<IFetchError | null>(null);
@@ -41,7 +39,9 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
     const search = new URLSearchParams(currentUrl);
     //console.log(currentUrl);
     const id = search.get('id');
-    // console.log(id);
+    console.log(id);
+
+    console.log(adsData);
 
     //submit handler which calls api posting component to post form data of user input
     const submitHandler = async (values: CreateAdvertisementInput) => {
@@ -114,22 +114,22 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
             </Form.Group>
             <Form.Group controlId="validateAdTitle">
               <Form.Label>Advertisement title</Form.Label>
-              <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} placeholder="Your advertisement title" isInvalid={!!errors.adTitle}/>
+              <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} isInvalid={!!errors.adTitle}/>
               <Form.Control.Feedback type="invalid">{errors.adTitle}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validateAdPosition">
               <Form.Label>Target position</Form.Label>
-              <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
+              <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validateDuration">
               <Form.Label>Advertisement Duration in Days</Form.Label>
-              <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} placeholder="Your advertisement duration" isInvalid={!!errors.duration}/>
+              <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} isInvalid={!!errors.duration}/>
               <Form.Control.Feedback type="invalid">{errors.duration}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validateExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
-              <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Your external link" isInvalid={!!errors.externalLink}/>
+              <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} isInvalid={!!errors.externalLink}/>
               <Form.Control.Feedback type="invalid">{errors.externalLink}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validateimagePath">
@@ -148,6 +148,7 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
             >
               {isLoading ? "Saving..." : "Submit your Advertisement!"}
             </Button>
+            <Button block variant="outline-danger" size="lg" href={`/advertisement/all`}>Cancel</Button>
           </Form>)}
           </Formik>
           {error && (

@@ -142,6 +142,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             >
               {isLoading ? "Saving..." : "Submit your Advertisement!"}
             </Button>
+            <Button block variant="outline-danger" size="lg" href={`/advertisement/all`}>Cancel</Button>
           </Form>)}
           </Formik>
           {error && (
