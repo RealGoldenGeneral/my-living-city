@@ -4,7 +4,7 @@ import { IFetchError } from "../lib/types/types"
 import { getAdvertisementById } from "../lib/api/advertisementRoutes"
 
 export const useSingleAdvertisement = (adsId: any) => {
-  return useQuery<any, IFetchError>(
+  return useQuery<IAdvertisement, IFetchError>(
     ['SingleAdvertisement', adsId],
     () => getAdvertisementById(adsId),
   )

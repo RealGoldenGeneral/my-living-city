@@ -4,7 +4,7 @@ import React, { useContext, useState } from 'react'
 import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
 import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-import { updateAdvertisement } from 'src/lib/api/advertisementRoutes';
+import { getAdvertisementById, updateAdvertisement } from 'src/lib/api/advertisementRoutes';
 import { IAdvertisement } from '../../lib/types/data/advertisement.type';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
@@ -13,9 +13,10 @@ import * as Yup from 'yup';
 import { values } from 'lodash';
 
 import '../../scss/content/_createAds.scss'
+import moment from 'moment';
 
 interface EditAdsPageContentProps {
-  adsData: any;
+  adsData: IAdvertisement | undefined;
 };
 //formik form input validation schema
 const schema = Yup.object().shape({
@@ -40,8 +41,6 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
     //console.log(currentUrl);
     const id = search.get('id');
     console.log(id);
-
-    console.log(adsData);
 
     //submit handler which calls api posting component to post form data of user input
     const submitHandler = async (values: CreateAdvertisementInput) => {
@@ -82,7 +81,7 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
     return (
       <Container className='edit-advertisement-page-content'>
         <Row className='mb-4 mt-4 justify-content-center'>
-          <h2 className="pb-2 pt-2 display-6">Edit Advertisement</h2>
+          <h2 className="pb-2 pt-2 display-6">Edit Advertisement of {adsData?.adTitle}</h2>
       </Row>
         <Row className='edit-advertisement-form-group justify-content-center'>
         <Col lg={10} >
@@ -114,23 +113,27 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
             </Form.Group>
             <Form.Group controlId="validateAdTitle">
               <Form.Label>Advertisement title</Form.Label>
-              <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} isInvalid={!!errors.adTitle}/>
+              <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} placeholder="Enter new title" isInvalid={!!errors.adTitle}/>
               <Form.Control.Feedback type="invalid">{errors.adTitle}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{adsData?.adTitle}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateAdPosition">
               <Form.Label>Target position</Form.Label>
-              <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} isInvalid={!!errors.adPosition}/>
+              <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Enter new target position" isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{adsData?.adPosition}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateDuration">
               <Form.Label>Advertisement Duration in Days</Form.Label>
               <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} isInvalid={!!errors.duration}/>
               <Form.Control.Feedback type="invalid">{errors.duration}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{moment(adsData?.duration).format('YYYY-MM-DD HH:mm:ss')}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
-              <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} isInvalid={!!errors.externalLink}/>
+              <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Enter new link" isInvalid={!!errors.externalLink}/>
               <Form.Control.Feedback type="invalid">{errors.externalLink}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{adsData?.externalLink}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateimagePath">
               {/*Need a specific info for image size here*/}
@@ -139,6 +142,8 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
             </Form.Group>
             <Form.Group>
               <Form.Check type="checkbox" label="Publish your advertisement" name="published" onChange={handleChange} isInvalid={!!errors.published} feedback={errors.published}/>
+              <Form.Text className="text-muted">"{adsData?.published ? "Yes": "No"}"</Form.Text>
+              
             </Form.Group>
             <Button
               block

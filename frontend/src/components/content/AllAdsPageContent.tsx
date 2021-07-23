@@ -83,7 +83,7 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
                 <td>{moment(item.duration).format('YYYY-MM-DD HH:mm:ss')}</td>
                 <td>{item.adPosition}</td>
                 <td><a href={item.externalLink}>{item.externalLink}</a></td>
-                <td>{item.published.toString()}</td>
+                <td>{item.published ? "Yes": "No"}</td>
                 <td>{item.createdAt}</td>
                 <td>{item.updatedAt}</td>
               </tr>
