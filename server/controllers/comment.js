@@ -173,6 +173,34 @@ commentRouter.post(
         return res.status(400).json({
           message: `The idea with that listed ID (${ideaId}) does not exist.`,
         });
+      }else{
+        let match = false;
+        
+        const userSegments = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
+
+        if(foundIdea.segmentId){
+          if(userSegments.homeSegmentId == foundIdea.segmentId){
+            match = true;
+          }else if(userSegments.workSegmentId == foundIdea.segmentId){
+            match = true;
+          }else if(userSegments.schoolSegmentId == foundIdea.segmentId){
+            match = true
+          }
+        }else if(foundIdea.subSegmentId){
+          if(userSegments.homeSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }else if(userSegments.workSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }else if(userSegments.schoolSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }
+        }
+
+        if(!match){
+          return res.status(403).json({
+            message:`You are not belonging to the idea's segment or subsegment!`
+          })
+        }
       }
 
       let segmentId = foundIdea.segmentId;
