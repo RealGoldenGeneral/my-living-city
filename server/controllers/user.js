@@ -194,7 +194,7 @@ userRouter.get(
 				include: {
 					address: true,
 					geo: true,
-					UserSegments: true
+					userSegments: true
 				}
 			});
 
