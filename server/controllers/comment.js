@@ -97,6 +97,14 @@ commentRouter.get(
               email: true,
               fname: true,
               lname: true,
+              userSegments: {
+                select: {
+                  id: true,
+                  homeSegmentId: true,
+                  workSegmentId: true,
+                  schoolSegmentId: true,
+                }
+              },
               address: {
                 select: {
                   streetAddress: true,
@@ -105,6 +113,28 @@ commentRouter.get(
               }
             }
           },
+          // userSeg: {
+          //   select: {
+          //     id: true,
+          //     homeSegmentId: true,
+          //     workSegmentId: true,
+          //     schoolSegmentId: true,
+          //   }
+          // },
+          idea: {
+            select: {
+              id: true,
+              segmentId: true,
+              subSegmentId: true
+            }
+          },
+          // userSeg: {
+          //   select: {
+          //     id: true,
+          //     homeSegmentId: true
+          //   }
+          // },
+
           ...loggedInUser && { ...prismaLikesAndDislikesQuery }
         },
         orderBy: [

@@ -135,7 +135,7 @@ model User {
   Advertisements Advertisements[]
   //Not sure if this one stays
   segmentRequest segmentRequest[]
-  UserSegments   UserSegments?
+  userSegments   UserSegments?
   @@map(name: "user")
 }
 
