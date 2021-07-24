@@ -1,7 +1,9 @@
 import { useFormik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react'
 import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom';
 import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
+import { API_BASE_URL } from 'src/lib/constants';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateIdea } from '../../lib/api/ideaRoutes';
@@ -28,6 +30,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const [location, setLocation] = useState('Home');
   const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
   const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
+  const history = useHistory();
   const getSegData = async (location: string) => {
     let data: any;
     if(location === 'Resident'){
@@ -66,6 +69,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       console.log(res);
 
       setError(null);
+      history.push('/ideas/'+res.id);
       formik.resetForm();
     } catch (error) {
       const genericMessage = 'An error occured while trying to create an Idea.';
