@@ -97,12 +97,16 @@ commentRouter.get(
               email: true,
               fname: true,
               lname: true,
+              userType: true,
               userSegments: {
                 select: {
                   id: true,
                   homeSegmentId: true,
                   workSegmentId: true,
                   schoolSegmentId: true,
+                  homeSubSegmentId: true,
+                  workSubSegmentId: true,
+                  schoolSubSegmentId: true
                 }
               },
               address: {

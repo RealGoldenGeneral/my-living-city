@@ -50,7 +50,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     proposalInfo,
     projectInfo,
   } = ideaData;
-
   console.log(ideaData);
 
   // const [subSegData, setSubSegData] = useState(subSegmentData);
@@ -109,7 +108,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
 
     return !ideaData.champion && !!ideaData.isChampionable;
   }
-
   return (
     <div className='single-idea-content pt-5'>
       <Card className='bg-mlc-shade-grey' border="next">
@@ -126,7 +124,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           {/* <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4> */}
           {/* <h4 className='h5'>As: {userType}</h4> */}
           <h4 className='h5'>Municipality: {segment ? capitalizeFirstLetterEachWord(segment.name) : 'N/A'}</h4>
-          <h4 className='h5'>Neighborhood: {subSegment ? capitalizeFirstLetterEachWord(subSegment.name): 'N/A'}</h4>
+          {subSegment ? <h4 className='h5'>Neighborhood: {subSegment ? capitalizeFirstLetterEachWord(subSegment.name): 'N/A'}</h4> : null}
           {!!ideaData.champion && (
             <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
           )}
