@@ -1,5 +1,6 @@
 export interface ISegment {
     segId: number;
+    superSegId: number;
     country: string;
     province: string;
     name: string;
@@ -23,4 +24,19 @@ export interface ISegmentRequest {
     province: string;
     segmentName: string;
     subSegmentName: string;
+}
+export interface IUserSegment {
+    id: number;                                      
+    homeSegmentId: number;       
+    homeSegmentName: string;     
+    workSegmentId: number;        
+    workSegmentName: string;     
+    schoolSegmentId: number;      
+    schoolSegmentName: string;   
+    homeSubSegmentId: number;     
+    homeSubSegmentName: string;  
+    workSubSegmentId: number;     
+    workSubSegmentName: string;  
+    schoolSubSegmentId: number;   
+    schoolSubSegmentName: string;
 }

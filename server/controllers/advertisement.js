@@ -217,34 +217,13 @@ advertisementRouter.post(
 //for retriving all advertisement table item for user.
 advertisementRouter.get(
     '/getAll',
-    passport.authenticate('jwt',{session:false}),
     async(req,res) => {
         try{
-            //get email and user id from request
-            const { email, id } = req.user;
-            //find the requesting user in the database
-            const theUser = await prisma.user.findUnique({
-                where:{id:id},
-                select:{userType:true}
-            });
-
-            if(theUser.userType === 'ADMIN' || theUser.userType === 'BUSINESS'){
-                const allAd = await prisma.advertisements.findMany({
-                    where:{ownerId:id}
-                });
-                if(allAd){
-                    return res.status(200).json(allAd);
-                }else{
-                    return res.status(404).send("there's no advertisement belongs to you!");
-                }
+            const allAd = await prisma.advertisements.findMany({});
+            if(allAd){
+                return res.status(200).json(allAd);
             }else{
-                return res.status(403).json({
-                    message: "You don't have the right to add an advertisement!",
-                    details: {
-                    errorMessage: 'In order to create an advertisement, you must be an admin or business user.',
-                    errorStack: 'user must be an admin or business if they want to create an advertisement',
-                    }
-                });
+                return res.status(404).send("there's no advertisement belongs to you!");
             }
         }catch(error){
             console.log(error);
@@ -260,6 +239,35 @@ advertisementRouter.get(
         }
     }
 );
+
+advertisementRouter.get(
+    '/get/:adsId',
+    async (req, res) => {
+        try {
+            const { Int: adsId } = req.params;
+            console.log(adsId);
+            const result = await prisma.advertisements.findFirst({
+                where:{id: adsId}
+            })
+
+            if(!result){
+                res.status(204).json("adsId not found!");
+            }
+            if(result){
+                res.status(200).json(result);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve the adsId.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
 
 advertisementRouter.put(
     '/update/:advertisementId',

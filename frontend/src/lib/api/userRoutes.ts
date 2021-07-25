@@ -17,7 +17,22 @@ export interface LoginResponse {
   user: IUser;
   token: string;
 }
-
+export const getAllUsers = async (token: string | null) => {
+  const res = await axios.get(`${API_BASE_URL}/user/getAll`,getAxiosJwtRequestOption(token!));
+  return res.data;
+}
+export const updateUser = async (userData: IUser, token: string | null) => {
+  console.log(userData);
+  console.log(token);
+  const res = await axios({
+    method: "put",
+    url: `${API_BASE_URL}/user/admin-update-profile`,
+    data: userData,
+    headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": token},
+    withCredentials: true
+})
+  return res.data;
+}
 export const resetUserPassword = async (loginData: ResetPassword): Promise<ResetPassword> => {
   if(loginData.password !== loginData.confirmPassword){
     throw new Error("Passwords must match");

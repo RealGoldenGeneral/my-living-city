@@ -1,13 +1,15 @@
 import { useQuery } from 'react-query';
 import { IFetchError } from '../lib/types/types';
-import { getUserWithEmailAndPass, getUserWithJWT, getUserWithJWTVerbose, LoginData, LoginResponse, UseUserWithJwtInput } from '../lib/api/userRoutes';
+import { getAllUsers, getUserWithEmailAndPass, getUserWithJWT, getUserWithJWTVerbose, LoginData, LoginResponse, UseUserWithJwtInput } from '../lib/api/userRoutes';
 import { AxiosError } from 'axios';
 import { IUser } from '../lib/types/data/user.type';
 
 export const useUserLoginWithEmailAndPass = (loginData: LoginData) => {
   return useQuery<LoginResponse, IFetchError>('userLogin', () => getUserWithEmailAndPass(loginData));
 }
-
+export const useAllUsers = (token: string | null) => {
+  return useQuery<IUser[], IFetchError>(`users`, () => getAllUsers(token));
+}
 export const useUserWithJwt = ({ jwtAuthToken, shouldTrigger}: UseUserWithJwtInput) => {
   return useQuery<IUser, AxiosError>(
     'user',

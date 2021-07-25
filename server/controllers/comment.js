@@ -97,6 +97,18 @@ commentRouter.get(
               email: true,
               fname: true,
               lname: true,
+              userType: true,
+              userSegments: {
+                select: {
+                  id: true,
+                  homeSegmentId: true,
+                  workSegmentId: true,
+                  schoolSegmentId: true,
+                  homeSubSegmentId: true,
+                  workSubSegmentId: true,
+                  schoolSubSegmentId: true
+                }
+              },
               address: {
                 select: {
                   streetAddress: true,
@@ -105,6 +117,28 @@ commentRouter.get(
               }
             }
           },
+          // userSeg: {
+          //   select: {
+          //     id: true,
+          //     homeSegmentId: true,
+          //     workSegmentId: true,
+          //     schoolSegmentId: true,
+          //   }
+          // },
+          idea: {
+            select: {
+              id: true,
+              segmentId: true,
+              subSegmentId: true
+            }
+          },
+          // userSeg: {
+          //   select: {
+          //     id: true,
+          //     homeSegmentId: true
+          //   }
+          // },
+
           ...loggedInUser && { ...prismaLikesAndDislikesQuery }
         },
         orderBy: [
@@ -153,6 +187,14 @@ commentRouter.post(
       const { content } = req.body;
       const parsedIdeaId = parseInt(req.params.ideaId);
 
+      const theUserSegment = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
+
+      if(!theUserSegment){
+        return res.status(400).json({
+          message: `user segment information not found.`
+        })
+      }
+
       // check if id is valid
       if (!parsedIdeaId) {
         return res.status(400).json({
@@ -165,13 +207,45 @@ commentRouter.post(
         return res.status(400).json({
           message: `The idea with that listed ID (${ideaId}) does not exist.`,
         });
+      }else{
+        let match = false;
+        
+        const userSegments = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
+
+        if(foundIdea.segmentId){
+          if(userSegments.homeSegmentId == foundIdea.segmentId){
+            match = true;
+          }else if(userSegments.workSegmentId == foundIdea.segmentId){
+            match = true;
+          }else if(userSegments.schoolSegmentId == foundIdea.segmentId){
+            match = true
+          }
+        }else if(foundIdea.subSegmentId){
+          if(userSegments.homeSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }else if(userSegments.workSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }else if(userSegments.schoolSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }
+        }
+
+        if(!match){
+          return res.status(403).json({
+            message:`You are not belonging to the idea's segment or subsegment!`
+          })
+        }
       }
+
+      let segmentId = foundIdea.segmentId;
 
       const createdComment = await prisma.ideaComment.create({
         data: {
           content,
           authorId: loggedInUserId,
           ideaId: parsedIdeaId,
+          userSegId:theUserSegment.id,
+          segmentId:segmentId
         },
         include: {
           author: {

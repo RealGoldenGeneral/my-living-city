@@ -1,10 +1,10 @@
 import { NONAME } from 'dns';
 import { Formik, useFormik} from 'formik';
 import React, { useContext, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert, Modal } from 'react-bootstrap'
 import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-import { updateAdvertisement } from 'src/lib/api/advertisementRoutes';
+import { getAdvertisementById, updateAdvertisement } from 'src/lib/api/advertisementRoutes';
 import { IAdvertisement } from '../../lib/types/data/advertisement.type';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
@@ -13,11 +13,10 @@ import * as Yup from 'yup';
 import { values } from 'lodash';
 
 import '../../scss/content/_createAds.scss'
-
-
+import moment from 'moment';
 
 interface EditAdsPageContentProps {
-    
+  adsData: IAdvertisement | undefined;
 };
 //formik form input validation schema
 const schema = Yup.object().shape({
@@ -29,11 +28,15 @@ const schema = Yup.object().shape({
   externalLink: Yup.string().url('please type in a valid url').required('external link is needed!')
 });
 
-const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
+const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState<IFetchError | null>(null);
-    const [success,setSuccess] = useState<String>('');
+
+    const [successModal, setSuccessModal] = useState(false);
+    const handleClose = () => setSuccessModal(false);
+
+    // const [success,setSuccess] = useState<String>('');
   
     const { token } = useContext(UserProfileContext);
 
@@ -41,7 +44,7 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
     const search = new URLSearchParams(currentUrl);
     //console.log(currentUrl);
     const id = search.get('id');
-    // console.log(id);
+    console.log(id);
 
     //submit handler which calls api posting component to post form data of user input
     const submitHandler = async (values: CreateAdvertisementInput) => {
@@ -55,14 +58,17 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
         //api component call
         const res = await updateAdvertisement(values, token, id);
         console.log(res);
-        setSuccess('You submitted your advertisement successfully');
-        setTimeout(()=> setSuccess(''),5000);
+
+        setSuccessModal(true);
+        // setSuccess('You submitted your advertisement successfully');
+        // setTimeout(()=> setSuccess(''),5000);
         //if successfully posted, set error to null
         setError(null);
         //reset the form
       } catch (error) {
         const genericMessage = 'An error occured while trying to create an Idea.';
         const errorObj = handlePotentialAxiosError(genericMessage, error);
+        setSuccessModal(false);
         setError(errorObj);
       } finally {
         setIsLoading(false)
@@ -81,8 +87,8 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
   
     return (
       <Container className='edit-advertisement-page-content'>
-        <Row className='justify-content-center'>
-          <h1 className="pb-1 border-bottom display-6">Edit Advertisement</h1>
+        <Row className='mb-4 mt-4 justify-content-center'>
+          <h2 className="pb-2 pt-2 display-6">Edit Advertisement of {adsData?.adTitle}</h2>
         </Row>
         <Row className='edit-advertisement-form-group justify-content-center'>
         <Col lg={10} >
@@ -114,23 +120,27 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
             </Form.Group>
             <Form.Group controlId="validateAdTitle">
               <Form.Label>Advertisement title</Form.Label>
-              <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} placeholder="Your advertisement title" isInvalid={!!errors.adTitle}/>
+              <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} placeholder="Enter new title" isInvalid={!!errors.adTitle}/>
               <Form.Control.Feedback type="invalid">{errors.adTitle}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{adsData?.adTitle}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateAdPosition">
               <Form.Label>Target position</Form.Label>
-              <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
+              <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Enter new target position" isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{adsData?.adPosition}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateDuration">
               <Form.Label>Advertisement Duration in Days</Form.Label>
-              <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} placeholder="Your advertisement duration" isInvalid={!!errors.duration}/>
+              <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} isInvalid={!!errors.duration}/>
               <Form.Control.Feedback type="invalid">{errors.duration}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{moment(adsData?.duration).format('YYYY-MM-DD HH:mm:ss')}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
-              <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Your external link" isInvalid={!!errors.externalLink}/>
+              <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Enter new link" isInvalid={!!errors.externalLink}/>
               <Form.Control.Feedback type="invalid">{errors.externalLink}</Form.Control.Feedback>
+              <Form.Text className="text-muted">"{adsData?.externalLink}"</Form.Text>
             </Form.Group>
             <Form.Group controlId="validateimagePath">
               {/*Need a specific info for image size here*/}
@@ -139,6 +149,8 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
             </Form.Group>
             <Form.Group>
               <Form.Check type="checkbox" label="Publish your advertisement" name="published" onChange={handleChange} isInvalid={!!errors.published} feedback={errors.published}/>
+              <Form.Text className="text-muted">"{adsData?.published ? "Yes": "No"}"</Form.Text>
+              
             </Form.Group>
             <Button
               block
@@ -148,6 +160,19 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
             >
               {isLoading ? "Saving..." : "Submit your Advertisement!"}
             </Button>
+            <Modal show={successModal} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Ads Edited</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Your ads is successfully Edited</Modal.Body>
+              <Modal.Footer>
+                <Button variant="primary" onClick={handleClose} href={`/advertisement/all`}>
+                  Done
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Button block variant="outline-danger" size="lg" href={`/advertisement/all`}>Cancel</Button>
           </Form>)}
           </Formik>
           {error && (
@@ -155,7 +180,7 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = () => {
               {error.message}
             </Alert>
           )}
-          {success}
+          {successModal}
         </Col>
       </Row>
       </Container>

@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRY } = require('../lib/constants');
 const { argon2ConfirmHash, argon2Hash } = require('../lib/utilityFunctions');
 const prisma = require('../lib/prismaClient');
+const { authenticate } = require('passport');
 
 /**
  * @swagger
@@ -155,7 +156,7 @@ userRouter.get(
 		try {
 			const { email } = req.params;
 			const foundUser = await prisma.user.findUnique({
-				where: { email }
+				where: { email:email }
 			});
 
 			if (!foundUser) {
@@ -193,6 +194,7 @@ userRouter.get(
 				include: {
 					address: true,
 					geo: true,
+					userSegments: true
 				}
 			});
 
@@ -463,21 +465,21 @@ userRouter.post(
  *        description: A set of users could not be fetched properly
 */
 userRouter.get(
-	'/getall',
+	'/getAll',
+	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
 		try {
-			const allUsers = await prisma.user.findMany({
-				select: {
-					id: true,
-					email: true,
-					fname: true,
-					lname: true,
-					createdAt: true,
-					updatedAt: true,
-				}
-			});
+			const {email,id} = req.user
 
-			res.json(allUsers);
+			const theUser = await prisma.user.findUnique({where:{id:id}});
+
+			if(theUser.userType === 'ADMIN'){
+				const allUsers = await prisma.user.findMany();
+
+				res.json(allUsers);
+			}else{
+				res.status(401).json("You are not allowed to pull all users!");
+			}
 		} catch (error) {
 			res.status(400).json({
         message: "An error occured while trying to fetch all the users.",
@@ -584,78 +586,176 @@ userRouter.put(
 	'/update-profile',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
-		try {
-			const { id, email } = req.user;
-			const {
-        fname,
-        lname,
-				userRoleId,
-				geo: {
-					lat,
-					lon
-				},
+	try {
+		const { id, email } = req.user;
+		const {
+			fname,
+			lname,
+			address: {
+				streetAddress,
+				streetAddress2,
+				city,
+				country,
+				postalCode,
+			}
+		} = req.body;
+
+		// Conditional add params to update only fields passed in 
+		// https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
+		const updateData = {
+			...fname && { fname },
+			...lname && { lname },
+		}
+
+		const updateAddressData = {
+			...streetAddress && { streetAddress },
+			...streetAddress2 && { streetAddress2 },
+			...city && { city },
+			...country && { country },
+			...postalCode && { postalCode },
+		}
+
+		const updatedUser = await prisma.user.update({
+			where: { id:id },
+			data: {
+				...updateData,
 				address: {
-					streetAddress,
-					streetAddress2,
-					city,
-					country,
-					postalCode,
-				},
-      } = req.body;
-
-      // Conditional add params to update only fields passed in 
-      // https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
-      const updateData = {
-					...fname && { fname },
-					...lname && { lname },
-					... userRoleId && { userRoleId }
-      }
-
-			const updateGeoData = {
-				...lat && { lat },
-				...lon && { lon }
+					update: updateAddressData
+				}
 			}
+		});
 
-			const updateAddressData = {
-				...streetAddress && { streetAddress },
-				...streetAddress2 && { streetAddress2 },
-				...city && { city },
-				...country && { country },
-				...postalCode && { postalCode },
+		const parsedUser = { ...updatedUser, password: null };
+
+		res.status(200).json({
+			message: "User succesfully updated",
+			user: parsedUser,
+		});
+	} catch (error) {
+		res.status(400).json({
+			message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+			details: {
+				errorMessage: error.message,
+				errorStack: error.stack,
 			}
+		});
+	} finally {
+		await prisma.$disconnect();
+	}
+	}
+);
 
-			const updatedUser = await prisma.user.update({
-				where: { id },
-				data: {
-					...updateData,
-					geo: {
-						update: updateGeoData
-					},
-					address: {
-						update: updateAddressData
+userRouter.put(
+	'/admin-update-profile',
+	passport.authenticate('jwt', { session: false }),
+	async(req,res) => {
+		try{
+			const {id , email} = req.user;
+
+			const theUser = await prisma.user.findUnique({where:{id:id}});
+
+			const userTypes = ['ADMIN',
+				'MOD',
+				'SEG_ADMIN',
+				'SEG_MOD',
+				'MUNICIPAL_SEG_ADMIN',
+				'BUSINESS',
+				'RESIDENTIAL',
+				'MUNICIPAL',
+				'WORKER',
+				'ASSOCIATE',
+				'DEVELOPER'
+			];
+
+			if(theUser.userType==='ADMIN'){
+				console.log(req.body.banned);
+
+				const {
+					id,
+					email,
+					fname,
+					lname,
+					userType,
+					// address: {
+					// 	streetAddress,
+					// 	streetAddress2,
+					// 	city,
+					// 	country,
+					// 	postalCode,
+					// },
+					banned
+				} = req.body;
+
+				if(!id){
+					return res.status(400).json("User id is missing!");
+				}
+				const targetUser = await prisma.user.findUnique({where:{id:id}});
+
+				if(!targetUser){
+					return res.status(404).json({
+						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+						details: {
+							errorMessage: "User can't be find by user id provided in the request body.",
+							errorStack: "User can't be find by user id provided in the request body."
+						}
+					});
+				}
+
+				if(userType && !userTypes.includes(userType)){
+					return res.status(400).json({
+						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+						details: {
+							errorMessage: "User type must be predfined value",
+							errorStack: "User type must be predfined value"
+						}
+					});
+				}
+				
+				/* const updateAddressData = {
+				 	...streetAddress && { streetAddress },
+				 	...streetAddress2 && { streetAddress2 },
+				 	...city && { city },
+				 	...country && { country },
+				 	...postalCode && { postalCode },
+				} */
+
+				const updatedUser = await prisma.user.update({
+					where: { id : id },
+					data: {
+						email:email,
+						fname:fname,
+						lname:lname,
+						userType:userType,
+						banned:banned
 					}
-				},
-				include: {
-					geo: true,
-					address: true
+				});
+
+				const parsedUser = { ...updatedUser, password: null };
+
+				res.status(200).json({
+					message: "User succesfully updated",
+					user: parsedUser,
+				});
+
+			}else{
+				return res.status(403).json({
+                    message: "You don't have the right to use this endpoint!",
+                    details: {
+                      errorMessage: 'In order to use this endpoint, you must be an admin.',
+                      errorStack: 'user must be an admin if they want to use this endpoint.',
+                    }
+                });
+			}
+		}catch(error){
+			console.log(error);
+			res.status(400).json({
+				message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+				details: {
+					errorMessage: error.message,
+					errorStack: error.stack,
 				}
 			});
-
-			const parsedUser = { ...updatedUser, password: null };
-
-			res.status(200).json({
-				message: "User succesfully updated",
-				user: parsedUser,
-			});
-		} catch (error) {
-			res.status(400).json({
-        message: `An Error occured while trying to change the password for the email ${req.user.email}.`,
-        details: {
-          errorMessage: error.message,
-          errorStack: error.stack,
-        }
-      });
-		} finally {
+		}finally{
 			await prisma.$disconnect();
 		}
 	}

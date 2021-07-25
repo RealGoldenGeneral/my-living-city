@@ -60,12 +60,13 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
 }
 
 // GET Retrieve all advertisement info
-export const getAllAdvertisement = async (token: string | null) => {
-    const res = await axios.get<IAdvertisement[]>(
-        `${API_BASE_URL}/advertisement/getAll`,
-        getAxiosJwtRequestOption(token!)
-    );
+export const getAllAdvertisement = async () => {
+    const res = await axios.get<IAdvertisement[]>(`${API_BASE_URL}/advertisement/getAll`);
+    return res.data;
+}
 
+export const getAdvertisementById = async (adsId: any) => {
+    const res = await axios.get<IAdvertisement>(`${API_BASE_URL}/advertisement/get/${adsId}`);
     return res.data;
 }
 

@@ -248,7 +248,36 @@ userSegmentRouter.get(
         }
     }
 )
+userSegmentRouter.get(
+    '/getUserSegment/:userId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            const { userId } = req.params;
+            console.log(userId);
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:userId}
+            })
 
+            if(!result){
+                res.status(204).json("user segment not found!");
+            }
+            if(result){
+                res.status(200).json(result);
+            }
+
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
 userSegmentRouter.delete(
     '/delete',
     passport.authenticate('jwt',{session:false}),
@@ -553,11 +582,16 @@ userSegmentRouter.get(
                 res.status(404).json("user segment not found!");
             }
 
-            const homeSeg = await prisma.segments.findUnique({
-                where:{segId:result.homeSegmentId}
-            });
+            if(result.homeSegmentId){
+                const homeSeg = await prisma.segments.findUnique({
+                    where:{segId:result.homeSegmentId}
+                });
 
-            res.status(200).json(homeSeg);
+                return res.status(200).json(homeSeg);
+            }else{
+                return res.sendStatus(204);
+            }
+
         }catch(error){
             console.log(error);
             res.status(400).json({
@@ -587,11 +621,15 @@ userSegmentRouter.get(
                 res.status(404).json("user segment not found!");
             }
 
-            const workSeg = await prisma.segments.findUnique({
-                where:{segId:result.workSegmentId}
-            });
+            if(result.workSegmentId){
+                const workSeg = await prisma.segments.findUnique({
+                    where:{segId:result.workSegmentId}
+                });
 
-            res.status(200).json(workSeg);
+                return res.status(200).json(workSeg);
+            }else{
+                return res.sendStatus(204);
+            }
         }catch(error){
             console.log(error);
             res.status(400).json({
@@ -621,11 +659,15 @@ userSegmentRouter.get(
                 res.status(404).json("user segment not found!");
             }
 
-            const schoolSeg = await prisma.segments.findUnique({
-                where:{segId:result.schoolSegmentId}
-            });
+            if(result.schoolSegmentId){
+                const schoolSeg = await prisma.segments.findUnique({
+                    where:{segId:result.schoolSegmentId}
+                });
 
-            res.status(200).json(schoolSeg);
+                return res.status(200).json(schoolSeg);
+            }else{
+                return res.sendStatus(204);
+            }
         }catch(error){
             console.log(error);
             res.status(400).json({
@@ -655,11 +697,16 @@ userSegmentRouter.get(
                 res.status(404).json("user segment not found!");
             }
 
-            const homeSubSeg = await prisma.subSegments.findUnique({
-                where:{id:result.homeSubSegmentId}
-            });
 
-            res.status(200).json(homeSubSeg);
+            if(result.homeSubSegmentId){
+                const homeSubSeg = await prisma.subSegments.findUnique({
+                    where:{id:result.homeSubSegmentId}
+                });
+
+                return res.status(200).json(homeSubSeg);
+            }else{
+                return res.sendStatus(204);
+            }            
         }catch(error){
             console.log(error);
             res.status(400).json({
@@ -689,11 +736,15 @@ userSegmentRouter.get(
                 res.status(404).json("user segment not found!");
             }
 
-            const workSubSeg = await prisma.subSegments.findUnique({
-                where:{id:result.workSubSegmentId}
-            });
+            if(result.workSubSegmentId){
+                const workSubSeg = await prisma.subSegments.findUnique({
+                    where:{id:result.workSubSegmentId}
+                });
 
-            res.status(200).json(workSubSeg);
+                return res.status(200).json(workSubSeg);
+            }else{
+                return res.sendStatus(204);
+            }
         }catch(error){
             console.log(error);
             res.status(400).json({
@@ -723,11 +774,15 @@ userSegmentRouter.get(
                 res.status(404).json("user segment not found!");
             }
 
-            const schoolSubSeg = await prisma.subSegments.findUnique({
-                where:{id:result.schoolSubSegmentId}
-            });
+            if(result.schoolSubSegmentId){
+                const schoolSubSeg = await prisma.subSegments.findUnique({
+                    where:{id:result.schoolSubSegmentId}
+                });
 
-            res.status(200).json(schoolSubSeg);
+                return res.status(200).json(schoolSubSeg);
+            }else{
+                return res.sendStatus(204);
+            }
         }catch(error){
             console.log(error);
             res.status(400).json({

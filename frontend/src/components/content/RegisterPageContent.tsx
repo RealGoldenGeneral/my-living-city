@@ -4,7 +4,7 @@ import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'f
 import React, { useContext, useEffect, useState } from 'react';
 import { IUserRole } from 'src/lib/types/data/userRole.type';
 import SimpleMap from '../map/SimpleMap';
-import { capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
+import { capitalizeFirstLetterEachWord, capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
 import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import * as Yup from 'yup';
@@ -22,10 +22,9 @@ import { BsForwardFill } from 'react-icons/bs';
 import { postAvatarImage } from 'src/lib/api/avatarRoutes';
 
 interface RegisterPageContentProps {
-    userRoles: IUserRole[] | undefined;
 }
 
-export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRoles}) => {
+export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const {
         setToken,
         setUser,
@@ -58,10 +57,10 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
     // }
     const displaySubSegList = (id: number) => {
             if(subSegments && subSegments[0].segId === id){
-                return (subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
+                return (subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }
             if(subSegments2 && subSegments2[0].segId === id){
-                return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{subSeg.name}</option>)));
+                return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }  
     }
     // useEffect(()=>{
@@ -83,7 +82,6 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({userRol
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
-                userRoleId: userRoles ? userRoles[0].id : undefined,
                 email: '',
                 password: '',
                 confirmPassword: '',
@@ -160,7 +158,6 @@ return (
                         })})
                     })}>
                     <BForm.Group>
-                        <h1>Create An Account</h1>
                         <BForm.Label>Email address</BForm.Label> 
                         <Field required name="email" type="email" as={BForm.Control}/>
                         <ErrorMessage name="email">{msg => <p className="text-danger">{msg}<br></br></p>}</ErrorMessage>
@@ -214,8 +211,8 @@ return (
                             // refactorSegIds(0,parseInt(e.target.value));
                             // refactorSubIds(0, null);
                             }}>
-                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
-                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                            {segment && <option value={segment?.segId}>{capitalizeFirstLetterEachWord(segment?.name)}</option>}
+                            {segment2 && <option value={segment2?.segId}>{capitalizeFirstLetterEachWord(segment2?.name)}</option>}
                         </BForm.Control>
                     </BForm.Group>
                     <BForm.Group>
@@ -224,7 +221,7 @@ return (
                             <option hidden></option>
                             {displaySubSegList(segIds[0])}
                         </BForm.Control>
-                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                        <p>Don't see your Municipality?<Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Click here</Button></p>
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests} />
                 </FormikStep>
@@ -238,7 +235,6 @@ return (
                         <BForm.Check inline label="no" name="group1" type="radio" id="inline-checkbox" onClick={()=>{transferHomeToWork(true)}}/>
                         </div>
                         </Card.Title>
-                        {!workTransfer&&<Card.Subtitle className="mb-4 text-next">Press Next to skip!</Card.Subtitle>}
                         </div>
                     :
                     <><Card.Title>Show us on the map where your work is (optional)</Card.Title>
@@ -252,8 +248,8 @@ return (
                             refactorStateArray(segIds, 1, parseInt(e.target.value), setSegIds);
                             refactorStateArray(subIds, 1, null, setSubIds);
                             }}>
-                            {segment && <option value={segment?.segId}>{segment?.name}</option>}
-                            {segment2 && <option value={segment2?.segId}>{segment2?.name}</option>}
+                            {segment && <option value={segment?.segId}>{capitalizeFirstLetterEachWord(segment?.name)}</option>}
+                            {segment2 && <option value={segment2?.segId}>{capitalizeFirstLetterEachWord(segment2?.name)}</option>}
                         </BForm.Control>
                     </BForm.Group>
                     <BForm.Group>
@@ -262,7 +258,7 @@ return (
                             <option hidden></option>
                             {displaySubSegList(segIds[1])}
                         </BForm.Control>
-                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                        <p>Don't see your Municipality?<Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Click here</Button></p>
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={1} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
                 </FormikStep>
@@ -276,7 +272,6 @@ return (
                         <BForm.Check inline label="no" name="group1" type="radio" id="inline-checkbox" onClick={()=>{transferWorkToSchool(true)}}/>
                         </div>
                         </Card.Title>
-                        {!schoolTransfer&&<Card.Subtitle className="mb-4 text-next">Press Next to skip!</Card.Subtitle>}
                         </div>
                     :
                     <><Card.Title>Show us on the map where your school is (optional)</Card.Title>
@@ -300,7 +295,7 @@ return (
                             <option hidden></option>
                             {displaySubSegList(segIds[2])}
                         </BForm.Control>
-                        <Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Don't see your Municipality or Neighbourhood in the list above? Click here to request it in our system!</Button>
+                        <p>Don't see your Municipality?<Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Click here</Button></p>
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={2} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>                   
                 </FormikStep>
@@ -311,10 +306,7 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                    <div className="text-center">
-                        <h3>Submit!</h3>
-                    </div>
-
+                        <h3>To complete your registration click submit</h3>
                 </FormikStep>
 
             </FormikStepper>
@@ -361,6 +353,22 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     const nextOrLoading = () => { return isLoading ? 'Loading...' : 'Next' };
     const submitOrSubmitting = () => { return isLoading ? 'Submitting...':'Submit' };
     const isHomeMarkerSet = () => { return (step===1 && markers.home.lat === null) };
+    const getStepHeader = (step: number) => {
+        switch(step) {
+            case 0:
+                return "Create Account"
+            case 1:
+                return "Home Location"
+            case 2:
+                return "Work Location"
+            case 3:
+                return "School Location"
+            case 4:
+                return "Submit"
+            default:
+                return ""
+        }
+    }
 
     const isWorkSubIdSet = () => { 
         if(subIds[1]) return subIds[1] 
@@ -436,31 +444,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                     props.setSubSegments(null);
                 }
             }
-
             setStep(s=>s+1);
-            // if(googleQuery){
-            //     console.log('hello');
-            //     // const seg = await findSegmentByName({segName:'victoria', province:'british columbia', country:'canada' });
-            //     const seg = await findSegmentByName({segName:googleQuery.city, province:googleQuery.province, country:googleQuery.country });
-            //     const sub = await findSubsegmentsBySegmentId(seg.segId);
-            //     props.setSegment(seg);
-            //     props.setSubSegments(sub);
-            //     refactorSegIds(index,seg.segId);
-            //     //refactorSegIds(index, seg.segId);
-
-            //     if(googleQuery){
-            //         // const seg2 = await findSegmentByName({segName:'saanich', province:'british columbia', country:'canada' });
-            //         const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
-            //         const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
-            //         props.setSegment2(seg2);
-            //         props.setSubSegments2(sub2);
-            //         //refactorSegIds(index, seg.segId);
-            //     }else{
-            //         props.setSegment2(null);
-            //         props.setSubSegments2(null);
-            //     }
-            // }
-
         }catch(err){
             console.log(err);
             //placeHolder
@@ -547,7 +531,7 @@ return(
     <div>
     <div className="stepper mb-4">
     <Stepper steps={ [
-        {title: 'Account Info'}, 
+        {title: 'Create Account'}, 
         {title: 'Home Location'}, 
         {title: 'Work Location'},
         {title: 'School Location'},
@@ -556,15 +540,16 @@ return(
         circleTop={0}
         lineMarginOffset={8}
         activeColor={'#98cc74'}
-        activeTitleColor={'#98cc74'}
         completeColor={"#98cc74"}
         completeBarColor={"#98cc74"}
         titleFontSize={19}
         />
     </div>
     <Card>
+    <h2 className="ml-3 mt-4">{getStepHeader(inferStep)}</h2>
     <Card.Body>   
     <Form>
+        
         {currentChild}
         {error && (<Alert variant='danger' className="error-alert">{ error.message }</Alert>)}
         <div className="text-center">
