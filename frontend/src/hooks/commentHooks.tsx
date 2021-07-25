@@ -58,7 +58,7 @@ export const useCreateCommentMutation = (
     ),
     {
       onMutate: async (newComment) => {
-        const { id: userId, fname, lname, email, address, userSegments} = user!
+        const { id: userId, fname, lname, email, address, userSegments, userType} = user!
 
         // snapshot previous value
         const previousCommentAggregate = 
@@ -93,11 +93,22 @@ export const useCreateCommentMutation = (
                   email,
                   fname: fname ?? '',
                   lname: lname ?? '',
+                  userType: userType ?? '',
                   address: {
                     postalCode: address?.postalCode ?? '',
                     streetAddress: address?.streetAddress ?? '',
+                  },
+                  userSegments:{
+                    homeSegmentId: userSegments?.homeSegmentId ?? -1,
+                    workSegmentId: userSegments?.workSegmentId ?? -1,
+                    schoolSegmentId: userSegments?.schoolSegmentId ?? -1,
+                    homeSubSegmentId: userSegments?.homeSubSegmentId ?? -1,
+                    workSubSegmentId: userSegments?.workSubSegmentId ?? -1,
+                    schoolSubSegmentId: userSegments?.schoolSubSegmentId ?? -1,
+
                   }
                 },
+                idea: {segmentId: -1, subSegmentId: -1},
                 likes: [],
                 dislikes: [],
                 content: newComment.content,
