@@ -1,14 +1,16 @@
 import React from 'react'
-import {Table, Form, Button, Col, Container, Row, Card, Alert } from 'react-bootstrap';
+import {Table, Form, Button, Col, Container, Row, Card, Alert, NavDropdown } from 'react-bootstrap';
 import {useState} from 'react'
 import {ISegment, ISubSegment, ISegmentRequest} from '../../lib/types/data/segment.type';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import {createSegment, createSubSegment, updateSegment, updateSubSegment} from '../../lib/api/segmentRoutes';
-import {useAllSubSegmentsWithId} from '../../hooks/segmentHooks';
 import { ShowSubSegmentsPage } from 'src/pages/ShowSubSegmentsPage';
-import { UserSegmentCard } from '../partials/UserSegmentCard';
+import { UserSegmentRequestCard } from '../partials/UserSegmentRequestCard';
+import { COUNTRIES, PROVINCES } from 'src/lib/constants';
+import { Dropdown } from 'react-bootstrap';
 //import {Image} from 'react-native';
+import { capitalizeFirstLetterEachWord } from './../../lib/utilityFunctions';
 
 export interface ShowSubSegmentsProps {
   segId: number;
@@ -18,6 +20,8 @@ export interface ShowSubSegmentsProps {
 }
 export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, segName, token}) => {
   // const {data} = useAllSubSegmentsWithId(String(segId!));
+  console.log(segId);
+  const [hideControls, setHideControls] = useState('');
   const [showNewSubSeg, setShowNewSubSeg] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   let createData = {} as ISubSegment;
@@ -52,6 +56,7 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
 
           createData.segId = segId;
           await createSubSegment(createData,token);
+          if(data) data.push(createData);
 
       }
       setShowNewSubSeg(false);
@@ -66,7 +71,7 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
       {/* <img alt=""src={"http://localhost:3001/static/uploads/1621449457193-SampleAds1.png"} /> */}
       <Card.Header>{capitalizeString(segName!)} Sub-Segments <Button className="float-right" size="sm" onClick={(e)=>{setShowNewSubSeg(true)}}>Add New Sub-Segments</Button></Card.Header>
       <Card.Body>
-          <Table bordered hover>
+          <Table bordered hover size="sm">
             <thead>
               <tr>
                 <th>Name</th>
@@ -78,25 +83,41 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
             <tbody>
               {data?.map((segment: ISubSegment) => (
               <tr key={segment.id}>
-                {/* <td><Form.Control type="text" value={String(segment.segId)} readOnly/></td> */}
-                <td><Form.Control 
-                  type="text" 
-                  defaultValue={capitalizeString(segment.name)}
-                  onChange={(e)=>{segment.name = e.target.value}}
-                  /></td>
-                  <td><Form.Control 
-                  type="text" 
-                  defaultValue={segment.lat}
-                  onChange={(e)=>{segment.lat = parseFloat(e.target.value)}}
-                  /></td>
-                  <td><Form.Control 
-                  type="text" 
-                  defaultValue={segment.lon}
-                  onChange={(e)=>{segment.lon = parseFloat(e.target.value)}}
-                  /></td>
+                {String(segment.id) !== hideControls
+                ?
+                <>
+                <td>{segment.name ? capitalizeString(segment.name) : ''}</td>
+                <td>{segment.lat}</td>
+                <td>{segment.lon}</td>
                 <td>
-                  <Button onClick={()=>handleSubSegSubmit({name:segment.name, lat: segment.lat, lon: segment.lon, id:segment.id})}size="sm">Update</Button>{' '}
+                  <NavDropdown title="Controls" id="nav-dropdown">
+                    <Dropdown.Item onClick={()=>setHideControls(String(segment.id))}>Edit</Dropdown.Item>
+                  </NavDropdown>
                 </td>
+                </>
+                :
+                <>
+                <td><Form.Control 
+                type="text" 
+                defaultValue={capitalizeString(segment.name)}
+                onChange={(e)=>{segment.name = e.target.value}}
+                /></td>
+                <td><Form.Control 
+                type="text" 
+                defaultValue={segment.lat}
+                onChange={(e)=>{segment.lat = parseFloat(e.target.value)}}
+                /></td>
+                <td><Form.Control 
+                type="text" 
+                defaultValue={segment.lon}
+                onChange={(e)=>{segment.lon = parseFloat(e.target.value)}}
+                /></td>
+                <td>
+                  <Button variant="outline-danger" className="mr-2" onClick={()=>setHideControls('')}>Cancel</Button>
+                  <Button onClick={()=>handleSubSegSubmit(segment)}>Save</Button>
+                </td>
+                </>
+                }
               </tr>))}
               {showNewSubSeg && 
               <tr>
@@ -128,15 +149,14 @@ interface ShowSegmentsProps {
 //Segments are filtered on the front-end by country/province. Will need to query by these params to limit the amount of segments returned.
 //Only handling Canadian Provinces, will need to be able to add other countries as well in the future.
 export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segReq}) => {
-  const provinces: string[] = ['British Columbia', 'Alberta', 'Manitoba', 'New Brunswick', 'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia', 'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec', 'Saskatchewan', 'Yukon']
-  const countries: string[] = ['Canada'];
+  const [hideControls, setHideControls] = useState('');
   const [showNewSeg, setShowNewSeg] = useState(false);
   const [segId, setSegId] = useState<number | null>(null);
   const[segName, setSegName] = useState<string | null>(null);
   const [error, setError] = useState<IFetchError | null>(null);
   const [showSub, setShowSub] = useState(false);
-  const[provName, setProvName] = useState(provinces[0].toLowerCase());
-  const[countryName, setCountryName] = useState(countries[0].toLowerCase());
+  const[provName, setProvName] = useState(PROVINCES[0].toLowerCase());
+  const[countryName, setCountryName] = useState(COUNTRIES[0].toLowerCase());
   const filteredSegments = segments!.filter(segment => segment.province === provName && segment.country === countryName)
   let createData = {} as ISegment;
   const handleSegSubmit = async(updateData?: any) => {
@@ -160,36 +180,40 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
       createData.country = countryName;
       createData.province = provName;
       await createSegment(createData,token);
+      if(segments) segments.push(createData);
+      
     }
     setShowNewSeg(false);
     setError(null);
-    window.location.reload();
   }catch(error){
     console.log(error);
   }
 }
     return (
-      <>
+      <div className="wrapper">
       <Row>
-      <Col md="auto">
+      <Col>
       <Form.Group>
       <Card>
         <Card.Header>Enter a location to manage</Card.Header>
         <Card.Body>
-          <Form.Label>Country</Form.Label>
-          <Form.Control 
-            size="sm" 
-            as="select"
-            name="country"
-            onChange={(e)=>{
-              setCountryName((e.target.value).toLowerCase());
-              setShowSub(false);
-              setShowNewSeg(false);
-              }}>
-            {countries.map(country => <option key={country}>{country}</option>)}
-          </Form.Control>
-            <br />
-          <Form.Label>Province</Form.Label>
+          <Row>
+            <Col>
+            <Form.Label>Country</Form.Label>
+            <Form.Control 
+              size="sm" 
+              as="select"
+              name="country"
+              onChange={(e)=>{
+                setCountryName((e.target.value).toLowerCase());
+                setShowSub(false);
+                setShowNewSeg(false);
+                }}>
+              {COUNTRIES.map(country => <option key={country}>{country}</option>)}
+            </Form.Control>
+            </Col>
+            <Col>
+            <Form.Label>Province</Form.Label>
             <Form.Control 
             size="sm" 
             as="select"
@@ -199,17 +223,21 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
               setShowSub(false);
               setShowNewSeg(false);
               }}>
-            {provinces.map(prov => <option key={prov}>{prov}</option>)}
+            {PROVINCES.map(prov => <option key={prov}>{prov}</option>)}
           </Form.Control>
+            </Col>
+          </Row>
         </Card.Body>
       </Card>
       </Form.Group>
       </Col>
+      </Row>
+      <Row>
       <Col>
       <Card>
       <Card.Header>{capitalizeString(provName!)} segments <Button className="float-right"size="sm"onClick={(e)=>{setShowNewSeg(true)}}>Create New Segment</Button></Card.Header>
         <Card.Body>
-          <Table bordered hover>
+          <Table bordered hover size="sm">
             <thead>
               <tr>
                 {/* <th>Seg ID</th> */}
@@ -221,28 +249,39 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
             <tbody>
               {filteredSegments?.map(segment=> (
                 <tr key={segment.segId}>
-                <td><Form.Control
-                  type="text" 
-                  defaultValue={capitalizeString(segment.name)}
-                  onChange={(e)=>{segment.name = e.target.value}}
-                  /></td>
-                <td><Form.Control 
-                  type="text" defaultValue={segment.superSegName!}
-                  onChange={(e)=>{segment.superSegName = e.target.value}}
-                  /></td>
-                <td>
-                  <Button onClick={()=>{
-                    // updateSegment({name:segment.name.toLowerCase(),superSegName:segment.superSegName?.toLowerCase(), segId:segment.segId}, token);
-                    // createData.segId = segment.segId;
-                    handleSegSubmit({country: countryName, province: provName, name:segment.name.toLowerCase(),superSegName:segment.superSegName?.toLowerCase(), segId:segment.segId});
-                    }}size="sm">Update</Button>{' '}
-                    <Button variant="outline-primary" onClick={()=>{
+                {String(segment.segId)!==hideControls ?
+                <>
+                  <td>{segment.name ? capitalizeFirstLetterEachWord(segment.name) : ''}</td>
+                  <td>{segment.superSegName ? capitalizeFirstLetterEachWord(segment.superSegName) : ''}</td>
+                  <td>
+                    <NavDropdown title="Controls" id="nav-dropdown">
+                    <Dropdown.Item onClick={()=>setHideControls(String(segment.segId))}>Edit</Dropdown.Item>
+                    <Dropdown.Item onClick={()=>{
                     setSegId(segment.segId);
                     setSegName(segment.name);
                     setShowNewSeg(false);
-                    setShowSub(b=>!b);
-                    }} size="sm">{showSub ? "Hide Sub-Segs" : "View Sub-Segs"}</Button>
+                    setShowSub(true);
+                    }}>Show Sub Segments</Dropdown.Item>
+                    </NavDropdown>
+                  </td>
+                </>
+                :
+                <>
+                <td>
+                  <Form.Control type="text" defaultValue={capitalizeString(segment.name)} onChange={(e)=>{segment.name = e.target.value}}/>
                 </td>
+              <td>
+                <Form.Control type="text" defaultValue={segment.superSegName ? capitalizeString(segment.superSegName) : ''} onChange={(e)=>{segment.superSegName = e.target.value}}/>
+              </td>
+              <td>
+              <Button size="sm" className="mr-2" variant="outline-danger" onClick={()=>setHideControls('')}>Cancel</Button>
+              <Button size="sm" onClick={()=>{
+                  handleSegSubmit(segment);
+                  setHideControls('')
+                  }}>Save</Button>
+              </td>
+              </>
+              }
               </tr>)
               )
             }
@@ -263,16 +302,11 @@ export const ShowSegments: React.FC<ShowSegmentsProps> = ({segments, token, segR
         </Card.Body>
       </Card>
       <br/>
-      {(showSub && segId) &&
-        <ShowSubSegmentsPage segId={segId} segName={segName}token={token}/>
-    }
-      <UserSegmentCard segReq={segReq} token={token}/>
+      {(showSub && segId) && <ShowSubSegmentsPage segId={segId} segName={segName}token={token}/>} <br/>
+      <UserSegmentRequestCard segReq={segReq} token={token}/>
       </Col>
-      
-      </Row>
-
-      
-    </>
+      </Row> 
+    </div>
     );
 }
 

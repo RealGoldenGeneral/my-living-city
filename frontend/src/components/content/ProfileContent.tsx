@@ -36,8 +36,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
   },[segmentRequests])
   return (
     <Container className='user-profile-content w-100'>
-      <Row className='justify-content-center'>
-      <h1 className="pb-1 border-bottom display-6 text-center">User Profile</h1>
+      <Row className='mb-4 mt-4 justify-content-center'>
+          <h2 className="pb-2 pt-2 display-6">User Profile</h2>
       </Row>
 
       <Row>

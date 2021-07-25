@@ -248,7 +248,36 @@ userSegmentRouter.get(
         }
     }
 )
+userSegmentRouter.get(
+    '/getUserSegment/:userId',
+    passport.authenticate('jwt',{session:false}),
+    async(req,res)=>{
+        try{
+            const { userId } = req.params;
+            console.log(userId);
+            const result = await prisma.userSegments.findFirst({
+                where:{userId:userId}
+            })
 
+            if(!result){
+                res.status(204).json("user segment not found!");
+            }
+            if(result){
+                res.status(200).json(result);
+            }
+
+        }catch(error){
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve a userSegment.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
 userSegmentRouter.delete(
     '/delete',
     passport.authenticate('jwt',{session:false}),
@@ -745,7 +774,7 @@ userSegmentRouter.get(
                 res.status(404).json("user segment not found!");
             }
 
-            if(result.schoolSubSeg){
+            if(result.schoolSubSegmentId){
                 const schoolSubSeg = await prisma.subSegments.findUnique({
                     where:{id:result.schoolSubSegmentId}
                 });

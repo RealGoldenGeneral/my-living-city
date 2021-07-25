@@ -1,9 +1,9 @@
 import { Button, Card } from 'react-bootstrap';
 import { IIdeaWithAggregations } from '../../lib/types/data/idea.type';
-import { timeDifference, truncateString } from '../../lib/utilityFunctions'
+import { capitalizeFirstLetterEachWord, timeDifference, truncateString } from '../../lib/utilityFunctions'
 import { BsPeople, BsHeartHalf } from 'react-icons/bs'
 import { AiOutlinePercentage } from 'react-icons/ai'
-import { FaRegThumbsUp, FaRegThumbsDown } from 'react-icons/fa'
+// import { FaRegThumbsUp, FaRegThumbsDown } from 'react-icons/fa'
 
 interface ideaTileProps {
   ideaData: IIdeaWithAggregations,
@@ -15,6 +15,10 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     id,
     title,
     description,
+    segmentName,
+    subSegmentName,
+    firstName,
+    streetAddress,
     updatedAt,
     ratingAvg,
     ratingCount,
@@ -22,6 +26,8 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     posRatings,
     negRatings
   } = ideaData;
+
+  console.log(ideaData);
   return (
     // <Card style={{ width: '18rem' }}>
     <Card>
@@ -58,6 +64,8 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       {showFooter && (
         <Card.Footer>
           <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small>
+          <small className='text-muted'>, {capitalizeFirstLetterEachWord(segmentName)}{subSegmentName ? ` at ${capitalizeFirstLetterEachWord(subSegmentName)}`: ""}</small>
+          {/* <small className='text-muted'>-- {firstName}@{streetAddress}</small> */}
         </Card.Footer>
       )}
     </Card>

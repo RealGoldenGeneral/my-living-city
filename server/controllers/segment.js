@@ -92,7 +92,8 @@ segmentRouter.post(
                         country:country,
                         province:province,
                         name:name,
-                        superSegId:theSuperSegId
+                        superSegId:theSuperSegId,
+                        superSegName:superSegName
                     }
                 })
 
@@ -191,6 +192,96 @@ segmentRouter.get(
         res.status(200).json(segments);
     }
 );
+
+segmentRouter.get(
+    '/getBySegmentId/:segmentId',
+        async (req, res, next) => {
+            try {
+            const parsedSegId = parseInt(req.params.segmentId);
+
+            // Check if id is valid
+            if (!parsedSegId) {
+                return res.status(400).json({
+                message: `A valid segmentId must be specified in the route parameter`
+                });
+            }
+            if (parsedSegId){
+                const foundSegment = await prisma.segments.findUnique({
+                    where: { segId: parsedSegId }
+                });
+                if(foundSegment){
+                    res.status(200).json(foundSegment);
+                }
+                if (!foundSegment) {
+                    return res.status(400).json({
+                    message: `The segment with listed ID (${parsedSegId}) does not exist.`,
+                    });
+                }
+            } else {
+                res.status(404).json("segmentId is not found!");
+            }
+            
+
+            
+
+            
+            } catch (error) {
+            res.status(400).json({
+                message: "An error occured while trying to fetch all segments",
+                details: {
+                errorMessage: error.message,
+                errorStack: error.stack,
+                }
+            });
+            } finally {
+            await prisma.$disconnect();
+            }
+        }
+)
+
+segmentRouter.get(
+'/getBySubSegmentId/:SubSegmentId',
+    async (req, res, next) => {
+        try {
+        const parsedSubSegId = parseInt(req.params.SubSegmentId);
+
+        // // Check if id is valid
+        // if (!parsedSubSegId) {
+        //     res.status(404).json("subSegmentId is not found!");
+        //     //return res.sendStatus(204);
+        // }
+
+        if(parsedSubSegId) {
+            const foundSubSegment = await prisma.subSegments.findUnique({
+                where: { id: parsedSubSegId }
+            });
+            if(foundSubSegment){
+                res.status(200).json(foundSubSegment);
+            }
+            if (!foundSubSegment) {
+                return res.status(404).json({
+                message: `The subSegment with listed ID (${parsedSubSegId}) does not exist.`,
+                });
+            }
+            
+        } else {
+            res.status(404).json("subSegmentId is not found!");
+        }
+
+        
+        } catch (error) {
+            res.status(400).json({
+                message: "An error occured while trying to fetch all subSegments",
+                details: {
+                errorMessage: error.message,
+                errorStack: error.stack,
+                }
+            });
+        } finally {
+        await prisma.$disconnect();
+        }
+    }
+)
 
 segmentRouter.delete(
     '/delete/:segmentId',

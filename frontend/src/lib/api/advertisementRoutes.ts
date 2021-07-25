@@ -65,6 +65,11 @@ export const getAllAdvertisement = async () => {
     return res.data;
 }
 
+export const getAdvertisementById = async (adsId: any) => {
+    const res = await axios.get<IAdvertisement>(`${API_BASE_URL}/advertisement/get/${adsId}`);
+    return res.data;
+}
+
 // PUT Update/Replace specific advertisement info
 export const updateAdvertisement = async (adsData: any, token:any, id: any) =>{
     console.log(adsData);

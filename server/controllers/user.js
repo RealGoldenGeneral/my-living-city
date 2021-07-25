@@ -671,8 +671,8 @@ userRouter.put(
 				console.log(req.body.banned);
 
 				const {
-					userId,
-					userEmail,
+					id,
+					email,
 					fname,
 					lname,
 					userType,
@@ -686,11 +686,10 @@ userRouter.put(
 					banned
 				} = req.body;
 
-				if(!userId){
+				if(!id){
 					return res.status(400).json("User id is missing!");
 				}
-
-				const targetUser = await prisma.user.findUnique({where:{id:userId}});
+				const targetUser = await prisma.user.findUnique({where:{id:id}});
 
 				if(!targetUser){
 					return res.status(404).json({
@@ -721,9 +720,9 @@ userRouter.put(
 				} */
 
 				const updatedUser = await prisma.user.update({
-					where: { id : userId },
+					where: { id : id },
 					data: {
-						email:userEmail,
+						email:email,
 						fname:fname,
 						lname:lname,
 						userType:userType,

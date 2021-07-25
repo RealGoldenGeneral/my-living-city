@@ -1,5 +1,6 @@
 export interface ISegment {
     segId: number;
+    superSegId: number;
     country: string;
     province: string;
     name: string;

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Card, Table, DropdownButton, Dropdown, Container, Button, Form } from 'react-bootstrap';
+import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { USER_TYPES } from 'src/lib/constants';
 import { IUser } from 'src/lib/types/data/user.type';
-import { capitalizeString } from 'src/lib/utilityFunctions';
+import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
+
 
 interface UserManagementContentProps {
     users: IUser[] | undefined;
@@ -12,7 +13,15 @@ interface UserManagementContentProps {
 
 export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token}) => {
     const [hideControls, setHideControls] = useState('');
+    const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
+    const [email, setEmail] = useState('');
+    const [id, setId] = useState('');
     const [ban ,setBan] = useState<boolean>(false);
+    const UserSegmentHandler = (email: string, id: string) => {
+        setShowUserSegmentCard(true);
+        setEmail(email);
+        setId(id);
+    }
     const userTypes = Object.keys(USER_TYPES);
         return (
             <Container>
@@ -28,7 +37,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                 <th scope="col">First</th>
                 <th scope="col">Last</th>
                 <th scope="col">User Type</th>
-                <th scope="col">Ban Status</th>
+                <th scope="col">Banned</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -42,7 +51,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     <td>{req.fname}</td>
                     <td>{req.lname}</td>
                     <td>{req.userType}</td>
-                    <td>{capitalizeString(String(req.banned))}</td> 
+                    <td>{req.banned ? "Yes" : "No" }</td> 
                     </> :
                     <>
                     <td><Form.Control type="text" defaultValue={req.email} onChange={(e)=>req.email = e.target.value}/></td>
@@ -58,25 +67,26 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     <td><Form.Check type="switch" checked={ban} onChange={(e)=>{
                         setBan(e.target.checked)
                         req.banned = e.target.checked;
-                        }} label="Banned" id="ban-switch"/></td>  
+                        }} id="ban-switch"/></td>  
                     </>
                 }
 
                     <td>
                     {req.id !== hideControls ?
-                        <DropdownButton id="dropdown-basic-button" title="Controls" variant="outline-primary">
+                        <NavDropdown title="Controls" id="nav-dropdown">
                             <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id);
                                 setBan(req.banned);
                                 }}>Edit</Dropdown.Item>
-                            <Dropdown.Item onClick={()=>console.log(req)}>View Segments</Dropdown.Item>
-                        </DropdownButton>
+                            <Dropdown.Item onClick={()=>UserSegmentHandler(req.email, req.id)}>View Segments</Dropdown.Item>
+                        </NavDropdown>
                         : <>
-                        <Button className="mr-2 mb-2" size="sm" onClick={()=>{
+                        <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
+                        <Button size="sm" onClick={()=>{
                             setHideControls('');
+                            console.log(req);
                             updateUser(req, token);
                             }}>Save</Button>
-                        <Button size="sm" variant="danger" onClick={()=>setHideControls('')}>Cancel</Button>
                         </>
                     }
 
@@ -88,6 +98,9 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
             </Card.Body>
         </Card>
         </Form>
+        <br></br>
+        {/* <UserSegmentHandler/> */}
+        {showUserSegmentCard && <UserSegmentInfoCard email={email} id={id} token={token}/>}
         </Container>
         );
 }

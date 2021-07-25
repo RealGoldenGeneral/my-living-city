@@ -10,24 +10,41 @@ interface CommentSubmitModalProps {
   buttonTextOutput: () => string;
   submitComment: (newComment: ICreateCommentInput) => void;
   show: boolean;
-  comments?: IComment[]
+  comments?: IComment[];
+  banned?: boolean;
+  setShowCommentSubmitError: any;
 }
 
 const CommentSubmitModal = ({
   setShow,
   shouldButtonBeDisabled,
+  setShowCommentSubmitError,
   buttonTextOutput,
   submitComment,
   show,
   comments,
+  banned,
 }: CommentSubmitModalProps) => {
   const handleClose = () => setShow(false);
   const [commentText, setCommentText] = useState('');
-
+  const [error, setError] = useState<string | null>(null);
   const submitHandler = (values: ICreateCommentInput) => {
-    submitComment(values);
-    setCommentText('');
-    handleClose();
+    console.log(banned, 'banned');
+    setError(null);
+    try{
+      if(banned === true){
+        setShowCommentSubmitError(true);
+        setError('You are banned');
+        throw error;
+      }
+      submitComment(values);
+      setCommentText('');
+    }catch(error){
+      console.log(error);
+    }finally{
+      handleClose();
+    }
+    
   };
 
   return (
@@ -36,6 +53,7 @@ const CommentSubmitModal = ({
       onHide={handleClose}
       centered
       size='lg'
+      animation={false}
     >
       <Modal.Header closeButton>
         <Container>
@@ -53,7 +71,7 @@ const CommentSubmitModal = ({
           <p className='text-center'>There are no Feedback Comments for this idea yet. Try posting one!</p>
         ) : null}
         {comments && comments?.map(comment => (
-          <IdeaCommentTile commentData={comment} />
+          <div key={comment.id}><IdeaCommentTile commentData={comment} /></div>
         ))}
       </Modal.Body>
       <Modal.Footer className='d-flex flex-column'>

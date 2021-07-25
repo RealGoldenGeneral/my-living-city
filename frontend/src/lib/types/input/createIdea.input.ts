@@ -3,6 +3,7 @@ import { IGeoInput } from "./geo.input";
 
 export interface ICreateIdeaInput {
 	categoryId: number;
+	userType: string;
 	title: string;
 	description: string;
 	communityImpact?: string;

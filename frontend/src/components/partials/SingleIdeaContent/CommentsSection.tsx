@@ -79,6 +79,8 @@ const CommentsSection: React.FC<CommentsSection> = () => {
         buttonTextOutput={buttonTextOutput}
         shouldButtonBeDisabled={shouldButtonBeDisabled}
         submitComment={submitComment}
+        banned={user?.banned}
+        setShowCommentSubmitError={setShowCommentSubmitError}
       />
       <div className="comments-wrapper my-3">
         {ideaComments && ideaComments.length === 0 ? (

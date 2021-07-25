@@ -26,7 +26,18 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
   } = commentData;
 
   const { email, fname, lname, address } = commentData?.author;
-
+  const inferUserType = (ideaSegId: number, homeSegId?: number, workSegId?: number, schoolSegId?: number) => {
+    switch(ideaSegId){
+      case homeSegId:
+        return "Resident"
+      case workSegId:
+        return "Worker"
+      case schoolSegId:
+        return "Student"
+      default:
+        return null;
+    }
+  }
   return (
     <Container fluid className='my-1'>
       <Row className='justify-content-center'>
