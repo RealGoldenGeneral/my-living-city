@@ -148,7 +148,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             >
               {isLoading ? "Saving..." : "Submit your Advertisement!"}
             </Button>
-            <Modal show={successModal} onHide={handleClose}>
+            <Modal show={successModal} onHide={handleClose} animation={false}>
               <Modal.Header closeButton>
                 <Modal.Title>Ads Posted</Modal.Title>
               </Modal.Header>
