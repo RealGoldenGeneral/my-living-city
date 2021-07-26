@@ -76,6 +76,14 @@ advertisementRouter.post(
 
                 //decompose necessary fields from request body
                 const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
+                
+                if(adType === 'BASIC'){
+                    const theBasicAd = await prisma.advertisements.findFirst({where:{ownerId:id,adType:'BASIC'}});
+
+                    if(theBasicAd){
+                        return res.status(400).json({message:`You already created a basic advertisement, if you want to create more, please select type "EXTRA"; you can edit or delete the current basic advertisement.`});
+                    }
+                }
 
                 //if there's no adType in the request body
                 if(!adType){
@@ -131,7 +139,7 @@ advertisementRouter.post(
                 }
 
                 //if there's no adDuration field in the request body
-                if(!adDuration || adDuration <= 0){
+                if((!adDuration&&adType=='EXTRA') || (adDuration <= 0&&adType=='EXTRA')){
                     error+='adDuration must be provided. ';
                     errorMessage+='adDuration must be provided in the body with a valid length. ';
                     errorStack+='adDuration must be provided in the body with a valid lenght. ';
@@ -171,23 +179,38 @@ advertisementRouter.post(
                         }
                     });
                 }
-                //Calculate the ending date of advertisement based on duration field.
-                let theDate = new Date();
-                let endDate = new Date();
-                endDate.setDate(theDate.getDate()+adDuration);
-                //create an advertisement object
-                const createAnAdvertisement = await prisma.advertisements.create({
-                    data:{
-                        ownerId:id,
-                        adTitle:adTitle,
-                        duration: endDate,
-                        adType:adType,
-                        adPosition:adPosition,
-                        imagePath:imagePath,
-                        externalLink:externalLink,
-                        published:thePublished
-                    }
-                });
+
+                if(adType=='EXTRA'){
+                    //Calculate the ending date of advertisement based on duration field.
+                    let theDate = new Date();
+                    let endDate = new Date();
+                    endDate.setDate(theDate.getDate()+adDuration);
+                    //create an advertisement object
+                    const createAnAdvertisement = await prisma.advertisements.create({
+                        data:{
+                            ownerId:id,
+                            adTitle:adTitle,
+                            duration: endDate,
+                            adType:adType,
+                            adPosition:adPosition,
+                            imagePath:imagePath,
+                            externalLink:externalLink,
+                            published:thePublished
+                        }
+                    });
+                }else{
+                    const createAnAdvertisement = await prisma.advertisements.create({
+                        data:{
+                            ownerId:id,
+                            adTitle:adTitle,
+                            adType:adType,
+                            adPosition:adPosition,
+                            imagePath:imagePath,
+                            externalLink:externalLink,
+                            published:thePublished
+                        }
+                    })
+                }
 
                 //sending user the successful status with created advertisement object
                 res.status(200).json(createAnAdvertisement);
