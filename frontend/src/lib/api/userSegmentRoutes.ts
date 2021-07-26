@@ -37,6 +37,12 @@ export const postUserSegmentInfo = async (registerData: IRegisterInput, token:st
     console.log(res.data);
     return res.data;
 }
+export const getMyUserSegmentInfo = async (token: string, userId: string) => {
+    console.log(userId);
+    const req = await axios.get(`${API_BASE_URL}/userSegment/getUserSegment/${userId}`,getAxiosJwtRequestOption(token!));
+    console.log(req);
+    return req.data;
+}
 export const getUserHomeSegmentInfo = async (token: string | null) => {
     const one = await axios.get(`${API_BASE_URL}/userSegment/homeSegment`,getAxiosJwtRequestOption(token!));
     const two = await axios.get(`${API_BASE_URL}/userSegment/homeSubSegment`,getAxiosJwtRequestOption(token!));

@@ -1,7 +1,7 @@
 import { NONAME } from 'dns';
 import { Formik, useFormik} from 'formik';
 import React, { useContext, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert, Modal } from 'react-bootstrap'
 import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateAdvertisement } from 'src/lib/api/advertisementRoutes';
@@ -33,7 +33,11 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState<IFetchError | null>(null);
-    const [success,setSuccess] = useState<String>('');
+
+    const [successModal, setSuccessModal] = useState(false);
+    const handleClose = () => setSuccessModal(false);
+    
+    // const [success,setSuccess] = useState<String>('');
   
     const { token } = useContext(UserProfileContext);
   
@@ -49,14 +53,16 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         //api component call
         const res = await postCreateAdvertisement(values, token);
         //console.log(res);
-        setSuccess('You submitted your advertisement successfully');
-        setTimeout(()=> setSuccess(''),5000);
+        // setSuccess('You submitted your advertisement successfully');
+        setSuccessModal(true);
+        // setTimeout(()=> setSuccess(''),5000);
         //if successfully posted, set error to null
         setError(null);
         //reset the form
       } catch (error) {
         const genericMessage = 'An error occured while trying to create an Idea.';
         const errorObj = handlePotentialAxiosError(genericMessage, error);
+        setSuccessModal(false);
         setError(errorObj);
       } finally {
         setIsLoading(false)
@@ -75,8 +81,8 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
   
     return (
       <Container className='submit-advertisement-page-content'>
-        <Row className='justify-content-center'>
-          <h1 className="pb-1 border-bottom display-6">Create Advertisement</h1>
+        <Row className='mb-4 mt-4 justify-content-center'>
+          <h2 className="pb-2 pt-2 display-6">Create Advertisement</h2>
         </Row>
         <Row className='submit-advertisement-form-group justify-content-center'>
         <Col lg={10} >
@@ -142,6 +148,19 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             >
               {isLoading ? "Saving..." : "Submit your Advertisement!"}
             </Button>
+            <Modal show={successModal} onHide={handleClose} animation={false}>
+              <Modal.Header closeButton>
+                <Modal.Title>Ads Posted</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Your ads is successfully posted</Modal.Body>
+              <Modal.Footer>
+                <Button variant="primary" onClick={handleClose} href={`/advertisement/all`}>
+                  Done
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Button block variant="outline-danger" size="lg" href={`/advertisement/all`}>Cancel</Button>
           </Form>)}
           </Formik>
           {error && (
@@ -149,7 +168,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               {error.message}
             </Alert>
           )}
-          {success}
+          {successModal}
         </Col>
       </Row>
       </Container>

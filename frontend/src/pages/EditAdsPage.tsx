@@ -5,6 +5,7 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useAdvertisements } from '../hooks/advertisementHooks';
 import { UserProfileContext } from '../contexts/UserProfile.Context';
 import { useContext } from 'react';
+import { useSingleAdvertisement } from 'src/hooks/editAdsHooks';
 
 // Extends Route component props with idea title route param
 interface EditAdsPageProps extends RouteComponentProps<{}> {
@@ -14,8 +15,14 @@ interface EditAdsPageProps extends RouteComponentProps<{}> {
 const EditAdsPage: React.FC<EditAdsPageProps> = ({}) => {
   // const { token } = useContext(UserProfileContext);
 
-  const { data, isLoading, error, isError } = useAdvertisements();
-  //console.log(data);
+  const currentUrl = window.location.search;
+  const search = new URLSearchParams(currentUrl);
+  //console.log(currentUrl);
+  const id = search.get('id');
+  console.log(id);
+
+  const { data, isLoading, error, isError } = useSingleAdvertisement(id);
+  // console.log(data);
   
   if (isLoading) {
     <div className="wrapper">
@@ -27,8 +34,7 @@ const EditAdsPage: React.FC<EditAdsPageProps> = ({}) => {
 
   return (
     <div className="wrapper">
-      {/* <EditAdsPageContent EditAdvertisement={data}/> */}
-      <EditAdsPageContent />
+      <EditAdsPageContent adsData={data}/>
     </div>
   );
 }

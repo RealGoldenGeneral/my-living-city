@@ -28,7 +28,20 @@ export interface IUserRegisterData {
   workSubSegmentId?: number;
   schoolSubSegmentId?: number;
 }
-
+export interface IUserSegment {
+  homeSegmentName: string;
+  workSegmentName: string;
+  schoolSegmentName: string;
+  homeSubSegmentName: string;
+  workSubSegmentName: string;
+  schoolSubSegmentName: string;
+  homeSegmentId?: number;
+  workSegmentId?: number;
+  schoolSegmentId?: number;
+  homeSubSegmentId?: number;
+  workSubSegmentId?: number;
+  schoolSubSegmentId?: number;
+}
 export interface IUserSegmentRegister {
   homeSegmentId?: number;
   workSegmentId?: number;

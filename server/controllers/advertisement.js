@@ -277,6 +277,35 @@ advertisementRouter.get(
     }
 );
 
+advertisementRouter.get(
+    '/get/:adsId',
+    async (req, res) => {
+        try {
+            const { Int: adsId } = req.params;
+            console.log(adsId);
+            const result = await prisma.advertisements.findFirst({
+                where:{id: adsId}
+            })
+
+            if(!result){
+                res.status(204).json("adsId not found!");
+            }
+            if(result){
+                res.status(200).json(result);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve the adsId.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
 advertisementRouter.put(
     '/update/:advertisementId',
     passport.authenticate('jwt',{session:false}),

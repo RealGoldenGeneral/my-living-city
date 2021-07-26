@@ -16,11 +16,19 @@ export interface IParsedCommentAuthor {
     streetAddress: string;
     postalCode: string;
   }
+  userType: string;
+  userSegments: {
+    homeSegmentId: number;
+    workSegmentId: number;
+    schoolSegmentId: number;
+    homeSubSegmentId: number;
+    workSubSegmentId: number;
+    schoolSubSegmentId: number;
+  }
 }
 export interface IParsedIdea {
-  id: string;
-  segId: number;
-  subSegId?:number;
+  segmentId: number;
+  subSegmentId?:number;
 }
 export interface IParsedSegData {
   id: string;
@@ -42,7 +50,7 @@ export interface IComment {
   active:    boolean;
   createdAt: string;
   updatedAt: string;
-  // idea: IParsedIdea;
+  idea: IParsedIdea;
   // userSeg: IParsedSegData;
   author: IParsedCommentAuthor;
   likes: ICommentLikeDislike[];
