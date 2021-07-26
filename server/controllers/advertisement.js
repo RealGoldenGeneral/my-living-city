@@ -32,7 +32,7 @@ const theFileFilter = (req,file,cb) =>{
 //const variable for 10MB max file size in bytes
 const maxFileSize = 10485760;
 //multer upload project, setting receiving mode and which key components to use
-const upload = multer({storage:storage,limits:{fileSize:maxFileSize},fileFilter:theFileFilter}).single('adImage');
+const upload = multer({storage:storage,limits:{fileSize:maxFileSize},fileFilter:theFileFilter}).single('imagePath');
 //Error information holder
 let error = '';
 let errorMessage = '';
@@ -74,6 +74,14 @@ advertisementRouter.post(
                     })
                 }
 
+                //Image path holder
+                let imagePath = '';
+                //if there's req.file been parsed by multer
+                if(req.file){
+                    //console.log(req.file);
+                    imagePath = req.file.path;
+                }
+
                 //decompose necessary fields from request body
                 const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
                 
@@ -81,6 +89,9 @@ advertisementRouter.post(
                     const theBasicAd = await prisma.advertisements.findFirst({where:{ownerId:id,adType:'BASIC'}});
 
                     if(theBasicAd){
+                        if(fs.existsSync(imagePath)){
+                            fs.unlinkSync(imagePath);
+                        }
                         return res.status(400).json({message:`You already created a basic advertisement, if you want to create more, please select type "EXTRA"; you can edit or delete the current basic advertisement.`});
                     }
                 }
@@ -151,13 +162,13 @@ advertisementRouter.post(
                     errorMessage+='Creating an advertisement must explicitly be supply a adPosition field. ';
                     errorStack+='"adPosition" must be provided in the body with a valid position found in the database. '
                 }
-                //Image path holder
-                let imagePath = '';
-                //if there's req.file been parsed by multer
-                if(req.file){
-                    //console.log(req.file);
-                    imagePath = req.file.path;
+
+                if(!externalLink){
+                    error+='externalLink is missing. ';
+                    errorMessage+='Creating an advertisement must explicitly be supply a externalLink field. ';
+                    errorStack+='"externalLink" must be provided in the body with a valid position found in the database. '
                 }
+                
                 //If there's error in error holder
                 if(error&&errorMessage&&errorStack){
                     //multer is a kind of middleware, if file is valid, multer will add it to upload folder. Following code are responsible for deleting files if error happened.
@@ -180,13 +191,16 @@ advertisementRouter.post(
                     });
                 }
 
+                let createAnAdvertisement;
+
+                //if advertisement type is extra, create one with duration date; if not, create one without duration.
                 if(adType=='EXTRA'){
                     //Calculate the ending date of advertisement based on duration field.
                     let theDate = new Date();
                     let endDate = new Date();
                     endDate.setDate(theDate.getDate()+adDuration);
                     //create an advertisement object
-                    const createAnAdvertisement = await prisma.advertisements.create({
+                    createAnAdvertisement = await prisma.advertisements.create({
                         data:{
                             ownerId:id,
                             adTitle:adTitle,
@@ -199,7 +213,7 @@ advertisementRouter.post(
                         }
                     });
                 }else{
-                    const createAnAdvertisement = await prisma.advertisements.create({
+                    createAnAdvertisement = await prisma.advertisements.create({
                         data:{
                             ownerId:id,
                             adTitle:adTitle,
