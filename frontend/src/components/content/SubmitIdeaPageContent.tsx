@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert, Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom';
 import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { API_BASE_URL } from 'src/lib/constants';
@@ -27,6 +27,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
+  const [successModal, setSuccessModal] = useState(false);
+  const handleClose = () => setSuccessModal(false);
   const [location, setLocation] = useState('Home');
   const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
   const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
@@ -59,6 +61,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
+      setSuccessModal(true);
       // if(user){
       //   if(user.banned === true){
       //     setError({message:'You have been banned'});
@@ -74,6 +77,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
     } catch (error) {
       const genericMessage = 'An error occured while trying to create an Idea.';
       const errorObj = handlePotentialAxiosError(genericMessage, error);
+      setSuccessModal(false);
       setError(errorObj);
     } finally {
       setIsLoading(false)
@@ -112,8 +116,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
 
   return (
     <Container className='submit-idea-page-content'>
-      <Row className='justify-content-center'>
-        <h1 className='pb-1 border-bottom display-6'>Submit Idea</h1>
+      <Row className='mb-4 mt-4 justify-content-center'>
+          <h2 className="pb-2 pt-2 display-6">Submit Idea</h2>
       </Row>
       <Row className='submit-idea-form-group justify-content-center'>
         <Col lg={10} >
@@ -249,13 +253,26 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             >
               {isLoading ? "Saving..." : "Submit your idea!"}
           </Button>
+          <Modal show={successModal} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Idea Posted</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Your idea is successfully posted</Modal.Body>
+              <Modal.Footer>
+                <Button variant="primary" onClick={handleClose} href={`/ideas`}>
+                  Done
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </Form>
+
           {error && (
             <Alert variant='danger' className="error-alert">
               { error.message}
             </Alert>
           )}
-          {/* TODO: Add ui alert flash to inform user that idea has succesfully been created */}
+          {/* REVIEW: Add ui alert flash to inform user that idea has successfully been created */}
+          {successModal}
         </Col>
       </Row>
     </Container>
