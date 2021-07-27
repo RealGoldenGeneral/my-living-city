@@ -40,3 +40,10 @@ export interface IUserSegment {
     schoolSubSegmentId: number;   
     schoolSubSegmentName: string;
 }
+
+export interface ISegmentData {
+    id: number;
+    name: string;
+    segType: 'Segment' | 'Sub-Segment' | 'Super-Segment';
+    userType: 'Resident' | 'Worker' | 'Student';
+}

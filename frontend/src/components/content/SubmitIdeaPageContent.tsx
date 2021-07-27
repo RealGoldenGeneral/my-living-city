@@ -2,9 +2,9 @@ import { useFormik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react'
 import { Col, Container, Row, Form, Button, Alert, Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom';
-import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
+// import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { API_BASE_URL } from 'src/lib/constants';
-import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
+import { ISegment, ISegmentData, ISubSegment } from 'src/lib/types/data/segment.type';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateIdea } from '../../lib/api/ideaRoutes';
 import { ICategory } from '../../lib/types/data/category.type';
@@ -14,7 +14,7 @@ import { capitalizeFirstLetterEachWord, capitalizeString, handlePotentialAxiosEr
 
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
-  segData: any;
+  segData: ISegmentData[];
 }
 
 /**
@@ -24,35 +24,37 @@ interface SubmitIdeaPageContentProps {
 const DEFAULT_CAT_ID = 1;
 
 const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, segData}) => {
+  // const {homeSegmentName, workSegmentName, schoolSegmentName} = segData;
+  // const {homeSubSegmentName, workSubSegmentName, schoolSubSegmentname} = segData;
+  // const {homeSegmentId, workSegmentId, schoolSegmentId} = segData;
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [successModal, setSuccessModal] = useState(false);
   const handleClose = () => setSuccessModal(false);
   const [location, setLocation] = useState('Home');
-  const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
-  const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
+  const [formikString, setFormikString] = useState('');
+  // const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
+  // const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
   const history = useHistory();
-  const getSegData = async (location: string) => {
-    let data: any;
-    if(location === 'Resident'){
-      data = await getUserHomeSegmentInfo(token);
-    }else if(location === 'Worker'){
-      data = await getUserWorkSegmentInfo(token);
-    }else if (location === 'Student'){
-      data = await getUserSchoolSegmentInfo(token);
+  console.log(segData);
+  const handleCommunityChange = (index: number) => {
+    if(segData[index].segType === 'Segment') {
+      formik.setFieldValue('segmentId',segData[index].id);
+      formik.setFieldValue('superSegmentId',undefined);
+      formik.setFieldValue('subSegmentId',undefined);
     }
-    
-    if(data.segment){
-      setSegment(data.segment)
-    }else{
-      setSegment(undefined);
+    if(segData[index].segType === 'Sub-Segment') {
+      formik.setFieldValue('subSegmentId',segData[index].id);
+      formik.setFieldValue('superSegmentId',undefined);
+      formik.setFieldValue('segmentId',undefined);
     }
-    if(data.subSegment){
-      setSubSegment(data.subSegment);
-    }else{
-      setSubSegment(undefined);
+    if(segData[index].segType === 'Super-Segment'){
+      formik.setFieldValue('superSegmentId',segData[index].id);
+      formik.setFieldValue('subSegmentId',undefined);
+      formik.setFieldValue('segmentId',undefined);
     }
+    formik.setFieldValue('userType', segData[index].userType);
   }
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
@@ -62,12 +64,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
       setSuccessModal(true);
-      // if(user){
-      //   if(user.banned === true){
-      //     setError({message:'You have been banned'});
-      //     throw error;
-      //   }
-      // }
       const res = await postCreateIdea(values, user!.banned, token);
       console.log(res);
 
@@ -90,7 +86,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       // TODO: CatId when chosen is a string
       categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
       title: '',
-      userType: 'Resident',
+      userType: segData ? segData[0].userType : 'Resident',
       description: '',
       artsImpact: '',
       communityImpact: '',
@@ -109,11 +105,15 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
         lon: undefined,
       },
       segmentId: undefined,
-      subSegmentId: undefined
+      subSegmentId: undefined,
+      superSegmentId: undefined
     },
     onSubmit: submitHandler
   })
-
+  useEffect(() => {
+    handleCommunityChange(0);
+    console.log('called');
+  },[])
   return (
     <Container className='submit-idea-page-content'>
       <Row className='mb-4 mt-4 justify-content-center'>
@@ -144,42 +144,18 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               </Form.Control>
             </Form.Group>
             <Form.Group>
-              <Form.Label>This idea pertains to which area of interest?</Form.Label>
-              <Form.Control
-                as='select'
-                name='userType'
-                onChange={(e)=>{
-                  getSegData(e.target.value);
-                  formik.handleChange(e);
-                }}
-                value={formik.values.userType}
-              > <option value={"Resident"}>Resident</option>
-                <option value={"Worker"}>Worker</option>
-                <option value={"Student"}>Student</option>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Municipality</Form.Label>
+              <Form.Label>Select your community of interest</Form.Label>
               <Form.Control
                 as='select'
                 type='number'
-                name='segmentId'//Change this
-                onChange={formik.handleChange}
-                value={formik.values.segmentId}
-              ><option>Select your Idea's municipality</option>
-                {segment &&<option value={segment ? (Number(segment.segId)) : undefined}>{segment ? capitalizeFirstLetterEachWord(segment.name) : ''}</option>}
+                onChange={(e)=>handleCommunityChange(Number(e.target.value))}
+              >
+                {segData && segData.map((seg, index) => (
+                  <option key={String(seg.name)} value={index}>
+                    {capitalizeString(seg.name)}
+                  </option>
+                ))}
                 </Form.Control>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Neighbourhood (optional)</Form.Label>
-              <Form.Control
-                as='select'
-                name='subSegmentId'
-                onChange={formik.handleChange}
-                value={formik.values.subSegmentId}
-              ><option>Select your Idea's neighbourhood</option>
-                {subSegment && <option value={subSegment ? (Number(subSegment.id)) : undefined}>{subSegment ? capitalizeFirstLetterEachWord(subSegment.name) : ''}</option>}
-              </Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>What is the title of your idea?</Form.Label>
@@ -203,7 +179,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             </Form.Group>
 
             <Form.Group>
-              <Form.Label>How does your idea affect the community positively? (7 Petals)</Form.Label>
+              <Form.Label>Impact Areas</Form.Label>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
