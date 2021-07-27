@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
 import { NavDropdown, Nav, Navbar, Form, FormControl, Button } from 'react-bootstrap'
+import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
 import { useUserWithJwtVerbose } from 'src/hooks/userHooks';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 export default function Header() {
@@ -46,7 +47,7 @@ export default function Header() {
               </NavDropdown>
                 }
                 
-
+                <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">Help</Nav.Link>
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
               </>
             ) : (
