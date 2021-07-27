@@ -618,6 +618,7 @@ ideaRouter.delete(
   async (req, res, next) => {
     try {
       const { id: loggedInUserId, email } = req.user;
+      console.log(req.user);
       const parsedIdeaId = parseInt(req.params.ideaId);
 
       // check if id is valid
@@ -643,6 +644,17 @@ ideaRouter.delete(
         });
       }
 
+      if(foundIdea.imagePath){
+        if(fs.existsSync(foundIdea.imagePath)){
+          fs.unlinkSync(foundIdea.imagePath);
+        }
+      }
+
+      const deleteComment = await prisma.ideaComment.deleteMany({where:{ideaId:foundIdea.id}});
+      const deleteRating = await prisma.ideaRating.deleteMany({where:{ideaId:foundIdea.id}});
+      const deleteProPosalInfo = await prisma.proposal.deleteMany({where:{ideaId:foundIdea.id}});
+      const deletedGeo = await prisma.ideaGeo.deleteMany({where:{ideaId:foundIdea.id}});
+      const deleteAddress = await prisma.ideaAddress.deleteMany({where:{ideaId:foundIdea.id}});
       const deletedIdea = await prisma.idea.delete({ where: { id: parsedIdeaId }});
 
       res.status(200).json({
@@ -650,6 +662,7 @@ ideaRouter.delete(
         deletedIdea: deletedIdea,
       });
     } catch (error) {
+      console.log(error);
       res.status(400).json({
         message: "An error occured while to delete an Idea",
         details: {
