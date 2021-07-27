@@ -13,7 +13,7 @@ const multer = require('multer');
 //multer storage policy, including file destination and file naming policy
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,'./uploads');
+        cb(null,'./uploads/adImage');
     },
     filename: function (req, file, cb) {
       cb(null,Date.now() + '-' + file.originalname);
