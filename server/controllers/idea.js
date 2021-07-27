@@ -79,7 +79,7 @@ ideaRouter.post(
             imagePath = req.file.path;
         }
   
-        let {categoryId,segmentId,subSegmentId,banned,title,
+        let {categoryId,superSegmentId,segmentId,subSegmentId,banned,title,
           description,
           communityImpact,
           natureImpact,
@@ -89,10 +89,15 @@ ideaRouter.post(
         } = req.body;
   
         categoryId = parseInt(categoryId);
-        segmentId = parseInt(segmentId);
+
         if(subSegmentId){
           subSegmentId = parseInt(subSegmentId);
+        }else if(segmentId){
+          segmentId = parseInt(segmentId);
+        }else if(superSegmentId){
+          superSegmentId = parseInt(superSegmentId);
         }
+        
         banned = (banned === 'true');
   
         if (banned === true){
@@ -114,49 +119,53 @@ ideaRouter.post(
             errorStack+='"CategoryId" must be defined in the body with a valid id found in the database.';
           }
         }
-  
-        if(!segmentId||!isInteger(segmentId)){
-          error+='An Idea must belong to a municipality.';
-          errorMessage+='Creating an idea must explicitly be supplied with a "segmentId" field.';
-          errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
-        }else{
-          const result = await prisma.segments.findUnique({
-            where:{segId:segmentId}
-          });
-  
-          if(!result){
-            error+='An Idea must belong to a municipality.';
-            errorMessage+='Creating an idea must explicitly be supplied with a "segmentId" field.';
-            errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
-          }
-        }
-  
-        if(subSegmentId&&!isInteger(subSegmentId)){
-          error+='Sub segment id must be valid.';
-          errorMessage+='Creating an idea must explicitly be supplied with a valid "subSegmentId" field.';
-          errorStack+='"subSegmentId" must be provided with a valid id found in the database.';
-        }else if(isInteger(subSegmentId)){
-          const result = await prisma.subSegments.findUnique({
-            where:{id:subSegmentId}
-          });
-          
-          if(!result){
+
+        if(isInteger(subSegmentId)){
+          theSubSegment = await prisma.subSegments.findUnique({where:{id:subSegmentId}});
+
+          if(!theSubSegment){
             error+='Sub segment id must be valid.';
             errorMessage+='Creating an idea must explicitly be supplied with a valid "subSegmentId" field.';
             errorStack+='"subSegmentId" must be provided with a valid id found in the database.';
-          }else if(result.segId!=segmentId){
-            error+='Sub segment id must be valid.';
-            errorMessage+='Creating an idea must explicitly be supplied with a valid "subSegmentId" field.';
-            errorStack+='"subSegmentId" must be provided with a valid id which belongs to the provided segment.';
+          }else{
+            segmentId = theSubSegment.segId;
+
+            const theSegment = await prisma.segments.findUnique({where:{segId:segmentId}});
+
+            superSegmentId = theSegment.superSegId;
           }
+        }else if(isInteger(segmentId)){
+          const theSegment = await prisma.segments.findUnique({where:{segId:segmentId}});
+
+          if(!theSegment){
+            error+='An Idea must belong to a municipality.';
+            errorMessage+='Creating an idea must explicitly be supplied with a valid "segmentId" field.';
+            errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
+          }else{
+            superSegmentId = theSegment.superSegId;
+          }
+        }else if(isInteger(superSegmentId)){
+          const theSuperSegment = await prisma.superSegment.findUnique({where:{superSegId:superSegmentId}});
+
+          if(!theSuperSegment){
+            error+='An Idea must belong to a area.';
+            errorMessage+='Creating an idea must explicitly be supplied with a valid "superSegmentId" field.';
+            errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
+          }
+        }else{
+          error+='An idea must belongs to a area';
+          errorMessage+='Creating an idea must explicitly be supplied with a valid "superSegmentId" or "segmentId" or "subSegmentId" field.';
+          errorStack+='One of the area id must explicitly be supplied with a valid id found in the database. '
         }
+  
+        
         
         // Parse data
         const geoData = JSON.parse(req.body.geo);
         //if geoData parse failed
         if(!typeof geoData == "object"){
           error+='Geo data parse error! ';
-          errorMessage+='Something is wrong about the json string of geo data! ';
+          errorMessage+='Something is wrong about the text string of geo data! ';
           errorStack+='Geo data json string parsing failed! '
         }
   
@@ -164,7 +173,7 @@ ideaRouter.post(
   
         if(!typeof addressData == "object"){
           error+='Address data parse error! ';
-          errorMessage+='Something is wrong about the json string of address data! ';
+          errorMessage+='Something is wrong about the text string of address data! ';
           errorStack+='Address data json string parsing failed! '
         }
   
@@ -185,6 +194,7 @@ ideaRouter.post(
   
         const ideaData = {
           categoryId,
+          superSegmentId,
           segmentId,
           subSegmentId,
           authorId: id,
