@@ -37,7 +37,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   // const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
   // const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
   const history = useHistory();
-  console.log(segData);
   const handleCommunityChange = (index: number) => {
     if(segData[index].segType === 'Segment') {
       formik.setFieldValue('segmentId',segData[index].id);
@@ -63,7 +62,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
-      setSuccessModal(true);
       const res = await postCreateIdea(values, user!.banned, token);
       console.log(res);
 
@@ -76,7 +74,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setSuccessModal(false);
       setError(errorObj);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
+      // setSuccessModal(true);
     }
   }
   // console.log(segment);
@@ -111,8 +110,10 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
     onSubmit: submitHandler
   })
   useEffect(() => {
-    handleCommunityChange(0);
-    console.log('called');
+    if(segData){
+      handleCommunityChange(0);
+    }
+
   },[])
   return (
     <Container className='submit-idea-page-content'>

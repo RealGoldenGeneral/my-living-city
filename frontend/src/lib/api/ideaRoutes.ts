@@ -44,10 +44,11 @@ export const getSingleIdea = async (ideaId: string) => {
 
 export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean, token: string | null) => {
   // Parse data and data checking
-  const { categoryId, title, description, segmentId, subSegmentId} = ideaData;
+  const { categoryId, title, description, segmentId, subSegmentId, superSegmentId, geo, address} = ideaData;
   const parsedCatId = Number(categoryId);
   const parsedSegId = Number(segmentId);
   const parsedSubId = Number(subSegmentId);
+  const parsedSuperId = Number(superSegmentId);
 
   if (!parsedCatId || !title || !description) {
     throw new Error('You must choose a category, define a title, and description of your idea.');
@@ -62,14 +63,25 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean
     categoryId: parsedCatId,
     segmentId: parsedSegId,
     subSegmentId: parsedSubId,
+    superSegmentId: parsedSuperId,
+    geo: geo,
+    addressData: address,
     banned: banned
   }
 
-  const res = await axios.post<IIdeaWithRelationship>(
-    `${API_BASE_URL}/idea/create`, 
-    parsedPayload, 
-    getAxiosJwtRequestOption(token)
-  );
-  return res.data;
+  // const res = await axios.post<IIdeaWithRelationship>(
+  //   `${API_BASE_URL}/idea/create`, 
+  //   parsedPayload, 
+  //   getAxiosJwtRequestOption(token)
+  // );
+
+  const res = await axios({
+    method: "post",
+    url: `${API_BASE_URL}/idea/create`,
+    data: parsedPayload,
+    headers: { "Content-Type": "multipart/form-data", "x-auth-token": token},
+    withCredentials: true
+})
+return res.data;
 }
 
