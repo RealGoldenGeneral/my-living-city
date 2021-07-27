@@ -235,7 +235,7 @@ model Idea {
   championId   String? @map("champion_id")
   categoryId   Int     @map("category_id")
   segmentId    Int     @map("segment_id")
-  subSegmentId Int?     @map("sub_segment_id")
+  subSegmentId Int?    @map("sub_segment_id")
 
   // Values
   title               String
@@ -248,6 +248,7 @@ model Idea {
   manufacturingImpact String?   @map("manufacturing_impact")
   state               IdeaState @default(IDEA)
   active              Boolean   @default(true)
+  imagePath           String?   @map("image_path")
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
 
@@ -261,10 +262,10 @@ model Idea {
 
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
-  author     User        @relation("author", fields: [authorId], references: [id])
-  champion   User?       @relation("champion", fields: [championId], references: [id])
-  category   Category    @relation(fields: [categoryId], references: [id])
-  segment    Segments    @relation(fields: [segmentId], references: [segId])
+  author     User         @relation("author", fields: [authorId], references: [id])
+  champion   User?        @relation("champion", fields: [championId], references: [id])
+  category   Category     @relation(fields: [categoryId], references: [id])
+  segment    Segments     @relation(fields: [segmentId], references: [segId])
   subSegment SubSegments? @relation(fields: [subSegmentId], references: [id])
 
   @@map(name: "idea")
@@ -375,13 +376,13 @@ model Advertisements {
   createAt DateTime  @default(now()) @map("creat_at")
   updateAt DateTime? @default(now()) @updatedAt @map("update_at")
 
-  adTitle      String   @map("advertisement_title")
-  adType       AdType   @default(BASIC) @map("advertisement_type")
-  duration     DateTime @map("advertisement_duration")
-  adPosition   String   @map("advertisement_position")
-  imagePath    String   @map("advertisement_image_path")
-  externalLink String   @map("advertisement_external_link")
-  published    Boolean  @default(false) @map("published")
+  adTitle      String    @map("advertisement_title")
+  adType       AdType    @default(BASIC) @map("advertisement_type")
+  duration     DateTime? @map("advertisement_duration")
+  adPosition   String    @map("advertisement_position")
+  imagePath    String    @map("advertisement_image_path")
+  externalLink String    @map("advertisement_external_link")
+  published    Boolean   @default(false) @map("published")
 
   author User? @relation(fields: [ownerId], references: [id])
 
