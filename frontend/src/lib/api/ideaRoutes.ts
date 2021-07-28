@@ -46,7 +46,7 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean
   const formData = new FormData;
   // Parse data and data checking
 
-  const { categoryId, title, description, segmentId, subSegmentId,communityImpact,natureImpact,artsImpact,energyImpact,manufacturingImpact,address,geo,imagePath} = ideaData;
+  const { categoryId, title, description, superSegmentId, segmentId, subSegmentId,communityImpact,natureImpact,artsImpact,energyImpact,manufacturingImpact,address,geo,imagePath} = ideaData;
   // const parsedCatId = Number(categoryId);
   // const parsedSegId = Number(segmentId);
   // const parsedSubId = Number(subSegmentId);
@@ -55,7 +55,7 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean
     throw new Error('You must choose a category, define a title, and description of your idea.');
   }
 
-  if(!segmentId&&!subSegmentId){
+  if(!segmentId&&!subSegmentId&&!superSegmentId){
     throw new Error('You must provide a segmentId or subSegmentId. ');
   }
 
@@ -74,7 +74,9 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean
   if(segmentId){
     formBody.append('segmentId',segmentId.toString());
   }
-
+  if(superSegmentId){
+    formBody.append('superSegmentId',superSegmentId.toString());
+  }
   if(subSegmentId){
     formBody.append('subSegmentId',subSegmentId.toString());
   }

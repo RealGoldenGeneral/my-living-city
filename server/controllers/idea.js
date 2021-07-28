@@ -469,7 +469,8 @@ ideaRouter.get(
             }
           },
           segment: true,
-          subSegment:true
+          subSegment:true,
+          superSegment: true
         }
       });
       if (!foundIdea) {

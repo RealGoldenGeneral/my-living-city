@@ -41,6 +41,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     category,
     segment,
     subSegment,
+    superSegment,
     author,
     state,
     // segmentId,
@@ -123,7 +124,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
           {/* <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4> */}
           {/* <h4 className='h5'>As: {userType}</h4> */}
-          <h4 className='h5'>Municipality: {segment ? capitalizeFirstLetterEachWord(segment.name) : 'N/A'}</h4>
+          {superSegment ? <h4 className='h5'>District: {superSegment ? capitalizeFirstLetterEachWord(superSegment.name) : 'N/A'}</h4> : null}
+          {segment ? <h4 className='h5'>Municipality: {segment ? capitalizeFirstLetterEachWord(segment.name) : 'N/A'}</h4> : null}
           {subSegment ? <h4 className='h5'>Neighborhood: {subSegment ? capitalizeFirstLetterEachWord(subSegment.name): 'N/A'}</h4> : null}
           {!!ideaData.champion && (
             <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
