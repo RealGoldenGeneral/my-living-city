@@ -22,6 +22,7 @@ import { useSingleSegmentBySegmentId } from 'src/hooks/segmentHooks';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { ISegment } from 'src/lib/types/data/segment.type';
 import { useState } from 'react';
+import { API_BASE_URL } from 'src/lib/constants';
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship
@@ -31,6 +32,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
   const {
     title,
     description,
+    imagePath,
     userType,
     communityImpact,
     natureImpact,
@@ -120,22 +122,33 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           </div>
           </Card.Header>
           <Card.Body>
-          <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
-          {/* <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4> */}
-          {/* <h4 className='h5'>As: {userType}</h4> */}
-          <h4 className='h5'>Municipality: {segment ? capitalizeFirstLetterEachWord(segment.name) : 'N/A'}</h4>
-          {subSegment ? <h4 className='h5'>Neighborhood: {subSegment ? capitalizeFirstLetterEachWord(subSegment.name): 'N/A'}</h4> : null}
-          {!!ideaData.champion && (
-            <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
-          )}
-          {/* <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5> */}
-          <br />
-          <p>{description}</p>
-          {communityImpact ? <p><strong>Community and Place:</strong> {communityImpact}</p> : null}
-          {natureImpact ? <p><strong>Nature and Food Security:</strong> {natureImpact}</p> : null}
-          {artsImpact ? <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p> : null}
-          {energyImpact ? <p><strong>Water and Energy:</strong> {energyImpact}</p> : null}
-          {manufacturingImpact ? <p><strong>Manufacturing and Waste:</strong> {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p> : null}
+            <Row>
+              <Col>
+                <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
+                {/* <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4> */}
+                {/* <h4 className='h5'>As: {userType}</h4> */}
+                <h4 className='h5'>Municipality: {segment ? capitalizeFirstLetterEachWord(segment.name) : 'N/A'}</h4>
+                {subSegment ? <h4 className='h5'>Neighborhood: {subSegment ? capitalizeFirstLetterEachWord(subSegment.name): 'N/A'}</h4> : null}
+                {!!ideaData.champion && (
+                  <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
+                )}
+                {/* <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5> */}
+                <br />
+                <p>{description}</p>
+                {communityImpact ? <p><strong>Community and Place:</strong> {communityImpact}</p> : null}
+                {natureImpact ? <p><strong>Nature and Food Security:</strong> {natureImpact}</p> : null}
+                {artsImpact ? <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p> : null}
+                {energyImpact ? <p><strong>Water and Energy:</strong> {energyImpact}</p> : null}
+                {manufacturingImpact ? <p><strong>Manufacturing and Waste:</strong> {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p> : null}
+              </Col>
+
+              <Col>
+                  <img src={`${API_BASE_URL}/ideas/${(imagePath).substring(17)}`} className="w-100"></img>
+              </Col>
+            </Row>
+
+
+
           </Card.Body>
         </Col>
 
