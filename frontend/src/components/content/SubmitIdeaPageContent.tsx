@@ -28,7 +28,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
-  const [successModal, setSuccessModal] = useState(false);
   const history = useHistory();
   const handleCommunityChange = (index: number) => {
     if(segData[index].segType === 'Segment') {
@@ -64,11 +63,9 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
     } catch (error) {
       const genericMessage = 'An error occured while trying to create an Idea.';
       const errorObj = handlePotentialAxiosError(genericMessage, error);
-      setSuccessModal(false);
       setError(errorObj);
     } finally {
       setIsLoading(false);
-      // setSuccessModal(true);
     }
   }
   // console.log(segment);
