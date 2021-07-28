@@ -12,7 +12,7 @@ import { ICreateIdeaInput } from '../../lib/types/input/createIdea.input';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeFirstLetterEachWord, capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 import { CONTENT, Toastie } from '../partials/LandingContent/CategoriesSection';
-
+import ImageUploader from 'react-images-upload';
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
   segData: ISegmentData[];
@@ -172,7 +172,10 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.description}
               />
             </Form.Group>
-
+            <Form.Group>
+                  <Form.Label>Idea image</Form.Label>
+                  <ImageUploader name="imagePath" onChange={(picture)=>formik.setFieldValue('imagePath',picture)} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose Your Idea Image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
+            </Form.Group>
             <Form.Group>
               <h3  className="border-bottom mb-3">Impact Areas</h3>
               <Row className="align-items-end">
