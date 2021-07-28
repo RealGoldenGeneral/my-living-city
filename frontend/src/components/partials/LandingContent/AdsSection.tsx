@@ -23,7 +23,7 @@ const AdsSection: React.FC<AdsSectionProps> = ({ads}) => {
                             <img
                             alt="Not found..."
                             className="d-block w-100"
-                            src={`${API_BASE_URL}/ads/${(ad.imagePath).substring(7)}`}
+                            src={`${API_BASE_URL}/ads/${(ad.imagePath).substring(15)}`}
                             />
                         </a>
                 </Carousel.Item>)}

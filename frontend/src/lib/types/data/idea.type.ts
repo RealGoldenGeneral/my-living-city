@@ -20,6 +20,7 @@ export interface IIdea {
 	subSegmentId?: number; //
 	title: string;
 	description: string;
+	imagePath: string;
 	communityImpact?: string;
 	natureImpact?: string;
 	artsImpact?: string;
