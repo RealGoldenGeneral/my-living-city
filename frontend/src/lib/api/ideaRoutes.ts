@@ -43,8 +43,9 @@ export const getSingleIdea = async (ideaId: string) => {
 }
 
 export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean, token: string | null) => {
+  const formData = new FormData;
   // Parse data and data checking
-  const { categoryId, title, description, segmentId, subSegmentId, superSegmentId, geo, address} = ideaData;
+  const { categoryId, title, description, segmentId, subSegmentId, superSegmentId, geo, address, userType, communityImpact} = ideaData;
   const parsedCatId = Number(categoryId);
   const parsedSegId = Number(segmentId);
   const parsedSubId = Number(subSegmentId);
@@ -64,17 +65,8 @@ export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean
     segmentId: parsedSegId,
     subSegmentId: parsedSubId,
     superSegmentId: parsedSuperId,
-    geo: geo,
-    addressData: address,
     banned: banned
   }
-
-  // const res = await axios.post<IIdeaWithRelationship>(
-  //   `${API_BASE_URL}/idea/create`, 
-  //   parsedPayload, 
-  //   getAxiosJwtRequestOption(token)
-  // );
-
   const res = await axios({
     method: "post",
     url: `${API_BASE_URL}/idea/create`,

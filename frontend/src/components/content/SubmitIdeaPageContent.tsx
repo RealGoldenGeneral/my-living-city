@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert, Modal } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert, Image } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom';
 // import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { API_BASE_URL } from 'src/lib/constants';
@@ -11,6 +11,7 @@ import { ICategory } from '../../lib/types/data/category.type';
 import { ICreateIdeaInput } from '../../lib/types/input/createIdea.input';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeFirstLetterEachWord, capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
+import { CONTENT, Toastie } from '../partials/LandingContent/CategoriesSection';
 
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
@@ -24,18 +25,10 @@ interface SubmitIdeaPageContentProps {
 const DEFAULT_CAT_ID = 1;
 
 const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categories, segData}) => {
-  // const {homeSegmentName, workSegmentName, schoolSegmentName} = segData;
-  // const {homeSubSegmentName, workSubSegmentName, schoolSubSegmentname} = segData;
-  // const {homeSegmentId, workSegmentId, schoolSegmentId} = segData;
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [successModal, setSuccessModal] = useState(false);
-  const handleClose = () => setSuccessModal(false);
-  const [location, setLocation] = useState('Home');
-  const [formikString, setFormikString] = useState('');
-  // const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
-  // const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
   const history = useHistory();
   const handleCommunityChange = (index: number) => {
     if(segData[index].segType === 'Segment') {
@@ -124,6 +117,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
         <Col lg={10} >
           <Form onSubmit={formik.handleSubmit}>
             <Form.Group controlId="submitIdeaCategory">
+              <h3 className="border-bottom mb-3">Idea Details</h3>
               <Form.Label>Select Category:</Form.Label>
               <Form.Control
                 as="select"
@@ -180,7 +174,9 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             </Form.Group>
 
             <Form.Group>
-              <Form.Label>Impact Areas</Form.Label>
+              <h3  className="border-bottom mb-2">Impact Areas</h3>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -189,6 +185,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.communityImpact}
                 placeholder='Community and Place'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.community.header} subHeader={CONTENT.community.subHeader} body={CONTENT.community.body} img="/categories/MLC-Icons-Green-05.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -197,6 +200,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.natureImpact}
                 placeholder='Nature and Food Security'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.nature.header} subHeader={CONTENT.nature.subHeader} body={CONTENT.nature.body} img="/categories/MLC-Icons-Green-01.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -205,6 +215,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.artsImpact}
                 placeholder='Arts, Culture, and Education'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.arts.header} subHeader={CONTENT.arts.subHeader} body={CONTENT.arts.body} img="/categories/MLC-Icons-Green-04.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -213,6 +230,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.energyImpact}
                 placeholder='Water and Energy'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.water.header} subHeader={CONTENT.water.subHeader} body={CONTENT.water.body} img="/categories/MLC-Icons-Green-02.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -221,6 +245,11 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.manufacturingImpact}
                 placeholder='Manufacturing and Waste'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.manufacturing.header} subHeader={CONTENT.manufacturing.subHeader} body={CONTENT.manufacturing.body} img="/categories/MLC-Icons-Green-03.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
             </Form.Group>
             <Button
               block
@@ -230,17 +259,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             >
               {isLoading ? "Saving..." : "Submit your idea!"}
           </Button>
-          <Modal show={successModal} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Idea Posted</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>Your idea is successfully posted</Modal.Body>
-              <Modal.Footer>
-                <Button variant="primary" onClick={handleClose} href={`/ideas`}>
-                  Done
-                </Button>
-              </Modal.Footer>
-            </Modal>
           </Form>
 
           {error && (
@@ -248,8 +266,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               { error.message}
             </Alert>
           )}
-          {/* REVIEW: Add ui alert flash to inform user that idea has successfully been created */}
-          {successModal}
+          <Image src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="/>
         </Col>
       </Row>
     </Container>
