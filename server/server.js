@@ -28,7 +28,8 @@ const main = async () => {
 	);
   
 
-app.use('/ads', express.static(path.join(__dirname, 'uploads')));
+app.use('/ads', express.static(path.join(__dirname, 'uploads/AdImage')));
+app.use('/ideas', express.static(path.join(__dirname, 'uploads/ideaImage')))
 app.use('/avatar', express.static(path.join(__dirname, 'avatarImages')));
 	// Swagger config
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
