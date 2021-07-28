@@ -44,32 +44,99 @@ export const getSingleIdea = async (ideaId: string) => {
 
 export const postCreateIdea = async (ideaData: ICreateIdeaInput, banned: boolean, token: string | null) => {
   // Parse data and data checking
-  const { categoryId, title, description, segmentId, subSegmentId} = ideaData;
-  const parsedCatId = Number(categoryId);
-  const parsedSegId = Number(segmentId);
-  const parsedSubId = Number(subSegmentId);
+  const { categoryId, title, description, segmentId, subSegmentId,communityImpact,natureImpact,artsImpact,energyImpact,manufacturingImpact,address,geo,imagePath} = ideaData;
+  // const parsedCatId = Number(categoryId);
+  // const parsedSegId = Number(segmentId);
+  // const parsedSubId = Number(subSegmentId);
 
-  if (!parsedCatId || !title || !description) {
+  if (!categoryId || !title || !description) {
     throw new Error('You must choose a category, define a title, and description of your idea.');
+  }
+
+  if(!segmentId&&!subSegmentId){
+    throw new Error('You must provide a segmentId or subSegmentId. ');
   }
 
   if (!token) {
     throw new Error('Your session has expired. Please relogin and try again.');
   }
 
-  const parsedPayload = {
+  let formBody = new FormData;
+
+  formBody.append('categoryId', categoryId.toString());
+
+  formBody.append('title', title);
+
+  formBody.append('description',description);
+
+  if(segmentId){
+    formBody.append('segmentId',segmentId.toString());
+  }
+
+  if(subSegmentId){
+    formBody.append('subSegmentId',subSegmentId.toString());
+  }
+
+  if(communityImpact){
+    formBody.append('communityImpact',communityImpact);
+  }
+
+  if(natureImpact){
+    formBody.append('natureImpact',natureImpact);
+  }
+
+  if(artsImpact){
+    formBody.append('artsImpact',artsImpact);
+  }
+
+  if(energyImpact){
+    formBody.append('energyImpact',energyImpact);
+  }
+
+  if(manufacturingImpact){
+    formBody.append('manufacturingImpact',manufacturingImpact);
+  }
+
+  if(address){
+    formBody.append('addressData',JSON.stringify(address));
+  }
+
+  if(geo){
+    formBody.append('geo',JSON.stringify(geo));
+  }
+
+  if(imagePath){
+    formBody.append('imagePath',imagePath[0]);
+  }
+
+  const res = await axios({
+    method: "post",
+    url: `${API_BASE_URL}/idea/create`,
+    data: formBody,
+    headers: { "Content-Type": "multipart/form-data", "x-auth-token": token, "Access-Control-Allow-Origin": "*" },
+    withCredentials: true
+  });
+
+  //if not success, throw error which will stop form reset
+  if(!(res.status==201 || res.status==200)){
+    throw new Error(res.data);
+  }
+  //return response data
+  return res.data;
+
+  /* const parsedPayload = {
     ...ideaData,
     categoryId: parsedCatId,
     segmentId: parsedSegId,
     subSegmentId: parsedSubId,
     banned: banned
-  }
+  } */
 
-  const res = await axios.post<IIdeaWithRelationship>(
+  /* const res = await axios.post<IIdeaWithRelationship>(
     `${API_BASE_URL}/idea/create`, 
     parsedPayload, 
     getAxiosJwtRequestOption(token)
   );
-  return res.data;
+  return res.data; */
 }
 
