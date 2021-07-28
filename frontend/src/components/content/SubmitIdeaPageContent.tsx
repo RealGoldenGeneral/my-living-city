@@ -174,7 +174,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             </Form.Group>
 
             <Form.Group>
-              <h3  className="border-bottom mb-2">Impact Areas</h3>
+              <h3  className="border-bottom mb-3">Impact Areas</h3>
               <Row className="align-items-end">
               <Col xs={11}>
               <Form.Control 
@@ -266,7 +266,6 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               { error.message}
             </Alert>
           )}
-          <Image src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="/>
         </Col>
       </Row>
     </Container>
