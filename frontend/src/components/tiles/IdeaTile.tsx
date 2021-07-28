@@ -15,8 +15,8 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     id,
     title,
     description,
-    segmentName,
-    subSegmentName,
+    // segmentName,
+    // subSegmentName,
     firstName,
     streetAddress,
     updatedAt,
@@ -26,6 +26,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
     posRatings,
     negRatings
   } = ideaData;
+  console.log(ideaData);
   return (
     // <Card style={{ width: '18rem' }}>
     <Card>
@@ -62,7 +63,7 @@ const IdeaTile: React.FC<ideaTileProps> = ({ ideaData, showFooter }) => {
       {showFooter && (
         <Card.Footer>
           <small className='text-muted user-select-none'>Updated {timeDifference(new Date(), new Date(updatedAt))}</small>
-          <small className='text-muted'>, {capitalizeFirstLetterEachWord(segmentName)}{subSegmentName ? ` at ${capitalizeFirstLetterEachWord(subSegmentName)}`: ""}</small>
+          {/* <small className='text-muted'>, {capitalizeFirstLetterEachWord(segmentName)}{subSegmentName ? ` at ${capitalizeFirstLetterEachWord(subSegmentName)}`: ""}</small> */}
           {/* <small className='text-muted'>-- {firstName}@{streetAddress}</small> */}
         </Card.Footer>
       )}

@@ -15,5 +15,6 @@ export interface ICreateIdeaInput {
   	geo?: IGeoInput;
 	segmentId?: number;
 	subSegmentId?: number;
+	superSegmentId?: number;
 	imagePath?: any;
 }

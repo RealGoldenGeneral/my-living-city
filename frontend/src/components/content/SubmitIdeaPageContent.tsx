@@ -1,21 +1,21 @@
-import { Formik, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert, Modal } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert, Image } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom';
-import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
+// import { getUserHomeSegmentInfo, getUserSchoolSegmentInfo, getUserWorkSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { API_BASE_URL } from 'src/lib/constants';
-import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
+import { ISegment, ISegmentData, ISubSegment } from 'src/lib/types/data/segment.type';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateIdea } from '../../lib/api/ideaRoutes';
 import { ICategory } from '../../lib/types/data/category.type';
 import { ICreateIdeaInput } from '../../lib/types/input/createIdea.input';
 import { IFetchError } from '../../lib/types/types';
 import { capitalizeFirstLetterEachWord, capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
+import { CONTENT, Toastie } from '../partials/LandingContent/CategoriesSection';
 import ImageUploader from 'react-images-upload';
-
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
-  segData: any;
+  segData: ISegmentData[];
 }
 
 /**
@@ -29,31 +29,24 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [successModal, setSuccessModal] = useState(false);
-  const handleClose = () => setSuccessModal(false);
-  const [location, setLocation] = useState('Home');
-  const [segment, setSegment] = useState<ISegment | undefined>(segData.segment);
-  const [subSegment, setSubSegment] = useState<ISubSegment | undefined>(segData.subSegment);
   const history = useHistory();
-  const getSegData = async (location: string) => {
-    let data: any;
-    if(location === 'Resident'){
-      data = await getUserHomeSegmentInfo(token);
-    }else if(location === 'Worker'){
-      data = await getUserWorkSegmentInfo(token);
-    }else if (location === 'Student'){
-      data = await getUserSchoolSegmentInfo(token);
+  const handleCommunityChange = (index: number) => {
+    if(segData[index].segType === 'Segment') {
+      formik.setFieldValue('segmentId',segData[index].id);
+      formik.setFieldValue('superSegmentId',undefined);
+      formik.setFieldValue('subSegmentId',undefined);
     }
-    
-    if(data.segment){
-      setSegment(data.segment)
-    }else{
-      setSegment(undefined);
+    if(segData[index].segType === 'Sub-Segment') {
+      formik.setFieldValue('subSegmentId',segData[index].id);
+      formik.setFieldValue('superSegmentId',undefined);
+      formik.setFieldValue('segmentId',undefined);
     }
-    if(data.subSegment){
-      setSubSegment(data.subSegment);
-    }else{
-      setSubSegment(undefined);
+    if(segData[index].segType === 'Super-Segment'){
+      formik.setFieldValue('superSegmentId',segData[index].id);
+      formik.setFieldValue('subSegmentId',undefined);
+      formik.setFieldValue('segmentId',undefined);
     }
+    formik.setFieldValue('userType', segData[index].userType);
   }
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
@@ -62,66 +55,31 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
-      setSuccessModal(true);
-      // if(user){
-      //   if(user.banned === true){
-      //     setError({message:'You have been banned'});
-      //     throw error;
-      //   }
-      // }
       const res = await postCreateIdea(values, user!.banned, token);
       console.log(res);
 
       setError(null);
-      history.push('/ideas/'+res?.id);
-      // formik.resetForm();
+      history.push('/ideas/'+res.id);
+      formik.resetForm();
     } catch (error) {
       const genericMessage = 'An error occured while trying to create an Idea.';
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setSuccessModal(false);
       setError(errorObj);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
+      // setSuccessModal(true);
     }
   }
-
-  // const formik = useFormik<ICreateIdeaInput>({
-  //   initialValues: {
-  //     // TODO: CatId when chosen is a string
-  //     categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
-  //     title: '',
-  //     userType: 'Resident',
-  //     description: '',
-  //     imagePath: '', // able to send data
-  //     artsImpact: '',
-  //     communityImpact: '',
-  //     energyImpact: '',
-  //     manufacturingImpact: '',
-  //     natureImpact: '',
-  //     address: {
-  //       streetAddress: '',
-  //       streetAddress2: '',
-  //       city: '',
-  //       postalCode: '',
-  //       country: '',
-  //     },
-  //     geo: {
-  //       lat: undefined,
-  //       lon: undefined,
-  //     },
-  //     segmentId: undefined,
-  //     subSegmentId: undefined
-  //   },
-  //   onSubmit: submitHandler
-  // })
-
-  const initialValues: ICreateIdeaInput = {
+  // console.log(segment);
+  // console.log(subSegment);
+  const formik = useFormik<ICreateIdeaInput>({
+    initialValues: {
       // TODO: CatId when chosen is a string
       categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
       title: '',
-      userType: 'Resident',
+      userType: segData ? segData[0].userType : 'Resident',
       description: '',
-      imagePath: '', // able to send data
       artsImpact: '',
       communityImpact: '',
       energyImpact: '',
@@ -139,9 +97,17 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
         lon: undefined,
       },
       segmentId: undefined,
-      subSegmentId: undefined
-  }
+      subSegmentId: undefined,
+      superSegmentId: undefined
+    },
+    onSubmit: submitHandler
+  })
+  useEffect(() => {
+    if(segData){
+      handleCommunityChange(0);
+    }
 
+  },[])
   return (
     <Container className='submit-idea-page-content'>
       <Row className='mb-4 mt-4 justify-content-center'>
@@ -149,193 +115,9 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
       </Row>
       <Row className='submit-idea-form-group justify-content-center'>
         <Col lg={10} >
-          <Formik
-            initialValues={initialValues}
-            onSubmit={(values, actions) => {submitHandler(values).then(() => {
-              actions.setSubmitting(false);
-              actions.resetForm({
-                values: {
-                  categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
-                  title: '',
-                  userType: 'Resident',
-                  description: '',
-                  imagePath: '',
-                  artsImpact: '',
-                  communityImpact: '',
-                  energyImpact: '',
-                  manufacturingImpact: '',
-                  natureImpact: '',
-                  address: {
-                    streetAddress: '',
-                    streetAddress2: '',
-                    city: '',
-                    postalCode: '',
-                    country: '',
-                  },
-                  geo: {
-                    lat: undefined,
-                    lon: undefined,
-                  },
-                  segmentId: undefined,
-                  subSegmentId: undefined
-                }
-              });
-            })
-            }}>{({errors, touched, handleSubmit, handleChange, values, setFieldValue}) => (
-              <Form onSubmit={handleSubmit}>
-              <Form.Group controlId="submitIdeaCategory">
-                <Form.Label>Select Category:</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="categoryId"
-                  onChange={handleChange}
-                  value={values.categoryId}
-                >
-                  {categories && categories.map(cat => (
-                    <option 
-                      key={String(cat.id)} 
-                      value={Number(cat.id)}
-                      style={{
-                        textTransform: 'capitalize'
-                      }}
-                    >
-                      {capitalizeString(cat.title)}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>This idea pertains to which area of interest?</Form.Label>
-                <Form.Control
-                  as='select'
-                  name='userType'
-                  onChange={(e)=>{
-                    getSegData(e.target.value);
-                    handleChange(e);
-                  }}
-                  value={values.userType}
-                > <option value={"Resident"}>Resident</option>
-                  <option value={"Worker"}>Worker</option>
-                  <option value={"Student"}>Student</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Municipality</Form.Label>
-                <Form.Control
-                  as='select'
-                  type='number'
-                  name='segmentId'//Change this
-                  onChange={handleChange}
-                  value={values.segmentId}
-                ><option>Select your Idea's municipality</option>
-                  {segment &&<option value={segment ? (Number(segment.segId)) : undefined}>{segment ? capitalizeFirstLetterEachWord(segment.name) : ''}</option>}
-                  </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Neighbourhood (optional)</Form.Label>
-                <Form.Control
-                  as='select'
-                  name='subSegmentId'
-                  onChange={handleChange}
-                  value={values.subSegmentId}
-                ><option>Select your Idea's neighbourhood</option>
-                  {subSegment && <option value={subSegment ? (Number(subSegment.id)) : undefined}>{subSegment ? capitalizeFirstLetterEachWord(subSegment.name) : ''}</option>}
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>What is the title of your idea?</Form.Label>
-                <Form.Control
-                  type='text'
-                  name='title'
-                  onChange={handleChange}
-                  value={values.title}
-                  placeholder="Enter the title of your idea"
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Describe your idea</Form.Label>
-                <Form.Control
-                  as='textarea'
-                  rows={3}
-                  name='description'
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Group>
-            
-              <Form.Group>
-                  <Form.Label>Idea image</Form.Label>
-                  <ImageUploader name="imagePath" onChange={(picture) => {setFieldValue('imagePath', picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose Your Idea Image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
-              </Form.Group>
-  
-              <Form.Group>
-                <Form.Label>How does your idea affect the community positively? (7 Petals)</Form.Label>
-                <Form.Control 
-                  className='idea-impacts'
-                  type='text'
-                  name='communityImpact'
-                  onChange={handleChange}
-                  value={values.communityImpact}
-                  placeholder='Community and Place'
-                />
-                <Form.Control 
-                  className='idea-impacts'
-                  type='text'
-                  name='natureImpact'
-                  onChange={handleChange}
-                  value={values.natureImpact}
-                  placeholder='Nature and Food Security'
-                />
-                <Form.Control 
-                  className='idea-impacts'
-                  type='text'
-                  name='artsImpact'
-                  onChange={handleChange}
-                  value={values.artsImpact}
-                  placeholder='Arts, Culture, and Education'
-                />
-                <Form.Control 
-                  className='idea-impacts'
-                  type='text'
-                  name='energyImpact'
-                  onChange={handleChange}
-                  value={values.energyImpact}
-                  placeholder='Water and Energy'
-                />
-                <Form.Control 
-                  className='idea-impacts'
-                  type='text'
-                  name='manufacturingImpact'
-                  onChange={handleChange}
-                  value={values.manufacturingImpact}
-                  placeholder='Manufacturing and Waste'
-                />
-              </Form.Group>
-              <Button
-                block
-                size="lg"
-                type='submit'
-                disabled={isLoading ? true : false}
-              >
-                {isLoading ? "Saving..." : "Submit your idea!"}
-            </Button>
-            <Modal show={successModal} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Idea Posted</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>Your idea is successfully posted</Modal.Body>
-              <Modal.Footer>
-                <Button variant="primary" onClick={handleClose} href={`/ideas`}>
-                  Done
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </Form>
-            )}
-          </Formik>
-        
-        {/* <Form onSubmit={formik.handleSubmit}>
+          <Form onSubmit={formik.handleSubmit}>
             <Form.Group controlId="submitIdeaCategory">
+              <h3 className="border-bottom mb-3">Idea Details</h3>
               <Form.Label>Select Category:</Form.Label>
               <Form.Control
                 as="select"
@@ -357,42 +139,18 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
               </Form.Control>
             </Form.Group>
             <Form.Group>
-              <Form.Label>This idea pertains to which area of interest?</Form.Label>
-              <Form.Control
-                as='select'
-                name='userType'
-                onChange={(e)=>{
-                  getSegData(e.target.value);
-                  formik.handleChange(e);
-                }}
-                value={formik.values.userType}
-              > <option value={"Resident"}>Resident</option>
-                <option value={"Worker"}>Worker</option>
-                <option value={"Student"}>Student</option>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Municipality</Form.Label>
+              <Form.Label>Select your community of interest</Form.Label>
               <Form.Control
                 as='select'
                 type='number'
-                name='segmentId'//Change this
-                onChange={formik.handleChange}
-                value={formik.values.segmentId}
-              ><option>Select your Idea's municipality</option>
-                {segment &&<option value={segment ? (Number(segment.segId)) : undefined}>{segment ? capitalizeFirstLetterEachWord(segment.name) : ''}</option>}
+                onChange={(e)=>handleCommunityChange(Number(e.target.value))}
+              >
+                {segData && segData.map((seg, index) => (
+                  <option key={String(seg.name)} value={index}>
+                    {capitalizeString(seg.name)}
+                  </option>
+                ))}
                 </Form.Control>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Neighbourhood (optional)</Form.Label>
-              <Form.Control
-                as='select'
-                name='subSegmentId'
-                onChange={formik.handleChange}
-                value={formik.values.subSegmentId}
-              ><option>Select your Idea's neighbourhood</option>
-                {subSegment && <option value={subSegment ? (Number(subSegment.id)) : undefined}>{subSegment ? capitalizeFirstLetterEachWord(subSegment.name) : ''}</option>}
-              </Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>What is the title of your idea?</Form.Label>
@@ -414,14 +172,14 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.description}
               />
             </Form.Group>
-          
-            <Form.Group controlId="validateimagePath">
-                <Form.Label>Idea image</Form.Label>
-                <ImageUploader name="imagePath" onChange={(imagePhoto) => {setFieldValue('imagePath', imagePhoto)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose Your Idea Image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
-            </Form.Group>
-
             <Form.Group>
-              <Form.Label>How does your idea affect the community positively? (7 Petals)</Form.Label>
+                  <Form.Label>Idea image</Form.Label>
+                  <ImageUploader name="imagePath" onChange={(picture)=>formik.setFieldValue('imagePath',picture)} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose Your Idea Image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
+            </Form.Group>
+            <Form.Group>
+              <h3  className="border-bottom mb-3">Impact Areas</h3>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -430,6 +188,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.communityImpact}
                 placeholder='Community and Place'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.community.header} subHeader={CONTENT.community.subHeader} body={CONTENT.community.body} img="/categories/MLC-Icons-Green-05.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -438,6 +203,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.natureImpact}
                 placeholder='Nature and Food Security'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.nature.header} subHeader={CONTENT.nature.subHeader} body={CONTENT.nature.body} img="/categories/MLC-Icons-Green-01.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -446,6 +218,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.artsImpact}
                 placeholder='Arts, Culture, and Education'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.arts.header} subHeader={CONTENT.arts.subHeader} body={CONTENT.arts.body} img="/categories/MLC-Icons-Green-04.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -454,6 +233,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.energyImpact}
                 placeholder='Water and Energy'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.water.header} subHeader={CONTENT.water.subHeader} body={CONTENT.water.body} img="/categories/MLC-Icons-Green-02.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
+              <Row className="align-items-end">
+              <Col xs={11}>
               <Form.Control 
                 className='idea-impacts'
                 type='text'
@@ -462,6 +248,11 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
                 value={formik.values.manufacturingImpact}
                 placeholder='Manufacturing and Waste'
               />
+              </Col>
+              <Col>
+              <a href="javascript:void(0)"><Toastie header={CONTENT.manufacturing.header} subHeader={CONTENT.manufacturing.subHeader} body={CONTENT.manufacturing.body} img="/categories/MLC-Icons-Green-03.png" sizePercent="90%"/></a>
+              </Col>
+              </Row>
             </Form.Group>
             <Button
               block
@@ -471,27 +262,13 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             >
               {isLoading ? "Saving..." : "Submit your idea!"}
           </Button>
-          <Modal show={successModal} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Idea Posted</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Your idea is successfully posted</Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" onClick={handleClose} href={`/ideas`}>
-                Done
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </Form> */}
-          
+          </Form>
 
           {error && (
             <Alert variant='danger' className="error-alert">
               { error.message}
             </Alert>
           )}
-          {/* REVIEW: Add ui alert flash to inform user that idea has successfully been created */}
-          {successModal}
         </Col>
       </Row>
     </Container>
