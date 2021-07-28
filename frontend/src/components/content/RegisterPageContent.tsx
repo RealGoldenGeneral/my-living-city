@@ -45,16 +45,6 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
     const [schoolTransfer, transferWorkToSchool] = useState(false);
-    // const refactorSubIds = (index: number, id: number | null) => {
-    //     let ids = [...subIds];
-    //     ids[index] = id;
-    //     setSubIds(ids);
-    // }
-    // const refactorSegIds = (index: number, segId: number) => {
-    //     let ids = [...segIds];
-    //     ids[index] = segId;
-    //     setSegIds(ids);
-    // }
     const displaySubSegList = (id: number) => {
             if(subSegments && subSegments[0].segId === id){
                 return (subSegments?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
@@ -63,22 +53,6 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }  
     }
-    // useEffect(()=>{
-    //     //This allows the first click on the map to update the markers variables in the step handler functions.
-    // },[markers])
-    // async function test(){
-    //     const data = {
-    //         userId: "ckqiefm5x0003zcv19le44ywr",
-    //         country: "Canada",
-    //         province: "British Columbia",
-    //         segmentName: "Victoriatest",
-    //         subSegmentName: "Vesttesttest"
-    //     }
-    //     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiY2txaWVmbTV4MDAwM3pjdjE5bGU0NHl3ciIsImVtYWlsIjoidGVzdHlAZ21haWwuY29tIn0sImlhdCI6MTYyNDk5MjI1NywiZXhwIjoxNjI3NTg0MjU3fQ.CaFPL8XzKIeu6wKUY9mQWjYBLRVFBY7ohQPe0belDx8";
-    //     postUserSegmentRequest(data, token);
-    // }
-    // test();
-    // console.log(segmentRequests);
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
@@ -301,7 +275,15 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                        <h3>Privacy Policy (temp test page)</h3>
+                        <p>It takes a lot to bring an idea to form, and as a user on the MLC Community Discussion Platform the following agreements will enable the interactions that turn ideas into reality:</p>
+                        <p><strong> 1. Ideas, comments and people are treated with respect;</strong></p>
+                        <p><strong> 2. Commenting on an idea is designed to flesh it out in more detail to get as much constructive feedback and viewpoints from the community.</strong></p>
+                        <p>  The following works when commenting:</p>
+                        <p className="ml-4"> a. Emphasizes what you see works about the idea and what is the value that it brings;</p>
+                        <p className="ml-4"> b. Identify areas that don’t work and suggest how they can be improved;</p>
+                        <p className="ml-4"> c. Opinions and judgments don’t add value to the conversation; and</p>
+                        <p className="ml-4"> d. Share about where else can this idea go or what new angle can be added to make even better for the whole community.</p>
+                        <p><strong> 3. Your ideas and experience is valuable and we want to hear from everyone how to make this an actual project that works in the community.</strong></p>
                         <p>By clicking next you verify that MyLivingCity has the right to store your personal information.</p>
                 </FormikStep>
 
@@ -364,6 +346,8 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             case 3:
                 return "School Location"
             case 4:
+                return "Privacy Policy"
+            case 5:
                 return "Submit"
             default:
                 return ""
@@ -381,7 +365,8 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     const handleBackButton = () => {
         if(step % 2 !== 0){
             setInferStep(s=>s-1);
-        } 
+        }
+        if(isLastStep()) setInferStep(s=>s-1);
         if(step===7 && markers.school.lat === null){
             setStep(s=>s-2);
         }else if(step === 5 && markers.work.lat === null){
@@ -390,7 +375,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             setStep(s=>s-1);
         }
     }
-
+    console.log(step, inferStep);
     //This function calls the google api to receive data on the map location
     //The data is then searched in the back end for a matching segment
     //Then the back end is searched for all the sub-segments of that matching segment.
@@ -518,6 +503,7 @@ return(
             helpers.setFieldValue('schoolSubSegmentId', subIds[2] || null);
             helpers.setFieldValue('schoolSegmentId', segIds[2] || null);
             setStep(s=>s+1);
+            setInferStep(s=>s+1);
         }else{
             setStep(s=>s+1);
             setInferStep(s=>s+1);
@@ -535,6 +521,7 @@ return(
         {title: 'Home Location'}, 
         {title: 'Work Location'},
         {title: 'School Location'},
+        {title: 'Privacy Policy'},
         {title: 'Submit'}] } 
         activeStep={ inferStep }
         circleTop={0}
@@ -546,7 +533,9 @@ return(
         />
     </div>
     <Card>
-    <h2 className="ml-3 mt-4">{getStepHeader(inferStep)}</h2>
+    <Card.Header>
+    <h3>{getStepHeader(inferStep)}</h3>
+    </Card.Header>
     <Card.Body>   
     <Form>
         
