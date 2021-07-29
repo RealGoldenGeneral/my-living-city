@@ -28,12 +28,13 @@ export default function Header() {
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='ml-auto'>
             <Nav.Link href='/'>Home</Nav.Link>
-            <Nav.Link href='/ideas'>Ideas</Nav.Link>
+            <Nav.Link href='/ideas'>Conversations</Nav.Link>
             {user ? (
               <>
                 {/* <Navbar.Text> Fake Name</Navbar.Text> */}
                 <Nav.Link href='/submit'>Submit Idea</Nav.Link>
                 <Nav.Link href='/profile'>Profile</Nav.Link>
+
                 {user.userType ==="ADMIN" &&
                 <NavDropdown title="Admin Tools" id="nav-dropdown">
                 <Nav.Link href='/advertisement/all'>Ads</Nav.Link>
@@ -46,7 +47,10 @@ export default function Header() {
                 <Nav.Link href='/segment/management'>Segments</Nav.Link>
               </NavDropdown>
                 }
-                
+                {user.userType ==="MOD" &&
+                <NavDropdown title="Mod Tools" id="nav-dropdown">
+              </NavDropdown>
+                }
                 <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">Help</Nav.Link>
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
               </>

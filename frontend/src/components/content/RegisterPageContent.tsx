@@ -1,8 +1,7 @@
 import {Alert, Button, Card} from 'react-bootstrap';
 import {Form as BForm} from 'react-bootstrap';
 import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
-import React, { useContext, useEffect, useState } from 'react';
-import { IUserRole } from 'src/lib/types/data/userRole.type';
+import React, { useContext, useState } from 'react';
 import SimpleMap from '../map/SimpleMap';
 import { capitalizeFirstLetterEachWord, capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
 import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
@@ -13,14 +12,10 @@ import '../../../src/scss/ui/_other.scss';
 import { IFetchError } from '../../lib/types/types';
 import { searchForLocation } from 'src/lib/api/googleMapQuery';
 import { getUserWithEmail, postRegisterUser } from 'src/lib/api/userRoutes';
-import { postUserSegmentInfo } from 'src/lib/api/userSegmentRoutes';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
-import { postUserSegmentRequest } from 'src/lib/api/userSegmentRequestRoutes';
-import { BsForwardFill } from 'react-icons/bs';
-import { postAvatarImage } from 'src/lib/api/avatarRoutes';
-
+import ImageUploader from 'react-images-upload';
 interface RegisterPageContentProps {
 }
 
@@ -39,7 +34,7 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const [subSegments2, setSubSegments2] = useState<ISubSegment[]>();
     const [subIds, setSubIds] = useState<any[]>([]);
     const [segIds, setSegIds] = useState<any[]>([]);
-    const [selectedFile, setSelectedFile] = useState();
+    const [avatar, setAvatar] = useState(undefined);
     const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
@@ -95,23 +90,18 @@ return (
                 subIds={subIds}
                 workTransfer={workTransfer}
                 schoolTransfer={schoolTransfer}
+                avatar={avatar}
                 onSubmit={async(values,helpers)=>{
                     // const {email, password, confirmPassword} = values;
                     try {
+                        console.log(values);
                         setIsLoading(true);
-                        const { token, user } = await postRegisterUser(values, segmentRequests);
-                        // console.log(token);
-                        // if(segmentRequests.length > 0){
-                        //     postUserSegmentRequest(segmentRequests, token);
-                        // }
-                        //await postUserSegmentInfo(values, token);
+                        const { token, user } = await postRegisterUser(values, segmentRequests, avatar);
                         storeUserAndTokenInLocalStorage(token, user);
                         storeTokenExpiryInLocalStorage();
                         setToken(token);
                         setUser(user);
                         // await postAvatarImage(selectedFile, token);
-                        //PLACEHOLDER//
-                        //For segment request functionality.
                         } catch (error) {
                             console.log(error);
                             wipeLocalStorage();
@@ -155,6 +145,13 @@ return (
                         <Field required name="lname" type="text" as={BForm.Control}/>
                     </BForm.Group>
                     <BForm.Group>
+                        <Field name="imagePath" type="file" fileContainerStyle={{backgroundColor: "#F8F9FA"}}
+                        withPreview={true} onChange={(pic:any)=>setAvatar(pic[0])} imgExtension={['.jpg','.jpeg','.png','.webp']} 
+                        buttonText="Select Idea Image" maxFileSize={10485760} label={"Max file size 10mb, \n jpg, jpeg, png, webp"} 
+                        singleImage={true} as={ImageUploader}/>
+                        {/* <ImageUploader name="imagePath" fileContainerStyle={{backgroundColor: "#F8F9FA"}}withPreview={true} onChange={pic=>console.log(pic)} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Select Idea Image" maxFileSize={10485760} label={"Max file size 10mb, \n jpg, jpeg, png, webp"} singleImage={true}/> */}
+                    </BForm.Group>
+                    <BForm.Group>
                         <BForm.Label>Street Name</BForm.Label>
                         <Field required name="address.streetAddress" type="text" as={BForm.Control}/>
                     </BForm.Group>
@@ -165,8 +162,7 @@ return (
                     <BForm.Group>
                         <BForm.Label>ZIP / Postal Code</BForm.Label>
                         <Field name="address.postalCode" type="text" as={BForm.Control}/>
-                    </BForm.Group>
-                    
+                    </BForm.Group>             
                     
                 </FormikStep>
 
@@ -321,8 +317,9 @@ export interface FormikStepperProps extends FormikConfig<IRegisterInput> {
     subIds: any;
     workTransfer: boolean;
     schoolTransfer: boolean;
+    avatar: any;
 }
-export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, ...props }: FormikStepperProps) {
+export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, avatar, ...props }: FormikStepperProps) {
     const childrenArray = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[];
     const [step, setStep] = useState(0);
     const [inferStep, setInferStep]=useState(0);
@@ -375,7 +372,6 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             setStep(s=>s-1);
         }
     }
-    console.log(step, inferStep);
     //This function calls the google api to receive data on the map location
     //The data is then searched in the back end for a matching segment
     //Then the back end is searched for all the sub-segments of that matching segment.
@@ -502,6 +498,7 @@ return(
             helpers.setFieldValue('workSegmentId', segIds[1] || null);
             helpers.setFieldValue('schoolSubSegmentId', subIds[2] || null);
             helpers.setFieldValue('schoolSegmentId', segIds[2] || null);
+            helpers.setFieldValue('imagePath', avatar);
             setStep(s=>s+1);
             setInferStep(s=>s+1);
         }else{
