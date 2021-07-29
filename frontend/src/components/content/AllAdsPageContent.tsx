@@ -79,7 +79,7 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
                 <td>{item.adTitle}</td>
                 <td>{item.adType}</td>
                 <td>{item.ownerId}</td>
-                <td><img alt="" src={`${API_BASE_URL}/ads/${(item.imagePath).substring(15)}`}></img></td>
+                <td><img alt="" src={`${API_BASE_URL}/${(item.imagePath)}`}></img></td>
                 <td>{moment(item.duration).format('YYYY-MM-DD HH:mm:ss')}</td>
                 <td>{item.adPosition}</td>
                 <td><a href={item.externalLink}>{item.externalLink}</a></td>

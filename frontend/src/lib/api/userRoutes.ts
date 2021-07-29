@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "../constants";
 import { IUser } from "../types/data/user.type";
 import { IRegisterInput, IUserRegisterData, IUserSegmentRequest } from "../types/input/register.input";
+import { postAvatarImage } from "./avatarRoutes";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 export interface LoginData {
   email: string;
@@ -76,7 +77,7 @@ export const getUserWithJWTVerbose = async ({ jwtAuthToken }: GetUserWithJWTInpu
   );
   return res.data;
 }
-export const postRegisterUser = async(registerData: IRegisterInput, requestData:IUserSegmentRequest[]): Promise<LoginResponse> => {
+export const postRegisterUser = async(registerData: IRegisterInput, requestData:IUserSegmentRequest[], avatar: any): Promise<LoginResponse> => {
   const { 
     email, 
     password, 
@@ -103,7 +104,6 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
   if (password !== confirmPassword) {
     throw new Error("Both your passwords must match. Please ensure both passwords match to register.")
   }
-
   const request = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo});
   const request2 = await axios({
     method: "post",
@@ -146,8 +146,8 @@ if(requestData){
     })
 }
 }
-    
-axios.all([request, request2, request3, request4, request5]).then((...responses)=>{
+const request6 = await postAvatarImage(avatar, request.data.token);
+axios.all([request, request2, request3, request4, request5, request6]).then((...responses)=>{
   console.log(responses);
 })
 return request.data;
