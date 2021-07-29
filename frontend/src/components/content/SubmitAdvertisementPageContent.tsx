@@ -134,7 +134,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             </Form.Group>
             <Form.Group controlId="validateimagePath">
               {/*Need a specific info for image size here*/}
-              <ImageUploader name="imagePath" onChange={(picture) => {setFieldValue('imagePath',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
+              <ImageUploader name="imagePath" withPreview={true} onChange={(picture) => {setFieldValue('imagePath',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
               <Form.Control.Feedback type="invalid">{errors.imagePath}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
