@@ -123,7 +123,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
             </Form.Group>
 
-            { String(values.adType) === "BASIC" 
+            {String(values.adType) === "BASIC" 
             ? 
             <>
               <Form.Group controlId="validateDuration">
@@ -182,7 +182,6 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               {error.message}
             </Alert>
           )}
-          {successModal}
         </Col>
       </Row>
       </Container>
