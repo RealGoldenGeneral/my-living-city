@@ -15,6 +15,10 @@ userSegmentRouter.post(
             let errorMessage = '';
             let errorStack = '';
 
+            let homeSuperSegId,workSuperSegId,schoolSuperSegId;
+            let homeSuperSegName = '';
+            let workSuperSegName = '';
+            let schoolSuperSegName = '';
             let homeSegmentName = '';
             let workSegmentName = '';
             let schoolSegmentName = '';
@@ -51,6 +55,10 @@ userSegmentRouter.post(
                         errorStack+='homeSegment Id must be provided with a existing segment id in the database.';
                     }else{
                         homeSegmentName=queryResult.name;
+
+                        homeSuperSegId = queryResult.superSegId;
+
+                        homeSegmentName = queryResult.superSegName;
                     }
                 }
             }
@@ -71,6 +79,10 @@ userSegmentRouter.post(
                         errorStack+='workSegment Id must be provided with a existing segment id in the database.';
                     }else{
                         workSegmentName=queryResult.name;
+
+                        workSuperSegId=queryResult.superSegId;
+
+                        workSuperSegName=queryResult.superSegName;
                     }
                 }
             }
@@ -91,6 +103,10 @@ userSegmentRouter.post(
                         errorStack+='schoolSegment Id must be provided with a existing segment id in the database.';
                     }else{
                         schoolSegmentName=queryResult.name;
+
+                        schoolSuperSegId=queryResult.superSegId;
+
+                        schoolSegmentName=queryResult.superSegName;
                     }
                 }
             }
@@ -187,6 +203,12 @@ userSegmentRouter.post(
             const result = await prisma.userSegments.create({
                 data:{
                     userId:id,
+                    homeSuperSegId:homeSuperSegId,
+                    homeSuperSegName:homeSuperSegName,
+                    workSuperSegId:workSuperSegId,
+                    workSuperSegName:workSuperSegName,
+                    schoolSuperSegId:schoolSuperSegId,
+                    schoolSuperSegName:schoolSegmentName,
                     homeSegmentId:homeSegmentId,
                     homeSegmentName:homeSegmentName,
                     workSegmentId:workSegmentId,
@@ -328,6 +350,10 @@ userSegmentRouter.put(
             let errorMessage = '';
             let errorStack = '';
 
+            let homeSuperSegId,workSuperSegId,schoolSuperSegId;
+            let homeSuperSegName = '';
+            let workSuperSegName = '';
+            let schoolSuperSegName = '';
             let homeSegmentName = '';
             let workSegmentName = '';
             let schoolSegmentName = '';
@@ -351,6 +377,9 @@ userSegmentRouter.put(
             if(exists){
                 updateId = exist.id;
 
+                homeSuperSegName = exist.homeSuperSegName;
+                workSuperSegName = exist.workSuperSegName;
+                schoolSuperSegName = exist.schoolSuperSegName;
                 homeSegmentName = exist.homeSegmentName;
                 workSegmentName = exist.workSegmentName;
                 schoolSegmentName = exist.schoolSegmentName;
@@ -375,6 +404,10 @@ userSegmentRouter.put(
                         errorStack+='homeSegment Id must be provided with a existing segment id in the database.';
                     }else{
                         homeSegmentName=queryResult.name;
+
+                        homeSuperSegId = queryResult.superSegId;
+
+                        homeSegmentName = queryResult.superSegName;
                     }
                 }
             }
@@ -395,6 +428,10 @@ userSegmentRouter.put(
                         errorStack+='workSegment Id must be provided with a existing segment id in the database.';
                     }else{
                         workSegmentName=queryResult.name;
+
+                        workSuperSegId=queryResult.superSegId;
+
+                        workSuperSegName=queryResult.superSegName;
                     }
                 }
             }
@@ -415,6 +452,10 @@ userSegmentRouter.put(
                         errorStack+='schoolSegment Id must be provided with a existing segment id in the database.';
                     }else{
                         schoolSegmentName=queryResult.name;
+
+                        schoolSuperSegId=queryResult.superSegId;
+
+                        schoolSegmentName=queryResult.superSegName;
                     }
                 }
             }
@@ -515,6 +556,12 @@ userSegmentRouter.put(
                 result = await prisma.userSegments.update({
                     where:{id:updateId},
                     data:{
+                        homeSuperSegId:homeSuperSegId,
+                        homeSuperSegName:homeSuperSegName,
+                        workSuperSegId:workSuperSegId,
+                        workSuperSegName:workSuperSegName,
+                        schoolSuperSegId:schoolSuperSegId,
+                        schoolSuperSegName:schoolSegmentName,
                         homeSegmentId:homeSegmentId,
                         homeSegmentName:homeSegmentName,
                         workSegmentId:workSegmentId,
@@ -533,6 +580,12 @@ userSegmentRouter.put(
                 result = await prisma.userSegments.create({
                     data:{
                         userId:id,
+                        homeSuperSegId:homeSuperSegId,
+                        homeSuperSegName:homeSuperSegName,
+                        workSuperSegId:workSuperSegId,
+                        workSuperSegName:workSuperSegName,
+                        schoolSuperSegId:schoolSuperSegId,
+                        schoolSuperSegName:schoolSegmentName,
                         homeSegmentId:homeSegmentId,
                         homeSegmentName:homeSegmentName,
                         workSegmentId:workSegmentId,
