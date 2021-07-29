@@ -144,6 +144,12 @@ model UserSegments {
   id                   String        @id @default(cuid())
   userId               String        @map("user_id")
   user                 User?         @relation(fields: [userId], references: [id])
+  homeSuperSegId       Int?          @map("home_super_segment_id")
+  homeSuperSegName     String?       @map("home_super_segment_name")
+  workSuperSegId       Int?          @map("work_super_segment_id")
+  workSuperSegName     String?       @map("work_super_segment_name")
+  schoolSuperSegId     Int?          @map("school_super_segment_id")
+  schoolSuperSegName   String?       @map("school_super_segment_name")
   homeSegmentId        Int?          @map("home_segment_id")
   homeSegmentName      String?       @map("home_segment_name")
   workSegmentId        Int?          @map("work_segment_id")
@@ -156,6 +162,9 @@ model UserSegments {
   workSubSegmentName   String?       @map("work_sub_segment_name")
   schoolSubSegmentId   Int?          @map("school_sub_segment")
   schoolSubSegmentName String?       @map("school_sub_segment_name")
+  homeSuperSeg         SuperSegment? @relation("homeSuperSeg", fields: [homeSuperSegId], references: [superSegId])
+  workSuperSeg         SuperSegment? @relation("workSuperSeg", fields: [workSuperSegId], references: [superSegId])
+  schoolSuperSeg       SuperSegment? @relation("schoolSuperSeg", fields: [schoolSuperSegId], references: [superSegId])
   homeSegment          Segments?     @relation("homeSegment", fields: [homeSegmentId], references: [segId])
   workSegment          Segments?     @relation("workSegment", fields: [workSegmentId], references: [segId])
   schoolSegment        Segments?     @relation("schoolSegment", fields: [schoolSegmentId], references: [segId])
@@ -399,9 +408,12 @@ model SuperSegment {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime? @default(now()) @updatedAt @map("updated_at")
 
-  Segments Segments[]
+  Segments           Segments[]
+  Idea               Idea[]
+  homeUserSegments   UserSegments[] @relation("homeSuperSeg")
+  workUserSegments   UserSegments[] @relation("workSuperSeg")
+  schoolUserSegments UserSegments[] @relation("schoolSuperSeg")
   @@map("super_segment")
-  Idea Idea[]
 }
 
 model Segments {

@@ -70,6 +70,10 @@ ideaRouter.post(
   
         // passport middleware provides this based on JWT
         const { email, id} = req.user;
+
+        const theUserSegment = await prisma.userSegments.findFirst({where:{userId:id}});
+
+        const {homeSuperSegId,workSuperSegId,schoolSuperSegId,homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = theUserSegment;
   
         //Image path holder
         let imagePath = '';
@@ -127,12 +131,16 @@ ideaRouter.post(
             error+='Sub segment id must be valid.';
             errorMessage+='Creating an idea must explicitly be supplied with a valid "subSegmentId" field.';
             errorStack+='"subSegmentId" must be provided with a valid id found in the database.';
-          }else{
+          }else if(subSegmentId==homeSubSegmentId||subSegmentId==workSubSegmentId||subSegmentId==schoolSegmentId){
             segmentId = theSubSegment.segId;
 
             const theSegment = await prisma.segments.findUnique({where:{segId:segmentId}});
 
             superSegmentId = theSegment.superSegId;
+          }else{
+            error+='You must belongs to the subSemgent you want to post to. ';
+            errorMessage+='Your subsegment ids don\'t match the subsegment id you porvided. ';
+            errorStack+='User does\'t belongs to the subsegment he/she wants to post idea to. '
           }
         }else if(isInteger(segmentId)){
           const theSegment = await prisma.segments.findUnique({where:{segId:segmentId}});
@@ -141,8 +149,12 @@ ideaRouter.post(
             error+='An Idea must belong to a municipality.';
             errorMessage+='Creating an idea must explicitly be supplied with a valid "segmentId" field.';
             errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
-          }else{
+          }else if(segmentId==homeSegmentId||segmentId==workSegmentId||segmentId==schoolSegmentId){
             superSegmentId = theSegment.superSegId;
+          }else{
+            error+='You must belongs to the semgent you want to post to. ';
+            errorMessage+='Your segment ids don\'t match the segment id you porvided. ';
+            errorStack+='User does\'t belongs to the segment he/she wants to post idea to. '
           }
         }else if(isInteger(superSegmentId)){
           const theSuperSegment = await prisma.superSegment.findUnique({where:{superSegId:superSegmentId}});
@@ -151,6 +163,10 @@ ideaRouter.post(
             error+='An Idea must belong to a area.';
             errorMessage+='Creating an idea must explicitly be supplied with a valid "superSegmentId" field.';
             errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
+          }else if(superSegmentId!=homeSuperSegId&&superSegmentId!=workSuperSegId&&superSegmentId!=schoolSegmentId){
+            error+='You must belongs to the superSemgent you want to post to. ';
+            errorMessage+='Your subsegment ids don\'t match the superSegment id you porvided. ';
+            errorStack+='User does\'t belongs to the superSegment he/she wants to post idea to. '
           }
         }else{
           error+='An idea must belongs to a area';
