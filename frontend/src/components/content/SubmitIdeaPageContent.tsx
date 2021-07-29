@@ -13,6 +13,8 @@ import { IFetchError } from '../../lib/types/types';
 import { capitalizeFirstLetterEachWord, capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
 import { CONTENT, Toastie } from '../partials/LandingContent/CategoriesSection';
 import ImageUploader from 'react-images-upload';
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 interface SubmitIdeaPageContentProps {
   categories: ICategory[] | undefined
   segData: ISegmentData[];
@@ -28,6 +30,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
+  const [crop, setCrop] = useState({aspect:16/9});
   const history = useHistory();
   const handleCommunityChange = (index: number) => {
     if(segData[index].segType === 'Segment') {
@@ -171,7 +174,10 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({ categorie
             </Form.Group>
             <Form.Group>
                   <Form.Label>Idea image</Form.Label>
-                  <ImageUploader name="imagePath" onChange={(picture)=>formik.setFieldValue('imagePath',picture)} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose Your Idea Image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
+                  <ImageUploader name="imagePath" fileContainerStyle={{backgroundColor: "#F8F9FA"}}withPreview={true} onChange={(picture)=>{
+                    formik.setFieldValue('imagePath',picture);
+                    console.log(picture);
+                    }} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Select Idea Image" maxFileSize={10485760} label={"Max file size 10mb, \n jpg, jpeg, png, webp"} singleImage={true}/>
             </Form.Group>
             <Form.Group>
               <h3  className="border-bottom mb-3">Impact Areas</h3>

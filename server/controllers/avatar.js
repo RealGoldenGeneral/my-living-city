@@ -8,7 +8,7 @@ const multer = require('multer');
 //multer storage policy, including file destination and file naming policy
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,'./avatarImages');
+        cb(null,'./uploads/avatarImages');
     },
     filename: function (req, file, cb) {
       cb(null,Date.now() + '-' + file.originalname);
@@ -69,6 +69,7 @@ avatarRouter.get(
         if(req.file){
             //console.log(req.file);
             imagePath = req.file.path;
+            console.log(imagePath);
         }
         upload(req, res, function (error) {
           if(error){
