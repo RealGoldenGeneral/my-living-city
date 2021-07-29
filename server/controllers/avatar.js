@@ -30,7 +30,7 @@ const upload = multer({
   storage:storage,
   limits:{fileSize:maxFileSize},
   fileFilter:theFileFilter
-}).single("image");
+}).single("avatar");
 
 //make this get the userId and add it to the image name;
 avatarRouter.get(
@@ -62,35 +62,48 @@ avatarRouter.get(
     '/image',
     passport.authenticate('jwt',{session:false}),
     async (req, res, next) => {
-      
-      try {
+      upload(req, res, async function(err){
+        const {email,id} = req.user;
+
+        const theUser = await prisma.user.findUnique({where:{id:id}});
+
+        const originalPath = theUser.imagePath;
+        //multer error handling method
+        let error = '';
+        let errorMessage = '';
+        let errorStack = '';
+        if(err){
+            console.log(err);
+            error+=err+' ';
+            errorMessage+=err+' ';
+            errorStack+=err+' ';
+
+            return res.status(400).json(err);
+        };
+        
         let imagePath = '';
-        //if there's req.file been parsed by multer
-        if(req.file){
-            //console.log(req.file);
-            imagePath = req.file.path;
-            console.log(imagePath);
-        }
-        upload(req, res, function (error) {
-          if(error){
-            throw error;
-          }
-      });
-        const{id}=req.user;
-        const result = await prisma.user.update({
-          where: { id:id},
-          data: {imagePath:imagePath}
-        });
-        res.status(200).json(result);
-      } catch (error) {
-          res.status(400).json({
-            message: error.message,
-            details: {
-              errorMessage: error.message,
-              errorStack: error.stack,
-            }
+
+        if(!req.file){
+          return res.status(400).json({
+            message: 'The image in the request body are missing. '
           });
-      }
+        }else{
+          imagePath = req.file.path;
+        }
+
+        const result = await prisma.user.update({
+          where:{id:id},
+          data:{
+            imagePath:imagePath
+          }
+        });
+
+        if(fs.existsSync(originalPath)){
+          fs.unlinkSync(originalPath);
+        }
+
+        res.status(200).json(result);
+      })
     }
   )
   
