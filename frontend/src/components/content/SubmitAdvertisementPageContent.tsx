@@ -122,11 +122,25 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="validateDuration">
+
+            { String(values.adType) === "BASIC" 
+            ? 
+            <>
+              <Form.Group controlId="validateDuration">
+              <Form.Label>Advertisement Duration in Days</Form.Label>
+              <Form.Control type="number" name="duration" size="sm" placeholder="No expiration" disabled/>
+              </Form.Group>
+            </>
+            :
+            <>
+              <Form.Group controlId="validateDuration">
               <Form.Label>Advertisement Duration in Days</Form.Label>
               <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} placeholder="Your advertisement duration" isInvalid={!!errors.duration}/>
               <Form.Control.Feedback type="invalid">{errors.duration}</Form.Control.Feedback>
-            </Form.Group>
+              </Form.Group>
+            </>
+            }
+
             <Form.Group controlId="validateExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
               <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Your external link" isInvalid={!!errors.externalLink}/>
