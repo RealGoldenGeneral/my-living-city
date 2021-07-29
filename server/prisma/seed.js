@@ -80,27 +80,22 @@ async function main() {
     ))
 	); */
 
-	const createSuperSegment = await Promise.all(
-		defaultSuperSegment.map(({superSegId,name,country,province}) => (
-			prisma.superSegment.upsert({
-				where:{
-					superSegId:superSegId
-				},
-				update:{
-					superSegId:superSegId,
-					name:name,
-					country:country,
-					province:province
-				},
-				create:{
-					superSegId:superSegId,
-					name:name,
-					country:country,
-					province:province
-				}
-			})
-		))
-	);
+	const createSuperSegment = await prisma.superSegment.upsert({
+			where:{
+				superSegId:defaultSuperSegment[0].superSegId
+			},
+			update:{
+				superSegId:defaultSuperSegment[0].superSegId,
+				name:defaultSuperSegment[0].name,
+				country:defaultSuperSegment[0].country,
+				province:defaultSuperSegment[0].province
+			},
+			create:{
+				name:defaultSuperSegment[0].name,
+				country:defaultSuperSegment[0].country,
+				province:defaultSuperSegment[0].province
+			}
+	});
 	
 	const victoriaSegment = await prisma.segments.upsert({
 		where:{segId:defaultSegments[0].segId},
