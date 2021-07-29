@@ -30,7 +30,7 @@ const upload = multer({
   storage:storage,
   limits:{fileSize:maxFileSize},
   fileFilter:theFileFilter
-}).single("image");
+}).single("imagePath");
 
 //make this get the userId and add it to the image name;
 avatarRouter.get(
