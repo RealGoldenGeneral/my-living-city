@@ -24,7 +24,7 @@ const schema = Yup.object().shape({
   adType: Yup.string().required().oneOf(['BASIC','EXTRA']),
   adTitle: Yup.string().min(2,'title is too short!').max(50,'title is too long!').required('title is needed!'),
   adPosition: Yup.string().min(1,'position name can\'t be that short!').max(85,'position name is too long!').required('target position is needed!'),
-  duration: Yup.number().min(1,'duration can\' be short than 1 day!').required('duration is needed!'),
+  duration: Yup.number().moreThan(0,'duration can\'t be short than 1 day!').required('duration is needed!'),
   published: Yup.bool().required('you need to choose whether you want to publish your advertisement'),
   externalLink: Yup.string().url('please type in a valid url').required('external link is needed!')
 });
@@ -52,7 +52,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         setTimeout(() => console.log("timeout"), 5000);
         //api component call
         const res = await postCreateAdvertisement(values, token);
-        //console.log(res);
+        console.log(res);
         // setSuccess('You submitted your advertisement successfully');
         setSuccessModal(true);
         // setTimeout(()=> setSuccess(''),5000);
@@ -122,11 +122,25 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="validateDuration">
+
+            {String(values.adType) === "BASIC" 
+            ? 
+            <>
+              <Form.Group controlId="validateDuration">
+              <Form.Label>Advertisement Duration in Days</Form.Label>
+              <Form.Control type="number" name="duration" size="sm" placeholder="No expiration" disabled/>
+              </Form.Group>
+            </>
+            :
+            <>
+              <Form.Group controlId="validateDuration">
               <Form.Label>Advertisement Duration in Days</Form.Label>
               <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} placeholder="Your advertisement duration" isInvalid={!!errors.duration}/>
               <Form.Control.Feedback type="invalid">{errors.duration}</Form.Control.Feedback>
-            </Form.Group>
+              </Form.Group>
+            </>
+            }
+
             <Form.Group controlId="validateExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
               <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Your external link" isInvalid={!!errors.externalLink}/>
@@ -134,7 +148,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             </Form.Group>
             <Form.Group controlId="validateimagePath">
               {/*Need a specific info for image size here*/}
-              <ImageUploader name="imagePath" onChange={(picture) => {setFieldValue('imagePath',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
+              <ImageUploader name="imagePath" withPreview={true} onChange={(picture) => {setFieldValue('imagePath',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
               <Form.Control.Feedback type="invalid">{errors.imagePath}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
@@ -168,7 +182,6 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               {error.message}
             </Alert>
           )}
-          {successModal}
         </Col>
       </Row>
       </Container>
