@@ -150,7 +150,7 @@ advertisementRouter.post(
                 }
 
                 //if there's no adDuration field in the request body
-                if((!adDuration&&adType=='EXTRA') || (parseInt(adDuration) <= 0&&adType=='EXTRA')){
+                if((!adDuration&&adType=='EXTRA') || (parseInt(adDuration)<=0&&adType=='EXTRA')){
                     error+='adDuration must be provided. ';
                     errorMessage+='adDuration must be provided in the body with a valid length. ';
                     errorStack+='adDuration must be provided in the body with a valid length. ';
@@ -377,13 +377,21 @@ advertisementRouter.put(
                     }
                 };
 
+                if(theAdvertisement.duration==null&&!adDuration&&adType=='EXTRA'){
+                    error+='adDuration must be provided. ';
+                    errorMessage+='adDuration must be provided in the body with a valid length if there\'s no exisintg duration. ';
+                    errorStack+='adDuration must be provided in the body with a valid lenght. ';
+                }
+
                 if(adDuration&&theAdvertisement.adType=='EXTRA'){
                     if(parseInt(adDuration)<=0){
                         error+='adDuration must be provided. ';
                         errorMessage+='adDuration must be provided in the body with a valid length. ';
                         errorStack+='adDuration must be provided in the body with a valid lenght. ';
                     }else{
-                        endDate = addDays(new Date(), Number(adDuration));
+                        let theDate = new Date();
+                        endDate = new Date();
+                        endDate.setDate(theDate.getDate()+parseInt(adDuration));
                     }
                 }
 
@@ -444,7 +452,7 @@ advertisementRouter.put(
                     data:{
                         adType:adType,
                         adTitle:adTitle,
-                        duration:endDate,
+                        duration:adType=='BASIC'?null:endDate,
                         imagePath:newImagePath,
                         externalLink:externalLink,
                         published:published
