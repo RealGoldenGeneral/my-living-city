@@ -58,7 +58,7 @@ userSegmentRouter.post(
 
                         homeSuperSegId = queryResult.superSegId;
 
-                        homeSegmentName = queryResult.superSegName;
+                        homeSuperSegName = queryResult.superSegName;
                     }
                 }
             }
@@ -106,7 +106,7 @@ userSegmentRouter.post(
 
                         schoolSuperSegId=queryResult.superSegId;
 
-                        schoolSegmentName=queryResult.superSegName;
+                        schoolSuperSegName=queryResult.superSegName;
                     }
                 }
             }
@@ -208,7 +208,7 @@ userSegmentRouter.post(
                     workSuperSegId:workSuperSegId,
                     workSuperSegName:workSuperSegName,
                     schoolSuperSegId:schoolSuperSegId,
-                    schoolSuperSegName:schoolSegmentName,
+                    schoolSuperSegName:schoolSuperSegName,
                     homeSegmentId:homeSegmentId,
                     homeSegmentName:homeSegmentName,
                     workSegmentId:workSegmentId,
