@@ -212,7 +212,15 @@ commentRouter.post(
         
         const userSegments = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
 
-        if(foundIdea.segmentId){
+        if(foundIdea.subSegmentId){
+          if(userSegments.homeSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }else if(userSegments.workSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }else if(userSegments.schoolSubSegmentId == foundIdea.subSegmentId){
+            match = true;
+          }
+        }else if(foundIdea.segmentId){
           if(userSegments.homeSegmentId == foundIdea.segmentId){
             match = true;
           }else if(userSegments.workSegmentId == foundIdea.segmentId){
@@ -220,13 +228,13 @@ commentRouter.post(
           }else if(userSegments.schoolSegmentId == foundIdea.segmentId){
             match = true
           }
-        }else if(foundIdea.subSegmentId){
-          if(userSegments.homeSubSegmentId == foundIdea.subSegmentId){
+        }else if(foundIdea.superSegmentId){
+          if(userSegments.homeSuperSegId==foundIdea.superSegmentId){
             match = true;
-          }else if(userSegments.workSubSegmentId == foundIdea.subSegmentId){
+          }else if(userSegments.workSuperSegId==foundIdea.superSegmentId){
             match = true;
-          }else if(userSegments.schoolSubSegmentId == foundIdea.subSegmentId){
-            match = true;
+          }else if(userSegments.schoolSuperSegId==foundIdea.superSegmentId){
+            match = true
           }
         }
 
