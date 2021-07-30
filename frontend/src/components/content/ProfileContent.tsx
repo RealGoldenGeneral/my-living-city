@@ -17,6 +17,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
     fname,
     lname,
     address,
+    userSegments,
+    imagePath,
   } = user;
 
   const {
@@ -41,11 +43,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
       </Row>
 
       <Row>
-        <Card className='text-center mx-5' style={{ width: '18rem'}}>
+        <Card className='text-center mx-5 mb-5' style={{ width: '18rem'}}>
             <Row className='mt-3'>
               <Col>
-                <Image fluid src='https://ih1.redbubble.net/image.785212781.7855/st,small,507x507-pad,600x600,f8f8f8.jpg' 
-                  width='70%' roundedCircle/>
+              {imagePath
+              ? <Image fluid src={`${API_BASE_URL}/${imagePath}`} style={{objectFit: "cover", height:"200px", width:"200px"}}roundedCircle/>
+              : <Image fluid src='https://ih1.redbubble.net/image.785212781.7855/st,small,507x507-pad,600x600,f8f8f8.jpg' width='70%' roundedCircle/>}
               </Col>
             </Row>
             <Card.Title className='mt-3'>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</Card.Title>
@@ -58,7 +61,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
                 <ListGroup.Item><strong>Full Name</strong></ListGroup.Item>
                 <ListGroup.Item><strong>Email</strong></ListGroup.Item>
                 <ListGroup.Item><strong>Street Address</strong></ListGroup.Item>
-                <ListGroup.Item><strong>Street Address 2</strong></ListGroup.Item>
+                {streetAddress2 ? <ListGroup.Item><strong>Street Address 2</strong></ListGroup.Item> : null}
                 <ListGroup.Item><strong>City</strong></ListGroup.Item>
                 <ListGroup.Item><strong>Postal Code / Zip</strong></ListGroup.Item>
                 <ListGroup.Item><strong>Community Request</strong></ListGroup.Item>
@@ -68,8 +71,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
                 <ListGroup.Item>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</ListGroup.Item>
                 <ListGroup.Item>{ email }</ListGroup.Item>
                 <ListGroup.Item>{ streetAddress ? capitalizeString(streetAddress) : "Unknown" }</ListGroup.Item>
-                <ListGroup.Item>{ streetAddress2 ? capitalizeString(streetAddress2) : "Unknown" }</ListGroup.Item>
-                <ListGroup.Item>{ city ? capitalizeString(city) : "Unknown" }</ListGroup.Item>
+                {streetAddress2 ? <ListGroup.Item>{ streetAddress2 ? capitalizeString(streetAddress2) : "Unknown" }</ListGroup.Item> : null}
+                <ListGroup.Item>{ city ? capitalizeString(city) : capitalizeString(userSegments!.homeSegmentName) }</ListGroup.Item>
                 <ListGroup.Item>{ postalCode ? postalCode.toUpperCase() : "Unknown" }</ListGroup.Item>
                 <ListGroup.Item><Button variant="link" onClick={()=>setShow(b=>!b)}>Request your Community!</Button></ListGroup.Item>
               </ListGroup>

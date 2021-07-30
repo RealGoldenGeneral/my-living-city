@@ -144,6 +144,12 @@ model UserSegments {
   id                   String        @id @default(cuid())
   userId               String        @map("user_id")
   user                 User?         @relation(fields: [userId], references: [id])
+  homeSuperSegId       Int?          @map("home_super_segment_id")
+  homeSuperSegName     String?       @map("home_super_segment_name")
+  workSuperSegId       Int?          @map("work_super_segment_id")
+  workSuperSegName     String?       @map("work_super_segment_name")
+  schoolSuperSegId     Int?          @map("school_super_segment_id")
+  schoolSuperSegName   String?       @map("school_super_segment_name")
   homeSegmentId        Int?          @map("home_segment_id")
   homeSegmentName      String?       @map("home_segment_name")
   workSegmentId        Int?          @map("work_segment_id")
@@ -156,6 +162,9 @@ model UserSegments {
   workSubSegmentName   String?       @map("work_sub_segment_name")
   schoolSubSegmentId   Int?          @map("school_sub_segment")
   schoolSubSegmentName String?       @map("school_sub_segment_name")
+  homeSuperSeg         SuperSegment? @relation("homeSuperSeg", fields: [homeSuperSegId], references: [superSegId])
+  workSuperSeg         SuperSegment? @relation("workSuperSeg", fields: [workSuperSegId], references: [superSegId])
+  schoolSuperSeg       SuperSegment? @relation("schoolSuperSeg", fields: [schoolSuperSegId], references: [superSegId])
   homeSegment          Segments?     @relation("homeSegment", fields: [homeSegmentId], references: [segId])
   workSegment          Segments?     @relation("workSegment", fields: [workSegmentId], references: [segId])
   schoolSegment        Segments?     @relation("schoolSegment", fields: [schoolSegmentId], references: [segId])
@@ -230,12 +239,13 @@ model IdeaAddress {
 
 model Idea {
   // Keys
-  id           Int     @id @default(autoincrement())
-  authorId     String  @map("author_id")
-  championId   String? @map("champion_id")
-  categoryId   Int     @map("category_id")
-  segmentId    Int     @map("segment_id")
-  subSegmentId Int?     @map("sub_segment_id")
+  id             Int     @id @default(autoincrement())
+  authorId       String  @map("author_id")
+  championId     String? @map("champion_id")
+  categoryId     Int     @map("category_id")
+  superSegmentId Int     @map("super_segment_id")
+  segmentId      Int?    @map("segment_id")
+  subSegmentId   Int?    @map("sub_segment_id")
 
   // Values
   title               String
@@ -248,6 +258,7 @@ model Idea {
   manufacturingImpact String?   @map("manufacturing_impact")
   state               IdeaState @default(IDEA)
   active              Boolean   @default(true)
+  imagePath           String?   @map("image_path")
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
 
@@ -261,11 +272,12 @@ model Idea {
 
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
-  author     User        @relation("author", fields: [authorId], references: [id])
-  champion   User?       @relation("champion", fields: [championId], references: [id])
-  category   Category    @relation(fields: [categoryId], references: [id])
-  segment    Segments    @relation(fields: [segmentId], references: [segId])
-  subSegment SubSegments? @relation(fields: [subSegmentId], references: [id])
+  author       User         @relation("author", fields: [authorId], references: [id])
+  champion     User?        @relation("champion", fields: [championId], references: [id])
+  category     Category     @relation(fields: [categoryId], references: [id])
+  superSegment SuperSegment @relation(fields: [superSegmentId], references: [superSegId])
+  segment      Segments?    @relation(fields: [segmentId], references: [segId])
+  subSegment   SubSegments? @relation(fields: [subSegmentId], references: [id])
 
   @@map(name: "idea")
 }
@@ -329,13 +341,15 @@ model IdeaComment {
   ideaId Int @map("idea_id")
 
   // Fields
-  authorId  String   @map("author_id")
-  userSegId String   @map("user_segment_id")
-  segmentId Int      @map("segment_id")
-  content   String
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  authorId       String   @map("author_id")
+  userSegId      String   @map("user_segment_id")
+  superSegmentId Int?     @map("super_segment_id")
+  segmentId      Int?     @map("segment_id")
+  subSegmentId   Int?     @map("sub_segment_id")
+  content        String
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map(name: "created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relations
   author   User                  @relation(fields: [authorId], references: [id])
@@ -375,13 +389,13 @@ model Advertisements {
   createAt DateTime  @default(now()) @map("creat_at")
   updateAt DateTime? @default(now()) @updatedAt @map("update_at")
 
-  adTitle      String   @map("advertisement_title")
-  adType       AdType   @default(BASIC) @map("advertisement_type")
-  duration     DateTime @map("advertisement_duration")
-  adPosition   String   @map("advertisement_position")
-  imagePath    String   @map("advertisement_image_path")
-  externalLink String   @map("advertisement_external_link")
-  published    Boolean  @default(false) @map("published")
+  adTitle      String    @map("advertisement_title")
+  adType       AdType    @default(BASIC) @map("advertisement_type")
+  duration     DateTime? @map("advertisement_duration")
+  adPosition   String    @map("advertisement_position")
+  imagePath    String    @map("advertisement_image_path")
+  externalLink String    @map("advertisement_external_link")
+  published    Boolean   @default(false) @map("published")
 
   author User? @relation(fields: [ownerId], references: [id])
 
@@ -396,7 +410,11 @@ model SuperSegment {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime? @default(now()) @updatedAt @map("updated_at")
 
-  Segments Segments[]
+  Segments           Segments[]
+  Idea               Idea[]
+  homeUserSegments   UserSegments[] @relation("homeSuperSeg")
+  workUserSegments   UserSegments[] @relation("workSuperSeg")
+  schoolUserSegments UserSegments[] @relation("schoolSuperSeg")
   @@map("super_segment")
 }
 

@@ -17,6 +17,14 @@ export interface ISubSegment {
     createdAt: Date;
     updatedAt: Date;
 }
+export interface ISuperSegment {
+    superSegId: number;      
+    name: string;
+    country: string;
+    province: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
 export interface ISegmentRequest {
     id: number;
     userId: string;
@@ -39,4 +47,11 @@ export interface IUserSegment {
     workSubSegmentName: string;  
     schoolSubSegmentId: number;   
     schoolSubSegmentName: string;
+}
+
+export interface ISegmentData {
+    id: number;
+    name: string;
+    segType: 'Segment' | 'Sub-Segment' | 'Super-Segment';
+    userType: 'Resident' | 'Worker' | 'Student';
 }

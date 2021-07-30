@@ -105,6 +105,10 @@ export const useCreateCommentMutation = (
                     homeSubSegmentId: userSegments?.homeSubSegmentId ?? -1,
                     workSubSegmentId: userSegments?.workSubSegmentId ?? -1,
                     schoolSubSegmentId: userSegments?.schoolSubSegmentId ?? -1,
+                    homeSuperSegmentId: userSegments?.homeSubSegmentId ?? -1,
+                    workSuperSegmentId: userSegments?.workSubSegmentId ?? -1,
+                    schoolSuperSegmentId: userSegments?.schoolSubSegmentId ?? -1,
+
 
                   }
                 },

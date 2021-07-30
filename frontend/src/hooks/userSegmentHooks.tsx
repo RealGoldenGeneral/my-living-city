@@ -1,12 +1,21 @@
 import { useQuery } from "react-query"
-import { getUserHomeSegmentInfo } from "src/lib/api/userSegmentRoutes"
-import { ISegment, ISubSegment } from "src/lib/types/data/segment.type"
-import { ICategory } from "../lib/types/data/category.type"
+import { getMyUserSegmentInfo, getMyUserSegmentInfoRefined} from "src/lib/api/userSegmentRoutes"
 import { IFetchError } from "../lib/types/types"
-export const useAllUserSegments = (token: string | null) => {
+export const useAllUserSegments = (token: string | null, userId: string | null) => {
     return useQuery<any, IFetchError>(
       ['segments', token],
-      () => getUserHomeSegmentInfo(token),
+      () => getMyUserSegmentInfo(token, userId),
     )
   }
-
+  export const useAllUserSegmentsRefined = (token: string | null, userId: string | null) => {
+    return useQuery<any, IFetchError>(
+      ['segments', token],
+      () => getMyUserSegmentInfoRefined(token, userId),
+    )
+  }
+  // export const useAllUserSegDataWithInfo = (token: string | null) => {
+  //   return useQuery<any, IFetchError>(
+  //     ['segments', token],
+  //     () => getAllUserSegInfo(token),
+  //   )
+  // }

@@ -6,7 +6,7 @@ import { IProject } from "./project.type";
 import { IRating } from "./rating.type";
 import { IComment } from "./comment.type";
 import { IUser } from "./user.type";
-import { ISegment, ISubSegment } from "./segment.type";
+import { ISegment, ISubSegment, ISuperSegment } from "./segment.type";
 
 export type IdeaState = 'IDEA' | 'PROPOSAL' | 'PROJECT';
 
@@ -20,6 +20,7 @@ export interface IIdea {
 	subSegmentId?: number; //
 	title: string;
 	description: string;
+	imagePath: string;
 	communityImpact?: string;
 	natureImpact?: string;
 	artsImpact?: string;
@@ -38,8 +39,9 @@ export interface IIdeaWithRelationship extends IIdea {
   address?: IAddress;
   category?: ICategory;
   userType: string;
-  segment: ISegment; // 
+  segment?: ISegment; // 
   subSegment?: ISubSegment; //
+  superSegment?: ISuperSegment;
   author?: IUser;
 	champion?: IUser | null;
   proposalInfo?: IProposal | null;

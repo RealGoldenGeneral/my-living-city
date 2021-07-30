@@ -180,7 +180,6 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
               {error.message}
             </Alert>
           )}
-          {successModal}
         </Col>
       </Row>
       </Container>

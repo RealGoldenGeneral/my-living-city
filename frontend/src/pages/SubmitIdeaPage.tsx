@@ -4,8 +4,8 @@ import { UserProfileContext } from '../contexts/UserProfile.Context';
 import SubmitIdeaPageContent from '../components/content/SubmitIdeaPageContent';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useCategories } from '../hooks/categoryHooks';
-import { getUserHomeSegmentInfo } from 'src/lib/api/userSegmentRoutes';
-import { useAllUserSegments } from 'src/hooks/userSegmentHooks';
+// import { getUserHomeSegmentInfo } from 'src/lib/api/userSegmentRoutes';
+import {  useAllUserSegments, useAllUserSegmentsRefined } from 'src/hooks/userSegmentHooks';
 
 // Extends Route component props with idea title route param
 interface SubmitIdeaPageProps extends RouteComponentProps<{}> {
@@ -13,9 +13,9 @@ interface SubmitIdeaPageProps extends RouteComponentProps<{}> {
 }
 
 const SubmitIdeaPage: React.FC<SubmitIdeaPageProps> = ({}) => {
-  const { token } = useContext(UserProfileContext);
+  const { token, user } = useContext(UserProfileContext);
   const { data, isLoading, error, isError } = useCategories();
-  const segData = useAllUserSegments(token);
+  const segData = useAllUserSegmentsRefined(token, user!.id);
   if (isLoading || segData.isLoading) {
     return(
       <div className="wrapper">

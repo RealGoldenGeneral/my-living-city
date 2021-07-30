@@ -1,5 +1,5 @@
 import { Col, Container, Image, Row, Popover, OverlayTrigger} from 'react-bootstrap'
-const CONTENT = {
+export const CONTENT = {
   community: {
     header: "Community & Place",
     subHeader: "How do we build community to a human scale, allowing equity, inclusivity, and peace?",
@@ -52,8 +52,9 @@ interface ToastieProps {
   subHeader: string;
   body: string;
   img: string;
+  sizePercent?: string;
 }
-export const Toastie: React.FC<ToastieProps> = ({header, subHeader, body, img}) => {
+export const Toastie: React.FC<ToastieProps> = ({header, subHeader, body, img, sizePercent}) => {
   let arr = body.split("\n");
   return(
     <OverlayTrigger
@@ -65,12 +66,12 @@ export const Toastie: React.FC<ToastieProps> = ({header, subHeader, body, img}) 
           <Popover.Title as="h3">{header}</Popover.Title>
           <Popover.Content>
             <strong>{subHeader}</strong><br/>
-            {arr.map((line)=><><p key={line}>{line}</p></>)}
+            {arr.map((line)=>< div key={line}><p>{line}</p></div>)}
           </Popover.Content>
         </Popover>
       }
     >
-      <Image className='d-block mx-auto' width='70%' src={img} />
+      <Image className='d-block mx-auto' width={sizePercent ? sizePercent : '70%'} src={img} />
     </OverlayTrigger>
     )
 }
