@@ -21,10 +21,8 @@ interface SubmitAdvertisementPageContentProps {
 };
 //formik form input validation schema
 const schema = Yup.object().shape({
-  adType: Yup.string().required().oneOf(['BASIC','EXTRA']),
   adTitle: Yup.string().min(2,'title is too short!').max(50,'title is too long!').required('title is needed!'),
   adPosition: Yup.string().min(1,'position name can\'t be that short!').max(85,'position name is too long!').required('target position is needed!'),
-  duration: Yup.number().moreThan(0,'duration can\'t be short than 1 day!').required('duration is needed!'),
   published: Yup.bool().required('you need to choose whether you want to publish your advertisement'),
   externalLink: Yup.string().url('please type in a valid url').required('external link is needed!')
 });
@@ -107,7 +105,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group controlId="submitAdvertisementType">
               <Form.Label>Select Advertisement Type</Form.Label>
-              <Form.Control as="select" name="adType" onChange={handleChange} value={values.adType} isValid={touched.adType && !errors.adType}>
+              <Form.Control as="select" name="adType" onChange={handleChange} value={values.adType}>
                 <option key='0' value='BASIC'>BASIC</option>
                 <option key='1' value='EXTRA'>EXTRA</option>
               </Form.Control>
@@ -118,19 +116,14 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control.Feedback type="invalid">{errors.adTitle}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validateAdPosition">
-              <Form.Label>Target position</Form.Label>
+              <Form.Label>Segment</Form.Label>
               <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
             </Form.Group>
 
             {String(values.adType) === "BASIC" 
             ? 
-            <>
-              <Form.Group controlId="validateDuration">
-              <Form.Label>Advertisement Duration in Days</Form.Label>
-              <Form.Control type="number" name="duration" size="sm" placeholder="No expiration" disabled/>
-              </Form.Group>
-            </>
+              null
             :
             <>
               <Form.Group controlId="validateDuration">
@@ -173,8 +166,6 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
                 </Button>
               </Modal.Footer>
             </Modal>
-
-            <Button block variant="outline-danger" size="lg" href={`/advertisement/all`}>Cancel</Button>
           </Form>)}
           </Formik>
           {error && (

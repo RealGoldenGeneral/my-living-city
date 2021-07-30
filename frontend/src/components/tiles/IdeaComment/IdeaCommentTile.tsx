@@ -27,9 +27,15 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
   } = commentData;
 
   const { email, fname, lname, address, userSegments, userType } = commentData?.author;
-  const {segmentId, subSegmentId} = commentData?.idea;
-  const {homeSegmentId, workSegmentId, schoolSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId} = userSegments;
+  const {segmentId, subSegmentId, superSegmentId} = commentData?.idea;
+  const {homeSegmentId, workSegmentId, schoolSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId, homeSuperSegmentId, workSuperSegmentId, schoolSuperSegmentId} = userSegments;
   const colouredUserNameHandle = (ideaId: number, homeId?:number, workId?:number, schoolId?:number) => {
+    // let ideaId, homeId, workId, schoolId;
+    // if(superSegmentId){
+    //   ideaId = superSegmentId;
+    // }else{
+
+    // }
     let userName = `${fname}@${address.streetAddress}`;
     let colour = '';
     if(userType === 'ADMIN') {
@@ -66,11 +72,15 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
       <Row className='justify-content-center'>
         <Col className='mx-2'>
           <div className="d-flex flex-column justify-content-start">
+            {superSegmentId ? colouredUserNameHandle(superSegmentId, homeSuperSegmentId, workSuperSegmentId, schoolSuperSegmentId)
+            :  <> 
             {subSegmentId ? 
-            colouredUserNameHandle(subSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId)
-            :
-            colouredUserNameHandle(segmentId, homeSegmentId, workSegmentId, schoolSegmentId)
+              colouredUserNameHandle(subSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId)
+              :
+              colouredUserNameHandle(segmentId, homeSegmentId, workSegmentId, schoolSegmentId)}
+            </>
           }
+            
             <span className="date text-black-50">
               Shared publicly - {timeDifference(new Date(), new Date(createdAt))}
             </span>

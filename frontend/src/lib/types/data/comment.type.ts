@@ -24,11 +24,15 @@ export interface IParsedCommentAuthor {
     homeSubSegmentId: number;
     workSubSegmentId: number;
     schoolSubSegmentId: number;
+    homeSuperSegmentId: number;
+    workSuperSegmentId: number;
+    schoolSuperSegmentId: number;
   }
 }
 export interface IParsedIdea {
   segmentId: number;
   subSegmentId?:number;
+  superSegmentId?:number;
 }
 export interface IParsedSegData {
   id: string;
