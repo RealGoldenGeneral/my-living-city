@@ -153,7 +153,7 @@ advertisementRouter.post(
                 if((!adDuration&&adType=='EXTRA') || (adDuration <= 0&&adType=='EXTRA')){
                     error+='adDuration must be provided. ';
                     errorMessage+='adDuration must be provided in the body with a valid length. ';
-                    errorStack+='adDuration must be provided in the body with a valid lenght. ';
+                    errorStack+='adDuration must be provided in the body with a valid length. ';
                 }
 
                 //if there's no adPosition field in the 
@@ -198,7 +198,8 @@ advertisementRouter.post(
                     //Calculate the ending date of advertisement based on duration field.
                     let theDate = new Date();
                     let endDate = new Date();
-                    endDate.setDate(theDate.getDate()+adDuration);
+                    endDate.setDate(theDate.getDate()+parseInt(adDuration));
+
                     //create an advertisement object
                     createAnAdvertisement = await prisma.advertisements.create({
                         data:{
