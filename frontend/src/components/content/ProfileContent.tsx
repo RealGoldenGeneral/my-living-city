@@ -43,11 +43,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
       </Row>
 
       <Row>
-        <Card className='text-center mx-5' style={{ width: '18rem'}}>
+        <Card className='text-center mx-5 mb-5' style={{ width: '18rem'}}>
             <Row className='mt-3'>
               <Col>
               {imagePath
-              ? null
+              ? <Image fluid src={`${API_BASE_URL}/${imagePath}`} style={{objectFit: "cover", height:"200px", width:"200px"}}roundedCircle/>
               : <Image fluid src='https://ih1.redbubble.net/image.785212781.7855/st,small,507x507-pad,600x600,f8f8f8.jpg' width='70%' roundedCircle/>}
               </Col>
             </Row>
