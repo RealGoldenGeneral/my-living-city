@@ -341,13 +341,15 @@ model IdeaComment {
   ideaId Int @map("idea_id")
 
   // Fields
-  authorId  String   @map("author_id")
-  userSegId String   @map("user_segment_id")
-  segmentId Int      @map("segment_id")
-  content   String
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  authorId       String   @map("author_id")
+  userSegId      String   @map("user_segment_id")
+  superSegmentId Int?     @map("super_segment_id")
+  segmentId      Int?     @map("segment_id")
+  subSegmentId   Int?     @map("sub_segment_id")
+  content        String
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map(name: "created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relations
   author   User                  @relation(fields: [authorId], references: [id])
