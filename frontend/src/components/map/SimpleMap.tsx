@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import GoogleMapReact from 'google-map-react';
 import Marker from '../map/Marker';
-
+import {GOOGLE_PHYSICAL_MAP_KEY} from '../../lib/constants'
 const DEFAULTGEO = {lat:48.4284,lng:-123.3656}
 var markers:any = {
   home: {lat: null, lon: null},
@@ -16,7 +16,7 @@ const SimpleMap = (props: any) => {
     return (
         <div style={{ height: '40vh', width: '100%' }}>
         <GoogleMapReact
-          bootstrapURLKeys={{ key: "" }}
+          bootstrapURLKeys={{ key: GOOGLE_PHYSICAL_MAP_KEY }}
           center={center}
           defaultZoom={zoom}
           onClick={(obj:any)=>{setMarker(marker = {lat:obj.lat,lon:obj.lng});
