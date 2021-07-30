@@ -173,8 +173,6 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
                 </Button>
               </Modal.Footer>
             </Modal>
-
-            <Button block variant="outline-danger" size="lg" href={`/advertisement/all`}>Cancel</Button>
           </Form>)}
           </Formik>
           {error && (
