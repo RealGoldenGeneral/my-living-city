@@ -147,7 +147,7 @@ return (
                     <BForm.Group>
                         <Field name="imagePath" type="file" fileContainerStyle={{backgroundColor: "#F8F9FA"}}
                         withPreview={true} onChange={(pic:any)=>setAvatar(pic[0])} imgExtension={['.jpg','.jpeg','.png','.webp']} 
-                        buttonText="Select Idea Image" maxFileSize={2097152} label={"Max file size 2mb, \n jpg, jpeg, png, webp"} 
+                        buttonText="Select Profile Picture" maxFileSize={2097152} label={"Max file size 2mb, \n jpg, jpeg, png, webp"} 
                         singleImage={true} as={ImageUploader}/>
                         {/* <ImageUploader name="imagePath" fileContainerStyle={{backgroundColor: "#F8F9FA"}}withPreview={true} onChange={pic=>console.log(pic)} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Select Idea Image" maxFileSize={10485760} label={"Max file size 10mb, \n jpg, jpeg, png, webp"} singleImage={true}/> */}
                     </BForm.Group>
