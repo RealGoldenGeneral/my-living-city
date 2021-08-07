@@ -1,6 +1,6 @@
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Card, Col, Row, Image } from 'react-bootstrap';
 import { IIdeaWithRelationship } from '../../lib/types/data/idea.type';
-import { capitalizeString } from '../../lib/utilityFunctions';
+import { capitalizeFirstLetterEachWord, capitalizeString } from '../../lib/utilityFunctions';
 import CommentsSection from '../partials/SingleIdeaContent/CommentsSection';
 import RatingsSection from '../partials/SingleIdeaContent/RatingsSection';
 import {
@@ -18,6 +18,11 @@ import {
   WhatsappIcon
 } from 'react-share'
 import ChampionSubmit from '../partials/SingleIdeaContent/ChampionSubmit';
+import { useSingleSegmentBySegmentId } from 'src/hooks/segmentHooks';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import { ISegment } from 'src/lib/types/data/segment.type';
+import { useState } from 'react';
+import { API_BASE_URL } from 'src/lib/constants';
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship
@@ -27,6 +32,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
   const {
     title,
     description,
+    imagePath,
+    userType,
     communityImpact,
     natureImpact,
     artsImpact,
@@ -34,6 +41,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     manufacturingImpact,
     createdAt,
     category,
+    segment,
+    subSegment,
+    superSegment,
     author,
     state,
 
@@ -41,8 +51,10 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
     proposalInfo,
     projectInfo,
   } = ideaData;
-
   const { title: catTitle } = category!;
+
+  
+
   const parsedDate = new Date(createdAt);
 
   // Social Media share for this Idea page
@@ -77,28 +89,42 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
 
     return !ideaData.champion && !!ideaData.isChampionable;
   }
-
+  console.log(imagePath);
   return (
-    <div className='single-idea-content pt-1'>
-      <Row className='bg-mlc-shade-grey py-5'>
+    <div className='single-idea-content pt-5'>
+      <Card>
+      {imagePath ? <Image src={`${API_BASE_URL}/${imagePath}`} style={{objectFit: "cover", height: '400px'}}></Image> : null}
+      <Row >
         <Col sm={12}>
+          <Card.Header>
           <div className="d-flex justify-content-between">
             <h1 className='h1'>{capitalizeString(title)}</h1>
             <h4 className='text-center my-auto text-muted'>Status: <span>{state}</span></h4>
           </div>
-          <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
-          <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4>
-          {!!ideaData.champion && (
-            <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
-          )}
-          <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5>
-          <br />
-          <p>{description}</p>
-          <p><strong>Community and place:</strong> {communityImpact}</p>
-          <p><strong>Nature and Food Security:</strong> {natureImpact}</p>
-          <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p>
-          <p><strong>Water and Energy:</strong> {energyImpact}</p>
-          <p><strong>Manufacturing and Waste:</strong> {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p>
+          </Card.Header>
+          <Card.Body>
+            <Row>
+              <Col>
+                <h4 className='h5'>Category: {capitalizeString(catTitle)}</h4>
+                {/* <h4 className='h5'>Posted by: {author?.fname}@{author?.address?.streetAddress}</h4> */}
+                {/* <h4 className='h5'>As: {userType}</h4> */}
+                {superSegment ? <h4 className='h5'>District: {superSegment ? capitalizeFirstLetterEachWord(superSegment.name) : 'N/A'}</h4> : null}
+                {segment ? <h4 className='h5'>Municipality: {segment ? capitalizeFirstLetterEachWord(segment.name) : 'N/A'}</h4> : null}
+                {subSegment ? <h4 className='h5'>Neighborhood: {subSegment ? capitalizeFirstLetterEachWord(subSegment.name): 'N/A'}</h4> : null}
+                {!!ideaData.champion && (
+                  <h4 className='h5'>Championed By: {ideaData?.champion?.fname}@{ideaData?.champion?.address?.streetAddress}</h4>
+                )}
+                {/* <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5> */}
+                <br />
+                <p>{description}</p>
+                {communityImpact ? <p><strong>Community and Place:</strong> {communityImpact}</p> : null}
+                {natureImpact ? <p><strong>Nature and Food Security:</strong> {natureImpact}</p> : null}
+                {artsImpact ? <p><strong>Arts, Culture, and Education:</strong> {artsImpact}</p> : null}
+                {energyImpact ? <p><strong>Water and Energy:</strong> {energyImpact}</p> : null}
+                {manufacturingImpact ? <p><strong>Manufacturing and Waste:</strong> {manufacturingImpact ? capitalizeString(manufacturingImpact) : ""}</p> : null}
+              </Col>
+            </Row>
+          </Card.Body>
         </Col>
 
         {/* Proposal State and Conditional Rendering */}
@@ -124,7 +150,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
         )}
 
         {/* Share functionality */}
-        <Col sm={12} className='mt-1 d-flex justify-content-center'>
+        
+        <Col sm={12}>
+        <Card.Footer className='mt-1 d-flex justify-content-between'>
+          <div>Posted: {parsedDate.toLocaleDateString()}</div>
+          <div>
           <FacebookShareButton
             className='mx-2'
             url={shareUrl}
@@ -167,8 +197,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({ ideaData 
           >
             <EmailIcon size={32} round />
           </EmailShareButton>
+          </div>
+          <div>{author?.fname}@{author?.address?.streetAddress} as {userType}</div>
+          </Card.Footer>
         </Col>
       </Row>
+      </Card>
       <Row>
         <RatingsSection />
       </Row>

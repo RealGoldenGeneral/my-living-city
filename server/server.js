@@ -14,6 +14,7 @@ const {
 	CORS_ORIGIN 
 } = require('./lib/constants');
 
+
 const main = async () => {
 	// Initialize dependencies
 	const app = express();
@@ -27,7 +28,9 @@ const main = async () => {
 	);
   
 
-app.use('/ads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads/AdImage', express.static(path.join(__dirname, 'uploads/AdImage')));
+app.use('/uploads/ideaImage', express.static(path.join(__dirname, 'uploads/ideaImage')));
+app.use('/uploads/avatarImages', express.static(path.join(__dirname, 'uploads/avatarImages')));
 	// Swagger config
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -52,6 +55,10 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	const sendEmailRouter = require('./controllers/sendEmailReset');
 	const segmentRouter = require('./controllers/segment');
 	const subSegmentRouter = require('./controllers/subSegment');
+	const googleLocationAPI = require('./controllers/googleMap');
+	const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
+	const superSegmentRouter = require('./controllers/superSegment');
+	const userSegmentRouter = require('./controllers/userSegment');
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -72,6 +79,11 @@ app.use('/ads', express.static(path.join(__dirname, 'uploads')));
 	apiRouter.use('/reset-password', userRouter);
 	apiRouter.use('/segment', segmentRouter);
 	apiRouter.use('/subSegment',subSegmentRouter);
+	apiRouter.use('/location', googleLocationAPI);
+	apiRouter.use('/userSegment',userSegmentRouter);
+	apiRouter.use('/userSegmentRequest',userSegmentRequestRouter);
+	apiRouter.use('/superSegment',superSegmentRouter);
+
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

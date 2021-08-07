@@ -4,6 +4,257 @@ const express = require('express');
 const ideaRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 const { checkIdeaThresholds } = require('../lib/prismaFunctions');
+const { isInteger, isEmpty } = require('lodash');
+
+const fs = require('fs');
+
+const multer = require('multer');
+
+//multer storage policy, including file destination and file naming policy
+const storage = multer.diskStorage({
+  destination: function(req,file,cb){
+      cb(null,'./uploads/ideaImage');
+  },
+  filename: function (req, file, cb) {
+    cb(null,Date.now() + '-' + file.originalname);
+  }
+});
+
+//file filter policy, only accept image file
+const theFileFilter = (req,file,cb) =>{
+  console.log(file);
+  if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp' || file.mimetype === 'image/jpg'){
+      cb(null,true);
+  }else{
+      cb(new Error('file format not supported'),false);
+  }
+}
+
+//const variable for 10MB max file size in bytes
+const maxFileSize = 10485760;
+
+//multer upload project, setting receiving mode and which key components to use
+const upload = multer({storage:storage,limits:{fileSize:maxFileSize},fileFilter:theFileFilter}).single('imagePath');
+
+
+// post request to create an idea
+ideaRouter.post(
+  '/create',
+  passport.authenticate('jwt', { session: false }),
+  //upload.single('imagePath'),
+  async (req, res) => {
+    upload(req, res, async function(err){
+      //multer error handling method
+      let error = '';
+      let errorMessage = '';
+      let errorStack = '';
+      if(err){
+          console.log(err);
+          error+=err+' ';
+          errorMessage+=err+' ';
+          errorStack+=err+' ';
+      };
+      try {
+        //if there's no object in the request body
+        if(isEmpty(req.body)){
+          return res.status(400).json({
+              message: 'The objects in the request body are missing',
+              details: {
+                  errorMessage: 'Creating an idea must supply necessary fields explicitly.',
+                  errorStack: 'necessary fields must be provided in the body with a valid id found in the database.',
+              }
+          })
+        }
+  
+        console.log(req.body);
+  
+        // passport middleware provides this based on JWT
+        const { email, id} = req.user;
+
+        const theUserSegment = await prisma.userSegments.findFirst({where:{userId:id}});
+
+        const {homeSuperSegId,workSuperSegId,schoolSuperSegId,homeSegmentId,workSegmentId,schoolSegmentId,homeSubSegmentId,workSubSegmentId,schoolSubSegmentId} = theUserSegment;
+  
+        //Image path holder
+        let imagePath = '';
+        //if there's req.file been parsed by multer
+        if(req.file){
+            //console.log(req.file);
+            imagePath = req.file.path;
+        }
+  
+        let {categoryId,superSegmentId,segmentId,subSegmentId,banned,title,
+          description,
+          communityImpact,
+          natureImpact,
+          artsImpact,
+          energyImpact,
+          manufacturingImpact
+        } = req.body;
+  
+        categoryId = parseInt(categoryId);
+
+        if(subSegmentId){
+          subSegmentId = parseInt(subSegmentId);
+        }else if(segmentId){
+          segmentId = parseInt(segmentId);
+        }else if(superSegmentId){
+          superSegmentId = parseInt(superSegmentId);
+        }
+        
+        banned = (banned === 'true');
+  
+        if (banned === true){
+          error+='You are banned';
+          errorMessage+='You must be un-banned before you can post ideas';
+          errorStack+='Users can not post ideas with a pending ban status of true';
+        }
+        // Check if category id is added
+        if (!categoryId||!isInteger(categoryId)) {
+          error+='An Idea must be under a specific category.';
+          errorMessage+='Creating an idea must explicitly be supplied with a "categoryId" field.';
+          errorStack+='"CategoryId" must be defined in the body with a valid id found in the database.';
+        }else{
+          const theCategory = await prisma.category.findUnique({where:{id:categoryId}});
+  
+          if(!theCategory){
+            error+='An Idea must be under a valid category.';
+            errorMessage+='Creating an idea must explicitly be supplied with valid a "categoryId" field.';
+            errorStack+='"CategoryId" must be defined in the body with a valid id found in the database.';
+          }
+        }
+
+        if(isInteger(subSegmentId)){
+          theSubSegment = await prisma.subSegments.findUnique({where:{id:subSegmentId}});
+
+          if(!theSubSegment){
+            error+='Sub segment id must be valid.';
+            errorMessage+='Creating an idea must explicitly be supplied with a valid "subSegmentId" field.';
+            errorStack+='"subSegmentId" must be provided with a valid id found in the database.';
+          }else if(subSegmentId==homeSubSegmentId||subSegmentId==workSubSegmentId||subSegmentId==schoolSegmentId){
+            segmentId = theSubSegment.segId;
+
+            const theSegment = await prisma.segments.findUnique({where:{segId:segmentId}});
+
+            superSegmentId = theSegment.superSegId;
+          }else{
+            error+='You must belongs to the subSemgent you want to post to. ';
+            errorMessage+='Your subsegment ids don\'t match the subsegment id you porvided. ';
+            errorStack+='User does\'t belongs to the subsegment he/she wants to post idea to. '
+          }
+        }else if(isInteger(segmentId)){
+          const theSegment = await prisma.segments.findUnique({where:{segId:segmentId}});
+
+          if(!theSegment){
+            error+='An Idea must belong to a municipality.';
+            errorMessage+='Creating an idea must explicitly be supplied with a valid "segmentId" field.';
+            errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
+          }else if(segmentId==homeSegmentId||segmentId==workSegmentId||segmentId==schoolSegmentId){
+            superSegmentId = theSegment.superSegId;
+          }else{
+            error+='You must belongs to the semgent you want to post to. ';
+            errorMessage+='Your segment ids don\'t match the segment id you porvided. ';
+            errorStack+='User does\'t belongs to the segment he/she wants to post idea to. '
+          }
+        }else if(isInteger(superSegmentId)){
+          const theSuperSegment = await prisma.superSegment.findUnique({where:{superSegId:superSegmentId}});
+
+          if(!theSuperSegment){
+            error+='An Idea must belong to a area.';
+            errorMessage+='Creating an idea must explicitly be supplied with a valid "superSegmentId" field.';
+            errorStack+='"segmentId" must be defined in the body with a valid id found in the database.';
+          }else if(superSegmentId!=homeSuperSegId&&superSegmentId!=workSuperSegId&&superSegmentId!=schoolSegmentId){
+            error+='You must belongs to the superSemgent you want to post to. ';
+            errorMessage+='Your subsegment ids don\'t match the superSegment id you porvided. ';
+            errorStack+='User does\'t belongs to the superSegment he/she wants to post idea to. '
+          }
+        }else{
+          error+='An idea must belongs to a area';
+          errorMessage+='Creating an idea must explicitly be supplied with a valid "superSegmentId" or "segmentId" or "subSegmentId" field.';
+          errorStack+='One of the area id must explicitly be supplied with a valid id found in the database. '
+        }
+  
+        
+        
+        // Parse data
+        const geoData = JSON.parse(req.body.geo);
+        //if geoData parse failed
+        if(!typeof geoData == "object"){
+          error+='Geo data parse error! ';
+          errorMessage+='Something is wrong about the text string of geo data! ';
+          errorStack+='Geo data json string parsing failed! '
+        }
+  
+        const addressData = JSON.parse(req.body.addressData);
+  
+        if(!typeof addressData == "object"){
+          error+='Address data parse error! ';
+          errorMessage+='Something is wrong about the text string of address data! ';
+          errorStack+='Address data json string parsing failed! '
+        }
+  
+        //If there's error in error holder
+        if(error||errorMessage||errorStack){
+          //multer is a kind of middleware, if file is valid, multer will add it to upload folder. Following code are responsible for deleting files if error happened.
+          if(fs.existsSync(imagePath)){
+            fs.unlinkSync(imagePath);
+          }
+          return res.status(400).json({
+              message: error,
+              details: {
+                errorMessage: errorMessage,
+                errorStack: errorStack
+              }
+          });
+        }
+  
+        const ideaData = {
+          categoryId,
+          superSegmentId,
+          segmentId,
+          subSegmentId,
+          authorId: id,
+          imagePath:imagePath,
+          title,
+          description,
+          communityImpact,
+          natureImpact,
+          artsImpact,
+          energyImpact,
+          manufacturingImpact
+        };
+  
+        // Create an idea and make the author JWT bearer
+        const createdIdea = await prisma.idea.create({
+          data: {
+            geo: { create: geoData },
+            address: { create: addressData },
+            ...ideaData
+          },
+          include: {
+            geo: true,
+            address: true,
+            category: true,
+          }
+        });
+  
+        res.status(201).json(createdIdea);
+      } catch (error) {
+        console.error(error);
+        res.status(400).json({
+          message: "An error occured while trying to create an Idea.",
+          details: {
+            errorMessage: error.message,
+            errorStack: error.stack,
+          }
+        });
+      } finally {
+        await prisma.$disconnect();
+      }
+    });
+    
+  }
+)
 
 ideaRouter.get(
   '/',
@@ -84,62 +335,88 @@ ideaRouter.post(
     try {
       // TODO: if rating is adjusted raw query will break
       const data = await prisma.$queryRaw(`
-        select		
-          i.id,
-          i.author_id as "authorId",
-          i.category_id as "categoryId",
-          i.title,
-          i.description,
-          coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
-          coalesce(ir.avg_rating, 0) as "ratingAvg",			
-          coalesce(ic.total_comments, 0) as "commentCount",
-          coalesce(ir.total_ratings, 0) as "ratingCount",
-          coalesce(pr.pos_rating, 0) as "posRatings",
-          coalesce(nr.neg_rating, 0) as "negRatings",
-          i.state,
-          i.active,
-          i.updated_at as "updatedAt",
-          i.created_at as "createdAt"
-        from idea i
-        -- Aggregate total comments
-        left join (
-            select		
-              idea_id,
-              count(id) as total_comments
-            from idea_comment
-            group by idea_comment.idea_id
-        ) ic on i.id = ic.idea_id
-        -- Aggregate total ratings and rating avg
-        left join (
-            select		
-              idea_id,
-              count(id) as total_ratings,
-              avg(rating) as avg_rating 
-            from idea_rating
-            group by idea_rating.idea_id
-        ) ir on	i.id = ir.idea_id
-        -- Aggregate total neg ratings
-        left join (
-            select 		
-              idea_id,
-              count(id) as neg_rating
-            from idea_rating
-            where rating < 0
-            group by idea_id
-        ) nr on	i.id = nr.idea_id
-        -- Aggregate total pos ratings
-        left join (
-            select 		
-              idea_id,
-              count(id) as pos_rating
-            from idea_rating
-            where rating > 0
-            group by idea_id
-        ) pr on	i.id = pr.idea_id
-        order by
-          "ratingCount" desc,
-          "ratingAvg" desc,
-          engagements desc
+      select
+        i.id,
+        i.author_id as "authorId",
+        i.category_id as "categoryId",
+        i.title,
+        i.description,
+        i.segment_id,
+        i.sub_segment_id,
+        coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
+        coalesce(ir.avg_rating, 0) as "ratingAvg",
+        coalesce(ic.total_comments, 0) as "commentCount",
+        coalesce(ir.total_ratings, 0) as "ratingCount",
+        coalesce(pr.pos_rating, 0) as "posRatings",
+        coalesce(nr.neg_rating, 0) as "negRatings",
+        coalesce(sn.segment_name, '') as "segmentName",
+        coalesce(sbn.sub_segment_name, '') as "subSegmentName",
+        coalesce(userfname.f_name, '') as "firstName",
+        coalesce(userStreetAddress.street_address, '') as "streetAddress",
+        i.state,
+        i.active,
+        i.updated_at as "updatedAt",
+        i.created_at as "createdAt"
+          from idea i
+          -- Aggregate total comments
+          left join (
+              select
+                idea_id,
+                count(id) as total_comments
+              from idea_comment
+              group by idea_comment.idea_id
+          ) ic on i.id = ic.idea_id
+          -- Aggregate total ratings and rating avg
+          left join (
+              select
+                idea_id,
+                count(id) as total_ratings,
+                avg(rating) as avg_rating
+              from idea_rating
+              group by idea_rating.idea_id
+          ) ir on	i.id = ir.idea_id
+          -- Aggregate total neg ratings
+          left join (
+              select
+                idea_id,
+                count(id) as neg_rating
+              from idea_rating
+              where rating < 0
+              group by idea_id
+          ) nr on	i.id = nr.idea_id
+          -- Aggregate total pos ratings
+          left join (
+              select
+                idea_id,
+                count(id) as pos_rating
+              from idea_rating
+              where rating > 0
+              group by idea_id
+          ) pr on	i.id = pr.idea_id
+          -- Aggregate idea segment name
+          left join (
+              select seg_id, segment_name
+              from segment
+              ) sn on i.segment_id = sn.seg_id
+          -- Aggregate idea sub segment name
+          left join (
+              select id, sub_segment_name
+              from sub_segment
+              ) sbn on i.sub_segment_id = sbn.id
+          -- Aggregate author's first name
+          left join  (
+              select id, f_name
+              from "user"
+              ) userfname on i.author_id = userfname.id
+          -- Aggregate author's address
+          left join (
+              select user_id, street_address
+              from user_address
+              ) userStreetAddress on i.author_id = userStreetAddress.user_id
+          order by
+            "ratingCount" desc,
+            "ratingAvg" desc,
+            engagements desc
         ${takeClause}
         ;
       `);
@@ -206,7 +483,10 @@ ideaRouter.get(
                 }
               }
             }
-          }
+          },
+          segment: true,
+          subSegment:true,
+          superSegment: true
         }
       });
       if (!foundIdea) {
@@ -347,68 +627,6 @@ ideaRouter.put(
   }
 )
 
-// post request to create an idea
-ideaRouter.post(
-  '/create',
-  passport.authenticate('jwt', { session: false }),
-  async (req, res, next) => {
-    try {
-      // passport middleware provides this based on JWT
-      const { email, id } = req.user;
-      const { categoryId } = req.body;
-
-      // Check if category id is added
-      if (!categoryId) {
-        return res.status(400).json({
-          message: 'An Idea must be under a specific category.',
-          details: {
-            errorMessage: 'Creating an idea must explicitly be supplied with a "categoryId" field.',
-            errorStack: '"CategoryId" must be defined in the body with a valid id found in the database.',
-          }
-        })
-      }
-
-      // Parse data
-      const geoData = { ...req.body.geo };
-      const addressData = { ...req.body.address };
-      delete req.body.geo;
-      delete req.body.address;
-
-
-      const ideaData = {
-        ...req.body,
-        authorId: id
-      };
-
-      // Create an idea and make the author JWT bearer
-      const createdIdea = await prisma.idea.create({
-        data: {
-          geo: { create: geoData },
-          address: { create: addressData },
-          ...ideaData
-        },
-        include: {
-          geo: true,
-          address: true,
-          category: true,
-        }
-      });
-
-      res.status(201).json(createdIdea);
-    } catch (error) {
-      console.error(error);
-      res.status(400).json({
-        message: "An error occured while trying to create an Idea.",
-        details: {
-          errorMessage: error.message,
-          errorStack: error.stack,
-        }
-      });
-    } finally {
-      await prisma.$disconnect();
-    }
-  }
-)
 
 // delete request to delete an idea
 ideaRouter.delete(
@@ -417,6 +635,7 @@ ideaRouter.delete(
   async (req, res, next) => {
     try {
       const { id: loggedInUserId, email } = req.user;
+      console.log(req.user);
       const parsedIdeaId = parseInt(req.params.ideaId);
 
       // check if id is valid
@@ -442,6 +661,17 @@ ideaRouter.delete(
         });
       }
 
+      if(foundIdea.imagePath){
+        if(fs.existsSync(foundIdea.imagePath)){
+          fs.unlinkSync(foundIdea.imagePath);
+        }
+      }
+
+      const deleteComment = await prisma.ideaComment.deleteMany({where:{ideaId:foundIdea.id}});
+      const deleteRating = await prisma.ideaRating.deleteMany({where:{ideaId:foundIdea.id}});
+      const deleteProPosalInfo = await prisma.proposal.deleteMany({where:{ideaId:foundIdea.id}});
+      const deletedGeo = await prisma.ideaGeo.deleteMany({where:{ideaId:foundIdea.id}});
+      const deleteAddress = await prisma.ideaAddress.deleteMany({where:{ideaId:foundIdea.id}});
       const deletedIdea = await prisma.idea.delete({ where: { id: parsedIdeaId }});
 
       res.status(200).json({
@@ -449,6 +679,7 @@ ideaRouter.delete(
         deletedIdea: deletedIdea,
       });
     } catch (error) {
+      console.log(error);
       res.status(400).json({
         message: "An error occured while to delete an Idea",
         details: {

@@ -1,7 +1,7 @@
 import { NONAME } from 'dns';
 import { Formik, useFormik} from 'formik';
 import React, { useContext, useState } from 'react'
-import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert, Modal } from 'react-bootstrap'
 import { CreateAdvertisementInput } from 'src/lib/types/input/advertisement.input';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateAdvertisement } from 'src/lib/api/advertisementRoutes';
@@ -21,10 +21,8 @@ interface SubmitAdvertisementPageContentProps {
 };
 //formik form input validation schema
 const schema = Yup.object().shape({
-  adType: Yup.string().required().oneOf(['BASIC','EXTRA']),
   adTitle: Yup.string().min(2,'title is too short!').max(50,'title is too long!').required('title is needed!'),
   adPosition: Yup.string().min(1,'position name can\'t be that short!').max(85,'position name is too long!').required('target position is needed!'),
-  duration: Yup.number().min(1,'duration can\' be short than 1 day!').required('duration is needed!'),
   published: Yup.bool().required('you need to choose whether you want to publish your advertisement'),
   externalLink: Yup.string().url('please type in a valid url').required('external link is needed!')
 });
@@ -33,7 +31,11 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState<IFetchError | null>(null);
-    const [success,setSuccess] = useState<String>('');
+
+    const [successModal, setSuccessModal] = useState(false);
+    const handleClose = () => setSuccessModal(false);
+    
+    // const [success,setSuccess] = useState<String>('');
   
     const { token } = useContext(UserProfileContext);
   
@@ -48,15 +50,17 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         setTimeout(() => console.log("timeout"), 5000);
         //api component call
         const res = await postCreateAdvertisement(values, token);
-        //console.log(res);
-        setSuccess('You submitted your advertisement successfully');
-        setTimeout(()=> setSuccess(''),5000);
+        console.log(res);
+        // setSuccess('You submitted your advertisement successfully');
+        setSuccessModal(true);
+        // setTimeout(()=> setSuccess(''),5000);
         //if successfully posted, set error to null
         setError(null);
         //reset the form
       } catch (error) {
         const genericMessage = 'An error occured while trying to create an Idea.';
         const errorObj = handlePotentialAxiosError(genericMessage, error);
+        setSuccessModal(false);
         setError(errorObj);
       } finally {
         setIsLoading(false)
@@ -75,8 +79,8 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
   
     return (
       <Container className='submit-advertisement-page-content'>
-        <Row className='justify-content-center'>
-          <h1 className="pb-1 border-bottom display-6">Create Advertisement</h1>
+        <Row className='mb-4 mt-4 justify-content-center'>
+          <h2 className="pb-2 pt-2 display-6">Create Advertisement</h2>
         </Row>
         <Row className='submit-advertisement-form-group justify-content-center'>
         <Col lg={10} >
@@ -101,7 +105,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group controlId="submitAdvertisementType">
               <Form.Label>Select Advertisement Type</Form.Label>
-              <Form.Control as="select" name="adType" onChange={handleChange} value={values.adType} isValid={touched.adType && !errors.adType}>
+              <Form.Control as="select" name="adType" onChange={handleChange} value={values.adType}>
                 <option key='0' value='BASIC'>BASIC</option>
                 <option key='1' value='EXTRA'>EXTRA</option>
               </Form.Control>
@@ -112,15 +116,24 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control.Feedback type="invalid">{errors.adTitle}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="validateAdPosition">
-              <Form.Label>Target position</Form.Label>
+              <Form.Label>Segment</Form.Label>
               <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="validateDuration">
+
+            {String(values.adType) === "BASIC" 
+            ? 
+              null
+            :
+            <>
+              <Form.Group controlId="validateDuration">
               <Form.Label>Advertisement Duration in Days</Form.Label>
               <Form.Control type="number" name="duration" size="sm" onChange={handleChange} value={values.duration} placeholder="Your advertisement duration" isInvalid={!!errors.duration}/>
               <Form.Control.Feedback type="invalid">{errors.duration}</Form.Control.Feedback>
-            </Form.Group>
+              </Form.Group>
+            </>
+            }
+
             <Form.Group controlId="validateExternalLink">
               <Form.Label>Provide external link for your advertisement</Form.Label>
               <Form.Control type="url" name="externalLink" onChange={handleChange} value={values.externalLink} placeholder="Your external link" isInvalid={!!errors.externalLink}/>
@@ -128,7 +141,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             </Form.Group>
             <Form.Group controlId="validateimagePath">
               {/*Need a specific info for image size here*/}
-              <ImageUploader name="imagePath" onChange={(picture) => {setFieldValue('imagePath',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
+              <ImageUploader name="imagePath" withPreview={true} onChange={(picture) => {setFieldValue('imagePath',picture)}} imgExtension={['.jpg','.jpeg','.png','.webp']} buttonText="Choose your advertisement image" maxFileSize={10485760} label="Max file size 10mb, accepted:jpg, jpeg, png, webp" singleImage={true}/>
               <Form.Control.Feedback type="invalid">{errors.imagePath}</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
@@ -142,6 +155,17 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
             >
               {isLoading ? "Saving..." : "Submit your Advertisement!"}
             </Button>
+            <Modal show={successModal} onHide={handleClose} animation={false}>
+              <Modal.Header closeButton>
+                <Modal.Title>Ads Posted</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Your ads is successfully posted</Modal.Body>
+              <Modal.Footer>
+                <Button variant="primary" onClick={handleClose} href={`/advertisement/all`}>
+                  Done
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </Form>)}
           </Formik>
           {error && (
@@ -149,7 +173,6 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               {error.message}
             </Alert>
           )}
-          {success}
         </Col>
       </Row>
       </Container>

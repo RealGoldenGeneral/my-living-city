@@ -12,9 +12,7 @@ export const ShowSubSegmentsPage: React.FC<ShowSubSegmentsPageProps> = ({segId, 
     const { data } = useAllSubSegmentsWithId(String(segId));
     return (
     <>
-        <div className="wrapper">
         <ShowSubSegments data={data} segId={segId} token={token} segName={segName}/>
-        </div>
     </>
     )
 }

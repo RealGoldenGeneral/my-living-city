@@ -4,6 +4,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = process.env.JWT_EXPIRY;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 const PORT = parseInt(process.env.EXPRESS_PORT ?? 3001);
+//This is for the googlePlaces api not the map.
+const GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY;
 
 // Rating Thresholds to advance
 // Retrieve from environment and set defaults if not set

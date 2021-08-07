@@ -13,7 +13,7 @@ const multer = require('multer');
 //multer storage policy, including file destination and file naming policy
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,'./uploads');
+        cb(null,'./uploads/adImage');
     },
     filename: function (req, file, cb) {
       cb(null,Date.now() + '-' + file.originalname);
@@ -74,8 +74,27 @@ advertisementRouter.post(
                     })
                 }
 
+                //Image path holder
+                let imagePath = '';
+                //if there's req.file been parsed by multer
+                if(req.file){
+                    //console.log(req.file);
+                    imagePath = req.file.path;
+                }
+
                 //decompose necessary fields from request body
                 const {adType,adTitle,adDuration,adPosition,externalLink,published} = req.body;
+                
+                if(adType === 'BASIC'){
+                    const theBasicAd = await prisma.advertisements.findFirst({where:{ownerId:id,adType:'BASIC'}});
+
+                    if(theBasicAd){
+                        if(fs.existsSync(imagePath)){
+                            fs.unlinkSync(imagePath);
+                        }
+                        return res.status(400).json({message:`You already created a basic advertisement, if you want to create more, please select type "EXTRA"; you can edit or delete the current basic advertisement.`});
+                    }
+                }
 
                 //if there's no adType in the request body
                 if(!adType){
@@ -131,10 +150,10 @@ advertisementRouter.post(
                 }
 
                 //if there's no adDuration field in the request body
-                if(!adDuration || adDuration <= 0){
+                if((!adDuration&&adType=='EXTRA') || (parseInt(adDuration)<=0&&adType=='EXTRA')){
                     error+='adDuration must be provided. ';
                     errorMessage+='adDuration must be provided in the body with a valid length. ';
-                    errorStack+='adDuration must be provided in the body with a valid lenght. ';
+                    errorStack+='adDuration must be provided in the body with a valid length. ';
                 }
 
                 //if there's no adPosition field in the 
@@ -143,13 +162,13 @@ advertisementRouter.post(
                     errorMessage+='Creating an advertisement must explicitly be supply a adPosition field. ';
                     errorStack+='"adPosition" must be provided in the body with a valid position found in the database. '
                 }
-                //Image path holder
-                let imagePath = '';
-                //if there's req.file been parsed by multer
-                if(req.file){
-                    //console.log(req.file);
-                    imagePath = req.file.path;
+
+                if(!externalLink){
+                    error+='externalLink is missing. ';
+                    errorMessage+='Creating an advertisement must explicitly be supply a externalLink field. ';
+                    errorStack+='"externalLink" must be provided in the body with a valid position found in the database. '
                 }
+                
                 //If there's error in error holder
                 if(error&&errorMessage&&errorStack){
                     //multer is a kind of middleware, if file is valid, multer will add it to upload folder. Following code are responsible for deleting files if error happened.
@@ -171,23 +190,42 @@ advertisementRouter.post(
                         }
                     });
                 }
-                //Calculate the ending date of advertisement based on duration field.
-                let theDate = new Date();
-                let endDate = new Date();
-                endDate.setDate(theDate.getDate()+adDuration);
-                //create an advertisement object
-                const createAnAdvertisement = await prisma.advertisements.create({
-                    data:{
-                        ownerId:id,
-                        adTitle:adTitle,
-                        duration: endDate,
-                        adType:adType,
-                        adPosition:adPosition,
-                        imagePath:imagePath,
-                        externalLink:externalLink,
-                        published:thePublished
-                    }
-                });
+
+                let createAnAdvertisement;
+
+                //if advertisement type is extra, create one with duration date; if not, create one without duration.
+                if(adType=='EXTRA'){
+                    //Calculate the ending date of advertisement based on duration field.
+                    let theDate = new Date();
+                    let endDate = new Date();
+                    endDate.setDate(theDate.getDate()+parseInt(adDuration));
+
+                    //create an advertisement object
+                    createAnAdvertisement = await prisma.advertisements.create({
+                        data:{
+                            ownerId:id,
+                            adTitle:adTitle,
+                            duration: endDate,
+                            adType:adType,
+                            adPosition:adPosition,
+                            imagePath:imagePath,
+                            externalLink:externalLink,
+                            published:thePublished
+                        }
+                    });
+                }else{
+                    createAnAdvertisement = await prisma.advertisements.create({
+                        data:{
+                            ownerId:id,
+                            adTitle:adTitle,
+                            adType:adType,
+                            adPosition:adPosition,
+                            imagePath:imagePath,
+                            externalLink:externalLink,
+                            published:thePublished
+                        }
+                    })
+                }
 
                 //sending user the successful status with created advertisement object
                 res.status(200).json(createAnAdvertisement);
@@ -217,34 +255,13 @@ advertisementRouter.post(
 //for retriving all advertisement table item for user.
 advertisementRouter.get(
     '/getAll',
-    passport.authenticate('jwt',{session:false}),
     async(req,res) => {
         try{
-            //get email and user id from request
-            const { email, id } = req.user;
-            //find the requesting user in the database
-            const theUser = await prisma.user.findUnique({
-                where:{id:id},
-                select:{userType:true}
-            });
-
-            if(theUser.userType === 'ADMIN' || theUser.userType === 'BUSINESS'){
-                const allAd = await prisma.advertisements.findMany({
-                    where:{ownerId:id}
-                });
-                if(allAd){
-                    return res.status(200).json(allAd);
-                }else{
-                    return res.status(404).send("there's no advertisement belongs to you!");
-                }
+            const allAd = await prisma.advertisements.findMany({});
+            if(allAd){
+                return res.status(200).json(allAd);
             }else{
-                return res.status(403).json({
-                    message: "You don't have the right to add an advertisement!",
-                    details: {
-                    errorMessage: 'In order to create an advertisement, you must be an admin or business user.',
-                    errorStack: 'user must be an admin or business if they want to create an advertisement',
-                    }
-                });
+                return res.status(404).send("there's no advertisement belongs to you!");
             }
         }catch(error){
             console.log(error);
@@ -260,6 +277,35 @@ advertisementRouter.get(
         }
     }
 );
+
+advertisementRouter.get(
+    '/get/:adsId',
+    async (req, res) => {
+        try {
+            const { Int: adsId } = req.params;
+            console.log(adsId);
+            const result = await prisma.advertisements.findFirst({
+                where:{id: adsId}
+            })
+
+            if(!result){
+                res.status(204).json("adsId not found!");
+            }
+            if(result){
+                res.status(200).json(result);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve the adsId.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
 
 advertisementRouter.put(
     '/update/:advertisementId',
@@ -331,22 +377,21 @@ advertisementRouter.put(
                     }
                 };
 
-                //if there's invalid adDuration field in the request body
-                if(!adDuration){
-                    if(adDuration <= 0){
-                        error+='adDuration must be provided. ';
-                        errorMessage+='adDuration must be provided in the body with a valid length. ';
-                        errorStack+='adDuration must be provided in the body with a valid lenght. ';
-                    }
+                if(theAdvertisement.duration==null&&!adDuration&&adType=='EXTRA'){
+                    error+='adDuration must be provided. ';
+                    errorMessage+='adDuration must be provided in the body with a valid length if there\'s no exisintg duration. ';
+                    errorStack+='adDuration must be provided in the body with a valid lenght. ';
                 }
 
-                if(adDuration){
+                if(adDuration&&theAdvertisement.adType=='EXTRA'){
                     if(parseInt(adDuration)<=0){
                         error+='adDuration must be provided. ';
                         errorMessage+='adDuration must be provided in the body with a valid length. ';
                         errorStack+='adDuration must be provided in the body with a valid lenght. ';
                     }else{
-                        endDate = addDays(new Date(), Number(adDuration));
+                        let theDate = new Date();
+                        endDate = new Date();
+                        endDate.setDate(theDate.getDate()+parseInt(adDuration));
                     }
                 }
 
@@ -407,7 +452,7 @@ advertisementRouter.put(
                     data:{
                         adType:adType,
                         adTitle:adTitle,
-                        duration:endDate,
+                        duration:adType=='BASIC'?null:endDate,
                         imagePath:newImagePath,
                         externalLink:externalLink,
                         published:published

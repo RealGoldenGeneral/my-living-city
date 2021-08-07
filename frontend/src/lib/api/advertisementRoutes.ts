@@ -23,7 +23,7 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
         throw new Error("You must provide a target position for advertisement or your position length is invalid (longer or equal to 1, shorter than 85)");
     }
     //if duration is not valid or missing
-    if(!duration||duration<=0){
+    if(duration === undefined){
         throw new Error("You must provide a duration for your advertisement or your duration is invalid (must be bigger than 0)");
     }
     //if imagePath is missing
@@ -60,12 +60,13 @@ export const postCreateAdvertisement = async (advertisementData:CreateAdvertisem
 }
 
 // GET Retrieve all advertisement info
-export const getAllAdvertisement = async (token: string | null) => {
-    const res = await axios.get<IAdvertisement[]>(
-        `${API_BASE_URL}/advertisement/getAll`,
-        getAxiosJwtRequestOption(token!)
-    );
+export const getAllAdvertisement = async () => {
+    const res = await axios.get<IAdvertisement[]>(`${API_BASE_URL}/advertisement/getAll`);
+    return res.data;
+}
 
+export const getAdvertisementById = async (adsId: any) => {
+    const res = await axios.get<IAdvertisement>(`${API_BASE_URL}/advertisement/get/${adsId}`);
     return res.data;
 }
 

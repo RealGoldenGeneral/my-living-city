@@ -5,9 +5,7 @@ import moment from 'moment';
 import { API_BASE_URL } from '../../lib/constants'
 
 // import '../../../../server/uploads'
-import '../../scss/content/_allAds.scss'
-import { deleteAdvertisement } from 'src/lib/api/advertisementRoutes';
-
+import { deleteAdvertisement, getAdvertisementById } from 'src/lib/api/advertisementRoutes';
 interface AllAdsPageContentProps {
   AllAdvertisement: IAdvertisement[] | undefined
   token: string | null
@@ -27,13 +25,22 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
       console.log(err)
     }
   }
+
+  // async function handleEdit(adsId: number) {
+  //   try {
+  //     await getAdvertisementById(adsId);
+  //   } catch(err) {
+  //     console.log(err);
+  //   }
+  // }
+
   return (
     
     <Container className='all-ads-page-content w-100'>
-      <Row className='justify-content-center'>
-      <h1 className="pb-1 border-bottom display-6 text-center">Advertisements Manager</h1>
+      <Row className='mb-4 mt-4'>
+          <h2 className="pb-2 pt-2 display-6">Advertisements Manager</h2>
       </Row>
-
+      
       <Row className='mb-3'>
         <a href='/advertisement/submit'>
           <Button>Create Ads</Button>
@@ -61,19 +68,22 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
             {AllAdvertisement?.map(item => (
               <tr key={item.id}>
                 <td>
-                  {/* <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary">Edit</Button></a> */}
-                  <Button block variant="danger" onClick={() => {
+                  <Button className='mb-2' block variant="primary" href={`/advertisement/edit/?id=${item.id}`}>Edit</Button>
+                  {/* <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary" onClick={() => {
+                    handleEdit(item.id);
+                  }}>Edit</Button></a> */}
+                  <Button block variant="outline-danger" onClick={() => {
                     handleDelete(item.id);
                   }}>Delete</Button>
                 </td>
                 <td>{item.adTitle}</td>
                 <td>{item.adType}</td>
                 <td>{item.ownerId}</td>
-                <td><img alt="" src={`${API_BASE_URL}/ads/${(item.imagePath).substring(7)}`}></img></td>
+                <td><img alt="" src={`${API_BASE_URL}/${(item.imagePath)}`}></img></td>
                 <td>{moment(item.duration).format('YYYY-MM-DD HH:mm:ss')}</td>
                 <td>{item.adPosition}</td>
                 <td><a href={item.externalLink}>{item.externalLink}</a></td>
-                <td>{item.published.toString()}</td>
+                <td>{item.published ? "Yes": "No"}</td>
                 <td>{item.createdAt}</td>
                 <td>{item.updatedAt}</td>
               </tr>

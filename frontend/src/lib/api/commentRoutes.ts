@@ -21,6 +21,7 @@ export const getCommentsUnderIdea = async (
     `${API_BASE_URL}/comment/getall/${ideaId}`,
     getAxiosJwtRequestOption(token!)
   );
+  console.log(res.data);
   return res.data;
 }
 

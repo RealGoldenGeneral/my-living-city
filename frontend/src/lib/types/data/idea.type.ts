@@ -6,6 +6,7 @@ import { IProject } from "./project.type";
 import { IRating } from "./rating.type";
 import { IComment } from "./comment.type";
 import { IUser } from "./user.type";
+import { ISegment, ISubSegment, ISuperSegment } from "./segment.type";
 
 export type IdeaState = 'IDEA' | 'PROPOSAL' | 'PROJECT';
 
@@ -15,8 +16,11 @@ export interface IIdea {
 	authorId: string;
 	championId: string;
 	categoryId: number;
+	segmentId: number; //
+	subSegmentId?: number; //
 	title: string;
 	description: string;
+	imagePath: string;
 	communityImpact?: string;
 	natureImpact?: string;
 	artsImpact?: string;
@@ -34,6 +38,10 @@ export interface IIdeaWithRelationship extends IIdea {
   geo?: IGeo;
   address?: IAddress;
   category?: ICategory;
+  userType: string;
+  segment?: ISegment; // 
+  subSegment?: ISubSegment; //
+  superSegment?: ISuperSegment;
   author?: IUser;
 	champion?: IUser | null;
   proposalInfo?: IProposal | null;
@@ -52,6 +60,10 @@ export interface IIdeaWithAggregations {
 	id: number;
 	authorId: string;
 	categoryId: number;
+	segmentName: string; //
+	subSegmentName?: string; //
+	firstName: string; //
+	streetAddress: string; //
 	title: string;
 	description: string;
 	state: IdeaState;

@@ -16,8 +16,30 @@ export interface IParsedCommentAuthor {
     streetAddress: string;
     postalCode: string;
   }
+  userType: string;
+  userSegments: {
+    homeSegmentId: number;
+    workSegmentId: number;
+    schoolSegmentId: number;
+    homeSubSegmentId: number;
+    workSubSegmentId: number;
+    schoolSubSegmentId: number;
+    homeSuperSegmentId: number;
+    workSuperSegmentId: number;
+    schoolSuperSegmentId: number;
+  }
 }
-
+export interface IParsedIdea {
+  segmentId: number;
+  subSegmentId?:number;
+  superSegmentId?:number;
+}
+export interface IParsedSegData {
+  id: string;
+  homeSegId: number;
+  workSegId: number;
+  schoolSegId: number;
+}
 export interface ICommentLikeDislike {
   id: number;
   ideaCommentId: number;
@@ -32,6 +54,8 @@ export interface IComment {
   active:    boolean;
   createdAt: string;
   updatedAt: string;
+  idea: IParsedIdea;
+  // userSeg: IParsedSegData;
   author: IParsedCommentAuthor;
   likes: ICommentLikeDislike[];
   dislikes: ICommentLikeDislike[];

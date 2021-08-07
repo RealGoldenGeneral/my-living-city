@@ -15,6 +15,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
   const {
     id,
     ideaId,
+    idea,
     authorId,
     content,
     createdAt,
@@ -25,14 +26,61 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
     }
   } = commentData;
 
-  const { email, fname, lname, address } = commentData?.author;
+  const { email, fname, lname, address, userSegments, userType } = commentData?.author;
+  const {segmentId, subSegmentId, superSegmentId} = commentData?.idea;
+  const {homeSegmentId, workSegmentId, schoolSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId, homeSuperSegmentId, workSuperSegmentId, schoolSuperSegmentId} = userSegments;
+  const colouredUserNameHandle = (ideaId: number, homeId?:number, workId?:number, schoolId?:number) => {
+    // let ideaId, homeId, workId, schoolId;
+    // if(superSegmentId){
+    //   ideaId = superSegmentId;
+    // }else{
 
+    // }
+    let userName = `${fname}@${address.streetAddress}`;
+    let colour = '';
+    if(userType === 'ADMIN') {
+      userName += " as Admin";
+      colour = 'text-danger';
+    }
+    else if(userType === 'MOD') {
+      userName += " as Mod";
+      colour = 'text-warning';
+    }else if(userType === 'MUNICIPAL'){
+      userName = "Municipal Account";
+      colour = 'text-warning';
+    }
+    else{
+      switch(ideaId){
+        case homeId:
+          userName += " as Resident"
+          colour = 'text-primary'
+          break;
+        case workId:
+          userName += " as Worker"
+          colour = 'text-next'
+          break;
+        case schoolId:
+          userName += " as Student"
+          colour = 'text-next'
+          break;
+      }
+    }
+    return(<span className={`name d-block font-weight-bold ${colour}`}>{userName}</span>)
+  }
   return (
     <Container fluid className='my-1'>
       <Row className='justify-content-center'>
         <Col className='mx-2'>
           <div className="d-flex flex-column justify-content-start">
-            <span className="name d-block font-weight-bold">{fname}@{address.streetAddress}</span>
+            {superSegmentId ? colouredUserNameHandle(superSegmentId, homeSuperSegmentId, workSuperSegmentId, schoolSuperSegmentId)
+            :  <> 
+            {subSegmentId ? 
+              colouredUserNameHandle(subSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId)
+              :
+              colouredUserNameHandle(segmentId, homeSegmentId, workSegmentId, schoolSegmentId)}
+            </>
+          }
+            
             <span className="date text-black-50">
               Shared publicly - {timeDifference(new Date(), new Date(createdAt))}
             </span>

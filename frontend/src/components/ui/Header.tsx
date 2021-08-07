@@ -1,20 +1,15 @@
 import { useContext, useState } from 'react'
 import { NavDropdown, Nav, Navbar, Form, FormControl, Button } from 'react-bootstrap'
+import NavbarCollapse from 'react-bootstrap/esm/NavbarCollapse';
 import { useUserWithJwtVerbose } from 'src/hooks/userHooks';
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-
-const UserName: React.FC = () => {
-  const { token } = useContext(UserProfileContext)
-  const { data: user} = useUserWithJwtVerbose({
+export default function Header() {
+  const { logout, user, token} = useContext(UserProfileContext);
+  const { data } = useUserWithJwtVerbose({
     jwtAuthToken: token!,
     shouldTrigger: token != null
   });
-  return (
-    <Nav.Link href='/profile' className="d-inline-block alight-top">{user && (`${user.fname}@${user!.address!.streetAddress}`)}</Nav.Link>
-  );
-}
-export default function Header() {
-  const { logout, user} = useContext(UserProfileContext);
+  console.log(data);
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
@@ -28,26 +23,35 @@ export default function Header() {
             alt="My Living City Logo"
           />
         </Navbar.Brand>
-        <UserName/>
+        <Nav.Link href='/profile' className="d-inline-block alight-top">{data && (`${data.fname}@${data!.address!.streetAddress}`)}</Nav.Link>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='ml-auto'>
             <Nav.Link href='/'>Home</Nav.Link>
-            <Nav.Link href='/ideas'>Ideas</Nav.Link>
+            <Nav.Link href='/ideas'>Conversations</Nav.Link>
             {user ? (
               <>
                 {/* <Navbar.Text> Fake Name</Navbar.Text> */}
                 <Nav.Link href='/submit'>Submit Idea</Nav.Link>
                 <Nav.Link href='/profile'>Profile</Nav.Link>
+
                 {user.userType ==="ADMIN" &&
                 <NavDropdown title="Admin Tools" id="nav-dropdown">
-                <Nav.Link href='/advertisement/all'>Ad Management</Nav.Link>
-                <Nav.Link href='/segment/management'>Segment Management</Nav.Link>
-                <Nav.Link href=''>User Management</Nav.Link>
+                <Nav.Link href='/advertisement/all'>Ads</Nav.Link>
+                <Nav.Link href='/segment/management'>Segments</Nav.Link>
+                <Nav.Link href='/user/management'>Users</Nav.Link>
               </NavDropdown>
                 }
-                
-
+                {user.userType ==="SEG_ADMIN" &&
+                <NavDropdown title="Seg-Admin Tools" id="nav-dropdown">
+                <Nav.Link href='/segment/management'>Segments</Nav.Link>
+              </NavDropdown>
+                }
+                {user.userType ==="MOD" &&
+                <NavDropdown title="Mod Tools" id="nav-dropdown">
+              </NavDropdown>
+                }
+                <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">Help</Nav.Link>
                 <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
               </>
             ) : (

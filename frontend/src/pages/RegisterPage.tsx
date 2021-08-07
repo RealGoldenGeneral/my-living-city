@@ -5,19 +5,19 @@ import useUserRoles from '../hooks/useUserRoles';
 export default function RegisterPage() {
 
   // Fetch User Roles
-  const { data, error, isLoading } = useUserRoles();
+  // const { data, error, isLoading } = useUserRoles();
 
-  if (isLoading) {
-    return (
-      <div className="wrapper">
-        <LoadingSpinner />
-      </div>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="wrapper">
+  //       <LoadingSpinner />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="wrapper">
-      <RegisterPageContent userRoles={ data }/>
+      <RegisterPageContent/>
     </div>
   )
 }
