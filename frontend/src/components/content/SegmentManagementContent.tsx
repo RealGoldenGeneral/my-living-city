@@ -114,7 +114,10 @@ export const ShowSubSegments:React.FC<ShowSubSegmentsProps> = ({data, segId, seg
                 /></td>
                 <td>
                   <Button variant="outline-danger" className="mr-2" onClick={()=>setHideControls('')}>Cancel</Button>
-                  <Button onClick={()=>handleSubSegSubmit(segment)}>Save</Button>
+                  <Button onClick={()=>{
+                    handleSubSegSubmit(segment);
+                    setHideControls('');
+                    }}>Save</Button>
                 </td>
                 </>
                 }
