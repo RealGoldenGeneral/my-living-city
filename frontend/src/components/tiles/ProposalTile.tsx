@@ -1,5 +1,5 @@
 import { Button, Card } from "react-bootstrap";
-import { IIdeaWithAggregations } from "../../lib/types/data/idea.type";
+import { IProposalWithAggregations } from "../../lib/types/data/proposal.type";
 import {
   capitalizeFirstLetterEachWord,
   timeDifference,
@@ -9,32 +9,32 @@ import { BsPeople, BsHeartHalf } from "react-icons/bs";
 import { AiOutlineStar } from "react-icons/ai";
 // import { FaRegThumbsUp, FaRegThumbsDown } from 'react-icons/fa'
 
-interface ideaTileProps {
-  ideaData: IIdeaWithAggregations;
+interface proposalTileProps {
+  proposalData: IProposalWithAggregations;
   showFooter: boolean;
   postType?: string;
 }
 
-const IdeaTile: React.FC<ideaTileProps> = ({
-  ideaData,
+const ProposalTile: React.FC<proposalTileProps> = ({
+  proposalData,
   showFooter,
   postType,
 }) => {
   const {
     id,
-    title,
-    description,
+    title = "No title provided",
+    description = "No description provided",
     // segmentName,
     // subSegmentName,
     firstName,
     streetAddress,
-    updatedAt,
-    ratingAvg,
-    ratingCount,
-    commentCount,
-    posRatings,
-    negRatings,
-  } = ideaData;
+    updatedAt = "0 days ago",
+    ratingAvg = 0,
+    ratingCount = 0,
+    commentCount = 0,
+    posRatings = 0,
+    negRatings = 0,
+  } = proposalData;
   //console.log(ideaData);
   return (
     // <Card style={{ width: '18rem' }}>
@@ -87,4 +87,4 @@ const IdeaTile: React.FC<ideaTileProps> = ({
   );
 };
 
-export default IdeaTile;
+export default ProposalTile;

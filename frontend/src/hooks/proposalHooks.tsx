@@ -33,7 +33,7 @@ export const useProposalsWithBreakdown = (take?: number) => {
   );
 };
 
-export const useIdeasHomepage = () => {
+export const useProposalsHomepage = () => {
   return useQuery<IProposalWithAggregations[], IFetchError>(
     "proposals-homepage",
     () => postAllProposalsWithBreakdown(3)

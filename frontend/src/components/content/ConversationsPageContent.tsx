@@ -1,11 +1,13 @@
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { IIdeaWithAggregations } from "../../lib/types/data/idea.type";
+import { IProposalWithAggregations } from "src/lib/types/data/proposal.type";
 import IdeaTile from "../tiles/IdeaTile";
+import ProposalTile from "../tiles/ProposalTile";
 
 interface ConversationsPageContentProps {
   ideas: IIdeaWithAggregations[] | undefined;
-  proposals: IIdeaWithAggregations[] | undefined;
+  proposals: IProposalWithAggregations[] | undefined;
 }
 
 // sorting and parsing ideas here
@@ -27,8 +29,8 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
               lg={4}
               className="pt-3 align-items-stretch"
             >
-              <IdeaTile
-                ideaData={proposal}
+              <ProposalTile
+                proposalData={proposal}
                 showFooter={true}
                 postType={"Proposal"}
               />

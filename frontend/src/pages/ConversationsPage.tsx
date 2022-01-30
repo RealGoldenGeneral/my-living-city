@@ -17,7 +17,7 @@ export default function ConversationsPage() {
     isError: pIsError,
   } = useProposalsWithBreakdown();
 
-  if (iLoading) {
+  if (iLoading || pLoading) {
     return (
       <div className="wrapper">
         <LoadingSpinner />
@@ -25,7 +25,7 @@ export default function ConversationsPage() {
     );
   }
 
-  if (iError) {
+  if (iError || pError) {
     console.log(iError);
     return (
       <div className="wrapper">
