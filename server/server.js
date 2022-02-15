@@ -8,10 +8,10 @@ const { swaggerSpec } = require('./lib/swaggerConfig');
 // TODO: May be reason why logout not working
 
 // Constants
-const { 
-	__prod__, 
-	PORT, 
-	CORS_ORIGIN 
+const {
+	__prod__,
+	PORT,
+	CORS_ORIGIN
 } = require('./lib/constants');
 
 
@@ -26,13 +26,13 @@ const main = async () => {
 			origin: CORS_ORIGIN
 		})
 	);
-  
 
-app.use('/uploads/AdImage', express.static(path.join(__dirname, 'uploads/AdImage')));
-app.use('/uploads/ideaImage', express.static(path.join(__dirname, 'uploads/ideaImage')));
-app.use('/uploads/avatarImages', express.static(path.join(__dirname, 'uploads/avatarImages')));
+
+	app.use('/uploads/AdImage', express.static(path.join(__dirname, 'uploads/AdImage')));
+	app.use('/uploads/ideaImage', express.static(path.join(__dirname, 'uploads/ideaImage')));
+	app.use('/uploads/avatarImages', express.static(path.join(__dirname, 'uploads/avatarImages')));
 	// Swagger config
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+	app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 	require('./auth/auth');
 
@@ -59,6 +59,8 @@ app.use('/uploads/avatarImages', express.static(path.join(__dirname, 'uploads/av
 	const userSegmentRequestRouter = require('./controllers/userSegmentRequest');
 	const superSegmentRouter = require('./controllers/superSegment');
 	const userSegmentRouter = require('./controllers/userSegment');
+	const proposalRouter = require('./controllers/proposal');
+
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -73,16 +75,17 @@ app.use('/uploads/avatarImages', express.static(path.join(__dirname, 'uploads/av
 	apiRouter.use('/rating', ideaRatingRouter);
 	apiRouter.use('/interact/comment', commentInteractRouter);
 	apiRouter.use('/champion', championRouter);
-	apiRouter.use('/advertisement',advertisementRouter);
+	apiRouter.use('/advertisement', advertisementRouter);
 	apiRouter.use('/avatar', avatarRouter);
-	apiRouter.use('/sendEmail',sendEmailRouter);
+	apiRouter.use('/sendEmail', sendEmailRouter);
 	apiRouter.use('/reset-password', userRouter);
 	apiRouter.use('/segment', segmentRouter);
-	apiRouter.use('/subSegment',subSegmentRouter);
+	apiRouter.use('/subSegment', subSegmentRouter);
 	apiRouter.use('/location', googleLocationAPI);
-	apiRouter.use('/userSegment',userSegmentRouter);
-	apiRouter.use('/userSegmentRequest',userSegmentRequestRouter);
-	apiRouter.use('/superSegment',superSegmentRouter);
+	apiRouter.use('/userSegment', userSegmentRouter);
+	apiRouter.use('/userSegmentRequest', userSegmentRequestRouter);
+	apiRouter.use('/superSegment', superSegmentRouter);
+	apiRouter.use('/proposal', proposalRouter);
 
 
 	// Listen to server

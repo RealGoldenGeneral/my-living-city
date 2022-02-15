@@ -62,5 +62,6 @@ export const ROUTES = {
   SEND_EMAIL: '/sendEmail',
   RESET_PASSWORD:'/user/reset-password',
   SEGMENT_MANAGEMENT:'/segment/management',
-  USER_MANAGEMENT:'/user/management'
+  USER_MANAGEMENT:'/user/management',
+  SUBMIT_DIRECT_PROPOSAL: '/submit-direct-proposal'
 }

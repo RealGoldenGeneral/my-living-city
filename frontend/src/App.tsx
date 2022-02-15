@@ -22,6 +22,7 @@ import AllAdsPage from './pages/AllAdsPage';
 import EditAdsPage from './pages/EditAdsPage'
 import AdminRoute from './components/utility/AdminRoute';
 import UserManagementPage from './pages/UserManagementPage';
+import SubmitDirectProposalPage from './pages/SubmitDirectProposalPage';
 function App() {
   return (
     <div className="App">
@@ -38,6 +39,8 @@ function App() {
           <PrivateRoute path={ROUTES.SUBMIT_IDEA} component={SubmitIdeaPage} />
           <PrivateRoute path={ROUTES.USER_PROFILE} component={ProfilePage} />
           <PrivateRoute path={ROUTES.TEST_PAGE} redirectPath='/ideas/1' component={TestPage} />
+
+          <PrivateRoute path={ROUTES.SUBMIT_DIRECT_PROPOSAL} component={SubmitDirectProposalPage} />
           <AdminRoute path={ROUTES.SUBMIT_ADVERTISEMENT} component={SubmitAdvertisementPage} />
           <AdminRoute path={ROUTES.ALL_ADVERTISEMENT} component={AllAdsPage} />
           <AdminRoute path={ROUTES.EDIT_ADVERTISEMENT} component={EditAdsPage} />

@@ -1,7 +1,7 @@
-const { 
-  PROJECT_RATING_AVG, 
-  PROJECT_RATING_COUNT, 
-  PROPOSAL_RATING_AVG, 
+const {
+  PROJECT_RATING_AVG,
+  PROJECT_RATING_COUNT,
+  PROPOSAL_RATING_AVG,
   PROPOSAL_RATING_COUNT
 } = require("./constants");
 const prisma = require('../lib/prismaClient');
@@ -24,7 +24,7 @@ const checkIdeaThresholds = async (ideaId) => {
 
   // Check if idea exists and throws error that will be caught in endpoint 
   const parsedIdeaId = parseInt(ideaId);
-  const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
+  const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
 
   if (!foundIdea) {
     throw new Error(`The idea with that listed ID (${parsedIdeaId}) does not exist.`)
@@ -51,7 +51,7 @@ const checkIdeaThresholds = async (ideaId) => {
     console.log("Meets Proposal Threshold")
     thresholdObject.triggerProposalAdvancement = true;
   }
-  
+
   // Check if idea meets Project thresholds
   if (
     PROJECT_RATING_AVG <= ratingAvg &&
