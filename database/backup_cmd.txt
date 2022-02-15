@@ -1,0 +1,1 @@
+pg_dump -U postgres -h 138.68.250.104 -p 32578 -W -F t mlc > c:\pgbackup\mlc_backup.tar
