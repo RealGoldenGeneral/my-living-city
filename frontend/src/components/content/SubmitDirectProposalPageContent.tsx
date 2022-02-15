@@ -33,6 +33,7 @@ import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import SubmitDirectProposalPage from "src/pages/SubmitDirectProposalPage";
 import { getDirectProposal } from "src/lib/api/proposalRoutes";
+import SimpleMap from "../map/SimpleMap";
 
 interface SubmitDirectProposalPageContentProps {
   categories: ICategory[] | undefined;
@@ -48,6 +49,12 @@ const DEFAULT_CAT_ID = 1;
 const SubmitDirectProposalPageContent: React.FC<
   SubmitDirectProposalPageContentProps
 > = ({ categories, segData }) => {
+  const [markers, sendData]: any = useState({
+    home: { lat: null, lon: null },
+    work: { lat: null, lon: null },
+    school: { lat: null, lon: null },
+  });
+  const [map, showMap] = useState(false);
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
@@ -92,8 +99,16 @@ const SubmitDirectProposalPageContent: React.FC<
       setIsLoading(false);
     }
   };
-  // console.log(segment);
-  // console.log(subSegment);
+
+  function toggleElement(str: string) {
+    let x = document.getElementById(str)!;
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+
   const formik = useFormik<ICreateIdeaInput>({
     initialValues: {
       // TODO: CatId when chosen is a string
@@ -132,11 +147,6 @@ const SubmitDirectProposalPageContent: React.FC<
     <Container className="submit-idea-page-content">
       <Row className="mb-4 mt-4 justify-content-center">
         <h2 className="pb-2 pt-2 display-6">Submit Direct Proposal</h2>
-        <button
-          onClick={() => getDirectProposal().then((data) => console.log(data))}
-        >
-          Click here!
-        </button>
       </Row>
       <Row className="submit-idea-form-group justify-content-center">
         <Col lg={10}>
@@ -434,6 +444,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 <Col></Col>
               </Row>
             </Form.Group>
+
             <Form.Group>
               <div className="checkbox">
                 <h3
@@ -479,25 +490,50 @@ const SubmitDirectProposalPageContent: React.FC<
                     id="567"
                     name="topping"
                     value="Paneer"
+                    onClick={() => toggleElement("specific-feedback")}
                   />
                   <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label> <br />
+                  <div id="specific-feedback" style={{ display: "none" }}>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      name="specific-feedback"
+                      onChange={formik.handleChange}
+                      placeholder="What specific feedback do you want?"
+                    />
+                  </div>
                   <input
                     type="checkbox"
-                    id="678"
+                    id="other"
                     name="topping"
                     value="Paneer"
+                    onClick={() => toggleElement("other-text")}
                   />
                   <Form.Label>&nbsp;&nbsp;Other</Form.Label> <br />
-                  <Form.Control
-                    type="text"
-                    name="title"
-                    onChange={formik.handleChange}
-                    value={formik.values.title}
-                    placeholder="Describe other"
-                    style={{ marginTop: "1rem" }}
-                  />
+                  <div id="other-text" style={{ display: "none" }}>
+                    <Form.Control
+                      type="text"
+                      name="other"
+                      onChange={formik.handleChange}
+                      placeholder="Describe other"
+                      style={{ marginTop: "1rem" }}
+                      // onclick toggle text box for other
+                    />
+                  </div>
                 </div>
               </div>
+            </Form.Group>
+            <Form.Group>
+              <h3
+                className="border-bottom mb-3"
+                style={{ paddingBottom: "1rem" }}
+              >
+                Location
+              </h3>
+              <SimpleMap
+                iconName={"home"}
+                sendData={(markers: any) => sendData(markers)}
+              />
             </Form.Group>
             <div style={{ display: "flex" }}>
               <Button
