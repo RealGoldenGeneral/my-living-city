@@ -29,7 +29,6 @@ import { UserSegmentRequestCard } from "../partials/UserSegmentRequestCard";
 import { COUNTRIES, PROVINCES } from "src/lib/constants";
 import { Dropdown } from "react-bootstrap";
 //import {Image} from 'react-native';
-//comment
 import { capitalizeFirstLetterEachWord } from "./../../lib/utilityFunctions";
 
 export interface ShowSubSegmentsProps {
