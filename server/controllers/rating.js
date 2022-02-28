@@ -16,13 +16,13 @@ ideaRatingRouter.get(
       //   route: 'welcome to the Idea Rating Router'
       // })
     } catch (error) {
-      res.status(400).json({
-        message: error.message,
+			res.status(400).json({
+				message: error.message,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
         }
-      })
+			})
     }
   }
 )
@@ -62,9 +62,9 @@ ideaRatingRouter.get(
         });
       }
 
-      const ratings = await prisma.ideaRating.findMany({ where: { ideaId: parsedIdeaId } });
+      const ratings = await prisma.ideaRating.findMany({ where: { ideaId: parsedIdeaId }});
       const posRatings = await prisma.ideaRating.aggregate({
-        where: {
+        where: { 
           ideaId: parsedIdeaId,
           rating: {
             gt: 0
@@ -73,8 +73,8 @@ ideaRatingRouter.get(
         count: true
       })
       const negRatings = await prisma.ideaRating.aggregate({
-        where: {
-          ideaId: parsedIdeaId,
+        where: { 
+          ideaId: parsedIdeaId ,
           rating: {
             lt: 0
           }
@@ -128,7 +128,7 @@ ideaRatingRouter.get(
         });
       }
 
-      const ratings = await prisma.ideaRating.findMany({ where: { ideaId: parsedIdeaId } });
+      const ratings = await prisma.ideaRating.findMany({ where: { ideaId: parsedIdeaId }});
 
       res.status(200).json(ratings);
     } catch (error) {
@@ -148,7 +148,7 @@ ideaRatingRouter.get(
 // Create a rating under an idea
 ideaRatingRouter.post(
   '/create/:ideaId',
-  passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
@@ -162,7 +162,7 @@ ideaRatingRouter.post(
         });
       }
 
-      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
+      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
       if (!foundIdea) {
         return res.status(400).json({
           message: `The idea with that listed ID (${ideaId}) does not exist.`,
@@ -171,7 +171,7 @@ ideaRatingRouter.post(
 
       // Check if user already submitted rating under "idea"
       const userAlreadyCreatedRating = await prisma.ideaRating.findFirst({
-        where: {
+        where: { 
           authorId: loggedInUserId,
           ideaId: parsedIdeaId,
         }
@@ -185,14 +185,12 @@ ideaRatingRouter.post(
         });
       }
 
-      const createdRating = await prisma.ideaRating.create({
-        data: {
-          rating,
-          ratingExplanation,
-          authorId: loggedInUserId,
-          ideaId: parsedIdeaId,
-        }
-      });
+      const createdRating = await prisma.ideaRating.create({ data: {
+        rating,
+        ratingExplanation,
+        authorId: loggedInUserId,
+        ideaId: parsedIdeaId,
+      }});
 
       // has fields "triggerProposalAdvancement", "triggerProjectAdvancement", "isChampionable".
       // Logic for "isChampionable" is not implemented yet.
@@ -209,7 +207,11 @@ ideaRatingRouter.post(
           where: { id: parsedIdeaId },
           data: {
             state: 'PROPOSAL',
-
+            proposalInfo: {
+              create: {
+                description: 'Proposal has been initialized',
+              },
+            },
           },
         });
       }
@@ -252,7 +254,7 @@ ideaRatingRouter.post(
 // Create a rating under an idea
 ideaRatingRouter.put(
   '/update/:ratingId',
-  passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
@@ -267,7 +269,7 @@ ideaRatingRouter.put(
       }
 
       // Check to see if rating exists
-      const foundRating = await prisma.ideaRating.findUnique({ where: { id: parsedRatingId } });
+      const foundRating = await prisma.ideaRating.findUnique({ where: { id: parsedRatingId }});
       if (!foundRating) {
         return res.status(400).json({
           message: `The rating with the listed ID (${commentId}) does not exist.`,
@@ -314,7 +316,7 @@ ideaRatingRouter.put(
 // delete a rating by ID
 ideaRatingRouter.delete(
   '/delete/:ratingId',
-  passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
@@ -328,7 +330,7 @@ ideaRatingRouter.delete(
       }
 
       // Check to see if comment exists
-      const foundRating = await prisma.ideaRating.findUnique({ where: { id: parsedRatingId } });
+      const foundRating = await prisma.ideaRating.findUnique({ where: { id: parsedRatingId }});
       if (!foundRating) {
         return res.status(400).json({
           message: `The rating with the listed ID (${commentId}) does not exist.`,
@@ -343,7 +345,7 @@ ideaRatingRouter.delete(
         });
       }
 
-      const deletedRating = await prisma.ideaRating.delete({ where: { id: parsedRatingId } });
+      const deletedRating = await prisma.ideaRating.delete({ where: { id: parsedRatingId }});
 
       res.status(200).json({
         message: "Rating succesfully deleted",
