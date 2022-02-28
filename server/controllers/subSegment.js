@@ -77,6 +77,13 @@ subSegmentRouter.post(
                     errorStack += 'lon must be provided in the body with a valid value. ';
                 }
 
+                //if radius is provided and radius is not valid
+                if (radius && !isNumber(radius)) {
+                    error += 'A subsegment must has a radius field with a valid value. ';
+                    errorMessage += 'Creating a subsegment must explicitly be supplied with a radius field. ';
+                    errorStack += 'radius must be provided in the body with a valid value. ';
+                }
+
                 //If there's error in error holder
                 if (error || errorMessage || errorStack) {
                     return res.status(400).json({
@@ -95,7 +102,8 @@ subSegmentRouter.post(
                         },
                         name: name,
                         lat: lat,
-                        lon: lon
+                        lon: lon,
+                        radius: radius
                     }
                 });
 
