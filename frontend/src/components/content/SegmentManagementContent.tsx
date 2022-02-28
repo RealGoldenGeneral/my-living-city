@@ -29,7 +29,6 @@ import { UserSegmentRequestCard } from "../partials/UserSegmentRequestCard";
 import { COUNTRIES, PROVINCES } from "src/lib/constants";
 import { Dropdown } from "react-bootstrap";
 //import {Image} from 'react-native';
-//comment
 import { capitalizeFirstLetterEachWord } from "./../../lib/utilityFunctions";
 
 export interface ShowSubSegmentsProps {
@@ -116,7 +115,8 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
               <th>Name</th>
               <th>Lat</th>
               <th>Lon</th>
-              <th>Controls</th>
+              <th>Radius</th>
+              <th style={{ width: "10rem" }}>Controls</th>
             </tr>
           </thead>
           <tbody>
@@ -129,6 +129,7 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
                     </td>
                     <td>{segment.lat}</td>
                     <td>{segment.lon}</td>
+                    <td>{segment.radius}</td>
                     <td>
                       <NavDropdown title="Controls" id="nav-dropdown">
                         <Dropdown.Item
@@ -169,14 +170,30 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
                       />
                     </td>
                     <td>
+                      <Form.Control
+                        type="text"
+                        defaultValue={segment.radius}
+                        onChange={(e) => {
+                          segment.radius = parseFloat(e.target.value);
+                        }}
+                      />
+                    </td>
+                    <td>
                       <Button
+                        size="sm"
                         variant="outline-danger"
                         className="mr-2"
                         onClick={() => setHideControls("")}
                       >
                         Cancel
                       </Button>
-                      <Button onClick={() => handleSubSegSubmit(segment)}>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          handleSubSegSubmit(segment);
+                          setHideControls("");
+                        }}
+                      >
                         Save
                       </Button>
                     </td>
@@ -205,6 +222,14 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
                     type="text"
                     onChange={(e) =>
                       (createData.lon = parseFloat(e.target.value))
+                    }
+                  ></Form.Control>
+                </td>
+                <td>
+                  <Form.Control
+                    type="text"
+                    onChange={(e) =>
+                      (createData.radius = parseFloat(e.target.value))
                     }
                   ></Form.Control>
                 </td>
