@@ -24,7 +24,7 @@ subSegmentRouter.post(
             });
             //User must be admin to create subsegment
             if (theUser.userType == 'ADMIN') {
-                const { segId, name, lat, lon } = req.body;
+                const { segId, name, lat, lon, radius } = req.body;
 
                 //if there's no object in the request body
                 if (isEmpty(req.body)) {
