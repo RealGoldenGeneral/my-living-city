@@ -1,9 +1,8 @@
-.footer-copyright,
-.push {
+.footer-copyright, .push{
   //max-width: $wrapper-max-width;
   //margin: 0 auto;
   padding: $wrapper-padding;
-  position: relative;
+  position: fixed;
   bottom: 0;
   background-color: white;
 }
