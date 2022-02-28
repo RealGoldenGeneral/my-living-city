@@ -115,8 +115,7 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
               <th>Name</th>
               <th>Lat</th>
               <th>Lon</th>
-              <th>Radius</th>
-              <th style={{ width: "10rem" }}>Controls</th>
+              <th>Controls</th>
             </tr>
           </thead>
           <tbody>
@@ -129,7 +128,6 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
                     </td>
                     <td>{segment.lat}</td>
                     <td>{segment.lon}</td>
-                    <td>{segment.radius}</td>
                     <td>
                       <NavDropdown title="Controls" id="nav-dropdown">
                         <Dropdown.Item
@@ -170,30 +168,14 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
                       />
                     </td>
                     <td>
-                      <Form.Control
-                        type="text"
-                        defaultValue={segment.radius}
-                        onChange={(e) => {
-                          segment.radius = parseFloat(e.target.value);
-                        }}
-                      />
-                    </td>
-                    <td>
                       <Button
-                        size="sm"
                         variant="outline-danger"
                         className="mr-2"
                         onClick={() => setHideControls("")}
                       >
                         Cancel
                       </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          handleSubSegSubmit(segment);
-                          setHideControls("");
-                        }}
-                      >
+                      <Button onClick={() => handleSubSegSubmit(segment)}>
                         Save
                       </Button>
                     </td>
@@ -222,14 +204,6 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
                     type="text"
                     onChange={(e) =>
                       (createData.lon = parseFloat(e.target.value))
-                    }
-                  ></Form.Control>
-                </td>
-                <td>
-                  <Form.Control
-                    type="text"
-                    onChange={(e) =>
-                      (createData.radius = parseFloat(e.target.value))
                     }
                   ></Form.Control>
                 </td>
