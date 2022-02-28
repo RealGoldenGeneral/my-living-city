@@ -481,6 +481,7 @@ model SubSegments {
   name      String    @map("sub_segment_name")
   lat       Decimal?
   lon       Decimal?
+  radius    Decimal?      
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @updatedAt @map("update_at")
 
