@@ -16,13 +16,13 @@ commentRouter.get(
         route: 'welcome to comment Router'
       })
     } catch (error) {
-			res.status(400).json({
-				message: error.message,
+      res.status(400).json({
+        message: error.message,
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
         }
-			})
+      })
     }
   }
 )
@@ -82,7 +82,7 @@ commentRouter.get(
         }
       }
 
-      const comments = await prisma.ideaComment.findMany({
+      const comments = await prisma.comment.findMany({
         where: { ideaId: parsedIdeaId },
         include: {
           _count: {
@@ -180,16 +180,16 @@ commentRouter.get(
 // Create a comment under an idea
 commentRouter.post(
   '/create/:ideaId',
-	passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
       const { content } = req.body;
       const parsedIdeaId = parseInt(req.params.ideaId);
 
-      const theUserSegment = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
+      const theUserSegment = await prisma.userSegments.findFirst({ where: { userId: loggedInUserId } });
 
-      if(!theUserSegment){
+      if (!theUserSegment) {
         return res.status(400).json({
           message: `user segment information not found.`
         })
@@ -202,56 +202,56 @@ commentRouter.post(
         });
       }
 
-      let theSuperSegmentId,theSegmentId,theSubSegmentId;
+      let theSuperSegmentId, theSegmentId, theSubSegmentId;
 
-      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId }});
+      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
       if (!foundIdea) {
         return res.status(400).json({
           message: `The idea with that listed ID (${ideaId}) does not exist.`,
         });
-      }else{
+      } else {
         let match = false;
-        
-        const userSegments = await prisma.userSegments.findFirst({where:{userId:loggedInUserId}});
 
-        if(foundIdea.subSegmentId){
-          if(userSegments.homeSubSegmentId == foundIdea.subSegmentId){
+        const userSegments = await prisma.userSegments.findFirst({ where: { userId: loggedInUserId } });
+
+        if (foundIdea.subSegmentId) {
+          if (userSegments.homeSubSegmentId == foundIdea.subSegmentId) {
             match = true;
-            theSubSegmentId=foundIdea.subSegmentId;
-          }else if(userSegments.workSubSegmentId == foundIdea.subSegmentId){
+            theSubSegmentId = foundIdea.subSegmentId;
+          } else if (userSegments.workSubSegmentId == foundIdea.subSegmentId) {
             match = true;
-            theSubSegmentId=foundIdea.subSegmentId;
-          }else if(userSegments.schoolSubSegmentId == foundIdea.subSegmentId){
+            theSubSegmentId = foundIdea.subSegmentId;
+          } else if (userSegments.schoolSubSegmentId == foundIdea.subSegmentId) {
             match = true;
-            theSubSegmentId=foundIdea.subSegmentId;
+            theSubSegmentId = foundIdea.subSegmentId;
           }
-        }else if(foundIdea.segmentId){
-          if(userSegments.homeSegmentId == foundIdea.segmentId){
+        } else if (foundIdea.segmentId) {
+          if (userSegments.homeSegmentId == foundIdea.segmentId) {
             match = true;
-            theSegmentId=foundIdea.segmentId;
-          }else if(userSegments.workSegmentId == foundIdea.segmentId){
+            theSegmentId = foundIdea.segmentId;
+          } else if (userSegments.workSegmentId == foundIdea.segmentId) {
             match = true;
-            theSegmentId=foundIdea.segmentId;
-          }else if(userSegments.schoolSegmentId == foundIdea.segmentId){
+            theSegmentId = foundIdea.segmentId;
+          } else if (userSegments.schoolSegmentId == foundIdea.segmentId) {
             match = true;
-            theSegmentId=foundIdea.segmentId;
+            theSegmentId = foundIdea.segmentId;
           }
-        }else if(foundIdea.superSegmentId){
-          if(userSegments.homeSuperSegId==foundIdea.superSegmentId){
+        } else if (foundIdea.superSegmentId) {
+          if (userSegments.homeSuperSegId == foundIdea.superSegmentId) {
             match = true;
-            theSuperSegmentId=foundIdea.superSegmentId;
-          }else if(userSegments.workSuperSegId==foundIdea.superSegmentId){
+            theSuperSegmentId = foundIdea.superSegmentId;
+          } else if (userSegments.workSuperSegId == foundIdea.superSegmentId) {
             match = true;
-            theSuperSegmentId=foundIdea.superSegmentId;
-          }else if(userSegments.schoolSuperSegId==foundIdea.superSegmentId){
+            theSuperSegmentId = foundIdea.superSegmentId;
+          } else if (userSegments.schoolSuperSegId == foundIdea.superSegmentId) {
             match = true;
-            theSuperSegmentId=foundIdea.superSegmentId;
+            theSuperSegmentId = foundIdea.superSegmentId;
           }
         }
 
-        if(!match){
+        if (!match) {
           return res.status(403).json({
-            message:`You are not belonging to the idea's segment or subsegment!`
+            message: `You are not belonging to the idea's segment or subsegment!`
           })
         }
       }
@@ -261,10 +261,10 @@ commentRouter.post(
           content,
           authorId: loggedInUserId,
           ideaId: parsedIdeaId,
-          userSegId:theUserSegment.id,
-          superSegmentId:theSuperSegmentId,
-          segmentId:theSegmentId,
-          subSegmentId:theSubSegmentId
+          userSegId: theUserSegment.id,
+          superSegmentId: theSuperSegmentId,
+          segmentId: theSegmentId,
+          subSegmentId: theSubSegmentId
         },
         include: {
           author: {
@@ -295,7 +295,7 @@ commentRouter.post(
 // Create a comment under an idea
 commentRouter.put(
   '/update/:commentId',
-	passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
@@ -310,7 +310,7 @@ commentRouter.put(
       }
 
       // Check to see if comment exists
-      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId }});
+      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId } });
       if (!foundComment) {
         return res.status(400).json({
           message: `The comment with the listed ID (${commentId}) does not exist.`,
@@ -356,7 +356,7 @@ commentRouter.put(
 // delete a comment
 commentRouter.delete(
   '/delete/:commentId',
-	passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
       const { email, id: loggedInUserId } = req.user;
@@ -370,7 +370,7 @@ commentRouter.delete(
       }
 
       // Check to see if comment exists
-      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId }});
+      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId } });
       if (!foundComment) {
         return res.status(400).json({
           message: `The comment with the listed ID (${commentId}) does not exist.`,
@@ -385,7 +385,7 @@ commentRouter.delete(
         });
       }
 
-      const deletedComment = await prisma.ideaComment.delete({ where: { id: parsedCommentId }});
+      const deletedComment = await prisma.ideaComment.delete({ where: { id: parsedCommentId } });
 
       res.status(200).json({
         message: "Comment succesfully deleted",
