@@ -44,7 +44,7 @@ export interface IProposalWithRelationship extends IProposal {
   superSegment?: ISuperSegment;
   author?: IUser;
   champion?: IUser | null;
-  proposalInfo?: IProposal | null;
+
   projectInfo?: IProject | null;
 
   // Comments and Ratings are fetched seperately but could be fetched
