@@ -334,51 +334,8 @@ proposalRouter.post(
         }
         try {
             // get all proposals with aggregations
-            const allIdeas = await prisma.proposal.findMany({
-                select: {
-                    id: true,
-                    title: true,
-                    description: true,
-                    communityImpact: true,
-                    natureImpact: true,
-                    artsImpact: true,
-                    energyImpact: true,
-                    manufacturingImpact: true,
-                    authorId: true,
+            const allIdeas = await prisma.proposal.findMany()
 
-                    categoryId: true,
-                    superSegmentId: true,
-                    segmentId: true,
-                    subSegmentId: true,
-
-                    geo: {
-                        select: {
-                            id: true,
-                            lat: true,
-                        }
-                    },
-                    address: {
-                        select: {
-                            id: true,
-
-                        }
-                    },
-                    category: {
-                        select: {
-                            id: true,
-
-                            description: true,
-
-                        }
-                    },
-
-
-                },
-                orderBy: {
-                    updatedAt: 'desc'
-                },
-                ...takeClause
-            });
 
             res.status(200).json(allIdeas);
 

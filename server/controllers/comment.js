@@ -82,7 +82,7 @@ commentRouter.get(
         }
       }
 
-      const comments = await prisma.comment.findMany({
+      const comments = await prisma.ideaComment.findMany({
         where: { ideaId: parsedIdeaId },
         include: {
           _count: {

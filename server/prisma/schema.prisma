@@ -122,13 +122,11 @@ model User {
   geo             UserGeo?
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
   ideas           Idea[]       @relation("ideaAuthor")
-  proposals  Proposal[]   @relation("proposalAuthor")
-  championedProposals Proposal[] @relation("proposalChampion")
   championedIdeas Idea[]       @relation("ideaChampion")
 
   // championedIdeas     Idea[]                @relation("championedIdeas")
-  ideaRatings         Rating[]
-  ideaComments        Comment[]
+  ideaRatings         IdeaRating[]
+  ideaComments        IdeaComment[]
   ideaCommentLikes    UserCommentLikes[]
   ideaCommentDislikes UserCommentDislikes[]
 
@@ -173,7 +171,7 @@ model UserSegments {
   homeSubSegment       SubSegments?  @relation("homeSubSegment", fields: [homeSubSegmentId], references: [id])
   workSubSegment       SubSegments?  @relation("workSubSegment", fields: [workSubSegmentId], references: [id])
   schoolSubSegment     SubSegments?  @relation("schoolSubSegment", fields: [schoolSubSegmentId], references: [id])
-  IdeaComment          Comment[]
+  IdeaComment          IdeaComment[]
 }
 
 // Category entity
@@ -189,7 +187,6 @@ model Category {
 
   // relations
   ideas Idea[]
-  proposals Proposal[]
 
   @@map(name: "category")
 }
@@ -203,7 +200,7 @@ enum IdeaState {
   @@map(name: "idea_state")
 }
 
-model Geo {
+model IdeaGeo {
   // keys
   id     Int @id @default(autoincrement())
   ideaId Int? @map("idea_id")
@@ -217,12 +214,11 @@ model Geo {
 
   // relationships
   idea Idea? @relation(fields: [ideaId], references: [id])
-  proposal Proposal? @relation(fields: [proposalId], references: [id])
 
   @@map(name: "idea_geo")
 }
 
-model Address {
+model IdeaAddress {
   // keys
   id     Int @id @default(autoincrement())
   ideaId Int? @map("idea_id")
@@ -239,7 +235,6 @@ model Address {
 
   // relationships
   idea Idea? @relation(fields: [ideaId], references: [id])
-  proposal Proposal? @relation(fields: [proposalId], references: [id])
 
   @@map(name: "idea_address")
 }
@@ -270,11 +265,12 @@ model Idea {
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
 
   // relations
-  comments     Comment[]
-  ratings      Rating[]
+  comments     IdeaComment[]
+  ratings      IdeaRating[]
+  proposalInfo Proposal?
   projectInfo  Project?
-  address      Address?
-  geo          Geo?
+  address      IdeaAddress?
+  geo          IdeaGeo?
 
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
@@ -289,45 +285,17 @@ model Idea {
 }
 
 model Proposal {
-  // Keys
-  id             Int     @id @default(autoincrement())
-  authorId       String  @map("author_id")
-  championId     String? @map("champion_id")
-  categoryId     Int     @map("category_id")
-  superSegmentId Int     @map("super_segment_id")
-  segmentId      Int?    @map("segment_id")
-  subSegmentId   Int?    @map("sub_segment_id")
+  id     Int @id @default(autoincrement())
+  ideaId Int? @map("idea_id")
 
-  // Values
-  title               String
-  description         String
-  userType            String    @default("Resident")
-  communityImpact     String?   @map("community_impact")
-  natureImpact        String?   @map("nature_impact")
-  artsImpact          String?   @map("arts_impact")
-  energyImpact        String?   @map("energy_impact")
-  manufacturingImpact String?   @map("manufacturing_impact")
-  state               IdeaState @default(PROPOSAL)
-  active              Boolean   @default(true)
-  imagePath           String?   @map("image_path")
-  createdAt           DateTime  @default(now()) @map(name: "created_at")
-  updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
+  // Fields
+  // TODO: Add fields that would be in Proposal state
+  description String?
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
-  // relations
-  comments     Comment[]
-  ratings      Rating[]
-  address      Address?
-  geo          Geo?
-
-  // Multiple relationships pointing to same User Model
-  // https://github.com/prisma/prisma/discussions/2073
-  author       User         @relation("proposalAuthor", fields: [authorId], references: [id])
-  champion     User?        @relation("proposalChampion", fields: [championId], references: [id])
-  category     Category     @relation(fields: [categoryId], references: [id])
-  superSegment SuperSegment @relation(fields: [superSegmentId], references: [superSegId])
-  segment      Segments?    @relation(fields: [segmentId], references: [segId])
-  subSegment   SubSegments? @relation(fields: [subSegmentId], references: [id])
-
+  // Relations
+  idea Idea? @relation(fields: [ideaId], references: [id])
   @@map(name: "proposal")
 }
 
@@ -348,7 +316,7 @@ model Project {
   @@map(name: "project")
 }
 
-model Rating {
+model IdeaRating {
   // Keys
   id       Int    @id @default(autoincrement())
   ideaId   Int?    @map("idea_id")
@@ -364,12 +332,12 @@ model Rating {
   // relations
   author User @relation(fields: [authorId], references: [id])
   idea   Idea? @relation(fields: [ideaId], references: [id])
-  proposal Proposal? @relation(fields: [proposalId], references: [id])
+
 
   @@map(name: "idea_rating")
 }
 
-model Comment {
+model IdeaComment {
   // keys
   id     Int @id @default(autoincrement())
   ideaId Int? @map("idea_id")
@@ -389,7 +357,6 @@ model Comment {
   // relations
   author   User                  @relation(fields: [authorId], references: [id])
   idea     Idea?                  @relation(fields: [ideaId], references: [id])
-  proposal Proposal?              @relation(fields: [proposalId], references: [id]) 
   userSeg  UserSegments          @relation(fields: [userSegId], references: [id])
   likes    UserCommentLikes[]
   dislikes UserCommentDislikes[]
@@ -402,7 +369,7 @@ model UserCommentLikes {
   ideaCommentId Int?    @map("idea_comment_id")
   authorId      String? @map("author_id")
 
-  ideaComment Comment? @relation(fields: [ideaCommentId], references: [id])
+  ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
   author      User?        @relation(fields: [authorId], references: [id])
 
   @@map(name: "user_comment_likes")
@@ -413,7 +380,7 @@ model UserCommentDislikes {
   ideaCommentId Int?    @map("idea_comment_id")
   authorId      String? @map("author_id")
 
-  ideaComment Comment? @relation(fields: [ideaCommentId], references: [id])
+  ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
   author      User?        @relation(fields: [authorId], references: [id])
 
   @@map(name: "user_comment_dislikes")
@@ -448,7 +415,6 @@ model SuperSegment {
 
   Segments           Segments[]
   Idea               Idea[]
-  Proposal           Proposal[]
   homeUserSegments   UserSegments[] @relation("homeSuperSeg")
   workUserSegments   UserSegments[] @relation("workSuperSeg")
   schoolUserSegments UserSegments[] @relation("schoolSuperSeg")
@@ -471,7 +437,6 @@ model Segments {
   workSegments   UserSegments[] @relation("workSegment")
   schoolSegments UserSegments[] @relation("schoolSegment")
   Idea           Idea[]
-  Proposal       Proposal[]
   @@map(name: "segment")
 }
 
@@ -491,7 +456,6 @@ model SubSegments {
   schoolSubSegments UserSegments[] @relation("schoolSubSegment")
 
   Idea Idea[]
-  Proposal Proposal[]
   @@map(name: "sub_segment")
 }
 
