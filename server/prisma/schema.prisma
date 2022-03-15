@@ -331,30 +331,23 @@ model Project {
 model IdeaRating {
   // Keys
   id       Int    @id @default(autoincrement())
-  ideaId   Int?    @map("idea_id")
-  proposalId Int?    @map("proposal_id")
+  ideaId   Int    @map("idea_id")
   authorId String @map("author_id")
-
   // Fields
   rating            Int      @default(0)
   ratingExplanation String?  @map("rating_explanation")
   createdAt         DateTime @default(now()) @map(name: "created_at")
   updatedAt         DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
   // relations
   author User @relation(fields: [authorId], references: [id])
-  idea   Idea? @relation(fields: [ideaId], references: [id])
-
-
+  idea   Idea @relation(fields: [ideaId], references: [id])
   @@map(name: "idea_rating")
 }
 
 model IdeaComment {
   // keys
   id     Int @id @default(autoincrement())
-  ideaId Int? @map("idea_id")
-  proposalId Int? @map("proposal_id")
-
+  ideaId Int @map("idea_id")
   // Fields
   authorId       String   @map("author_id")
   userSegId      String   @map("user_segment_id")
@@ -365,14 +358,12 @@ model IdeaComment {
   active         Boolean  @default(true)
   createdAt      DateTime @default(now()) @map(name: "created_at")
   updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
   // relations
   author   User                  @relation(fields: [authorId], references: [id])
-  idea     Idea?                  @relation(fields: [ideaId], references: [id])
+  idea     Idea                  @relation(fields: [ideaId], references: [id])
   userSeg  UserSegments          @relation(fields: [userSegId], references: [id])
   likes    UserCommentLikes[]
   dislikes UserCommentDislikes[]
-
   @@map(name: "idea_comment")
 }
 
@@ -380,10 +371,8 @@ model UserCommentLikes {
   id            Int     @id @default(autoincrement())
   ideaCommentId Int?    @map("idea_comment_id")
   authorId      String? @map("author_id")
-
   ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
   author      User?        @relation(fields: [authorId], references: [id])
-
   @@map(name: "user_comment_likes")
 }
 
@@ -391,13 +380,10 @@ model UserCommentDislikes {
   id            Int     @id @default(autoincrement())
   ideaCommentId Int?    @map("idea_comment_id")
   authorId      String? @map("author_id")
-
   ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
   author      User?        @relation(fields: [authorId], references: [id])
-
   @@map(name: "user_comment_dislikes")
 }
-
 model Advertisements {
   id       Int       @id @default(autoincrement())
   ownerId  String    @map("owner_id")
