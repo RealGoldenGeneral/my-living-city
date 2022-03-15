@@ -111,14 +111,14 @@ proposalRouter.post(
                 }
                 // Check if category id is added
                 if (!categoryId || !isInteger(categoryId)) {
-                    error += 'An Idea must be under a specific category.';
+                    error += 'An Proposal must be under a specific category.';
                     errorMessage += 'Creating an idea must explicitly be supplied with a "categoryId" field.';
                     errorStack += '"CategoryId" must be defined in the body with a valid id found in the database.';
                 } else {
                     const theCategory = await prisma.category.findUnique({ where: { id: categoryId } });
 
                     if (!theCategory) {
-                        error += 'An Idea must be under a valid category.';
+                        error += 'An Proposal must be under a valid category.';
                         errorMessage += 'Creating an idea must explicitly be supplied with valid a "categoryId" field.';
                         errorStack += '"CategoryId" must be defined in the body with a valid id found in the database.';
                     }
@@ -146,7 +146,7 @@ proposalRouter.post(
                     const theSegment = await prisma.segments.findUnique({ where: { segId: segmentId } });
 
                     if (!theSegment) {
-                        error += 'An Idea must belong to a municipality.';
+                        error += 'An Proposal must belong to a municipality.';
                         errorMessage += 'Creating an idea must explicitly be supplied with a valid "segmentId" field.';
                         errorStack += '"segmentId" must be defined in the body with a valid id found in the database.';
                     } else if (segmentId == homeSegmentId || segmentId == workSegmentId || segmentId == schoolSegmentId) {
@@ -160,7 +160,7 @@ proposalRouter.post(
                     const theSuperSegment = await prisma.superSegment.findUnique({ where: { superSegId: superSegmentId } });
 
                     if (!theSuperSegment) {
-                        error += 'An Idea must belong to a area.';
+                        error += 'An Proposal must belong to a area.';
                         errorMessage += 'Creating an idea must explicitly be supplied with a valid "superSegmentId" field.';
                         errorStack += '"segmentId" must be defined in the body with a valid id found in the database.';
                     } else if (superSegmentId != homeSuperSegId && superSegmentId != workSuperSegId && superSegmentId != schoolSegmentId) {
@@ -225,7 +225,7 @@ proposalRouter.post(
                 };
 
                 // Create an idea and make the author JWT bearer
-                const createdIdea = await prisma.idea.create({
+                const createdProposal = await prisma.idea.create({
                     data: {
                         geo: { create: geoData },
                         address: { create: addressData },
@@ -238,11 +238,11 @@ proposalRouter.post(
                     }
                 });
 
-                res.status(201).json(createdIdea);
+                res.status(201).json(createdProposal);
             } catch (error) {
                 console.error(error);
                 res.status(400).json({
-                    message: "An error occured while trying to create an Idea.",
+                    message: "An error occured while trying to create an Proposal.",
                     details: {
                         errorMessage: error.message,
                         errorStack: error.stack,
@@ -275,41 +275,43 @@ proposalRouter.get(
     }
 )
 
-// Get all Ideas
+// Get all Proposals
 proposalRouter.get(
-    '/getall',
+    '/getAll',
     async (req, res, next) => {
         try {
-            const allIdeas = await prisma.proposal.findMany({
-                orderBy: {
-                    updatedAt: 'desc'
+            const proposals = await prisma.proposal.findMany({
+                include: {
+                    idea:
+                    {
+                        include: {
+                            ratings: true,
+                        }
+                    }
                 }
             });
-
-            res.status(200).json(allIdeas);
+            res.json(proposals);
         } catch (error) {
             res.status(400).json({
-                message: "An error occured while trying to fetch all ideas",
+                message: error.message,
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
                 }
-            });
-        } finally {
-            await prisma.$disconnect();
+            })
         }
     }
 )
 
-// Get all ideas with aggregations
+// Get all proposals with aggregations
 proposalRouter.post(
     '/getall/with-sort',
     async (req, res, next) => {
         try {
             console.log(req.body);
-            const allIdeas = await prisma.idea.findMany(req.body);
+            const allProposals = await prisma.proposal.findMany(req.body);
 
-            res.status(200).json(allIdeas);
+            res.status(200).json(allProposals);
         } catch (error) {
             res.status(400).json({
                 message: "An error occured while trying to fetch all ideas",
@@ -327,95 +329,61 @@ proposalRouter.post(
 proposalRouter.post(
     '/getall/aggregations',
     async (req, res, next) => {
-        const take = req.body.take;
-        let takeClause = ''
-        if (!!take) {
-            takeClause = `limit ${take}`;
-        }
         try {
-            // get all proposals with aggregations
-            const allIdeas = await prisma.proposal.findMany()
-
-
-            res.status(200).json(allIdeas);
-
+            const proposals = await prisma.proposal.findMany({
+                include: {
+                    idea: {
+                        include: {
+                            ratings: true,
+                        },
+                    },
+                },
+            });
+            res.json(proposals);
         } catch (error) {
-            console.error(error);
             res.status(400).json({
-                message: "An error occured while trying to fetch all ideas",
+                message: error.message,
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
                 }
-            });
-        } finally {
-            await prisma.$disconnect();
+            })
         }
     }
 )
 
 // Get all idea as well as relations with ideaId
 proposalRouter.get(
-    '/get/:ideaId',
+    '/get/:proposalId',
     async (req, res, next) => {
         try {
-            const parsedIdeaId = parseInt(req.params.ideaId);
+            const parsedProposalId = parseInt(req.params.proposalId);
 
             // check if id is valid
-            if (!parsedIdeaId) {
+            if (!parsedProposalId) {
                 return res.status(400).json({
                     message: `A valid ideaId must be specified in the route parameter.`,
                 });
             }
 
-            const {
-                isChampionable
-            } = await checkIdeaThresholds(parsedIdeaId);
-
-            const foundIdea = await prisma.idea.findUnique({
-                where: { id: parsedIdeaId },
+            const foundProposal = await prisma.proposal.findUnique({
+                where: { id: parsedProposalId },
                 include: {
-                    // TODO: Is this necessary? SQL query will join 9-10 times.
-                    geo: true,
-                    address: true,
-                    category: true,
-                    projectInfo: true,
-                    champion: {
+                    idea: {
                         include: {
-                            address: {
-                                select: {
-                                    postalCode: true,
-                                    streetAddress: true,
-                                }
-                            }
-                        }
+                            ratings: true,
+                        },
                     },
-                    author: {
-                        include: {
-                            address: {
-                                select: {
-                                    postalCode: true,
-                                    streetAddress: true,
-                                }
-                            }
-                        }
-                    },
-                    segment: true,
-                    subSegment: true,
-                    superSegment: true
-                }
+                },
+
             });
-            if (!foundIdea) {
+            if (!foundProposal) {
                 return res.status(400).json({
-                    message: `The idea with that listed ID (${parsedIdeaId}) does not exist.`,
+                    message: `The idea with that listed ID (${parsedProposalId}) does not exist.`,
                 });
             }
 
-            const result = { ...foundIdea, isChampionable };
-            delete result.author.password;
-            if (!!result.champion) {
-                delete result.champion.password;
-            }
+            const result = { ...foundProposal };
 
             res.status(200).json(result);
         } catch (error) {
@@ -442,7 +410,7 @@ proposalRouter.put(
         try {
             const { email, id: loggedInUserId } = req.user;
             const { ideaId } = req.params;
-            const parsedIdeaId = parseInt(ideaId);
+            const parsedProposalId = parseInt(ideaId);
             const {
                 title,
                 description,
@@ -465,22 +433,22 @@ proposalRouter.put(
                 },
             } = req.body;
 
-            if (!ideaId || !parsedIdeaId) {
+            if (!ideaId || !parsedProposalId) {
                 return res.status(400).json({
                     message: `A valid ideaId must be specified in the route paramater.`,
                 });
             }
 
             // Check to see if idea with id exists
-            const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
-            if (!foundIdea) {
+            const foundProposal = await prisma.idea.findUnique({ where: { id: parsedProposalId } });
+            if (!foundProposal) {
                 return res.status(400).json({
                     message: `The idea with that listed ID (${ideaId}) does not exist.`,
                 });
             }
 
-            // Check to see if Idea is the requestee's idea by JWT
-            const ideaOwnedByUser = foundIdea.authorId === loggedInUserId;
+            // Check to see if Proposal is the requestee's idea by JWT
+            const ideaOwnedByUser = foundProposal.authorId === loggedInUserId;
             if (!ideaOwnedByUser) {
                 return res.status(401).json({
                     message: `The user ${email} is not the author or an admin and therefore cannot edit this idea.`
@@ -511,8 +479,8 @@ proposalRouter.put(
                 ...manufacturingImpact && { manufacturingImpact },
             };
 
-            const updatedIdea = await prisma.idea.update({
-                where: { id: parsedIdeaId },
+            const updatedProposal = await prisma.idea.update({
+                where: { id: parsedProposalId },
                 data: {
                     geo: { update: updateGeoData },
                     address: { update: updateAddressData },
@@ -526,12 +494,12 @@ proposalRouter.put(
 
             console.log("Returns here")
             res.status(200).json({
-                message: "Idea succesfully updated",
-                idea: updatedIdea,
+                message: "Proposal succesfully updated",
+                idea: updatedProposal,
             })
         } catch (error) {
             res.status(400).json({
-                message: "An error occured while to update an Idea",
+                message: "An error occured while to update an Proposal",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -552,52 +520,52 @@ proposalRouter.delete(
         try {
             const { id: loggedInUserId, email } = req.user;
             console.log(req.user);
-            const parsedIdeaId = parseInt(req.params.ideaId);
+            const parsedProposalId = parseInt(req.params.ideaId);
 
             // check if id is valid
-            if (!parsedIdeaId) {
+            if (!parsedProposalId) {
                 return res.status(400).json({
                     message: `A valid ideaId must be specified in the route paramater.`,
                 });
             }
 
             // Check to see if idea exists
-            const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
-            if (!foundIdea) {
+            const foundProposal = await prisma.idea.findUnique({ where: { id: parsedProposalId } });
+            if (!foundProposal) {
                 return res.status(400).json({
                     message: `The idea with that listed ID (${ideaId}) does not exist.`,
                 });
             }
 
             // Check to see if idea is owned by user
-            const ideaOwnedByUser = foundIdea.authorId === loggedInUserId;
+            const ideaOwnedByUser = foundProposal.authorId === loggedInUserId;
             if (!ideaOwnedByUser) {
                 return res.status(401).json({
                     message: `The user ${email} is not the author or an admin and therefore cannot delete this idea.`
                 });
             }
 
-            if (foundIdea.imagePath) {
-                if (fs.existsSync(foundIdea.imagePath)) {
-                    fs.unlinkSync(foundIdea.imagePath);
+            if (foundProposal.imagePath) {
+                if (fs.existsSync(foundProposal.imagePath)) {
+                    fs.unlinkSync(foundProposal.imagePath);
                 }
             }
 
-            const deleteComment = await prisma.ideaComment.deleteMany({ where: { ideaId: foundIdea.id } });
-            const deleteRating = await prisma.ideaRating.deleteMany({ where: { ideaId: foundIdea.id } });
+            const deleteComment = await prisma.ideaComment.deleteMany({ where: { ideaId: foundProposal.id } });
+            const deleteRating = await prisma.ideaRating.deleteMany({ where: { ideaId: foundProposal.id } });
 
-            const deletedGeo = await prisma.ideaGeo.deleteMany({ where: { ideaId: foundIdea.id } });
-            const deleteAddress = await prisma.ideaAddress.deleteMany({ where: { ideaId: foundIdea.id } });
-            const deletedIdea = await prisma.idea.delete({ where: { id: parsedIdeaId } });
+            const deletedGeo = await prisma.ideaGeo.deleteMany({ where: { ideaId: foundProposal.id } });
+            const deleteAddress = await prisma.ideaAddress.deleteMany({ where: { ideaId: foundProposal.id } });
+            const deletedProposal = await prisma.idea.delete({ where: { id: parsedProposalId } });
 
             res.status(200).json({
-                message: "Idea succesfully deleted",
-                deletedIdea: deletedIdea,
+                message: "Proposal succesfully deleted",
+                deletedProposal: deletedProposal,
             });
         } catch (error) {
             console.log(error);
             res.status(400).json({
-                message: "An error occured while to delete an Idea",
+                message: "An error occured while to delete an Proposal",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,

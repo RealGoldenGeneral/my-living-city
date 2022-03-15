@@ -41,7 +41,7 @@ export const useProposalsHomepage = () => {
 };
 
 export const useSingleProposal = (ProposalId: string) => {
-  return useQuery<IProposalWithRelationship, IFetchError>(
+  return useQuery<IProposalWithAggregations, IFetchError>(
     ["proposal", ProposalId],
     () => getSingleProposal(ProposalId),
     // https://react-query.tanstack.com/guides/initial-query-data#staletime-and-initialdataupdatedat

@@ -131,6 +131,14 @@ model User {
   ideaCommentDislikes UserCommentDislikes[]
 
 
+  collaborator Proposal[] @relation("collaborator")
+  volunteer    Proposal[] @relation("volunteer")
+  donor        Proposal[] @relation("donor")
+  suggestor   Proposal[] @relation("suggestion")
+  feedback     Proposal[] @relation("feedback")
+  other        Proposal[] @relation("other")
+
+
   // Model overwrites
   Advertisements Advertisements[]
   //Not sure if this one stays
@@ -289,7 +297,14 @@ model Proposal {
   ideaId Int @map("idea_id")
 
   // Fields
-  collaboators User[]
+  collaborUser User[] @relation("collaborator")
+  volunteerUser User[] @relation("volunteer")
+  donorUser User[] @relation("donor")
+  suggestionUser User[] @relation("suggestion")
+  feedbackUser User[] @relation("feedback")
+  otherUser User[] @relation("other")
+
+  testString String?
   
   // Relations
   idea Idea @relation(fields: [ideaId], references: [id])
