@@ -100,12 +100,15 @@ const SubmitDirectProposalPageContent: React.FC<
     }
   };
 
-  function toggleElement(str: string) {
+  function toggleElement(str: string, str2: string) {
     let x = document.getElementById(str)!;
+    let y = document.getElementById(str2)!;
     if (x.style.display === "none") {
       x.style.display = "block";
+      y.style.display = "none";
     } else {
       x.style.display = "none";
+      y.style.display = "block";
     }
   }
 
@@ -234,7 +237,7 @@ const SubmitDirectProposalPageContent: React.FC<
             <Form.Group>
               <h3
                 className="border-bottom mb-3"
-                style={{ paddingBottom: "1rem" }}
+                style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
               >
                 Impact Areas
               </h3>
@@ -449,7 +452,7 @@ const SubmitDirectProposalPageContent: React.FC<
               <div className="checkbox">
                 <h3
                   className="border-bottom mb-3"
-                  style={{ paddingBottom: "1rem" }}
+                  style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
                 >
                   Community Solicitation
                 </h3>
@@ -484,56 +487,41 @@ const SubmitDirectProposalPageContent: React.FC<
                     name="topping"
                     value="Paneer"
                   />
-                  <Form.Label>&nbsp;&nbsp;Idea suggestion</Form.Label> <br />
-                  <input
-                    type="checkbox"
-                    id="567"
-                    name="topping"
-                    value="Paneer"
-                    onClick={() => toggleElement("specific-feedback")}
-                  />
-                  <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label> <br />
-                  <div id="specific-feedback" style={{ display: "none" }}>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      name="specific-feedback"
-                      onChange={formik.handleChange}
-                      placeholder="What specific feedback do you want?"
-                    />
-                  </div>
-                  <input
-                    type="checkbox"
-                    id="other"
-                    name="topping"
-                    value="Paneer"
-                    onClick={() => toggleElement("other-text")}
-                  />
-                  <Form.Label>&nbsp;&nbsp;Other</Form.Label> <br />
-                  <div id="other-text" style={{ display: "none" }}>
-                    <Form.Control
-                      type="text"
-                      name="other"
-                      onChange={formik.handleChange}
-                      placeholder="Describe other"
-                      style={{ marginTop: "1rem" }}
-                      // onclick toggle text box for other
-                    />
-                  </div>
+                  <Form.Label>&nbsp;&nbsp;Idea Proposals</Form.Label> <br />
                 </div>
               </div>
             </Form.Group>
             <Form.Group>
               <h3
                 className="border-bottom mb-3"
-                style={{ paddingBottom: "1rem" }}
+                style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
               >
                 Location
               </h3>
-              <SimpleMap
-                iconName={"home"}
-                sendData={(markers: any) => sendData(markers)}
+              <input
+                type="checkbox"
+                id="234"
+                name="topping"
+                value="Paneer"
+                onClick={() => toggleElement("location", "map")}
               />
+              <Form.Label>&nbsp;&nbsp;Use Map</Form.Label>
+              <div id="location">
+                <Form.Control
+                  type="text"
+                  name="location"
+                  onChange={formik.handleChange}
+                  value="Enter Location (Optional)"
+                  style={{ marginBottom: "1rem" }}
+                />
+              </div>
+
+              <div id="map" style={{ display: "none" }}>
+                <SimpleMap
+                  iconName={"home"}
+                  sendData={(markers: any) => sendData(markers)}
+                />
+              </div>
             </Form.Group>
             <div style={{ display: "flex" }}>
               <Button

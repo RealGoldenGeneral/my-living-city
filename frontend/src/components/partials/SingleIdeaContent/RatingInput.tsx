@@ -1,46 +1,45 @@
-import { useContext, useEffect, useState } from 'react'
-import { Button, Col, Container, Row, Alert } from 'react-bootstrap';
-import { useParams } from 'react-router';
-import { UserProfileContext } from '../../../contexts/UserProfile.Context';
+import { useContext, useEffect, useState } from "react";
+import { Button, Col, Container, Row, Alert } from "react-bootstrap";
+import { useParams } from "react-router";
+import { UserProfileContext } from "../../../contexts/UserProfile.Context";
 // https://github.com/microsoft/TypeScript/issues/22217
 // https://github.com/ekeric13/react-ratings-declarative
-import Ratings from 'react-ratings-declarative';
-import { useCreateRatingMutation } from 'src/hooks/ratingHooks';
-import { IFetchError } from 'src/lib/types/types';
+import Ratings from "react-ratings-declarative";
+import { useCreateRatingMutation } from "src/hooks/ratingHooks";
+import { IFetchError } from "src/lib/types/types";
 
 interface RatingInputProps {
-  userHasRated: boolean,
-  userSubmittedRating: number | null,
+  userHasRated: boolean;
+  userSubmittedRating: number | null;
 }
 
-const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) => {
+const RatingInput = ({
+  userHasRated,
+  userSubmittedRating,
+}: RatingInputProps) => {
   const { token, user } = useContext(UserProfileContext);
   const { ideaId } = useParams<{ ideaId: string }>();
-  const [ ratingValue, setRatingValue ] = useState<number>(userSubmittedRating ?? 0);
-
+  const [ratingValue, setRatingValue] = useState<number>(
+    userSubmittedRating ?? 0
+  );
 
   // =================== SUBMITTING RATING MUTATION ==========================
-  const {
-    submitRatingMutation,
-    isLoading,
-    isError,
-    error,
-    isSuccess
-  } = useCreateRatingMutation(parseInt(ideaId), token, user);
+  const { submitRatingMutation, isLoading, isError, error, isSuccess } =
+    useCreateRatingMutation(parseInt(ideaId), token, user);
 
-  const [ showRatingSubmitError, setShowRatingSubmitError ] = useState(false);
+  const [showRatingSubmitError, setShowRatingSubmitError] = useState(false);
 
   useEffect(() => {
     setShowRatingSubmitError(isError);
-  }, [ isError ])
-  
+  }, [isError]);
+
   const submitHandler = () => {
     const payload = {
       rating: ratingValue,
-      ratingExplanation: ''
+      ratingExplanation: "",
     };
     submitRatingMutation(payload);
-  }
+  };
 
   // =================== UTILITY FUNCTIONS FOR UI/AGGREGATIONS ==========================
   const parseNegativeRatingValue = (val: number): void => {
@@ -48,25 +47,24 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
 
     let parsedVal = -1 * val;
     setRatingValue(parsedVal);
-  }
+  };
 
   const parsePositiveRatingValue = (val: number): void => {
     if (userHasRated) return;
 
     let parsedVal = val - 1;
     setRatingValue(parsedVal);
-  }
-
+  };
 
   // Loads user submitted rating
   useEffect(() => {
-    setRatingValue(userSubmittedRating ?? 0)
-  }, [ userSubmittedRating ])
+    setRatingValue(userSubmittedRating ?? 0);
+  }, [userSubmittedRating]);
 
   // Helper functions
   const tokenExists = (): boolean => {
     return token != null;
-  }
+  };
 
   const shouldButtonBeDisabled = (): boolean => {
     // Unauthenticated
@@ -75,26 +73,27 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
     if (isLoading) flag = true;
     if (userHasRated) flag = true;
     return flag;
-  }
+  };
 
   const buttonTextOutput = (): string => {
     // Unauthenticated
-    let buttonText = 'Please login to comment';
-    if (tokenExists()) buttonText = 'Share';
-    if (isLoading) buttonText = 'Saving Comment';
-    if (userHasRated) buttonText = 'You have already rated. You cannot rate an Idea twice.';
-    if (!user) buttonText = 'You must sign in to rate an idea'
+    let buttonText = "Please login to comment";
+    if (tokenExists()) buttonText = "Share";
+    if (isLoading) buttonText = "Saving Comment";
+    if (userHasRated)
+      buttonText = "You have already rated. You cannot rate an Idea twice.";
+    if (!user) buttonText = "You must sign in to rate an idea";
     return buttonText;
-  }
+  };
   return (
-    <Container className=''>
-      <h2 className='text-center'>Submit Your Rating:</h2>
+    <Container className="">
+      <h2 className="text-center">Submit Your Rating:</h2>
       <Row>
-        <Col xs={12} className='text-center'>
+        <Col xs={12} className="text-center">
           <Ratings
             rating={-1 * ratingValue}
-            widgetRatedColors='red'
-            widgetHoverColors='red'
+            widgetRatedColors="gold"
+            widgetHoverColors="gold"
             changeRating={parseNegativeRatingValue}
           >
             <Ratings.Widget />
@@ -102,34 +101,32 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
           </Ratings>
           <Ratings
             rating={ratingValue < 0 ? 0 : ratingValue + 1}
-            widgetRatedColors='gold'
-            widgetHoverColors='gold'
+            widgetRatedColors="gold"
+            widgetHoverColors="gold"
             changeRating={parsePositiveRatingValue}
           >
-            <Ratings.Widget
-              widgetHoverColor='grey'
-              widgetRatedColor='grey'
-            />
+            <Ratings.Widget widgetHoverColor="gold" widgetRatedColor="gold" />
             <Ratings.Widget />
             <Ratings.Widget />
           </Ratings>
         </Col>
-        <Col xs={12} className='text-center mt-3'>
+        <Col xs={12} className="text-center mt-3">
           {showRatingSubmitError && (
             <Alert
-              className=''
+              className=""
               show={showRatingSubmitError}
               onClose={() => setShowRatingSubmitError(false)}
               dismissible
-              variant='danger'
+              variant="danger"
             >
-              {error?.message ?? "An Error occured while trying to submit your rating."}
+              {error?.message ??
+                "An Error occured while trying to submit your rating."}
             </Alert>
           )}
           <Button
             onClick={submitHandler}
             disabled={shouldButtonBeDisabled()}
-            size='lg'
+            size="lg"
           >
             {buttonTextOutput()}
           </Button>
@@ -137,6 +134,6 @@ const RatingInput = ({ userHasRated, userSubmittedRating }: RatingInputProps) =>
       </Row>
     </Container>
   );
-}
+};
 
-export default RatingInput
+export default RatingInput;

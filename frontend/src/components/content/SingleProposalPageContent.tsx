@@ -99,8 +99,20 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     return !ideaData.champion && !!ideaData.isChampionable;
   };
   console.log(imagePath);
+
+  function redirectToIdeaSubmit() {
+    window.location.href = `/submit`;
+  }
+
   return (
     <div className="single-idea-content pt-5">
+      <style>
+        {`
+        .canvasjs-chart-credit {
+          display: none;
+        }
+        `}
+      </style>
       <Card>
         {imagePath ? (
           <Image
@@ -280,9 +292,13 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <Card>
           <Card.Header>
             <div className="d-flex justify-content-between">
-              <h4 className="h4">Collaborators</h4>
+              <div>
+                <h4 className="h4">Collaborators</h4>
+                <p>Apply to be a collaborator for this project</p>
+              </div>
+
               <h4 className="text-center my-auto text-muted">
-                <Button>Join</Button>
+                <Button>Apply</Button>
               </h4>
             </div>
           </Card.Header>
@@ -296,9 +312,12 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <Card>
           <Card.Header>
             <div className="d-flex justify-content-between">
-              <h4 className="h4">Volunteers</h4>
+              <div>
+                <h4 className="h4">Volunteers</h4>
+                <p>Help support this project by becoming a volunteer</p>
+              </div>
               <h4 className="text-center my-auto text-muted">
-                <Button>Join</Button>
+                <Button>Sign Up</Button>
               </h4>
             </div>
           </Card.Header>
@@ -314,9 +333,12 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <Card>
           <Card.Header>
             <div className="d-flex justify-content-between">
-              <h4 className="h4">Donors</h4>
+              <div>
+                <h4 className="h4">Donors</h4>
+                <p>Donate to help this project grow</p>
+              </div>
               <h4 className="text-center my-auto text-muted">
-                <Button>Join</Button>
+                <Button>Donate</Button>
               </h4>
             </div>
           </Card.Header>
@@ -329,92 +351,41 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <Card>
           <Card.Header>
             <div className="d-flex justify-content-between">
-              <h4 className="h4">Suggestions</h4>
+              <h4 className="h4">Suggested Ideas</h4>
               {/** create a textbox */}
 
-              <textarea
-                style={{ padding: "2rem", width: "70%", height: "5rem" }}
-                id="exampleFormControlTextarea1"
-              />
+              <h4 className="text-center my-auto text-muted">
+                <Button onClick={() => redirectToIdeaSubmit()}>
+                  Propose Idea
+                </Button>
+              </h4>
+            </div>
+          </Card.Header>
+          <Card.Body>
+            <Row sm={12} md={3}>
+              <Col>
+                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
+              </Col>
+              <Col>
+                <a style={{ padding: "0px" }} href={"/ideas/5"}>
+                  Test
+                </a>
+              </Col>
+            </Row>
+            <Row sm={12} md={3}>
+              <Col>
+                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
+              </Col>
+              <Col>
+                <a style={{ padding: "0px" }} href={"/ideas/6"}>
+                  Second Test
+                </a>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+      </div>
 
-              <h4 className="text-center my-auto text-muted">
-                <Button>Join</Button>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <Row sm={12} md={3}>
-              <Col>
-                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
-              </Col>
-              <Col>
-                <p style={{ padding: "0px" }}>I have a suggestion...</p>
-              </Col>
-            </Row>
-            <Row sm={12} md={3}>
-              <Col>
-                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
-              </Col>
-              <Col>
-                <p style={{ padding: "0px" }}>
-                  I think this would look good...
-                </p>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <h4 className="h4">Feedback</h4>
-              <textarea
-                style={{ padding: "2rem", width: "70%", height: "5rem" }}
-                id="exampleFormControlTextarea1"
-              />
-              <h4 className="text-center my-auto text-muted">
-                <Button>Join</Button>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <Row sm={12} md={3}>
-              <Col>
-                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
-              </Col>
-              <Col>
-                <p style={{ padding: "0px" }}>I like this part...</p>
-              </Col>
-            </Row>
-            <Row sm={12} md={3}>
-              <Col>
-                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
-              </Col>
-              <Col>
-                <p style={{ padding: "0px" }}>I think you should...</p>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <h4 className="h4">Other</h4>
-              <h4 className="text-center my-auto text-muted">
-                <Button>Join</Button>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <p style={{ padding: "0px" }}>Other@test ave</p>
-            <p style={{ padding: "0px" }}>Other@test ave</p>
-            <p style={{ padding: "0px" }}>Other@test ave</p>
-          </Card.Body>
-        </Card>
-      </div>
       <Row>
         <RatingsSection />
       </Row>
