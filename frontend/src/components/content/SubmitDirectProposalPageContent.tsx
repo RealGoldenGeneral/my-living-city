@@ -60,6 +60,25 @@ const SubmitDirectProposalPageContent: React.FC<
   const [error, setError] = useState<IFetchError | null>(null);
   const [crop, setCrop] = useState({ aspect: 16 / 9 });
   const history = useHistory();
+
+  const [extraFeedback, setExtraFeedback] = useState(false);
+
+  const toggleExtraFeedback = () => {
+    setExtraFeedback(!extraFeedback);
+  };
+
+  const [numberOfFeedback, setNumberOfFeedback] = useState(1);
+
+  const toggleNumberOfFeedback = (num: number) => {
+    if (
+      (numberOfFeedback < 1 && num < 0) ||
+      (numberOfFeedback > 5 && num > 0)
+    ) {
+      return;
+    }
+    setNumberOfFeedback(numberOfFeedback + num);
+  };
+
   const handleCommunityChange = (index: number) => {
     if (segData[index].segType === "Segment") {
       formik.setFieldValue("segmentId", segData[index].id);
@@ -465,7 +484,7 @@ const SubmitDirectProposalPageContent: React.FC<
                   />
                   <Form.Label>
                     &nbsp;&nbsp;Project Team/Collaborators
-                  </Form.Label>{" "}
+                  </Form.Label>
                   <br />
                   <input
                     type="checkbox"
@@ -480,7 +499,7 @@ const SubmitDirectProposalPageContent: React.FC<
                     name="topping"
                     value="Paneer"
                   />
-                  <Form.Label>&nbsp;&nbsp;Material donors</Form.Label> <br />
+                  <Form.Label>&nbsp;&nbsp;Material Donations</Form.Label> <br />
                   <input
                     type="checkbox"
                     id="456"
@@ -488,6 +507,105 @@ const SubmitDirectProposalPageContent: React.FC<
                     value="Paneer"
                   />
                   <Form.Label>&nbsp;&nbsp;Idea Proposals</Form.Label> <br />
+                  <input
+                    type="checkbox"
+                    id="456"
+                    name="topping"
+                    value="Paneer"
+                    onClick={toggleExtraFeedback}
+                  />
+                  <Form.Label>
+                    &nbsp;&nbsp;Specific Feedback&nbsp;&nbsp;
+                  </Form.Label>
+                  {extraFeedback && (
+                    <>
+                      <Button
+                        color="danger"
+                        size="sm"
+                        onClick={() => toggleNumberOfFeedback(-1)}
+                      >
+                        -
+                      </Button>
+                      &nbsp;&nbsp;
+                      <Button
+                        color="success"
+                        size="sm"
+                        onClick={() => toggleNumberOfFeedback(1)}
+                      >
+                        +
+                      </Button>
+                      {numberOfFeedback > 0 && (
+                        <div className="feedback-1">
+                          <br />
+                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 1 && (
+                        <div className="feedback-2">
+                          <br />
+                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 2 && (
+                        <div className="feedback-3">
+                          <br />
+                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 3 && (
+                        <div className="feedback-4">
+                          <br />
+                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 4 && (
+                        <div className="feedback-5">
+                          <br />
+                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             </Form.Group>

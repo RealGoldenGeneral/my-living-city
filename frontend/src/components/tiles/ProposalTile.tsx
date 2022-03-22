@@ -20,10 +20,9 @@ const ProposalTile: React.FC<proposalTileProps> = ({
   showFooter,
   postType,
 }) => {
-  const { idea, testString, id } = proposalData;
+  const { idea, id } = proposalData;
   console.log("proposalData", proposalData);
   console.log("idea", idea);
-  console.log("testString", testString);
   return (
     // <Card style={{ width: '18rem' }}>
     <Card>

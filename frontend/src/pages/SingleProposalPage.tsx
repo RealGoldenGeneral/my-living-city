@@ -30,13 +30,21 @@ const SingleProposalPage: React.FC<SingleIdeaPageProps> = (props) => {
     },
   } = props;
 
-  const { data, error, isLoading, isError } = useSingleIdea("7");
   const {
     data: proposalData,
     error: proposalError,
     isLoading: proposalIsLoading,
     isError: proposalIsError,
   } = useSingleProposal(proposalId);
+
+  //wait for proposal data to load
+  if (!proposalIsLoading) {
+    var ideaStringId = proposalData!.ideaId.toString();
+  } else {
+    var ideaStringId = "";
+  }
+
+  const { data, error, isLoading, isError } = useSingleIdea(ideaStringId);
   // const segmentData = useSingleSegmentBySegmentId(data?.segmentId!);
 
   // const [subSegmentId, setSubSegmentId] = useState(data?.subSegmentId);
@@ -48,8 +56,28 @@ const SingleProposalPage: React.FC<SingleIdeaPageProps> = (props) => {
   // }
   // const subSegmentData = useSingleSubSegmentBySubSegmentId(data?.subSegmentId!);
 
+  if (proposalIsError) {
+    console.log(proposalIsError);
+    return (
+      <div className="wrapper">
+        <p>
+          Error occured while trying to retrieve proposal. Please try again
+          later.
+        </p>
+      </div>
+    );
+  }
+
+  if (proposalIsLoading) {
+    return (
+      <div className="wrapper">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   if (isError) {
-    console.log(error);
+    console.log(isError);
     return (
       <div className="wrapper">
         <p>

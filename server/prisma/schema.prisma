@@ -129,14 +129,10 @@ model User {
   ideaComments        IdeaComment[]
   ideaCommentLikes    UserCommentLikes[]
   ideaCommentDislikes UserCommentDislikes[]
-
-
-  collaborator Proposal[] @relation("collaborator")
-  volunteer    Proposal[] @relation("volunteer")
-  donor        Proposal[] @relation("donor")
-  suggestor   Proposal[] @relation("suggestion")
-  feedback     Proposal[] @relation("feedback")
-  other        Proposal[] @relation("other")
+  collaborators     Collaborator[] @relation("ideaCollaborator")
+  volunteers         Volunteer[]     @relation("ideaVolunteer")
+  donors             Donor[]         @relation("ideaDonor")
+  
 
 
   // Model overwrites
@@ -247,10 +243,71 @@ model IdeaAddress {
   @@map(name: "idea_address")
 }
 
+model Collaborator {
+  // keys
+  id     Int @id @default(autoincrement())
+  proposalId Int @map("proposal_id")
+  authorId       String  @map("author_id")
+
+  experience String? @default("No experience")
+  role       String? @default("No role")
+  time       String? @default("No time")
+  contactInfo String? @default("No contact info")
+
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
+
+  // relationships
+  proposal Proposal @relation("collab", fields: [proposalId], references: [id])
+  author       User         @relation("ideaCollaborator", fields: [authorId], references: [id])
+
+  @@map(name: "collaborator")
+}
+
+model Volunteer{
+  id Int @id @default(autoincrement())
+  proposalId Int @map("proposal_id")
+  authorId       String  @map("author_id")
+
+  experience String? @default("No experience")
+  task       String? @default("No task")
+  time       String? @default("No time")
+  contactInfo String? @default("No contact info")
+
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
+
+  // relationships
+  proposal Proposal @relation("volunteer", fields: [proposalId], references: [id])
+  author       User         @relation("ideaVolunteer", fields: [authorId], references: [id])
+
+  @@map(name: "volunteer")
+
+}
+
+model Donor {
+  id Int @id @default(autoincrement())
+  proposalId Int @map("proposal_id")
+  authorId       String  @map("author_id")
+
+  donations String? @default("No donations")
+  contactInfo String? @default("No contact info")
+
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
+
+  // relationships
+  proposal Proposal @relation("donor", fields: [proposalId], references: [id])
+  author       User         @relation("ideaDonor", fields: [authorId], references: [id])
+
+  @@map(name: "donors")
+}
+
 model Idea {
   // Keys
   id             Int     @id @default(autoincrement())
   authorId       String  @map("author_id")
+  supportingProposalId Int? @map("supporting_proposal_id")
   championId     String? @map("champion_id")
   categoryId     Int     @map("category_id")
   superSegmentId Int     @map("super_segment_id")
@@ -275,7 +332,7 @@ model Idea {
   // relations
   comments     IdeaComment[]
   ratings      IdeaRating[]
-  proposalInfo Proposal?
+  proposalInfo Proposal? @relation("proposal")
   projectInfo  Project?
   address      IdeaAddress?
   geo          IdeaGeo?
@@ -283,6 +340,7 @@ model Idea {
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
   author       User         @relation("ideaAuthor", fields: [authorId], references: [id])
+  supportedProposal Proposal? @relation("supportedProposal", fields: [supportingProposalId], references: [id])
   champion     User?        @relation("ideaChampion", fields: [championId], references: [id])
   category     Category     @relation(fields: [categoryId], references: [id])
   superSegment SuperSegment @relation(fields: [superSegmentId], references: [superSegId])
@@ -296,18 +354,25 @@ model Proposal {
   id     Int @id @default(autoincrement())
   ideaId Int @map("idea_id")
 
-  // Fields
-  collaborUser User[] @relation("collaborator")
-  volunteerUser User[] @relation("volunteer")
-  donorUser User[] @relation("donor")
-  suggestionUser User[] @relation("suggestion")
-  feedbackUser User[] @relation("feedback")
-  otherUser User[] @relation("other")
+  needCollaborators Boolean @default(false)
+  needVolunteers    Boolean @default(false)
+  needDonations     Boolean @default(false)
+  needSuggestions   Boolean @default(false)
+  needFeedback      Boolean @default(false)
 
-  testString String?
-  
+  collaborations Collaborator[] @relation("collab")
+  volunteers      Volunteer[]    @relation("volunteer")
+  donors          Donor[]       @relation("donor")
+
+  feedback1  String? @map("feedback_1")
+  feedback2  String? @map("feedback_2")
+  feedback3  String? @map("feedback_3")
+  feedback4  String? @map("feedback_4")
+  feedback5  String? @map("feedback_5")  
   // Relations
-  idea Idea @relation(fields: [ideaId], references: [id])
+  idea Idea @relation("proposal",fields: [ideaId], references: [id])
+  suggestedIdeas Idea[] @relation("supportedProposal")
+  
   @@map(name: "proposal")
 }
 

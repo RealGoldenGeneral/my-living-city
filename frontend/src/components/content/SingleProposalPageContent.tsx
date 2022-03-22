@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Image } from "react-bootstrap";
+import { Button, Card, Col, Row, Image, Form } from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
 import {
   capitalizeFirstLetterEachWord,
@@ -21,12 +21,17 @@ import {
   WhatsappIcon,
 } from "react-share";
 import ChampionSubmit from "../partials/SingleIdeaContent/ChampionSubmit";
-import { useSingleSegmentBySegmentId } from "src/hooks/segmentHooks";
-import LoadingSpinner from "../ui/LoadingSpinner";
-import { ISegment } from "src/lib/types/data/segment.type";
-import { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { API_BASE_URL } from "src/lib/constants";
-import { Form } from "react-bootstrap/lib/Navbar";
+import Popup from "../content/Popup";
+import { UserProfileContext } from "../../contexts/UserProfile.Context";
+import { IFetchError } from "../../lib/types/types";
+import { useFormik } from "formik";
+import { useHistory } from "react-router-dom";
+import "react-image-crop/dist/ReactCrop.css";
+import { handlePotentialAxiosError } from "../../lib/utilityFunctions";
+import { postCreateIdea } from "../../lib/api/ideaRoutes";
+import { postCreateCollabotator } from "src/lib/api/communityRoutes";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
@@ -60,7 +65,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     projectInfo,
   } = ideaData;
 
-  const { id } = proposalData;
+  const { id: proposalId } = proposalData;
 
   const { title: catTitle } = category!;
 
@@ -91,18 +96,67 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   };
 
   const shouldDisplayChampionButton = (): boolean => {
-    console.log(!ideaData.champion);
-    console.log(!!ideaData.isChampionable);
-    console.log(ideaData.champion);
-    console.log(ideaData.isChampionable);
-
     return !ideaData.champion && !!ideaData.isChampionable;
   };
-  console.log(imagePath);
 
   function redirectToIdeaSubmit() {
     window.location.href = `/submit`;
   }
+
+  const [collaboratorIsOpen, setCollaboratorIsOpen] = useState(false);
+  const togglePopupCollaborator = () => {
+    setCollaboratorIsOpen(!collaboratorIsOpen);
+  };
+
+  const [volunteerIsOpen, setVolunteerIsOpen] = useState(false);
+  const togglePopupVoluteer = () => {
+    setVolunteerIsOpen(!volunteerIsOpen);
+  };
+
+  const [donorIsOpen, setDonorIsOpen] = useState(false);
+  const togglePopupDonor = () => {
+    setDonorIsOpen(!donorIsOpen);
+  };
+
+  const [map, showMap] = useState(false);
+  const { token, user } = useContext(UserProfileContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<IFetchError | null>(null);
+  const [crop, setCrop] = useState({ aspect: 16 / 9 });
+
+  const collaboratorSubmitHandler = async (values: any) => {
+    try {
+      // Set loading and error state
+      setError(null);
+      setIsLoading(true);
+      setTimeout(() => console.log("timeout"), 5000);
+      const res = await postCreateCollabotator(
+        proposalId,
+        values,
+        user!.banned,
+        token
+      );
+      console.log("Here" + res);
+      setError(null);
+      //formikCollaborator.resetForm();
+    } catch (error) {
+      const genericMessage = "An error occured while trying to create an Idea.";
+      const errorObj = handlePotentialAxiosError(genericMessage, error);
+      setError(errorObj);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formikCollaborator = useFormik({
+    initialValues: {
+      experience: "",
+      role: "",
+      time: "",
+      contactInfo: "",
+    },
+    onSubmit: collaboratorSubmitHandler,
+  });
 
   return (
     <div className="single-idea-content pt-5">
@@ -294,11 +348,68 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <div className="d-flex justify-content-between">
               <div>
                 <h4 className="h4">Collaborators</h4>
-                <p>Apply to be a collaborator for this project</p>
+                <p>Join to be part of the project team</p>
               </div>
 
               <h4 className="text-center my-auto text-muted">
-                <Button>Apply</Button>
+                <div className="collab">
+                  <Button onClick={togglePopupCollaborator}>Join</Button>
+                  {collaboratorIsOpen && (
+                    <Popup
+                      content={
+                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
+                          <Form.Group>
+                            <Form.Label>Experience</Form.Label>
+
+                            <Form.Control
+                              type="text"
+                              name="experience"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.experience}
+                              placeholder="What experience and skills do you bring to the
+                              project?"
+                            />
+                            <br />
+
+                            <Form.Label xs>Role</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="role"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.role}
+                              placeholder="What role or task would you would like to work on?"
+                            />
+                            <br />
+                            <Form.Label>Time</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="time"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.time}
+                              placeholder="How much time per week or per month do you have
+                              available?"
+                            />
+                            <br />
+                            <Form.Label>Contact</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="contactInfo"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or
+                              phone number)?"
+                            />
+                            <br />
+                          </Form.Group>
+                          <Button variant="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Form>
+                      }
+                      handleClose={togglePopupCollaborator}
+                    />
+                  )}
+                </div>
               </h4>
             </div>
           </Card.Header>
@@ -317,7 +428,61 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <p>Help support this project by becoming a volunteer</p>
               </div>
               <h4 className="text-center my-auto text-muted">
-                <Button>Sign Up</Button>
+                <div className="volunteer">
+                  <Button onClick={togglePopupVoluteer}>Sign Up</Button>
+                  {volunteerIsOpen && (
+                    <Popup
+                      content={
+                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
+                          <Form.Group>
+                            <Form.Label>Experience</Form.Label>
+
+                            <Form.Control
+                              type="text"
+                              name="experience"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.experience}
+                              placeholder="What experience and skills do you bring to the project?"
+                            />
+                            <br />
+
+                            <Form.Label xs>Task</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="role"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.role}
+                              placeholder="What type of task would you like to work on?"
+                            />
+                            <br />
+                            <Form.Label>Time</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="time"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.time}
+                              placeholder="How much time do you want to contribute?"
+                            />
+                            <br />
+                            <Form.Label>Contact</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="contactInfo"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or phone number)?"
+                            />
+                            <br />
+                          </Form.Group>
+                          <Button variant="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Form>
+                      }
+                      handleClose={togglePopupVoluteer}
+                    />
+                  )}
+                </div>
               </h4>
             </div>
           </Card.Header>
@@ -338,7 +503,44 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <p>Donate to help this project grow</p>
               </div>
               <h4 className="text-center my-auto text-muted">
-                <Button>Donate</Button>
+                <div className="donor">
+                  <Button onClick={togglePopupDonor}>Sign Up</Button>
+                  {donorIsOpen && (
+                    <Popup
+                      content={
+                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
+                          <Form.Group>
+                            <Form.Label>Contribution</Form.Label>
+
+                            <Form.Control
+                              type="text"
+                              name="experience"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.experience}
+                              placeholder="What is your contact information (e-mail and/or phone number)?"
+                            />
+
+                            <br />
+                            <Form.Label>Contact</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="contactInfo"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or
+                          phone number)?"
+                            />
+                            <br />
+                          </Form.Group>
+                          <Button variant="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Form>
+                      }
+                      handleClose={togglePopupDonor}
+                    />
+                  )}
+                </div>
               </h4>
             </div>
           </Card.Header>

@@ -60,6 +60,5 @@ export interface IProposalWithRelationship extends IProposal {
 export interface IProposalWithAggregations {
   id: number;
   ideaId: number;
-  testString: string;
   idea: IIdeaWithAggregations;
 }

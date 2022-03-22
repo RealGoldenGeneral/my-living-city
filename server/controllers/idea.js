@@ -516,6 +516,67 @@ ideaRouter.get(
   }
 )
 
+// Get all ideas with a specific proposalId
+ideaRouter.get(
+  '/get/proposal/:supportingProposalId',
+  async (req, res, next) => {
+    try {
+      const parsedSupportingProposalId = parseInt(req.params.supportingProposalId);
+
+      // check if id is valid
+      if (!parsedSupportingProposalId) {
+        return res.status(400).json({
+          message: `A valid proposalId must be specified in the route parameter.`,
+        });
+      }
+
+      const foundIdea = await prisma.idea.findMany({
+        where: {
+          supportingProposalId: parsedSupportingProposalId
+        },
+        include: {
+          geo: true,
+          address: true,
+          category: true,
+          projectInfo: true,
+          champion: {
+            include: {
+              address: {
+                select: {
+                  postalCode: true,
+                  streetAddress: true,
+                }
+              }
+            }
+          },
+        }
+      });
+
+      if (!foundIdea) {
+        return res.status(400).json({
+          message: `The idea with that listed ID (${parsedSupportingProposalId}) does not exist.`,
+        });
+      }
+
+      res.status(200).json(foundIdea);
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({
+        message: `An Error occured while trying to fetch idea with id ${req.params.supportingProposalId}.`,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
+
+
+
 
 // Put request to update data
 ideaRouter.put(
