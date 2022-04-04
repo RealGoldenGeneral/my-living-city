@@ -60,6 +60,25 @@ const SubmitDirectProposalPageContent: React.FC<
   const [error, setError] = useState<IFetchError | null>(null);
   const [crop, setCrop] = useState({ aspect: 16 / 9 });
   const history = useHistory();
+
+  const [extraFeedback, setExtraFeedback] = useState(false);
+
+  const toggleExtraFeedback = () => {
+    setExtraFeedback(!extraFeedback);
+  };
+
+  const [numberOfFeedback, setNumberOfFeedback] = useState(1);
+
+  const toggleNumberOfFeedback = (num: number) => {
+    if (
+      (numberOfFeedback == 1 && num < 0) ||
+      (numberOfFeedback == 5 && num > 0)
+    ) {
+      return;
+    }
+    setNumberOfFeedback(numberOfFeedback + num);
+  };
+
   const handleCommunityChange = (index: number) => {
     if (segData[index].segType === "Segment") {
       formik.setFieldValue("segmentId", segData[index].id);
@@ -100,12 +119,15 @@ const SubmitDirectProposalPageContent: React.FC<
     }
   };
 
-  function toggleElement(str: string) {
+  function toggleElement(str: string, str2: string) {
     let x = document.getElementById(str)!;
+    let y = document.getElementById(str2)!;
     if (x.style.display === "none") {
       x.style.display = "block";
+      y.style.display = "none";
     } else {
       x.style.display = "none";
+      y.style.display = "block";
     }
   }
 
@@ -234,7 +256,7 @@ const SubmitDirectProposalPageContent: React.FC<
             <Form.Group>
               <h3
                 className="border-bottom mb-3"
-                style={{ paddingBottom: "1rem" }}
+                style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
               >
                 Impact Areas
               </h3>
@@ -449,7 +471,7 @@ const SubmitDirectProposalPageContent: React.FC<
               <div className="checkbox">
                 <h3
                   className="border-bottom mb-3"
-                  style={{ paddingBottom: "1rem" }}
+                  style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
                 >
                   Community Solicitation
                 </h3>
@@ -462,7 +484,7 @@ const SubmitDirectProposalPageContent: React.FC<
                   />
                   <Form.Label>
                     &nbsp;&nbsp;Project Team/Collaborators
-                  </Form.Label>{" "}
+                  </Form.Label>
                   <br />
                   <input
                     type="checkbox"
@@ -477,63 +499,157 @@ const SubmitDirectProposalPageContent: React.FC<
                     name="topping"
                     value="Paneer"
                   />
-                  <Form.Label>&nbsp;&nbsp;Material donors</Form.Label> <br />
+                  <Form.Label>&nbsp;&nbsp;Material Donations</Form.Label> <br />
                   <input
                     type="checkbox"
                     id="456"
                     name="topping"
                     value="Paneer"
                   />
-                  <Form.Label>&nbsp;&nbsp;Idea suggestion</Form.Label> <br />
+                  <Form.Label>&nbsp;&nbsp;Idea Proposals</Form.Label> <br />
                   <input
                     type="checkbox"
-                    id="567"
+                    id="456"
                     name="topping"
                     value="Paneer"
-                    onClick={() => toggleElement("specific-feedback")}
+                    onClick={toggleExtraFeedback}
                   />
-                  <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label> <br />
-                  <div id="specific-feedback" style={{ display: "none" }}>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      name="specific-feedback"
-                      onChange={formik.handleChange}
-                      placeholder="What specific feedback do you want?"
-                    />
-                  </div>
-                  <input
-                    type="checkbox"
-                    id="other"
-                    name="topping"
-                    value="Paneer"
-                    onClick={() => toggleElement("other-text")}
-                  />
-                  <Form.Label>&nbsp;&nbsp;Other</Form.Label> <br />
-                  <div id="other-text" style={{ display: "none" }}>
-                    <Form.Control
-                      type="text"
-                      name="other"
-                      onChange={formik.handleChange}
-                      placeholder="Describe other"
-                      style={{ marginTop: "1rem" }}
-                      // onclick toggle text box for other
-                    />
-                  </div>
+                  <Form.Label>
+                    &nbsp;&nbsp;Specific Feedback&nbsp;&nbsp;
+                  </Form.Label>
+                  {extraFeedback && (
+                    <>
+                      <Button
+                        color="danger"
+                        size="sm"
+                        onClick={() => toggleNumberOfFeedback(-1)}
+                      >
+                        -
+                      </Button>
+                      &nbsp;&nbsp;
+                      <Button
+                        color="success"
+                        size="sm"
+                        onClick={() => toggleNumberOfFeedback(1)}
+                      >
+                        +
+                      </Button>
+                      {numberOfFeedback > 0 && (
+                        <div className="feedback-1">
+                          <br />
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #1
+                          </Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 1 && (
+                        <div className="feedback-2">
+                          <br />
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #2
+                          </Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 2 && (
+                        <div className="feedback-3">
+                          <br />
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #3
+                          </Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 3 && (
+                        <div className="feedback-4">
+                          <br />
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #4
+                          </Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                      {numberOfFeedback > 4 && (
+                        <div className="feedback-5">
+                          <br />
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #5
+                          </Form.Label>
+                          <br />
+                          <Form.Control
+                            type="text"
+                            name="specificFeedback1"
+                            onChange={formik.handleChange}
+                            value={formik.values.title}
+                            placeholder="Extra Feedback"
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             </Form.Group>
             <Form.Group>
               <h3
                 className="border-bottom mb-3"
-                style={{ paddingBottom: "1rem" }}
+                style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
               >
                 Location
               </h3>
-              <SimpleMap
-                iconName={"home"}
-                sendData={(markers: any) => sendData(markers)}
+              <input
+                type="checkbox"
+                id="234"
+                name="topping"
+                value="Paneer"
+                onClick={() => toggleElement("location", "map")}
               />
+              <Form.Label>&nbsp;&nbsp;Use Map</Form.Label>
+              <div id="location">
+                <Form.Control
+                  type="text"
+                  name="location"
+                  onChange={formik.handleChange}
+                  value="Enter Location (Optional)"
+                  style={{ marginBottom: "1rem" }}
+                />
+              </div>
+
+              <div id="map" style={{ display: "none" }}>
+                <SimpleMap
+                  iconName={"home"}
+                  sendData={(markers: any) => sendData(markers)}
+                />
+              </div>
             </Form.Group>
             <div style={{ display: "flex" }}>
               <Button

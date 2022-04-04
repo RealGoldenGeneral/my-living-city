@@ -41,8 +41,14 @@ export default function Header() {
             {user ? (
               <>
                 {/* <Navbar.Text> Fake Name</Navbar.Text> */}
-                <Nav.Link href="/submit">Submit Idea</Nav.Link>
-                <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
+
+                <NavDropdown title="Submit" id="nav-dropdown">
+                  <Nav.Link href="/submit">Submit Idea</Nav.Link>
+                  <Nav.Link href="/submit-direct-proposal">
+                    Submit Proposal
+                  </Nav.Link>
+                </NavDropdown>
+
                 <Nav.Link href="/profile">Profile</Nav.Link>
 
                 {user.userType === "ADMIN" && (

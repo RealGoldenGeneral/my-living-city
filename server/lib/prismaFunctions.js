@@ -30,7 +30,7 @@ const checkIdeaThresholds = async (ideaId) => {
     throw new Error(`The idea with that listed ID (${parsedIdeaId}) does not exist.`)
   }
 
-  const ratingAggregations = await prisma.rating.aggregate({
+  const ratingAggregations = await prisma.ideaRating.aggregate({
     where: { ideaId },
     avg: {
       rating: true
