@@ -71,8 +71,8 @@ const SubmitDirectProposalPageContent: React.FC<
 
   const toggleNumberOfFeedback = (num: number) => {
     if (
-      (numberOfFeedback < 1 && num < 0) ||
-      (numberOfFeedback > 5 && num > 0)
+      (numberOfFeedback == 1 && num < 0) ||
+      (numberOfFeedback == 5 && num > 0)
     ) {
       return;
     }
@@ -537,7 +537,9 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 0 && (
                         <div className="feedback-1">
                           <br />
-                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #1
+                          </Form.Label>
                           <br />
                           <Form.Control
                             type="text"
@@ -551,7 +553,9 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 1 && (
                         <div className="feedback-2">
                           <br />
-                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #2
+                          </Form.Label>
                           <br />
                           <Form.Control
                             type="text"
@@ -565,7 +569,9 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 2 && (
                         <div className="feedback-3">
                           <br />
-                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #3
+                          </Form.Label>
                           <br />
                           <Form.Control
                             type="text"
@@ -579,7 +585,9 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 3 && (
                         <div className="feedback-4">
                           <br />
-                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #4
+                          </Form.Label>
                           <br />
                           <Form.Control
                             type="text"
@@ -593,7 +601,9 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 4 && (
                         <div className="feedback-5">
                           <br />
-                          <Form.Label>&nbsp;&nbsp;Specific Feedback</Form.Label>
+                          <Form.Label>
+                            &nbsp;&nbsp;Specific Feedback #5
+                          </Form.Label>
                           <br />
                           <Form.Control
                             type="text"

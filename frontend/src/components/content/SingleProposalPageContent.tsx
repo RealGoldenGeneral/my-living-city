@@ -359,7 +359,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                       content={
                         <Form onSubmit={() => formikCollaborator.handleSubmit}>
                           <Form.Group>
-                            <Form.Label>Experience</Form.Label>
+                            <p style={{ textAlign: "center" }}>Collaborate</p>
+                            <p style={{ fontSize: "1rem" }}>Experience</p>
 
                             <Form.Control
                               type="text"
@@ -371,7 +372,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             />
                             <br />
 
-                            <Form.Label xs>Role</Form.Label>
+                            <p style={{ fontSize: "1rem" }}>Role</p>
                             <Form.Control
                               type="text"
                               name="role"
@@ -380,7 +381,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                               placeholder="What role or task would you would like to work on?"
                             />
                             <br />
-                            <Form.Label>Time</Form.Label>
+                            <p style={{ fontSize: "1rem" }}>Time</p>
                             <Form.Control
                               type="text"
                               name="time"
@@ -390,7 +391,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                               available?"
                             />
                             <br />
-                            <Form.Label>Contact</Form.Label>
+                            <p style={{ fontSize: "1rem" }}>Contact</p>
                             <Form.Control
                               type="text"
                               name="contactInfo"
@@ -435,7 +436,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                       content={
                         <Form onSubmit={() => formikCollaborator.handleSubmit}>
                           <Form.Group>
-                            <Form.Label>Experience</Form.Label>
+                            <p style={{ textAlign: "center" }}>Volunteer</p>
+                            <p style={{ fontSize: "1rem" }}>Experience</p>
 
                             <Form.Control
                               type="text"
@@ -446,7 +448,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             />
                             <br />
 
-                            <Form.Label xs>Task</Form.Label>
+                            <p style={{ fontSize: "1rem" }}>Task</p>
                             <Form.Control
                               type="text"
                               name="role"
@@ -455,7 +457,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                               placeholder="What type of task would you like to work on?"
                             />
                             <br />
-                            <Form.Label>Time</Form.Label>
+                            <p style={{ fontSize: "1rem" }}>Time</p>
                             <Form.Control
                               type="text"
                               name="time"
@@ -464,7 +466,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                               placeholder="How much time do you want to contribute?"
                             />
                             <br />
-                            <Form.Label>Contact</Form.Label>
+                            <p style={{ fontSize: "1rem" }}>Contact</p>
                             <Form.Control
                               type="text"
                               name="contactInfo"
@@ -510,18 +512,19 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                       content={
                         <Form onSubmit={() => formikCollaborator.handleSubmit}>
                           <Form.Group>
-                            <Form.Label>Contribution</Form.Label>
+                            <p style={{ textAlign: "center" }}>Donate</p>
+                            <p style={{ fontSize: "1rem" }}>Contribution</p>
 
                             <Form.Control
                               type="text"
                               name="experience"
                               onChange={formikCollaborator.handleChange}
                               value={formikCollaborator.values.experience}
-                              placeholder="What is your contact information (e-mail and/or phone number)?"
+                              placeholder="What would you like to contribute?"
                             />
 
                             <br />
-                            <Form.Label>Contact</Form.Label>
+                            <p style={{ fontSize: "1rem" }}>Contact</p>
                             <Form.Control
                               type="text"
                               name="contactInfo"
