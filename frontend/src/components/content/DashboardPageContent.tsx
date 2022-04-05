@@ -33,7 +33,17 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
       )}
       {topIdeas && !ideasIsError && !ideasLoading && (
         <Row as="article" className="new-and-trending">
+          <Container className="py-5" id="hanging-icons">
+            <h2 className="pb-1 border-bottom display-6 text-center">
+              System Messages
+            </h2>
+          </Container>
           <NewAndTrendingSection topIdeas={topIdeas!} />
+          <Container className="py-5" id="hanging-icons">
+            <h2 className="pb-1 border-bottom display-6 text-center">
+              Followed Posts and Updates
+            </h2>
+          </Container>
         </Row>
       )}
     </Container>
