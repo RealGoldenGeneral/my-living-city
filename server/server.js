@@ -61,6 +61,7 @@ const main = async () => {
 	const userSegmentRouter = require('./controllers/userSegment');
 	const proposalRouter = require('./controllers/proposal');
 	const communityRouter = require('./controllers/community');
+	const dashboardRouter = require('./controllers/dashboard');
 
 
 	const apiRouter = express.Router();
@@ -88,6 +89,7 @@ const main = async () => {
 	apiRouter.use('/superSegment', superSegmentRouter);
 	apiRouter.use('/proposal', proposalRouter);
 	apiRouter.use('/community', communityRouter);
+	apiRouter.use('/dashboard', dashboardRouter);
 
 
 	// Listen to server
