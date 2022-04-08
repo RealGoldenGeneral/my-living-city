@@ -29,11 +29,11 @@ const IdeaTile: React.FC<ideaTileProps> = ({
     firstName,
     streetAddress,
     updatedAt,
-    ratingAvg,
-    ratingCount,
-    commentCount,
-    posRatings,
-    negRatings,
+    ratingAvg = -1,
+    ratingCount = -1,
+    commentCount = 0,
+    posRatings = -1,
+    negRatings = -1,
   } = ideaData;
   //console.log(ideaData);
   return (

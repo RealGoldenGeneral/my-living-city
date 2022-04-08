@@ -37,7 +37,6 @@ export default function Header() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
             <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/dashboard">Dashboard</Nav.Link>
             <Nav.Link href="/ideas">Conversations</Nav.Link>
             {user ? (
               <>
@@ -70,6 +69,7 @@ export default function Header() {
                     id="nav-dropdown"
                   ></NavDropdown>
                 )}
+                <Nav.Link href="/dashboard">Dashboard</Nav.Link>
                 <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
                   Help
                 </Nav.Link>
