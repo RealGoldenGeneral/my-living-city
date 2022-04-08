@@ -78,6 +78,7 @@ export const postCreateIdea = async (
     address,
     geo,
     imagePath,
+    supportedProposalId,
   } = ideaData;
   // const parsedCatId = Number(categoryId);
   // const parsedSegId = Number(segmentId);
@@ -145,6 +146,11 @@ export const postCreateIdea = async (
 
   if (imagePath) {
     formBody.append("imagePath", imagePath[0]);
+  }
+
+  //CHANGES_NEEDED
+  if (supportedProposalId) {
+    formBody.append("supportedProposalId", supportedProposalId.toString());
   }
 
   const res = await axios({

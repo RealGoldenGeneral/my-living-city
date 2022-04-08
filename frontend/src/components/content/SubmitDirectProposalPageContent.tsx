@@ -165,6 +165,7 @@ const SubmitDirectProposalPageContent: React.FC<
       handleCommunityChange(0);
     }
   }, []);
+
   return (
     <Container className="submit-idea-page-content">
       <Row className="mb-4 mt-4 justify-content-center">

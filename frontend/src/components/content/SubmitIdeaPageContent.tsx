@@ -118,6 +118,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       segmentId: undefined,
       subSegmentId: undefined,
       superSegmentId: undefined,
+      supportedProposalId: undefined,
     },
     onSubmit: submitHandler,
   });
@@ -125,7 +126,17 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
     if (segData) {
       handleCommunityChange(0);
     }
+    if (supportedProposal) {
+      formik.setFieldValue("supportedProposal", supportedProposal);
+    }
   }, []);
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const supportedProposal = urlParams.get("supportedProposal");
+  console.log("supportedProposal: ");
+  console.log(supportedProposal);
+
   return (
     <Container className="submit-idea-page-content">
       <Row className="mb-4 mt-4 justify-content-center">

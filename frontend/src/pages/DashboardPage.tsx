@@ -27,7 +27,10 @@ export default function Dashboard() {
     isError: iIsError,
   } = useIdeasHomepage();
 
-  //TODO: Find way to wait for user id to be loaded before useUserIdeas
+  //doesnt get loaded before useUserIdeas is called
+  const userId = data?.id;
+
+  //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
   const {
     data: uData,
     error: uError,

@@ -92,7 +92,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
     return !ideaData.champion && !!ideaData.isChampionable;
   };
-  console.log(imagePath);
+
   return (
     <div className="single-idea-content pt-5">
       <Card>

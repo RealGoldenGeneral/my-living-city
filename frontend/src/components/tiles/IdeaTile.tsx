@@ -34,7 +34,29 @@ const IdeaTile: React.FC<ideaTileProps> = ({
     commentCount = 0,
     posRatings = -1,
     negRatings = -1,
+    ratings,
+    comments,
   } = ideaData;
+
+  let numRatings = 0;
+  let numComments = 0;
+  let ratingRatio = 0;
+
+  if (ratings) {
+    numRatings = ratings!.length;
+    numComments = comments!.length;
+    ratings?.forEach((rate: any) => {
+      if (rate.rating > 0) {
+        ratingRatio += 1;
+      } else if (rate.rating < 0) {
+        ratingRatio += 1;
+      }
+    });
+  }
+
+  console.log(numRatings);
+  console.log(numComments);
+
   //console.log(ideaData);
   return (
     // <Card style={{ width: '18rem' }}>
