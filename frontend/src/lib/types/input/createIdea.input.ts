@@ -17,5 +17,5 @@ export interface ICreateIdeaInput {
   subSegmentId?: number;
   superSegmentId?: number;
   imagePath?: any;
-  supportedProposalId?: number;
+  supportingProposalId?: number;
 }

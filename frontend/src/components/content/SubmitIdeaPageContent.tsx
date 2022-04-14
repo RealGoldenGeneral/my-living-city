@@ -90,6 +90,14 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       setIsLoading(false);
     }
   };
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const supportedProposal = urlParams.get("supportedProposal");
+  const parsedProposalId = parseInt(supportedProposal!);
+  console.log("supportedProposal: ");
+  console.log(supportedProposal);
+
   // console.log(segment);
   // console.log(subSegment);
   const formik = useFormik<ICreateIdeaInput>({
@@ -118,24 +126,17 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       segmentId: undefined,
       subSegmentId: undefined,
       superSegmentId: undefined,
-      supportedProposalId: undefined,
+      //supportingProposalId that is not null
+      supportingProposalId: parsedProposalId,
     },
     onSubmit: submitHandler,
   });
+
   useEffect(() => {
     if (segData) {
       handleCommunityChange(0);
     }
-    if (supportedProposal) {
-      formik.setFieldValue("supportedProposal", supportedProposal);
-    }
   }, []);
-
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const supportedProposal = urlParams.get("supportedProposal");
-  console.log("supportedProposal: ");
-  console.log(supportedProposal);
 
   return (
     <Container className="submit-idea-page-content">
