@@ -78,4 +78,7 @@ export interface IIdeaWithAggregations {
   ratingCount: number;
   posRatings: number;
   negRatings: number;
+
+  ratings?: IRating[];
+  comments?: IComment[];
 }

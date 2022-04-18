@@ -7,6 +7,7 @@ import { IRating } from "./rating.type";
 import { IComment } from "./comment.type";
 import { IUser } from "./user.type";
 import { ISegment, ISubSegment, ISuperSegment } from "./segment.type";
+import { IIdea, IIdeaWithAggregations } from "./idea.type";
 
 export type ProposalState = "IDEA" | "PROPOSAL" | "PROJECT";
 
@@ -58,24 +59,6 @@ export interface IProposalWithRelationship extends IProposal {
 // Idea Breakdown (Used in Landing Page and Ideas Page) extends Root base Idea
 export interface IProposalWithAggregations {
   id: number;
-  authorId: string;
-  categoryId: number;
-  segmentName: string; //
-  subSegmentName?: string; //
-  firstName: string; //
-  streetAddress: string; //
-  title: string;
-  description: string;
-  state: ProposalState;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-
-  // Aggregate breakdown
-  engagements: number;
-  ratingAvg: number;
-  commentCount: number;
-  ratingCount: number;
-  posRatings: number;
-  negRatings: number;
+  ideaId: number;
+  idea: IIdeaWithAggregations;
 }
