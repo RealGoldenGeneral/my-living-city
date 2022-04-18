@@ -100,7 +100,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   };
 
   function redirectToIdeaSubmit() {
-    window.location.href = `/submit`;
+    window.location.href = `/submit?supportedProposal=${proposalId}`;
   }
 
   const [collaboratorIsOpen, setCollaboratorIsOpen] = useState(false);

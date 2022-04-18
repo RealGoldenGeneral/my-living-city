@@ -437,6 +437,39 @@ ideaRouter.post(
   }
 )
 
+// Get all ideas from a specific author
+ideaRouter.get(
+  '/getall/:userId',
+  async (req, res, next) => {
+    try {
+      const allIdeas = await prisma.idea.findMany({
+        where: {
+          authorId: req.params.userId
+        },
+        include: {
+          ratings: true,
+          comments: true,
+        },
+        orderBy: {
+          updatedAt: 'desc'
+        }
+      });
+
+      res.status(200).json(allIdeas);
+    } catch (error) {
+      res.status(400).json({
+        message: "An error occured while trying to fetch all ideas",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
 // Get all idea as well as relations with ideaId
 ideaRouter.get(
   '/get/:ideaId',
@@ -573,10 +606,6 @@ ideaRouter.get(
     }
   }
 )
-
-
-
-
 
 // Put request to update data
 ideaRouter.put(

@@ -66,4 +66,5 @@ export const ROUTES = {
   SEGMENT_MANAGEMENT: "/segment/management",
   USER_MANAGEMENT: "/user/management",
   SUBMIT_DIRECT_PROPOSAL: "/submit-direct-proposal",
+  DASHBOARD: "/dashboard",
 };

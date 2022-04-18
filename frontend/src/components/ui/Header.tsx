@@ -69,6 +69,7 @@ export default function Header() {
                     id="nav-dropdown"
                   ></NavDropdown>
                 )}
+                <Nav.Link href="/dashboard">Dashboard</Nav.Link>
                 <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
                   Help
                 </Nav.Link>
