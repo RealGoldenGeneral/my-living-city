@@ -1,28 +1,33 @@
-import React from 'react'
-import { Container, Row, Table, Button} from 'react-bootstrap';
-import { IAdvertisement } from 'src/lib/types/data/advertisement.type';
-import moment from 'moment';
-import { API_BASE_URL } from '../../lib/constants'
+import React from "react";
+import { Container, Row, Table, Button } from "react-bootstrap";
+import { IAdvertisement } from "src/lib/types/data/advertisement.type";
+import moment from "moment";
+import { API_BASE_URL } from "../../lib/constants";
 
 // import '../../../../server/uploads'
-import { deleteAdvertisement, getAdvertisementById } from 'src/lib/api/advertisementRoutes';
+import {
+  deleteAdvertisement,
+  getAdvertisementById,
+} from "src/lib/api/advertisementRoutes";
 interface AllAdsPageContentProps {
-  AllAdvertisement: IAdvertisement[] | undefined
-  token: string | null
+  AllAdvertisement: IAdvertisement[] | undefined;
+  token: string | null;
 }
 
-const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement, token }) => {
+const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({
+  AllAdvertisement,
+  token,
+}) => {
   // console.log(AllAdvertisement);
   // const [adsId, setAdsId] = useState<number>();
   // console.log(adsId);
 
   async function handleDelete(adsId: number) {
-    
     try {
       await deleteAdvertisement(token, adsId);
       window.location.reload();
-    } catch(err) {
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -35,14 +40,13 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
   // }
 
   return (
-    
-    <Container className='all-ads-page-content w-100'>
-      <Row className='mb-4 mt-4'>
-          <h2 className="pb-2 pt-2 display-6">Advertisements Manager</h2>
+    <Container className="all-ads-page-content w-100">
+      <Row className="mb-4 mt-4">
+        <h2 className="pb-2 pt-2 display-6">Advertisements Manager</h2>
       </Row>
-      
-      <Row className='mb-3'>
-        <a href='/advertisement/submit'>
+
+      <Row className="mb-3">
+        <a href="/advertisement/submit">
           <Button>Create Ads</Button>
         </a>
       </Row>
@@ -65,25 +69,46 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
             </tr>
           </thead>
           <tbody>
-            {AllAdvertisement?.map(item => (
+            {AllAdvertisement?.map((item) => (
               <tr key={item.id}>
                 <td>
-                  <Button className='mb-2' block variant="primary" href={`/advertisement/edit/?id=${item.id}`}>Edit</Button>
+                  <Button
+                    className="mb-2"
+                    block
+                    variant="primary"
+                    href={`/advertisement/edit/?id=${item.id}`}
+                  >
+                    Edit
+                  </Button>
                   {/* <a href={`/advertisement/edit/?id=${item.id}`}><Button className='mb-2' block variant="primary" onClick={() => {
                     handleEdit(item.id);
                   }}>Edit</Button></a> */}
-                  <Button block variant="outline-danger" onClick={() => {
-                    handleDelete(item.id);
-                  }}>Delete</Button>
+                  <Button
+                    block
+                    variant="outline-danger"
+                    onClick={() => {
+                      handleDelete(item.id);
+                    }}
+                  >
+                    Delete
+                  </Button>
                 </td>
                 <td>{item.adTitle}</td>
                 <td>{item.adType}</td>
                 <td>{item.ownerId}</td>
-                <td><img alt="" src={`${API_BASE_URL}/${(item.imagePath)}`}></img></td>
-                <td>{moment(item.duration).format('YYYY-MM-DD HH:mm:ss')}</td>
+                <td>
+                  <img
+                    alt=""
+                    src={`${API_BASE_URL}/${item.imagePath}`}
+                    height="100rem"
+                  ></img>
+                </td>
+                <td>{moment(item.duration).format("YYYY-MM-DD HH:mm:ss")}</td>
                 <td>{item.adPosition}</td>
-                <td><a href={item.externalLink}>{item.externalLink}</a></td>
-                <td>{item.published ? "Yes": "No"}</td>
+                <td>
+                  <a href={item.externalLink}>{item.externalLink}</a>
+                </td>
+                <td>{item.published ? "Yes" : "No"}</td>
                 <td>{item.createdAt}</td>
                 <td>{item.updatedAt}</td>
               </tr>
@@ -91,10 +116,8 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({ AllAdvertisement,
           </tbody>
         </Table>
       </Row>
-      
-      
     </Container>
   );
-}
+};
 
-export default AllAdsPageContent
+export default AllAdsPageContent;
