@@ -67,4 +67,5 @@ export const ROUTES = {
   USER_MANAGEMENT: "/user/management",
   SUBMIT_DIRECT_PROPOSAL: "/submit-direct-proposal",
   DASHBOARD: "/dashboard",
+  My_POSTS: "/dashboard/my-posts",
 };
