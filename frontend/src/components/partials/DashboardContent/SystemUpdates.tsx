@@ -41,7 +41,7 @@ const SystemUpdates: React.FC<SystemUpdatesProps> = ({
 
       <Carousel controls={true} interval={null}>
         {[...Array(4)].map((x, i) => (
-          <Carousel.Item>
+          <Carousel.Item key={i}>
             {topIdeas &&
               topIdeas.slice(i * 3, i * 3 + 3).map((idea) => (
                 <Col

@@ -24,6 +24,13 @@ export default function MyPostsPage() {
   //doesnt get loaded before useUserIdeas is called
   const userId = data?.id;
 
+  const [waitedUserId, setWaitedUserId] = useState(userId);
+
+  async function getUserId() {
+    const waitedUserId = await userId;
+    setWaitedUserId(waitedUserId);
+  }
+
   //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
   const {
     data: uData,
@@ -31,7 +38,7 @@ export default function MyPostsPage() {
     isLoading: uLoading,
   } = useUserIdeas("ckz0lag2k0003tcv3uvunhmyl");
 
-  console.log(uData);
+  //console log logged in user
 
   return (
     <div className="wrapper">

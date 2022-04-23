@@ -45,11 +45,13 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
       <div style={{ marginTop: "2rem" }}>
         {!isDismissed ? (
           <Table>
-            {messages.map((message) => (
-              <tr>
-                <td>{message}</td>
-              </tr>
-            ))}
+            <tbody>
+              {messages.map((message, index) => (
+                <tr key={index}>
+                  <td>{message}</td>
+                </tr>
+              ))}
+            </tbody>
           </Table>
         ) : (
           <div>
