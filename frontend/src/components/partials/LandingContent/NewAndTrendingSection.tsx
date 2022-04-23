@@ -5,17 +5,23 @@ import IdeaTile from "../../tiles/IdeaTile";
 interface NewAndTrendingProps {
   topIdeas: IIdeaWithAggregations[];
   postType?: string;
+  isDashboard?: boolean;
 }
 
 const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
   topIdeas,
   postType,
+  isDashboard,
 }) => {
   return (
     <Container className="py-5" id="hanging-icons">
-      <h2 className="pb-1 border-bottom display-6 text-center">
-        New and Trending
-      </h2>
+      {isDashboard ? (
+        <h2 className="pb-1 border-bottom display-6">New and Trending</h2>
+      ) : (
+        <h2 className="pb-1 border-bottom display-6 text-center">
+          New and Trending
+        </h2>
+      )}
       <Row className="g-5 py-3 justify-content-center">
         {topIdeas &&
           topIdeas.map((idea) => (

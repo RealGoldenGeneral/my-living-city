@@ -7,7 +7,7 @@ import MyPosts from "../partials/DashboardContent/MyPosts";
 
 import AdsSection from "../partials/LandingContent/AdsSection"; //
 import { AdsSectionPage } from "src/pages/AdsSectionPage";
-import SystemMessages from "../partials/DashboardContent/SystemMessages";
+import Notifications from "../partials/DashboardContent/Notifications";
 import SystemUpdates from "../partials/DashboardContent/SystemUpdates";
 import LoadingSpinner from "../ui/LoadingSpinner";
 
@@ -30,7 +30,7 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
     <Container className="landing-page-content">
       <Row as="article" className="featured"></Row>
       <Row as="article" className="system-messages">
-        <SystemMessages />
+        <Notifications />
       </Row>
       {ideasLoading && (
         <div className="landing-spinner d-flex justify-content-center my-4">
@@ -57,7 +57,7 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
       )}
       {topIdeas && !ideasIsError && !ideasLoading && (
         <Row as="article" className="new-and-trending">
-          <NewAndTrendingSection topIdeas={topIdeas!} />
+          <NewAndTrendingSection topIdeas={topIdeas!} isDashboard={true} />
         </Row>
       )}
       {topIdeas && !ideasIsError && !ideasLoading && (

@@ -7,7 +7,7 @@ import MyPosts from "../partials/DashboardContent/MyPosts";
 
 import AdsSection from "../partials/LandingContent/AdsSection"; //
 import { AdsSectionPage } from "src/pages/AdsSectionPage";
-import SystemMessages from "../partials/DashboardContent/SystemMessages";
+import Notifications from "../partials/DashboardContent/Notifications";
 import SystemUpdates from "../partials/DashboardContent/SystemUpdates";
 import LoadingSpinner from "../ui/LoadingSpinner";
 

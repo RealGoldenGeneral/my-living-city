@@ -17,7 +17,7 @@ const SystemUpdates: React.FC<SystemUpdatesProps> = ({
       id="hanging-icons"
       style={{ padding: "0rem 0rem 1rem 0rem", margin: "0 auto" }}
     >
-      <h2 className="pb-1 border-bottom display-6 text-center">
+      <h2 className="pb-1 border-bottom display-6">
         Followed Posts and Updates
       </h2>
       <Row className="g-5 py-3 justify-content-center">
