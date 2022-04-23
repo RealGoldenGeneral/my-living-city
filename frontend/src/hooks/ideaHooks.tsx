@@ -36,7 +36,7 @@ export const useIdeasWithBreakdown = (take?: number) => {
 
 export const useIdeasHomepage = () => {
   return useQuery<IIdeaWithAggregations[], IFetchError>("ideas-homepage", () =>
-    postAllIdeasWithBreakdown(3)
+    postAllIdeasWithBreakdown(12)
   );
 };
 
