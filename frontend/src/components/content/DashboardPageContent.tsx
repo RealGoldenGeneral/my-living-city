@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Spinner, Button } from "react-bootstrap";
+import { Container, Row, Spinner, Button, Carousel } from "react-bootstrap";
 import { IIdeaWithAggregations } from "../../lib/types/data/idea.type";
 import { IFetchError } from "../../lib/types/types";
 import NewAndTrendingSection from "../partials/LandingContent/NewAndTrendingSection";

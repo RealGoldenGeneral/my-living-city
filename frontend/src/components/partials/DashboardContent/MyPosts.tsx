@@ -19,9 +19,12 @@ const MyPosts: React.FC<MyPostsProps> = ({
   }
   return (
     <Container
-      className="system"
+      className="container"
       id="hanging-icons"
-      style={{ padding: "2rem 0rem 1rem 0rem", margin: "0 auto" }}
+      style={{
+        padding: "2rem 1rem 1rem 1rem",
+        margin: "0 auto",
+      }}
     >
       {!isDashboard && (
         <>
@@ -31,6 +34,8 @@ const MyPosts: React.FC<MyPostsProps> = ({
             padding-left: 0;
             background-color: #fff;
           }
+          .container {
+            padding: 1rem;
         `}
           </style>
           <Breadcrumb
