@@ -54,14 +54,34 @@ const IdeaTile: React.FC<ideaTileProps> = ({
     });
   }
 
-  console.log(numRatings);
-  console.log(numComments);
+  const oneWeek = 604800000;
+  const postDate = new Date(updatedAt);
+  const currentTime = new Date();
+  const date = currentTime.getTime() - postDate.getTime();
+
+  const isNew = date < oneWeek;
+
+  console.log(isNew);
 
   //console.log(ideaData);
   return (
     // <Card style={{ width: '18rem' }}>
-    <Card>
+    <Card style={{ position: "relative" }}>
       {/* <Card.Img variant="top" src="https://via.placeholder.com/300x150" /> */}
+      <style>
+        {`
+          .new-banner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #93cb6e;
+            color: #fff;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+          }
+        `}
+      </style>
+      {isNew && <div className="new-banner">NEW</div>}
       <Card.Body>
         <div style={{ textAlign: "left", color: "gray" }}>{postType}</div>
         <Card.Title>{truncateString(title, 50)}</Card.Title>

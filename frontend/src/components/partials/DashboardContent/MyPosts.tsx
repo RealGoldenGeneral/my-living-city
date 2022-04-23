@@ -1,22 +1,62 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Breadcrumb } from "react-bootstrap";
 import IdeaTile from "src/components/tiles/IdeaTile";
 import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 
 interface MyPostsProps {
   userIdeas: IIdeaWithAggregations[];
+  numPosts: number;
+  isDashboard: boolean;
 }
 
-const MyPosts: React.FC<MyPostsProps> = ({ userIdeas }) => {
+const MyPosts: React.FC<MyPostsProps> = ({
+  userIdeas,
+  numPosts,
+  isDashboard,
+}) => {
+  let parsedPosts = userIdeas;
+  if (numPosts > 0) {
+    parsedPosts = parsedPosts.slice(0, numPosts);
+  }
   return (
     <Container
-      className="system"
+      className="container"
       id="hanging-icons"
-      style={{ padding: "0rem 0rem 1rem 0rem", margin: "0 auto" }}
+      style={{
+        padding: "2rem 1rem 1rem 1rem",
+        margin: "0 auto",
+      }}
     >
-      <h2 className="pb-1 border-bottom display-6 text-center">My Posts</h2>
+      {!isDashboard && (
+        <>
+          <style>
+            {`
+          .breadcrumb {
+            padding-left: 0;
+            background-color: #fff;
+          }
+          .container {
+            padding: 1rem;
+        `}
+          </style>
+          <Breadcrumb
+            style={{
+              backgroundColor: "fff",
+            }}
+          >
+            <Breadcrumb.Item
+              onClick={() => (window.location.href = "/dashboard")}
+            >
+              Dashboard
+            </Breadcrumb.Item>
+            <Breadcrumb.Item active>My Posts</Breadcrumb.Item>
+          </Breadcrumb>
+        </>
+      )}
+
+      <h2 className="pb-1 border-bottom display-6">My Posts</h2>
       <Row className="g-5 py-3 justify-content-center">
-        {userIdeas &&
-          userIdeas.map((idea: any) => (
+        {parsedPosts &&
+          parsedPosts.map((idea: any) => (
             <Col
               key={idea.id}
               md={6}
