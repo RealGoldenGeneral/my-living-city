@@ -18,7 +18,7 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
       className="system"
       id="hanging-icons"
       // Top Right Bottom Left
-      style={{ padding: "3rem 0rem 0rem 0rem", margin: "0 auto" }}
+      style={{ padding: "3rem 1rem 0rem 1rem", margin: "0 auto" }}
     >
       <style>
         {`
