@@ -67,7 +67,7 @@ const MyPosts: React.FC<MyPostsProps> = ({
                 <IdeaTile ideaData={idea} showFooter={true} postType="Idea" />
               </Col>
             ))
-          : [...Array(numPosts)].map((x, i) => (
+          : [...Array(6)].map((x, i) => (
               <Col key={i} md={6} lg={4} className="pt-3 align-items-stretch">
                 <PlaceholderIdeaTile />
               </Col>
