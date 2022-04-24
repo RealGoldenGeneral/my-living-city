@@ -1,4 +1,5 @@
 import { Container, Row, Col, Carousel } from "react-bootstrap";
+import PlaceholderIdeaTile from "src/components/tiles/PlaceholderIdeaTile";
 import { IIdeaWithAggregations } from "../../../lib/types/data/idea.type";
 import IdeaTile from "../../tiles/IdeaTile";
 
@@ -49,17 +50,31 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
       <Carousel controls={true} interval={null}>
         {[...Array(4)].map((x, i) => (
           <Carousel.Item key={i}>
-            {topIdeas &&
-              topIdeas.slice(i * 3, i * 3 + 3).map((idea) => (
-                <Col
-                  key={idea.id}
-                  md={6}
-                  lg={4}
-                  className="pt-3 align-items-stretch"
-                >
-                  <IdeaTile ideaData={idea} showFooter={true} postType="Idea" />
-                </Col>
-              ))}
+            {topIdeas
+              ? topIdeas.slice(i * 3, i * 3 + 3).map((idea) => (
+                  <Col
+                    key={idea.id}
+                    md={6}
+                    lg={4}
+                    className="pt-3 align-items-stretch"
+                  >
+                    <IdeaTile
+                      ideaData={idea}
+                      showFooter={true}
+                      postType="Idea"
+                    />
+                  </Col>
+                ))
+              : [...Array(12)].map((x, i) => (
+                  <Col
+                    key={i}
+                    md={6}
+                    lg={4}
+                    className="pt-3 align-items-stretch"
+                  >
+                    <PlaceholderIdeaTile />
+                  </Col>
+                ))}
           </Carousel.Item>
         ))}
       </Carousel>

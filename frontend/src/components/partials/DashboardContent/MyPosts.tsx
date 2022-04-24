@@ -1,5 +1,6 @@
 import { Container, Row, Col, Breadcrumb } from "react-bootstrap";
 import IdeaTile from "src/components/tiles/IdeaTile";
+import PlaceholderIdeaTile from "src/components/tiles/PlaceholderIdeaTile";
 import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 
 interface MyPostsProps {
@@ -14,7 +15,7 @@ const MyPosts: React.FC<MyPostsProps> = ({
   isDashboard,
 }) => {
   let parsedPosts = userIdeas;
-  if (numPosts > 0) {
+  if (numPosts > 0 && userIdeas) {
     parsedPosts = parsedPosts.slice(0, numPosts);
   }
   return (
@@ -55,17 +56,22 @@ const MyPosts: React.FC<MyPostsProps> = ({
 
       <h2 className="pb-1 border-bottom display-6">My Posts</h2>
       <Row className="g-5 py-3 justify-content-center">
-        {parsedPosts &&
-          parsedPosts.map((idea: any) => (
-            <Col
-              key={idea.id}
-              md={6}
-              lg={4}
-              className="pt-3 align-items-stretch"
-            >
-              <IdeaTile ideaData={idea} showFooter={true} postType="Idea" />
-            </Col>
-          ))}
+        {parsedPosts
+          ? parsedPosts.map((idea: any) => (
+              <Col
+                key={idea.id}
+                md={6}
+                lg={4}
+                className="pt-3 align-items-stretch"
+              >
+                <IdeaTile ideaData={idea} showFooter={true} postType="Idea" />
+              </Col>
+            ))
+          : [...Array(numPosts)].map((x, i) => (
+              <Col key={i} md={6} lg={4} className="pt-3 align-items-stretch">
+                <PlaceholderIdeaTile />
+              </Col>
+            ))}
         {/* <a className='pt-5 text-align-center' href="/ideas">
           <h3>View all ideas and conversations</h3>
         </a> */}

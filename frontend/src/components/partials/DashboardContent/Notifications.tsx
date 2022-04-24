@@ -47,7 +47,10 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
           <Table>
             <tbody>
               {messages.map((message, index) => (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  onClick={() => (window.location.href = "/ideas")}
+                >
                   <td>{message}</td>
                 </tr>
               ))}

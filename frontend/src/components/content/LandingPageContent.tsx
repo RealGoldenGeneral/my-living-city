@@ -27,16 +27,11 @@ const LandingPageContent: React.FC<LandingPageContentProps> = ({
     <Container className="landing-page-content">
       <HeroBannerSection />
       <Row as="article" className="featured"></Row>
-      {ideasLoading && (
-        <div className="landing-spinner d-flex justify-content-center my-4">
-          <Spinner animation="border" />
-        </div>
-      )}
-      {topIdeas && !ideasIsError && !ideasLoading && (
-        <Row as="article" className="new-and-trending">
-          <NewAndTrendingSection topIdeas={topIdeas!} isDashboard={false} />
-        </Row>
-      )}
+
+      <Row as="article" className="new-and-trending">
+        <NewAndTrendingSection topIdeas={topIdeas!} isDashboard={false} />
+      </Row>
+
       <Row as="article" className="categories">
         <CategoriesSection />
       </Row>
