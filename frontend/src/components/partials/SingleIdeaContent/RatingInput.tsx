@@ -4,9 +4,13 @@ import { useParams } from "react-router";
 import { UserProfileContext } from "../../../contexts/UserProfile.Context";
 // https://github.com/microsoft/TypeScript/issues/22217
 // https://github.com/ekeric13/react-ratings-declarative
-import Ratings from "react-ratings-declarative";
 import { useCreateRatingMutation } from "src/hooks/ratingHooks";
-import { IFetchError } from "src/lib/types/types";
+import {
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 
 interface RatingInputProps {
   userHasRated: boolean;
@@ -42,19 +46,19 @@ const RatingInput = ({
   };
 
   // =================== UTILITY FUNCTIONS FOR UI/AGGREGATIONS ==========================
-  const parseNegativeRatingValue = (val: number): void => {
-    if (userHasRated) return;
+  // const parseNegativeRatingValue = (val: number): void => {
+  //   if (userHasRated) return;
 
-    let parsedVal = -1 * val;
-    setRatingValue(parsedVal);
-  };
+  //   let parsedVal = -1 * val;
+  //   setRatingValue(parsedVal);
+  // };
 
-  const parsePositiveRatingValue = (val: number): void => {
-    if (userHasRated) return;
+  // const parsePositiveRatingValue = (val: number): void => {
+  //   if (userHasRated) return;
 
-    let parsedVal = val - 1;
-    setRatingValue(parsedVal);
-  };
+  //   let parsedVal = val - 1;
+  //   setRatingValue(parsedVal);
+  // };
 
   // Loads user submitted rating
   useEffect(() => {
@@ -85,11 +89,12 @@ const RatingInput = ({
     if (!user) buttonText = "You must sign in to rate an idea";
     return buttonText;
   };
+
   return (
     <Container className="">
       <h2 className="text-center">Submit Your Rating:</h2>
       <Row>
-        <Col xs={12} className="text-center">
+        {/* <Col xs={12} className="text-center">
           <Ratings
             rating={-1 * ratingValue}
             widgetRatedColors="gold"
@@ -109,6 +114,58 @@ const RatingInput = ({
             <Ratings.Widget />
             <Ratings.Widget />
           </Ratings>
+        </Col> */}
+        <Col>
+          <div>
+            <FormControl
+              style={{ width: "100%", padding: "0rem 8rem 0rem 8rem" }}
+            >
+              <RadioGroup
+                row
+                aria-labelledby="demo-form-control-label-placement"
+                name="position"
+                defaultValue="top"
+                style={{ justifyContent: "space-between" }}
+                onChange={(e) => setRatingValue(parseInt(e.target.value))}
+              >
+                <FormControlLabel
+                  value="-2"
+                  control={<Radio color="success" />}
+                  label="Strongly Oppose"
+                  labelPlacement="bottom"
+                  disabled={shouldButtonBeDisabled()}
+                />
+                <FormControlLabel
+                  value="-1"
+                  control={<Radio color="success" />}
+                  label="Slightly Oppose"
+                  labelPlacement="bottom"
+                  disabled={shouldButtonBeDisabled()}
+                />
+                <FormControlLabel
+                  value="0"
+                  control={<Radio color="success" />}
+                  label="Neutral"
+                  labelPlacement="bottom"
+                  disabled={shouldButtonBeDisabled()}
+                />
+                <FormControlLabel
+                  value="1"
+                  control={<Radio color="success" />}
+                  label="Slightly Support"
+                  labelPlacement="bottom"
+                  disabled={shouldButtonBeDisabled()}
+                />
+                <FormControlLabel
+                  value="2"
+                  control={<Radio color="success" />}
+                  label="Strongly Support"
+                  labelPlacement="bottom"
+                  disabled={shouldButtonBeDisabled()}
+                />
+              </RadioGroup>
+            </FormControl>
+          </div>
         </Col>
         <Col xs={12} className="text-center mt-3">
           {showRatingSubmitError && (
@@ -123,6 +180,7 @@ const RatingInput = ({
                 "An Error occured while trying to submit your rating."}
             </Alert>
           )}
+
           <Button
             onClick={submitHandler}
             disabled={shouldButtonBeDisabled()}
