@@ -17,7 +17,11 @@ const AdsSection: React.FC<AdsSectionProps> = ({ ads }) => {
         {/* <h2 className="pb-1 border-bottom display-6 text-center">Our Locals</h2> */}
         <Carousel indicators={false} pause={"hover"}>
           {ads.map((ad) => (
-            <Carousel.Item interval={5000} key={ad.id}>
+            <Carousel.Item
+              interval={5000}
+              key={ad.id}
+              style={{ justifyContent: "center" }}
+            >
               <a href={ad.externalLink}>
                 <img
                   alt="Not found..."
