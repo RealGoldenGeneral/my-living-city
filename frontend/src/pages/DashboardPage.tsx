@@ -15,11 +15,6 @@ import { useIdeasHomepage, useUserIdeas } from "../hooks/ideaHooks";
 import LoadingSpinner from "src/components/ui/LoadingSpinner";
 
 export default function Dashboard() {
-  const { logout, user, token } = useContext(UserProfileContext);
-  const { data } = useUserWithJwtVerbose({
-    jwtAuthToken: token!,
-    shouldTrigger: token != null,
-  });
   const {
     data: iData,
     error: iError,
@@ -27,15 +22,15 @@ export default function Dashboard() {
     isError: iIsError,
   } = useIdeasHomepage();
 
-  //doesnt get loaded before useUserIdeas is called
-  const userId = data?.id;
+  const stringifiedUser = localStorage.getItem("logged-user");
+  const loggedInUser = JSON.parse(stringifiedUser!);
 
   //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
   const {
     data: uData,
     error: uError,
     isLoading: uLoading,
-  } = useUserIdeas("ckz0lag2k0003tcv3uvunhmyl");
+  } = useUserIdeas(loggedInUser.id);
 
   console.log(uData);
 

@@ -21,16 +21,10 @@ const MyPostsPageContent: React.FC<LandingPageContentProps> = ({
   return (
     <Container className="landing-page-content">
       <Row as="article" className="featured"></Row>
-      {userIdeas && (
-        <Row as="article" className="new-and-trending">
-          <MyPosts userIdeas={userIdeas!} numPosts={-1} isDashboard={false} />
-        </Row>
-      )}
-      {!userIdeas && (
-        <Row as="article" className="new-and-trending">
-          <LoadingSpinner />
-        </Row>
-      )}
+
+      <Row as="article" className="new-and-trending">
+        <MyPosts userIdeas={userIdeas!} numPosts={-1} isDashboard={false} />
+      </Row>
     </Container>
   );
 };
