@@ -25,7 +25,7 @@ const AdsSection: React.FC<AdsSectionProps> = ({ ads }) => {
               <a href={ad.externalLink}>
                 <img
                   alt="Not found..."
-                  className="d-block w-100"
+                  className="d-block w-100 ads-image"
                   style={{
                     margin: "0 auto",
                     maxHeight: "150px",
