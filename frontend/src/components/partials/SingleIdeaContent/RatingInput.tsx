@@ -92,6 +92,13 @@ const RatingInput = ({
 
   return (
     <Container className="">
+      <style>
+        {`
+        .canvasjs-chart-credit {
+          display: none;
+        }
+        `}
+      </style>
       <h2 className="text-center">Submit Your Rating:</h2>
       <Row>
         {/* <Col xs={12} className="text-center">
