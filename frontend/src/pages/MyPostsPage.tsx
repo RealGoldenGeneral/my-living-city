@@ -13,25 +13,22 @@ import { UserProfileContext } from "src/contexts/UserProfile.Context";
 import MyPostsPageContent from "../components/content/MyPostsPageContent";
 import { useIdeasHomepage, useUserIdeas } from "../hooks/ideaHooks";
 import LoadingSpinner from "src/components/ui/LoadingSpinner";
+import UserProfileProvider from "src/contexts/UserProfile.Context";
 
 export default function MyPostsPage() {
-  const { logout, user, token } = useContext(UserProfileContext);
-  const { data } = useUserWithJwtVerbose({
-    jwtAuthToken: token!,
-    shouldTrigger: token != null,
-  });
-
   //doesnt get loaded before useUserIdeas is called
-  const userId = data?.id;
+
+  const stringifiedUser = localStorage.getItem("logged-user");
+  const loggedInUser = JSON.parse(stringifiedUser!);
+
+  console.log(loggedInUser.id);
 
   //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
   const {
     data: uData,
     error: uError,
     isLoading: uLoading,
-  } = useUserIdeas("ckz0lag2k0003tcv3uvunhmyl");
-
-  console.log(uData);
+  } = useUserIdeas(loggedInUser.id);
 
   return (
     <div className="wrapper">

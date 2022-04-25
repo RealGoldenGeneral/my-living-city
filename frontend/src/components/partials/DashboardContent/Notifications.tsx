@@ -18,7 +18,7 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
       className="system"
       id="hanging-icons"
       // Top Right Bottom Left
-      style={{ padding: "3rem 0rem 0rem 0rem", margin: "0 auto" }}
+      style={{ padding: "3rem 1rem 0rem 1rem", margin: "0 auto" }}
     >
       <style>
         {`
@@ -45,11 +45,16 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
       <div style={{ marginTop: "2rem" }}>
         {!isDismissed ? (
           <Table>
-            {messages.map((message) => (
-              <tr>
-                <td>{message}</td>
-              </tr>
-            ))}
+            <tbody>
+              {messages.map((message, index) => (
+                <tr
+                  key={index}
+                  onClick={() => (window.location.href = "/ideas")}
+                >
+                  <td>{message}</td>
+                </tr>
+              ))}
+            </tbody>
           </Table>
         ) : (
           <div>

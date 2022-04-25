@@ -9,6 +9,7 @@ import {
   deleteAdvertisement,
   getAdvertisementById,
 } from "src/lib/api/advertisementRoutes";
+import { timeDifference } from "src/lib/utilityFunctions";
 interface AllAdsPageContentProps {
   AllAdvertisement: IAdvertisement[] | undefined;
   token: string | null;
@@ -30,6 +31,8 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({
       console.log(err);
     }
   }
+
+  console.log(AllAdvertisement);
 
   // async function handleEdit(adsId: number) {
   //   try {
@@ -109,7 +112,7 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({
                   <a href={item.externalLink}>{item.externalLink}</a>
                 </td>
                 <td>{item.published ? "Yes" : "No"}</td>
-                <td>{item.createdAt}</td>
+                <td>{timeDifference(new Date(), new Date(item.createdAt))}</td>
                 <td>{item.updatedAt}</td>
               </tr>
             ))}

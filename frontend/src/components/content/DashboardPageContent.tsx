@@ -32,39 +32,23 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
       <Row as="article" className="system-messages">
         <Notifications />
       </Row>
-      {ideasLoading && (
-        <div className="landing-spinner d-flex justify-content-center my-4">
-          <Spinner animation="border" />
+      <Row as="article" className="new-and-trending">
+        <MyPosts userIdeas={userIdeas!} numPosts={6} isDashboard={true} />
+        <div className="centered" style={{ margin: "0 auto" }}>
+          <Button
+            onClick={() => (window.location.href = "/dashboard/my-posts")}
+            size="lg"
+          >
+            See More
+          </Button>
         </div>
-      )}
-      {userIdeas && (
-        <Row as="article" className="new-and-trending">
-          <MyPosts userIdeas={userIdeas!} numPosts={6} isDashboard={true} />
-          <div className="centered" style={{ margin: "0 auto" }}>
-            <Button
-              onClick={() => (window.location.href = "/dashboard/my-posts")}
-              size="lg"
-            >
-              See More
-            </Button>
-          </div>
-        </Row>
-      )}
-      {!userIdeas && (
-        <Row as="article" className="new-and-trending">
-          <LoadingSpinner />
-        </Row>
-      )}
-      {topIdeas && !ideasIsError && !ideasLoading && (
-        <Row as="article" className="new-and-trending">
-          <NewAndTrendingSection topIdeas={topIdeas!} isDashboard={true} />
-        </Row>
-      )}
-      {topIdeas && !ideasIsError && !ideasLoading && (
-        <Row as="article" className="system-updates">
-          <SystemUpdates topIdeas={topIdeas!} />
-        </Row>
-      )}
+      </Row>
+      <Row as="article" className="new-and-trending">
+        <NewAndTrendingSection topIdeas={topIdeas!} isDashboard={true} />
+      </Row>
+      <Row as="article" className="system-updates">
+        <SystemUpdates topIdeas={topIdeas!} />
+      </Row>
     </Container>
   );
 };
