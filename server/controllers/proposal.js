@@ -43,18 +43,20 @@ proposalRouter.post(
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
-            //TODO
+            console.log("req.body", req);
+            res.status(200).json(req.body);
         } catch (error) {
+            console.error(error);
             res.status(400).json({
-                message: error.message,
+                message: "An error occured while trying to create an Idea.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
                 }
-            })
+            });
+        } finally {
+            await prisma.$disconnect();
         }
-
-
     }
 )
 

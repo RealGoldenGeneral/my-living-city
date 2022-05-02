@@ -42,28 +42,18 @@ export const getSingleProposal = async (proposalId: string) => {
 };
 
 export const postCreateProposal = async (
-  idea: ICreateIdeaInput,
+  proposal: any,
   banned: boolean,
   token: string | null
 ) => {
-  // const {
-  //   categoryId,
-  //   title,
-  //   description,
-  //   superSegmentId,
-  //   segmentId,
-  //   subSegmentId,
-  //   communityImpact,
-  //   natureImpact,
-  //   artsImpact,
-  //   energyImpact,
-  //   manufacturingImpact,
-  //   address,
-  //   geo,
-  //   imagePath,
-  // } = idea;
+  const { ideaId } = proposal;
+
+  console.log("checkHere", ideaId);
+  console.log(ideaId);
 
   let formBody = new FormData();
+
+  formBody.append("ideaId", ideaId.toString());
 
   const res = await axios({
     method: "post",

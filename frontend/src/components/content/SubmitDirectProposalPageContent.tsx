@@ -107,7 +107,43 @@ const SubmitDirectProposalPageContent: React.FC<
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
-      const idea = await postCreateIdea(values, user!.banned, token);
+      //const ideaValues with <ICreateIdeaInput> interface
+      const ideaValues: ICreateIdeaInput = {
+        categoryId: values.categoryId,
+        title: values.title,
+        userType: values.userType,
+        description: values.description,
+        artsImpact: values.artsImpact,
+        communityImpact: values.communityImpact,
+        energyImpact: values.energyImpact,
+        manufacturingImpact: values.manufacturingImpact,
+        natureImpact: values.natureImpact,
+        address: {
+          streetAddress: values.address!.streetAddress,
+          streetAddress2: values.address!.streetAddress2,
+          city: values.address!.city,
+          postalCode: values.address!.postalCode,
+          country: values.address!.country,
+        },
+        geo: {
+          lat: values.geo!.lat,
+          lon: values.geo!.lon,
+        },
+        segmentId: values.segmentId,
+        subSegmentId: values.subSegmentId,
+        superSegmentId: values.superSegmentId,
+        state: "PROPOSAL",
+      };
+      const idea = await postCreateIdea(ideaValues, user!.banned, token);
+      const proposalValues = {
+        ideaId: idea.id,
+      };
+      console.log("proposalValues", proposalValues);
+      const proposal = await postCreateProposal(
+        proposalValues,
+        user!.banned,
+        token
+      );
       console.log(idea);
       //const res = await postCreateProposal(idea, user!.banned, token);
       //console.log(res);
