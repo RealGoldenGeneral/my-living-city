@@ -41,218 +41,22 @@ const upload = multer({ storage: storage, limits: { fileSize: maxFileSize }, fil
 proposalRouter.post(
     '/create',
     passport.authenticate('jwt', { session: false }),
-    //upload.single('imagePath'),
     async (req, res) => {
-        upload(req, res, async function (err) {
-            //multer error handling method
-            let error = '';
-            let errorMessage = '';
-            let errorStack = '';
-            if (err) {
-                console.log(err);
-                error += err + ' ';
-                errorMessage += err + ' ';
-                errorStack += err + ' ';
-            };
-            try {
-                //if there's no object in the request body
-                if (isEmpty(req.body)) {
-                    return res.status(400).json({
-                        message: 'The objects in the request body are missing',
-                        details: {
-                            errorMessage: 'Creating an idea must supply necessary fields explicitly.',
-                            errorStack: 'necessary fields must be provided in the body with a valid id found in the database.',
-                        }
-                    })
+        try {
+            console.log("req.body", req);
+            res.status(200).json(req.body);
+        } catch (error) {
+            console.error(error);
+            res.status(400).json({
+                message: "An error occured while trying to create an Idea.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
                 }
-
-                console.log(req.body);
-
-                // passport middleware provides this based on JWT
-                const { email, id } = req.user;
-
-                const theUserSegment = await prisma.userSegments.findFirst({ where: { userId: id } });
-
-                const { homeSuperSegId, workSuperSegId, schoolSuperSegId, homeSegmentId, workSegmentId, schoolSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId } = theUserSegment;
-
-                //Image path holder
-                let imagePath = '';
-                //if there's req.file been parsed by multer
-                if (req.file) {
-                    //console.log(req.file);
-                    imagePath = req.file.path;
-                }
-
-                let { categoryId, superSegmentId, segmentId, subSegmentId, banned, title,
-                    description,
-                    communityImpact,
-                    natureImpact,
-                    artsImpact,
-                    energyImpact,
-                    manufacturingImpact
-                } = req.body;
-
-                categoryId = parseInt(categoryId);
-
-                if (subSegmentId) {
-                    subSegmentId = parseInt(subSegmentId);
-                } else if (segmentId) {
-                    segmentId = parseInt(segmentId);
-                } else if (superSegmentId) {
-                    superSegmentId = parseInt(superSegmentId);
-                }
-
-                banned = (banned === 'true');
-
-                if (banned === true) {
-                    error += 'You are banned';
-                    errorMessage += 'You must be un-banned before you can post ideas';
-                    errorStack += 'Users can not post ideas with a pending ban status of true';
-                }
-                // Check if category id is added
-                if (!categoryId || !isInteger(categoryId)) {
-                    error += 'An Proposal must be under a specific category.';
-                    errorMessage += 'Creating an idea must explicitly be supplied with a "categoryId" field.';
-                    errorStack += '"CategoryId" must be defined in the body with a valid id found in the database.';
-                } else {
-                    const theCategory = await prisma.category.findUnique({ where: { id: categoryId } });
-
-                    if (!theCategory) {
-                        error += 'An Proposal must be under a valid category.';
-                        errorMessage += 'Creating an idea must explicitly be supplied with valid a "categoryId" field.';
-                        errorStack += '"CategoryId" must be defined in the body with a valid id found in the database.';
-                    }
-                }
-
-                if (isInteger(subSegmentId)) {
-                    theSubSegment = await prisma.subSegments.findUnique({ where: { id: subSegmentId } });
-
-                    if (!theSubSegment) {
-                        error += 'Sub segment id must be valid.';
-                        errorMessage += 'Creating an idea must explicitly be supplied with a valid "subSegmentId" field.';
-                        errorStack += '"subSegmentId" must be provided with a valid id found in the database.';
-                    } else if (subSegmentId == homeSubSegmentId || subSegmentId == workSubSegmentId || subSegmentId == schoolSegmentId) {
-                        segmentId = theSubSegment.segId;
-
-                        const theSegment = await prisma.segments.findUnique({ where: { segId: segmentId } });
-
-                        superSegmentId = theSegment.superSegId;
-                    } else {
-                        error += 'You must belongs to the subSemgent you want to post to. ';
-                        errorMessage += 'Your subsegment ids don\'t match the subsegment id you porvided. ';
-                        errorStack += 'User does\'t belongs to the subsegment he/she wants to post idea to. '
-                    }
-                } else if (isInteger(segmentId)) {
-                    const theSegment = await prisma.segments.findUnique({ where: { segId: segmentId } });
-
-                    if (!theSegment) {
-                        error += 'An Proposal must belong to a municipality.';
-                        errorMessage += 'Creating an idea must explicitly be supplied with a valid "segmentId" field.';
-                        errorStack += '"segmentId" must be defined in the body with a valid id found in the database.';
-                    } else if (segmentId == homeSegmentId || segmentId == workSegmentId || segmentId == schoolSegmentId) {
-                        superSegmentId = theSegment.superSegId;
-                    } else {
-                        error += 'You must belongs to the semgent you want to post to. ';
-                        errorMessage += 'Your segment ids don\'t match the segment id you porvided. ';
-                        errorStack += 'User does\'t belongs to the segment he/she wants to post idea to. '
-                    }
-                } else if (isInteger(superSegmentId)) {
-                    const theSuperSegment = await prisma.superSegment.findUnique({ where: { superSegId: superSegmentId } });
-
-                    if (!theSuperSegment) {
-                        error += 'An Proposal must belong to a area.';
-                        errorMessage += 'Creating an idea must explicitly be supplied with a valid "superSegmentId" field.';
-                        errorStack += '"segmentId" must be defined in the body with a valid id found in the database.';
-                    } else if (superSegmentId != homeSuperSegId && superSegmentId != workSuperSegId && superSegmentId != schoolSegmentId) {
-                        error += 'You must belongs to the superSemgent you want to post to. ';
-                        errorMessage += 'Your subsegment ids don\'t match the superSegment id you porvided. ';
-                        errorStack += 'User does\'t belongs to the superSegment he/she wants to post idea to. '
-                    }
-                } else {
-                    error += 'An idea must belongs to a area';
-                    errorMessage += 'Creating an idea must explicitly be supplied with a valid "superSegmentId" or "segmentId" or "subSegmentId" field.';
-                    errorStack += 'One of the area id must explicitly be supplied with a valid id found in the database. '
-                }
-
-
-
-                // Parse data
-                const geoData = JSON.parse(req.body.geo);
-                //if geoData parse failed
-                if (!typeof geoData == "object") {
-                    error += 'Geo data parse error! ';
-                    errorMessage += 'Something is wrong about the text string of geo data! ';
-                    errorStack += 'Geo data json string parsing failed! '
-                }
-
-                const addressData = JSON.parse(req.body.addressData);
-
-                if (!typeof addressData == "object") {
-                    error += 'Address data parse error! ';
-                    errorMessage += 'Something is wrong about the text string of address data! ';
-                    errorStack += 'Address data json string parsing failed! '
-                }
-
-                //If there's error in error holder
-                if (error || errorMessage || errorStack) {
-                    //multer is a kind of middleware, if file is valid, multer will add it to upload folder. Following code are responsible for deleting files if error happened.
-                    if (fs.existsSync(imagePath)) {
-                        fs.unlinkSync(imagePath);
-                    }
-                    return res.status(400).json({
-                        message: error,
-                        details: {
-                            errorMessage: errorMessage,
-                            errorStack: errorStack
-                        }
-                    });
-                }
-
-                const ideaData = {
-                    categoryId,
-                    superSegmentId,
-                    segmentId,
-                    subSegmentId,
-                    authorId: id,
-                    imagePath: imagePath,
-                    title,
-                    description,
-                    communityImpact,
-                    natureImpact,
-                    artsImpact,
-                    energyImpact,
-                    manufacturingImpact
-                };
-
-                // Create an idea and make the author JWT bearer
-                const createdProposal = await prisma.idea.create({
-                    data: {
-                        geo: { create: geoData },
-                        address: { create: addressData },
-                        ...ideaData
-                    },
-                    include: {
-                        geo: true,
-                        address: true,
-                        category: true,
-                    }
-                });
-
-                res.status(201).json(createdProposal);
-            } catch (error) {
-                console.error(error);
-                res.status(400).json({
-                    message: "An error occured while trying to create an Proposal.",
-                    details: {
-                        errorMessage: error.message,
-                        errorStack: error.stack,
-                    }
-                });
-            } finally {
-                await prisma.$disconnect();
-            }
-        });
-
+            });
+        } finally {
+            await prisma.$disconnect();
+        }
     }
 )
 
@@ -369,11 +173,19 @@ proposalRouter.get(
             const foundProposal = await prisma.proposal.findUnique({
                 where: { id: parsedProposalId },
                 include: {
-                    idea: {
-                        include: {
-                            ratings: true,
+                    suggestedIdeas: {
+                        select: {
+                            id: true,
+                            title: true,
+                            author: {
+                                select: {
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
                         },
                     },
+
                 },
 
             });
