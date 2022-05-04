@@ -147,12 +147,10 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
   }
 }
 
-if (avatar) {
-  const request6 = await postAvatarImage(avatar, request.data.token);
+  const request6 = avatar ? await postAvatarImage(avatar, request.data.token) : null;
   axios.all([request, request2, request3, request4, request5, request6]).then((...responses)=>{
     console.log(responses);
   })
-}
   return request.data;
   
     // .then(res=> (

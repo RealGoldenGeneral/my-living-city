@@ -174,6 +174,7 @@ return (
 
                 <FormikStep >
                     <BForm.Group>
+                        {segment || segment2 ? null : <p>Your home municipality is not registered in our system.</p>}
                         <BForm.Label>Select your home municipality</BForm.Label>
                         <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
                             refactorStateArray(segIds, 0, parseInt(e.target.value), setSegIds);
