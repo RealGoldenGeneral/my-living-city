@@ -89,9 +89,7 @@ ideaRouter.post(
           natureImpact,
           artsImpact,
           energyImpact,
-          manufacturingImpact,
-          supportingProposalId
-          //TODO
+          manufacturingImpact
         } = req.body;
 
         categoryId = parseInt(categoryId);
@@ -103,13 +101,6 @@ ideaRouter.post(
         } else if (superSegmentId) {
           superSegmentId = parseInt(superSegmentId);
         }
-
-        if (supportingProposalId) {
-          supportingProposalId = parseInt(supportingProposalId);
-        }
-
-        console.log("lookHere");
-        console.log(supportingProposalId);
 
         banned = (banned === 'true');
 
@@ -230,8 +221,7 @@ ideaRouter.post(
           natureImpact,
           artsImpact,
           energyImpact,
-          manufacturingImpact,
-          supportingProposalId,
+          manufacturingImpact
         };
 
         // Create an idea and make the author JWT bearer
@@ -239,14 +229,12 @@ ideaRouter.post(
           data: {
             geo: { create: geoData },
             address: { create: addressData },
-            supportingProposalId: supportingProposalId,
             ...ideaData
           },
           include: {
             geo: true,
             address: true,
             category: true,
-            supportedProposal: true,
           }
         });
 
@@ -657,10 +645,18 @@ ideaRouter.get(
           supportingProposalId: parsedSupportingProposalId
         },
         include: {
-          author: {
-            select: {
-              fname: true,
-              lname: true,
+          geo: true,
+          address: true,
+          category: true,
+          projectInfo: true,
+          champion: {
+            include: {
+              address: {
+                select: {
+                  postalCode: true,
+                  streetAddress: true,
+                }
+              }
             }
           },
         }
@@ -841,9 +837,7 @@ ideaRouter.delete(
       const deleteRating = await prisma.ideaRating.deleteMany({ where: { ideaId: foundIdea.id } });
       const deletedGeo = await prisma.ideaGeo.deleteMany({ where: { ideaId: foundIdea.id } });
       const deleteAddress = await prisma.ideaAddress.deleteMany({ where: { ideaId: foundIdea.id } });
-      const deletedIdea = await prisma.idea.delete({
-        where: { id: parsedIdeaId },
-      });
+      const deletedIdea = await prisma.idea.delete({ where: { id: parsedIdeaId } });
 
       res.status(200).json({
         message: "Idea succesfully deleted",

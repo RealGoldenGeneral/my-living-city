@@ -59,14 +59,13 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     superSegment,
     author,
     state,
+
     // Proposal and Project info
 
     projectInfo,
   } = ideaData;
 
-  const { id: proposalId, suggestedIdeas } = proposalData;
-  console.log(proposalData);
-  console.log(suggestedIdeas);
+  const { id: proposalId } = proposalData;
 
   const { title: catTitle } = category!;
 
@@ -435,7 +434,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   {volunteerIsOpen && (
                     <Popup
                       content={
-                        <Form>
+                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
                           <Form.Group>
                             <p style={{ textAlign: "center" }}>Volunteer</p>
                             <p style={{ fontSize: "1rem" }}>Experience</p>
@@ -443,6 +442,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="experience"
+                              onChange={formikCollaborator.handleChange}
                               value={formikCollaborator.values.experience}
                               placeholder="What experience and skills do you bring to the project?"
                             />
@@ -452,6 +452,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="role"
+                              onChange={formikCollaborator.handleChange}
                               value={formikCollaborator.values.role}
                               placeholder="What type of task would you like to work on?"
                             />
@@ -460,6 +461,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="time"
+                              onChange={formikCollaborator.handleChange}
                               value={formikCollaborator.values.time}
                               placeholder="How much time do you want to contribute?"
                             />
@@ -468,6 +470,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="contactInfo"
+                              onChange={formikCollaborator.handleChange}
                               value={formikCollaborator.values.contactInfo}
                               placeholder="What is your contact information (e-mail and/or phone number)?"
                             />
@@ -564,17 +567,26 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </div>
           </Card.Header>
           <Card.Body>
-            {suggestedIdeas &&
-              suggestedIdeas.map((idea: any) => (
-                <Row style={{}}>
-                  <Col>
-                    {idea.author.fname} {idea.author.lname}
-                  </Col>
-                  <Col>
-                    <a href={"/ideas/" + idea.id}>{idea.title}</a>
-                  </Col>
-                </Row>
-              ))}
+            <Row sm={12} md={3}>
+              <Col>
+                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
+              </Col>
+              <Col>
+                <a style={{ padding: "0px" }} href={"/ideas/5"}>
+                  Test
+                </a>
+              </Col>
+            </Row>
+            <Row sm={12} md={3}>
+              <Col>
+                <p style={{ padding: "0px" }}>Suggestor@test ave</p>
+              </Col>
+              <Col>
+                <a style={{ padding: "0px" }} href={"/ideas/6"}>
+                  Second Test
+                </a>
+              </Col>
+            </Row>
           </Card.Body>
         </Card>
       </div>

@@ -32,10 +32,7 @@ import ImageUploader from "react-images-upload";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import SubmitDirectProposalPage from "src/pages/SubmitDirectProposalPage";
-import {
-  getDirectProposal,
-  postCreateProposal,
-} from "src/lib/api/proposalRoutes";
+import { getDirectProposal } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 
 interface SubmitDirectProposalPageContentProps {
@@ -107,53 +104,14 @@ const SubmitDirectProposalPageContent: React.FC<
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
-      //const ideaValues with <ICreateIdeaInput> interface
-      const ideaValues: ICreateIdeaInput = {
-        categoryId: values.categoryId,
-        title: values.title,
-        userType: values.userType,
-        description: values.description,
-        artsImpact: values.artsImpact,
-        communityImpact: values.communityImpact,
-        energyImpact: values.energyImpact,
-        manufacturingImpact: values.manufacturingImpact,
-        natureImpact: values.natureImpact,
-        address: {
-          streetAddress: values.address!.streetAddress,
-          streetAddress2: values.address!.streetAddress2,
-          city: values.address!.city,
-          postalCode: values.address!.postalCode,
-          country: values.address!.country,
-        },
-        geo: {
-          lat: values.geo!.lat,
-          lon: values.geo!.lon,
-        },
-        segmentId: values.segmentId,
-        subSegmentId: values.subSegmentId,
-        superSegmentId: values.superSegmentId,
-        state: "PROPOSAL",
-      };
-      const idea = await postCreateIdea(ideaValues, user!.banned, token);
-      const proposalValues = {
-        ideaId: idea.id,
-      };
-      console.log("proposalValues", proposalValues);
-      const proposal = await postCreateProposal(
-        proposalValues,
-        user!.banned,
-        token
-      );
-      console.log(idea);
-      //const res = await postCreateProposal(idea, user!.banned, token);
-      //console.log(res);
+      const res = await postCreateIdea(values, user!.banned, token);
+      console.log(res);
 
       setError(null);
-      //history.push("/proposal/" + res.id);
+      history.push("/ideas/" + res.id);
       formik.resetForm();
     } catch (error) {
-      const genericMessage =
-        "An error occured while trying to create a Proposal.";
+      const genericMessage = "An error occured while trying to create an Idea.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {

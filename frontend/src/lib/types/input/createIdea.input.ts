@@ -18,5 +18,4 @@ export interface ICreateIdeaInput {
   superSegmentId?: number;
   imagePath?: any;
   supportingProposalId?: number;
-  state?: string;
 }
