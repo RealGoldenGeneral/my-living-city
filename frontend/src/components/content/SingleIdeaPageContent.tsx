@@ -93,6 +93,10 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     return !ideaData.champion && !!ideaData.isChampionable;
   };
 
+  const addIdeaToUserFollowList = () => {
+    console.log("addIdeaToUserFollowList");
+  };
+
   return (
     <div className="single-idea-content pt-5">
       <Card>
@@ -107,9 +111,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
-                <h4 className="text-center my-auto text-muted">
-                  Status: <span>{state}</span>
-                </h4>
+                <Button
+                  style={{ height: "3rem" }}
+                  onClick={() => addIdeaToUserFollowList()}
+                >
+                  Follow
+                </Button>
               </div>
             </Card.Header>
             <Card.Body>
@@ -149,6 +156,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     </h4>
                   )}
                   {/* <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5> */}
+                  <h4 className="h5">
+                    Status: <span>{state}</span>
+                  </h4>
                   <br />
                   <p>{description}</p>
                   {communityImpact ? (
