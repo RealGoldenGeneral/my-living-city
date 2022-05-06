@@ -51,16 +51,14 @@ export const postCreateProposal = async (
   console.log("checkHere", ideaId);
   console.log(ideaId);
 
-  let formBody = new FormData();
-
-  formBody.append("ideaId", ideaId.toString());
+  let formBody = { ideaId: ideaId.toString() };
 
   const res = await axios({
     method: "post",
     url: `${API_BASE_URL}/proposal/create`,
     data: formBody,
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },

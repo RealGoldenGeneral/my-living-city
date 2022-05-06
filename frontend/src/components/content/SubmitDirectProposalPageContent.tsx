@@ -145,11 +145,9 @@ const SubmitDirectProposalPageContent: React.FC<
         token
       );
       console.log(idea);
-      //const res = await postCreateProposal(idea, user!.banned, token);
-      //console.log(res);
-
+      console.log(proposal);
       setError(null);
-      //history.push("/proposal/" + res.id);
+      history.push("/proposals/" + proposal.id);
       formik.resetForm();
     } catch (error) {
       const genericMessage =

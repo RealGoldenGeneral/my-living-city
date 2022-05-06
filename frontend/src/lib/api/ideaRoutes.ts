@@ -79,6 +79,7 @@ export const postCreateIdea = async (
     geo,
     imagePath,
     supportingProposalId,
+    state,
   } = ideaData;
   // const parsedCatId = Number(categoryId);
   // const parsedSegId = Number(segmentId);
@@ -151,6 +152,10 @@ export const postCreateIdea = async (
   //CHANGES_NEEDED
   if (supportingProposalId) {
     formBody.append("supportingProposalId", supportingProposalId.toString());
+  }
+
+  if (state) {
+    formBody.append("state", state);
   }
 
   console.log("formBody");
