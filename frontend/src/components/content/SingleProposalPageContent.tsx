@@ -64,7 +64,16 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     projectInfo,
   } = ideaData;
 
-  const { id: proposalId, suggestedIdeas } = proposalData;
+  const {
+    id: proposalId,
+    suggestedIdeas,
+    needCollaborators,
+    needVolunteers,
+    needDonations,
+    needFeedback,
+    needSuggestions,
+    location,
+  } = proposalData;
   console.log(proposalData);
   console.log(suggestedIdeas);
 
@@ -159,6 +168,11 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     onSubmit: collaboratorSubmitHandler,
   });
 
+  const addIdeaToUserFollowList = () => {
+    console.log("addIdeaToUserFollowList");
+    console.log("proposalData", proposalData);
+  };
+
   return (
     <div className="single-idea-content pt-5">
       <style>
@@ -180,9 +194,12 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
-                <h4 className="text-center my-auto text-muted">
-                  Status: <span>{state}</span>
-                </h4>
+                <Button
+                  style={{ height: "3rem" }}
+                  onClick={() => addIdeaToUserFollowList()}
+                >
+                  Follow
+                </Button>
               </div>
             </Card.Header>
             <Card.Body>
@@ -215,6 +232,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                         : "N/A"}
                     </h4>
                   ) : null}
+                  {location ? (
+                    <h4 className="h5">Location: {location}</h4>
+                  ) : null}
                   {!!ideaData.champion && (
                     <h4 className="h5">
                       Championed By: {ideaData?.champion?.fname}@
@@ -222,6 +242,13 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     </h4>
                   )}
                   {/* <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5> */}
+
+                  {state ? (
+                    <h4 className="h5">
+                      Status: <span>{state}</span>
+                    </h4>
+                  ) : null}
+
                   <br />
                   <p>{description}</p>
                   {communityImpact ? (
@@ -564,9 +591,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </div>
           </Card.Header>
           <Card.Body>
-            {suggestedIdeas &&
+            {suggestedIdeas.length ? (
               suggestedIdeas.map((idea: any) => (
-                <Row style={{}}>
+                <Row>
                   <Col>
                     {idea.author.fname} {idea.author.lname}
                   </Col>
@@ -574,7 +601,12 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <a href={"/ideas/" + idea.id}>{idea.title}</a>
                   </Col>
                 </Row>
-              ))}
+              ))
+            ) : (
+              <Row>
+                <Col style={{ textAlign: "center" }}>No suggestions yet</Col>
+              </Row>
+            )}
           </Card.Body>
         </Card>
       </div>

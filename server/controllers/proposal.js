@@ -12,17 +12,39 @@ proposalRouter.post(
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
-            let { ideaId, banned } = req.body;
+            let {
+                ideaId,
+                banned,
+                needCollaborators,
+                needVolunteers,
+                needDonations,
+                needFeedback,
+                needSuggestions,
+                location
+            } = req.body;
+            const bannedBoolean = (banned === 'true');
+            const needCollaboratorsBoolean = (needCollaborators === 'true');
+            const needVolunteersBoolean = (needVolunteers === 'true');
+            const needDonationsBoolean = (needDonations === 'true');
+            const needFeedbackBoolean = (needFeedback === 'true');
+            const needSuggestionsBoolean = (needSuggestions === 'true');
             if (banned === true) {
                 error += 'You are banned';
                 errorMessage += 'You must be un-banned before you can post ideas';
                 errorStack += 'Users can not post ideas with a pending ban status of true';
             }
             ideaId = parseInt(ideaId);
+
             console.log("ideaId", ideaId);
             const createdProposal = await prisma.proposal.create({
                 data: {
                     ideaId: ideaId,
+                    needCollaborators: needCollaboratorsBoolean,
+                    needVolunteers: needVolunteersBoolean,
+                    needDonations: needDonationsBoolean,
+                    needFeedback: needFeedbackBoolean,
+                    needSuggestions: needSuggestionsBoolean,
+                    location: location,
                 }
             });
             console.log("createdProposal", createdProposal);

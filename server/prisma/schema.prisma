@@ -368,7 +368,9 @@ model Proposal {
   feedback2  String? @map("feedback_2")
   feedback3  String? @map("feedback_3")
   feedback4  String? @map("feedback_4")
-  feedback5  String? @map("feedback_5")  
+  feedback5  String? @map("feedback_5")
+
+  location   String? @map("location")  
   // Relations
   idea Idea @relation("proposal",fields: [ideaId], references: [id])
   suggestedIdeas Idea[] @relation("supportedProposal")

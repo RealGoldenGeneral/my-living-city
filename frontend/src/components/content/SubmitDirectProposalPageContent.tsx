@@ -137,6 +137,12 @@ const SubmitDirectProposalPageContent: React.FC<
       const idea = await postCreateIdea(ideaValues, user!.banned, token);
       const proposalValues = {
         ideaId: idea.id,
+        needCollaborators: values.needCollaborators,
+        needVolunteers: values.needVolunteers,
+        needDonations: values.needDonations,
+        needFeedback: values.needFeedback,
+        needSuggestions: values.needSuggestions,
+        location: values.location,
       };
       console.log("proposalValues", proposalValues);
       const proposal = await postCreateProposal(
@@ -197,6 +203,12 @@ const SubmitDirectProposalPageContent: React.FC<
       segmentId: undefined,
       subSegmentId: undefined,
       superSegmentId: undefined,
+      needCollaborators: false,
+      needVolunteers: false,
+      needDonations: false,
+      needFeedback: false,
+      needSuggestions: false,
+      location: "",
     },
     onSubmit: submitHandler,
   });
@@ -264,7 +276,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 name="title"
                 onChange={formik.handleChange}
                 value={formik.values.title}
-                placeholder="Enter the title of your propposal"
+                placeholder="Enter the title of your proposal"
               />
             </Form.Group>
             <Form.Group>
@@ -516,43 +528,42 @@ const SubmitDirectProposalPageContent: React.FC<
                 >
                   Community Solicitation
                 </h3>
-                <div className="topping">
+                <div>
                   <input
+                    className="collaboration-checkbox"
                     type="checkbox"
-                    id="123"
-                    name="topping"
-                    value="Paneer"
+                    name="needCollaborators"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>
                     &nbsp;&nbsp;Project Team/Collaborators
                   </Form.Label>
                   <br />
                   <input
+                    className="volunteer-checkbox"
                     type="checkbox"
-                    id="234"
-                    name="topping"
-                    value="Paneer"
+                    name="needVolunteers"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>&nbsp;&nbsp;Volunteers</Form.Label> <br />
                   <input
+                    className="donation-checkbox"
                     type="checkbox"
-                    id="345"
-                    name="topping"
-                    value="Paneer"
+                    name="needDonations"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>&nbsp;&nbsp;Material Donations</Form.Label> <br />
                   <input
+                    className="suggestion-checkbox"
                     type="checkbox"
-                    id="456"
-                    name="topping"
-                    value="Paneer"
+                    name="needSuggestions"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>&nbsp;&nbsp;Idea Proposals</Form.Label> <br />
                   <input
+                    className="other-checkbox"
                     type="checkbox"
-                    id="456"
-                    name="topping"
-                    value="Paneer"
+                    name="needFeedback"
                     onClick={toggleExtraFeedback}
                   />
                   <Form.Label>
@@ -669,9 +680,6 @@ const SubmitDirectProposalPageContent: React.FC<
               </h3>
               <input
                 type="checkbox"
-                id="234"
-                name="topping"
-                value="Paneer"
                 onClick={() => toggleElement("location", "map")}
               />
               <Form.Label>&nbsp;&nbsp;Use Map</Form.Label>
@@ -680,7 +688,8 @@ const SubmitDirectProposalPageContent: React.FC<
                   type="text"
                   name="location"
                   onChange={formik.handleChange}
-                  value="Enter Location (Optional)"
+                  value={formik.values.location}
+                  placeholder="Enter Location (Optional)"
                   style={{ marginBottom: "1rem" }}
                 />
               </div>

@@ -46,12 +46,25 @@ export const postCreateProposal = async (
   banned: boolean,
   token: string | null
 ) => {
-  const { ideaId } = proposal;
+  const {
+    ideaId,
+    needCollaborators,
+    needVolunteers,
+    needDonations,
+    needFeedback,
+    needSuggestions,
+    location,
+  } = proposal;
 
-  console.log("checkHere", ideaId);
-  console.log(ideaId);
-
-  let formBody = { ideaId: ideaId.toString() };
+  let formBody = {
+    ideaId: ideaId.toString(),
+    needCollaborators: needCollaborators.toString(),
+    needVolunteers: needVolunteers.toString(),
+    needDonations: needDonations.toString(),
+    needFeedback: needFeedback.toString(),
+    needSuggestions: needSuggestions.toString(),
+    location: location.toString(),
+  };
 
   const res = await axios({
     method: "post",
