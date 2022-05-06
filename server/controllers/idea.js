@@ -90,7 +90,8 @@ ideaRouter.post(
           artsImpact,
           energyImpact,
           manufacturingImpact,
-          supportingProposalId
+          supportingProposalId,
+          state,
           //TODO
         } = req.body;
 
@@ -232,6 +233,7 @@ ideaRouter.post(
           energyImpact,
           manufacturingImpact,
           supportingProposalId,
+          state,
         };
 
         // Create an idea and make the author JWT bearer
@@ -425,6 +427,7 @@ ideaRouter.post(
               select user_id, street_address
               from user_address
               ) userStreetAddress on i.author_id = userStreetAddress.user_id
+          where i.state = 'IDEA'
           order by
             "ratingCount" desc,
             "ratingAvg" desc,

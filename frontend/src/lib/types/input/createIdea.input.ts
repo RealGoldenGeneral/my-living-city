@@ -19,4 +19,10 @@ export interface ICreateIdeaInput {
   imagePath?: any;
   supportingProposalId?: number;
   state?: string;
+  needCollaborators?: boolean;
+  needVolunteers?: boolean;
+  needDonations?: boolean;
+  needSuggestions?: boolean;
+  needFeedback?: boolean;
+  location?: string;
 }
