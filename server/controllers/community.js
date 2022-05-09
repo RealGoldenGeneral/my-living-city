@@ -13,8 +13,17 @@ communityRouter.post(
     passport.authenticate('jwt', { session: false }),
     async (req, res, next) => {
         try {
-            const { email, id: loggedInUserId } = req.user;
-            const { content } = req.body;
+            const { id: loggedInUserId } = req.user;
+            const {
+                proposalId,
+                experience,
+                role,
+                time,
+                contactInfo,
+            } = req.body;
+
+            console.log("collabValues: ", proposalId, experience, role, time, contactInfo);
+
             const parsedProposalId = parseInt(req.params.proposalId);
 
             // check if id is valid
@@ -35,14 +44,17 @@ communityRouter.post(
                 data: {
                     author: loggedInUserId,
                     proposal: parsedProposalId,
-                    experience: content,
-                    role: 'collaborator',
+                    experience: experience,
+                    role: role,
+                    time: time,
+                    contactInfo: contactInfo,
                 },
             });
 
 
 
             res.status(200).json(createdCollaborator);
+
         } catch (error) {
             res.status(400).json({
                 message: `An error occured while trying to create a comment for idea ${req.params.proposalId}.`,

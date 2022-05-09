@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Image, Form } from "react-bootstrap";
+import { Button, Card, Col, Row, Image, Form, Modal } from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
 import {
   capitalizeFirstLetterEachWord,
@@ -128,15 +128,18 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     setDonorIsOpen(!donorIsOpen);
   };
 
-  const [map, showMap] = useState(false);
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
   const [crop, setCrop] = useState({ aspect: 16 / 9 });
 
+  const [modalShow, setModalShow] = React.useState(false);
+
   const collaboratorSubmitHandler = async (values: any) => {
     try {
       // Set loading and error state
+      console.log("Submitting collaborator...");
+      console.log("values", values);
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -172,6 +175,77 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     console.log("addIdeaToUserFollowList");
     console.log("proposalData", proposalData);
   };
+
+  function CollaboratorModal(props: any) {
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Collaborate
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={() => formikCollaborator.handleSubmit}>
+            <Form.Group>
+              <p style={{ fontSize: "1rem" }}>Experience</p>
+
+              <Form.Control
+                type="text"
+                name="experience"
+                onChange={formikCollaborator.handleChange}
+                value={formikCollaborator.values.experience}
+                placeholder="What experience and skills do you bring to the
+                                project?"
+              />
+              <br />
+
+              <p style={{ fontSize: "1rem" }}>Role</p>
+              <Form.Control
+                type="text"
+                name="role"
+                onChange={formikCollaborator.handleChange}
+                value={formikCollaborator.values.role}
+                placeholder="What role or task would you would like to work on?"
+              />
+              <br />
+              <p style={{ fontSize: "1rem" }}>Time</p>
+              <Form.Control
+                type="text"
+                name="time"
+                onChange={formikCollaborator.handleChange}
+                value={formikCollaborator.values.time}
+                placeholder="How much time per week or per month do you have
+                                available?"
+              />
+              <br />
+              <p style={{ fontSize: "1rem" }}>Contact</p>
+              <Form.Control
+                type="text"
+                name="contactInfo"
+                onChange={formikCollaborator.handleChange}
+                value={formikCollaborator.values.contactInfo}
+                placeholder="What is your contact information (e-mail and/or
+                                phone number)?"
+              />
+              <br />
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={() => formikCollaborator.handleSubmit}
+            >
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
 
   return (
     <div className="single-idea-content pt-5">
@@ -381,63 +455,13 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
               <h4 className="text-center my-auto text-muted">
                 <div className="collab">
-                  <Button onClick={togglePopupCollaborator}>Join</Button>
-                  {collaboratorIsOpen && (
-                    <Popup
-                      content={
-                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
-                          <Form.Group>
-                            <p style={{ textAlign: "center" }}>Collaborate</p>
-                            <p style={{ fontSize: "1rem" }}>Experience</p>
-
-                            <Form.Control
-                              type="text"
-                              name="experience"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.experience}
-                              placeholder="What experience and skills do you bring to the
-                              project?"
-                            />
-                            <br />
-
-                            <p style={{ fontSize: "1rem" }}>Role</p>
-                            <Form.Control
-                              type="text"
-                              name="role"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.role}
-                              placeholder="What role or task would you would like to work on?"
-                            />
-                            <br />
-                            <p style={{ fontSize: "1rem" }}>Time</p>
-                            <Form.Control
-                              type="text"
-                              name="time"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.time}
-                              placeholder="How much time per week or per month do you have
-                              available?"
-                            />
-                            <br />
-                            <p style={{ fontSize: "1rem" }}>Contact</p>
-                            <Form.Control
-                              type="text"
-                              name="contactInfo"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.contactInfo}
-                              placeholder="What is your contact information (e-mail and/or
-                              phone number)?"
-                            />
-                            <br />
-                          </Form.Group>
-                          <Button variant="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Form>
-                      }
-                      handleClose={togglePopupCollaborator}
-                    />
-                  )}
+                  <Button variant="primary" onClick={() => setModalShow(true)}>
+                    Join
+                  </Button>
+                  <CollaboratorModal
+                    show={modalShow}
+                    onHide={() => setModalShow(false)}
+                  />
                 </div>
               </h4>
             </div>
@@ -470,7 +494,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="experience"
-                              value={formikCollaborator.values.experience}
+                              value=""
                               placeholder="What experience and skills do you bring to the project?"
                             />
                             <br />
@@ -479,7 +503,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="role"
-                              value={formikCollaborator.values.role}
+                              value=""
                               placeholder="What type of task would you like to work on?"
                             />
                             <br />
@@ -487,7 +511,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="time"
-                              value={formikCollaborator.values.time}
+                              value=""
                               placeholder="How much time do you want to contribute?"
                             />
                             <br />
@@ -495,7 +519,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="contactInfo"
-                              value={formikCollaborator.values.contactInfo}
+                              value=""
                               placeholder="What is your contact information (e-mail and/or phone number)?"
                             />
                             <br />
@@ -534,7 +558,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   {donorIsOpen && (
                     <Popup
                       content={
-                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
+                        <Form>
                           <Form.Group>
                             <p style={{ textAlign: "center" }}>Donate</p>
                             <p style={{ fontSize: "1rem" }}>Contribution</p>
@@ -542,8 +566,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="experience"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.experience}
                               placeholder="What would you like to contribute?"
                             />
 
@@ -552,8 +574,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <Form.Control
                               type="text"
                               name="contactInfo"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.contactInfo}
                               placeholder="What is your contact information (e-mail and/or
                           phone number)?"
                             />
@@ -593,7 +613,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
           <Card.Body>
             {suggestedIdeas.length ? (
               suggestedIdeas.map((idea: any) => (
-                <Row>
+                <Row key={idea.id}>
                   <Col>
                     {idea.author.fname} {idea.author.lname}
                   </Col>
