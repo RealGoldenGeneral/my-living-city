@@ -96,8 +96,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     return !ideaData.champion && !!ideaData.isChampionable;
   };
 
+  const [followingPost, setFollowingPost] = useState(false);
+
   const addIdeaToUserFollowList = () => {
     console.log("addIdeaToUserFollowList");
+    setFollowingPost(!followingPost);
   };
 
   return (
@@ -118,7 +121,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   style={{ height: "3rem" }}
                   onClick={() => addIdeaToUserFollowList()}
                 >
-                  Follow
+                  {followingPost ? "Unfollow" : "Follow"}
                 </Button>
               </div>
             </Card.Header>

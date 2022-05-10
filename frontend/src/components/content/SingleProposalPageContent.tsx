@@ -187,9 +187,11 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     onSubmit: collaboratorSubmitHandler,
   });
 
+  const [followingPost, setFollowingPost] = useState(false);
+
   const addIdeaToUserFollowList = () => {
     console.log("addIdeaToUserFollowList");
-    console.log("proposalData", proposalData);
+    setFollowingPost(!followingPost);
   };
 
   return (
@@ -220,7 +222,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   style={{ height: "3rem" }}
                   onClick={() => addIdeaToUserFollowList()}
                 >
-                  Follow
+                  {followingPost ? "Unfollow" : "Follow"}
                 </Button>
               </div>
             </Card.Header>
@@ -595,10 +597,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </div>
           </Card.Header>
           <Card.Body>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
+            <p style={{ padding: "0px", textAlign: "center", margin: "0rem" }}>
+              No volunteers yet, be the first!
+            </p>
           </Card.Body>
         </Card>
       </div>
@@ -650,7 +651,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </div>
           </Card.Header>
           <Card.Body>
-            <p style={{ padding: "0px" }}>Donor@test ave</p>
+            <p style={{ padding: "0px", textAlign: "center", margin: "0rem" }}>
+              No donations yet, be the first!
+            </p>
           </Card.Body>
         </Card>
       </div>
