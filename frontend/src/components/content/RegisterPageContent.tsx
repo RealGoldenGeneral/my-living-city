@@ -1,7 +1,7 @@
 import {Alert, Button, Card} from 'react-bootstrap';
 import {Form as BForm} from 'react-bootstrap';
-import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
-import React, { useContext, useState } from 'react';
+import { ErrorMessage, Field, Form, Formik, FormikConfig } from 'formik';
+import React, { useContext, useEffect, useState } from 'react';
 import SimpleMap from '../map/SimpleMap';
 import { capitalizeFirstLetterEachWord, capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
 import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
@@ -16,6 +16,7 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import ImageUploader from 'react-images-upload';
+import { USER_TYPES } from 'src/lib/constants';
 interface RegisterPageContentProps {
 }
 
@@ -36,6 +37,7 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const [segIds, setSegIds] = useState<any[]>([]);
     const [avatar, setAvatar] = useState(undefined);
     const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
+    const [userType, setUserType] = useState<string>(USER_TYPES.RESIDENTIAL);
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
@@ -48,37 +50,43 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }  
     }
+
+    useEffect(() => {
+        console.log(`User Type: ${userType}`);
+    }, [userType]);
+    
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
-                email: '',
-                password: '',
-                confirmPassword: '',
-                fname: '',
-                lname: '',
-                address: {
-                    streetAddress: '',
-                    streetAddress2: '',
-                    city: '',
-                    postalCode: '',
-                    country: '',
-                },
-                geo: {
-                    lon: undefined,
-                    lat: undefined,
-                    work_lat: undefined,
-                    work_lon: undefined,
-                    school_lat: undefined,
-                    school_lon: undefined,
-                },
-                homeSegmentId: undefined,
-                workSegmentId: undefined,
-                schoolSegmentId: undefined,
-                homeSubSegmentId: undefined,
-                workSubSegmentId: undefined,
-                schoolSubSegmentId: undefined,
-                
-            }}  markers={markers}
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                    fname: '',
+                    lname: '',
+                    address: {
+                        streetAddress: '',
+                        streetAddress2: '',
+                        city: '',
+                        postalCode: '',
+                        country: '',
+                    },
+                    geo: {
+                        lon: undefined,
+                        lat: undefined,
+                        work_lat: undefined,
+                        work_lon: undefined,
+                        school_lat: undefined,
+                        school_lon: undefined,
+                    },
+                    homeSegmentId: undefined,
+                    workSegmentId: undefined,
+                    schoolSegmentId: undefined,
+                    homeSubSegmentId: undefined,
+                    workSubSegmentId: undefined,
+                    schoolSubSegmentId: undefined,
+                    userType: "Standard",
+                }}  
+                markers={markers}
                 setSegment={setSegment}
                 setSegment2={setSegment2}
                 setSubSegments={setSubSegments}
@@ -91,6 +99,7 @@ return (
                 workTransfer={workTransfer}
                 schoolTransfer={schoolTransfer}
                 avatar={avatar}
+                userType={userType}
                 onSubmit={async(values,helpers)=>{
                     // const {email, password, confirmPassword} = values;
                     try {
@@ -115,12 +124,20 @@ return (
                     password: Yup.string().min(8, 'Password is too short, 8 characters minimum'),
                     confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
                     email: Yup.string().email('Invalid email')
-                    .test('Unique Email','Email already in use', 
+                    .test('Unique Email','Email already in use',
                         function(value){return new Promise((resolve, reject) => {
                             getUserWithEmail(value)
                             .then(res => {res === 200 ? resolve(false) : resolve(true)})
                         })})
                     })}>
+                    <BForm.Group>
+                        <BForm.Label>Select User Type</BForm.Label>
+                        <select name="userType" onChange={e => setUserType(e.target.value)} >
+                            <option value={USER_TYPES.RESIDENTIAL} label="Standard">Standard</option>
+                            <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
+                            <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
+                        </select>
+                    </BForm.Group>
                     <BForm.Group>
                         <BForm.Label>Email address</BForm.Label> 
                         <Field required name="email" type="email" as={BForm.Control}/>
@@ -195,7 +212,7 @@ return (
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests} />
                 </FormikStep>
-
+            
                 <FormikStep >
                     {!map 
                     ?   <div>
@@ -211,6 +228,7 @@ return (
                     <SimpleMap iconName={'work'} sendData={(markers:any)=>sendData(markers) } /></>}
                 </FormikStep>
 
+                {userType === USER_TYPES.RESIDENTIAL && 
                 <FormikStep>
                     <BForm.Group>
                         <BForm.Label>Your Work Municipality is</BForm.Label>
@@ -232,7 +250,9 @@ return (
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={1} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
                 </FormikStep>
+                }
 
+                {userType === USER_TYPES.RESIDENTIAL && 
                 <FormikStep >
                     {!map 
                     ?   <div>
@@ -247,6 +267,7 @@ return (
                     <><Card.Title>Show us on the map where your school is (optional)</Card.Title>
                     <SimpleMap iconName={'school'} sendData={(markers:any)=>sendData(markers) } /></>}
                 </FormikStep>
+                }
 
                 <FormikStep>
                     <BForm.Group>   
@@ -318,8 +339,9 @@ export interface FormikStepperProps extends FormikConfig<IRegisterInput> {
     workTransfer: boolean;
     schoolTransfer: boolean;
     avatar: any;
+    userType: any;
 }
-export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, avatar, ...props }: FormikStepperProps) {
+export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, avatar, userType, ...props }: FormikStepperProps) {
     const childrenArray = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[];
     const [step, setStep] = useState(0);
     const [inferStep, setInferStep]=useState(0);
@@ -339,9 +361,9 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             case 1:
                 return "Home Location"
             case 2:
-                return "Work Location"
+                return userType === USER_TYPES.RESIDENTIAL ? "Work Location" : "Reach";
             case 3:
-                return "School Location"
+                return userType === USER_TYPES.RESIDENTIAL ? "School Location" : "Complementary Ad Setup"
             case 4:
                 return "Privacy Policy"
             case 5:
@@ -514,12 +536,12 @@ return(
     <div>
     <div className="stepper mb-4">
     <Stepper steps={ [
-        {title: 'Create Account'}, 
-        {title: 'Home Location'}, 
-        {title: 'Work Location'},
-        {title: 'School Location'},
-        {title: 'Privacy Policy'},
-        {title: 'Submit'}] } 
+        {title: `${getStepHeader(0)}`}, 
+        {title: `${getStepHeader(1)}`}, 
+        {title: `${getStepHeader(2)}`},
+        {title: `${getStepHeader(3)}`},
+        {title: `${getStepHeader(4)}`},
+        {title: `${getStepHeader(5)}`}] } 
         activeStep={ inferStep }
         circleTop={0}
         lineMarginOffset={8}

@@ -45,6 +45,7 @@ export enum USER_TYPES {
   ASSOCIATE = "ASSOCIATE",
   DEVELOPER = "DEVELOPER",
   RESIDENTIAL = "RESIDENTIAL",
+  COMMUNITY = "COMMUNITY",
 }
 // Routes should be placed here and called into "path" in Route component
 export const ROUTES = {
@@ -68,4 +69,5 @@ export const ROUTES = {
   SUBMIT_DIRECT_PROPOSAL: "/submit-direct-proposal",
   DASHBOARD: "/dashboard",
   My_POSTS: "/dashboard/my-posts",
+  MY_ADVERTISMENT: "/advertisement/my-ads",
 };

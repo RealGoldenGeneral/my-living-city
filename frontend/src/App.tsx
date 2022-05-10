@@ -22,6 +22,7 @@ import SegmentManagementPage from "./pages/SegmentManagementPage";
 import AllAdsPage from "./pages/AllAdsPage";
 import EditAdsPage from "./pages/EditAdsPage";
 import AdminRoute from "./components/utility/AdminRoute";
+import BusinessRoute from "./components/utility/BusinessRoute";
 import UserManagementPage from "./pages/UserManagementPage";
 import SubmitDirectProposalPage from "./pages/SubmitDirectProposalPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -80,6 +81,9 @@ function App() {
             path={ROUTES.USER_MANAGEMENT}
             component={UserManagementPage}
           />
+
+          <BusinessRoute path={ROUTES.MY_ADVERTISMENT} component={AllAdsPage} ></BusinessRoute>
+
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>
       </div>
