@@ -494,8 +494,26 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <Modal.Body>
                       <Form onSubmit={formikCollaborator.handleSubmit}>
                         <Form.Group>
+                          <p style={{ fontSize: "1rem" }}>Contact</p>
+                          <Form.Control
+                            type="text"
+                            name="contactInfo"
+                            onChange={formikCollaborator.handleChange}
+                            value={formikCollaborator.values.contactInfo}
+                            placeholder="What is your contact information (e-mail and/or phone number)?"
+                          />
+                          <br />
+                          <p style={{ fontSize: "1rem" }}>Time</p>
+                          <Form.Control
+                            type="text"
+                            name="time"
+                            onChange={formikCollaborator.handleChange}
+                            value={formikCollaborator.values.time}
+                            placeholder="How much time per week or per month do you have
+                                available?"
+                          />
+                          <br />
                           <p style={{ fontSize: "1rem" }}>Experience</p>
-
                           <Form.Control
                             type="text"
                             name="experience"
@@ -515,25 +533,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             placeholder="What role or task would you would like to work on?"
                           />
                           <br />
-                          <p style={{ fontSize: "1rem" }}>Time</p>
-                          <Form.Control
-                            type="text"
-                            name="time"
-                            onChange={formikCollaborator.handleChange}
-                            value={formikCollaborator.values.time}
-                            placeholder="How much time per week or per month do you have
-                                available?"
-                          />
-                          <br />
-                          <p style={{ fontSize: "1rem" }}>Contact</p>
-                          <Form.Control
-                            type="text"
-                            name="contactInfo"
-                            onChange={formikCollaborator.handleChange}
-                            value={formikCollaborator.values.contactInfo}
-                            placeholder="What is your contact information (e-mail and/or phone number)?"
-                          />
-                          <br />
+
                           {error && (
                             <Alert variant="danger" className="error-alert">
                               {error.message}
@@ -572,18 +572,18 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                         <Table style={{ margin: "0rem" }}>
                           <thead>
                             <tr>
+                              <th>Contact</th>
+                              <th>Time</th>
                               <th>Experience</th>
                               <th>Role</th>
-                              <th>Time</th>
-                              <th>Contact</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
+                              <td>{collaboration.contactInfo}</td>
+                              <td>{collaboration.time}</td>
                               <td>{collaboration.experience}</td>
                               <td>{collaboration.role}</td>
-                              <td>{collaboration.time}</td>
-                              <td>{collaboration.contactInfo}</td>
                             </tr>
                           </tbody>
                         </Table>
@@ -632,6 +632,25 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <Modal.Body>
                       <Form onSubmit={formikVolunteer.handleSubmit}>
                         <Form.Group>
+                          <p style={{ fontSize: "1rem" }}>Contact</p>
+                          <Form.Control
+                            type="text"
+                            name="contactInfo"
+                            onChange={formikVolunteer.handleChange}
+                            value={formikVolunteer.values.contactInfo}
+                            placeholder="What is your contact information (e-mail and/or phone number)?"
+                          />
+                          <br />
+                          <p style={{ fontSize: "1rem" }}>Time</p>
+                          <Form.Control
+                            type="text"
+                            name="time"
+                            onChange={formikVolunteer.handleChange}
+                            value={formikVolunteer.values.time}
+                            placeholder="How much time do you want to contribute?"
+                          />
+                          <br />
+
                           <p style={{ fontSize: "1rem" }}>Experience</p>
 
                           <Form.Control
@@ -652,24 +671,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             placeholder="What type of task would you like to work on?"
                           />
                           <br />
-                          <p style={{ fontSize: "1rem" }}>Time</p>
-                          <Form.Control
-                            type="text"
-                            name="time"
-                            onChange={formikVolunteer.handleChange}
-                            value={formikVolunteer.values.time}
-                            placeholder="How much time do you want to contribute?"
-                          />
-                          <br />
-                          <p style={{ fontSize: "1rem" }}>Contact</p>
-                          <Form.Control
-                            type="text"
-                            name="contactInfo"
-                            onChange={formikVolunteer.handleChange}
-                            value={formikVolunteer.values.contactInfo}
-                            placeholder="What is your contact information (e-mail and/or phone number)?"
-                          />
-                          <br />
+
                           {error && (
                             <Alert variant="danger" className="error-alert">
                               {error.message}
@@ -708,18 +710,18 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                         <Table style={{ margin: "0rem" }}>
                           <thead>
                             <tr>
+                              <th>Contact</th>
+                              <th>Time</th>
                               <th>Experience</th>
                               <th>Task</th>
-                              <th>Time</th>
-                              <th>Contact</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
+                              <td>{volunteer.contactInfo}</td>
+                              <td>{volunteer.time}</td>
                               <td>{volunteer.experience}</td>
                               <td>{volunteer.task}</td>
-                              <td>{volunteer.time}</td>
-                              <td>{volunteer.contactInfo}</td>
                             </tr>
                           </tbody>
                         </Table>
@@ -824,14 +826,14 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                         <Table style={{ margin: "0rem" }}>
                           <thead>
                             <tr>
-                              <th>Donation</th>
                               <th>Contact</th>
+                              <th>Donation</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
-                              <td>{donor.donations}</td>
                               <td>{donor.contactInfo}</td>
+                              <td>{donor.donations}</td>
                             </tr>
                           </tbody>
                         </Table>
@@ -863,24 +865,48 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </div>
           </Card.Header>
           <Card.Body>
-            {suggestedIdeas.length ? (
-              suggestedIdeas.map((idea: any) => (
-                <Row key={idea.id}>
-                  <Col>
-                    {idea.author.fname} {idea.author.lname}
-                  </Col>
-                  <Col>
-                    <a href={"/ideas/" + idea.id}>{idea.title}</a>
-                  </Col>
-                </Row>
-              ))
-            ) : (
-              <Row>
-                <Col style={{ textAlign: "center" }}>
-                  No suggestions yet, be the first!
-                </Col>
-              </Row>
-            )}
+            <Accordion>
+              {suggestedIdeas.length > 0 ? (
+                suggestedIdeas.map((idea: any, index: number) => (
+                  <Card key={index}>
+                    <Accordion.Toggle
+                      as={Card.Header}
+                      variant="link"
+                      eventKey={index.toString()}
+                      className="mouse-pointer"
+                    >
+                      {idea.author.fname} {idea.author.lname}
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey={index.toString()}>
+                      <Card.Body>
+                        <Table style={{ margin: "0rem" }}>
+                          <thead>
+                            <tr>
+                              <th>Author</th>
+                              <th>Idea</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>
+                                {idea.author.fname} {idea.author.lname}
+                              </td>
+                              <td>
+                                <a href={"/ideas/" + idea.id}>{idea.title}</a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                ))
+              ) : (
+                <p style={{ margin: "0rem", textAlign: "center" }}>
+                  No donations yet, be the first!
+                </p>
+              )}
+            </Accordion>
           </Card.Body>
         </Card>
       </div>
