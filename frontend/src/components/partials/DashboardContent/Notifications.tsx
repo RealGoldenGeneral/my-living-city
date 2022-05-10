@@ -7,7 +7,7 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
   const messages = [
     "Post: New Park/flag was dismissed / Reason: Post met acceptable standards",
     "Comment: Dog Fountain at Mac.../flag was dismissed / Reason: Postmet acceptable standards",
-    "Your Post: Shoot the dogs / was flagged and Quarantine / Reason: Has abusive language, is hostile to a community segment",
+    "Your Post: Get rid of the dogs / was flagged and Quarantine / Reason: Has abusive language, is hostile to a community segment",
     "New Community: West Bay / Is now active and you are located within it",
   ];
 
@@ -30,7 +30,6 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
            background-color: #e8ffe9;
            cursor: pointer;
         }
-          
         `}
       </style>
       <div className="d-flex justify-content-between border-bottom display-6">
