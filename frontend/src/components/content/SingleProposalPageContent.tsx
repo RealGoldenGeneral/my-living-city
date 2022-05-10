@@ -7,6 +7,8 @@ import {
   Form,
   Modal,
   Alert,
+  Accordion,
+  Table,
 } from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
 import {
@@ -76,6 +78,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const {
     id: proposalId,
     suggestedIdeas,
+    collaborations,
     needCollaborators,
     needVolunteers,
     needDonations,
@@ -191,6 +194,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         {`
         .canvasjs-chart-credit {
           display: none;
+        }
+        .mouse-pointer:hover {
+          cursor: pointer;
         }
         `}
       </style>
@@ -475,8 +481,46 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </div>
           </Card.Header>
           <Card.Body>
-            <p style={{ padding: "0px" }}>Collaborator1@test ave</p>
-            <p style={{ padding: "0px" }}>Collaborator2@test ave</p>
+            <Accordion>
+              {collaborations.length > 0 ? (
+                collaborations.map((collaboration: any, index: number) => (
+                  <Card key={index}>
+                    <Accordion.Toggle
+                      as={Card.Header}
+                      variant="link"
+                      eventKey={index.toString()}
+                      className="mouse-pointer"
+                    >
+                      {collaboration.author.fname} {collaboration.author.lname}
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey={index.toString()}>
+                      <Card.Body>
+                        <Table style={{ margin: "0rem" }}>
+                          <thead>
+                            <tr>
+                              <th>Experience</th>
+                              <th>Role</th>
+                              <th>Time</th>
+                              <th>Contact</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{collaboration.experience}</td>
+                              <td>{collaboration.role}</td>
+                              <td>{collaboration.time}</td>
+                              <td>{collaboration.contactInfo}</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                ))
+              ) : (
+                <p>No collaborations yet</p>
+              )}
+            </Accordion>
           </Card.Body>
         </Card>
       </div>
