@@ -118,39 +118,40 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
     },
     headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
     withCredentials: true
-})
-if(requestData){
-  if(requestData[0]){
-    request3 = await axios({
-        method: "post",
-        url: `${API_BASE_URL}/userSegmentRequest/create`,
-        data: requestData[0],
-        headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
-        withCredentials: true
-    })
-}if(requestData[1]){
-    request4 = await axios({
-        method: "post",
-        url: `${API_BASE_URL}/userSegmentRequest/create`,
-        data: requestData[1],
-        headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
-        withCredentials: true
-    })
-}if(requestData[2]){
-    request5 = await axios({
-        method: "post",
-        url: `${API_BASE_URL}/userSegmentRequest/create`,
-        data: requestData[2],
-        headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
-        withCredentials: true
-    })
+  })
+  if(requestData){
+    if(requestData[0]){
+      request3 = await axios({
+          method: "post",
+          url: `${API_BASE_URL}/userSegmentRequest/create`,
+          data: requestData[0],
+          headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+          withCredentials: true
+      })
+  }if(requestData[1]){
+      request4 = await axios({
+          method: "post",
+          url: `${API_BASE_URL}/userSegmentRequest/create`,
+          data: requestData[1],
+          headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+          withCredentials: true
+      })
+  }if(requestData[2]){
+      request5 = await axios({
+          method: "post",
+          url: `${API_BASE_URL}/userSegmentRequest/create`,
+          data: requestData[2],
+          headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+          withCredentials: true
+      })
+  }
 }
-}
-const request6 = await postAvatarImage(avatar, request.data.token);
-axios.all([request, request2, request3, request4, request5, request6]).then((...responses)=>{
-  console.log(responses);
-})
-return request.data;
+
+  const request6 = avatar ? await postAvatarImage(avatar, request.data.token) : null;
+  axios.all([request, request2, request3, request4, request5, request6]).then((...responses)=>{
+    console.log(responses);
+  })
+  return request.data;
   
     // .then(res=> (
     //   axios({

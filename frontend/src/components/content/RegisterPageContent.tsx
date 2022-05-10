@@ -1,9 +1,9 @@
 import {Alert, Button, Card} from 'react-bootstrap';
 import {Form as BForm} from 'react-bootstrap';
-import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
+import { ErrorMessage, Field, Form, Formik, FormikConfig } from 'formik';
 import React, { useContext, useState } from 'react';
 import SimpleMap from '../map/SimpleMap';
-import { capitalizeFirstLetterEachWord, capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
+import { capitalizeFirstLetterEachWord, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
 import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import * as Yup from 'yup';
@@ -94,7 +94,7 @@ return (
                 onSubmit={async(values,helpers)=>{
                     // const {email, password, confirmPassword} = values;
                     try {
-                        console.log(values);
+                        console.log(`Sign up values: ${values}`);
                         setIsLoading(true);
                         const { token, user } = await postRegisterUser(values, segmentRequests, avatar);
                         storeUserAndTokenInLocalStorage(token, user);
@@ -102,12 +102,12 @@ return (
                         setToken(token);
                         setUser(user);
                         // await postAvatarImage(selectedFile, token);
-                        } catch (error) {
-                            console.log(error);
-                            wipeLocalStorage();
-                        }finally{
-                            setIsLoading(false);
-                        }
+                    } catch (error) {
+                        console.log(error);
+                        wipeLocalStorage();
+                    }finally{
+                        setIsLoading(false);
+                    }
                 }
             }
             >
@@ -174,6 +174,7 @@ return (
 
                 <FormikStep >
                     <BForm.Group>
+                        {segment || segment2 ? null : <p>Your home municipality is not registered in our system.</p>}
                         <BForm.Label>Select your home municipality</BForm.Label>
                         <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
                             refactorStateArray(segIds, 0, parseInt(e.target.value), setSegIds);
