@@ -34,7 +34,7 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
       </Row>
       <Row as="article" className="new-and-trending">
         <MyPosts userIdeas={userIdeas!} numPosts={6} isDashboard={true} />
-        <div className="centered" style={{ margin: "0 auto" }}>
+        <div className="" style={{ margin: "0rem 1rem 3rem 1rem" }}>
           <Button
             onClick={() => (window.location.href = "/dashboard/my-posts")}
             size="lg"

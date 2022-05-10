@@ -72,8 +72,8 @@ const IdeaTile: React.FC<ideaTileProps> = ({
         {`
           .new-banner {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 1rem;
+            right: 1rem;
             background-color: #93cb6e;
             color: #fff;
             padding: 0.5rem;

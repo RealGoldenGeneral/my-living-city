@@ -283,6 +283,7 @@ model Volunteer{
   author       User         @relation("ideaVolunteer", fields: [authorId], references: [id])
 
   @@map(name: "volunteer")
+  @@unique([proposalId, authorId], name: "volunteer_unique")
 
 }
 
@@ -302,6 +303,7 @@ model Donor {
   author       User         @relation("ideaDonor", fields: [authorId], references: [id])
 
   @@map(name: "donors")
+  @@unique([proposalId, authorId], name: "donor_unique")
 }
 
 model Idea {
