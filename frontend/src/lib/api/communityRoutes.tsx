@@ -21,7 +21,7 @@ export const postCreateCollabotator = async (
   const { experience, role, time, contactInfo } = collaboratorData;
 
   if (!experience || !role || !time || !contactInfo) {
-    throw new Error("Missing data");
+    throw new Error("Please fill out all fields");
   }
 
   if (!token) {

@@ -518,7 +518,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   </Card>
                 ))
               ) : (
-                <p>No collaborations yet</p>
+                <p style={{ margin: "0rem", textAlign: "center" }}>
+                  No collaborators yet, be the first!
+                </p>
               )}
             </Accordion>
           </Card.Body>
@@ -676,7 +678,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
               ))
             ) : (
               <Row>
-                <Col style={{ textAlign: "center" }}>No suggestions yet</Col>
+                <Col style={{ textAlign: "center" }}>
+                  No suggestions yet, be the first!
+                </Col>
               </Row>
             )}
           </Card.Body>

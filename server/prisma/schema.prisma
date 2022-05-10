@@ -247,7 +247,7 @@ model Collaborator {
   // keys
   id     Int @id @default(autoincrement())
   proposalId Int @map("proposal_id")
-  authorId       String @unique  @map("author_id")
+  authorId       String @map("author_id")
 
   experience String? @default("No experience")
   role       String? @default("No role")
@@ -262,6 +262,7 @@ model Collaborator {
   author       User         @relation("ideaCollaborator", fields: [authorId], references: [id])
 
   @@map(name: "collaborator")
+  @@unique([proposalId, authorId], name: "collaborator_unique")
 }
 
 model Volunteer{

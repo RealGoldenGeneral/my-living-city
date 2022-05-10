@@ -45,7 +45,10 @@ communityRouter.post(
 
             const createdCollaborator = await prisma.collaborator.upsert({
                 where: {
-                    authorId: loggedInUserId,
+                    collaborator_unique: {
+                        proposalId: parsedProposalId,
+                        authorId: loggedInUserId,
+                    },
                 },
                 update: {
                     experience: experience,
@@ -68,8 +71,9 @@ communityRouter.post(
             res.status(200).json(createdCollaborator);
 
         } catch (error) {
+            console.log(error);
             res.status(400).json({
-                message: `You are already collaborating on this idea.`,
+                message: `Error creating collaborator: ${error}`,
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
