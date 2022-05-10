@@ -47,11 +47,13 @@ import { postCreateCollabotator } from "src/lib/api/communityRoutes";
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
   proposalData: any;
+  ideaId: string;
 }
 
 const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   ideaData,
   proposalData,
+  ideaId,
 }) => {
   const {
     title,
@@ -74,6 +76,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
     projectInfo,
   } = ideaData;
+
+  const parsedIdeaId = ideaId;
 
   const {
     id: proposalId,
@@ -691,7 +695,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <RatingsSection />
       </Row>
       <Row>
-        <CommentsSection />
+        <CommentsSection ideaId={parsedIdeaId} />
       </Row>
     </div>
   );

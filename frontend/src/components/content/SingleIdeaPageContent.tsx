@@ -29,12 +29,15 @@ import { API_BASE_URL } from "src/lib/constants";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
+  ideaId: string;
 }
 
 const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   ideaData,
+  ideaId,
 }) => {
   const {
+    id,
     title,
     description,
     imagePath,
@@ -282,7 +285,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <RatingsSection />
       </Row>
       <Row>
-        <CommentsSection />
+        <CommentsSection ideaId={ideaId} />
       </Row>
     </div>
   );
