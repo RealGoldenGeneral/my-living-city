@@ -82,10 +82,9 @@ const RatingInput = ({
   const buttonTextOutput = (): string => {
     // Unauthenticated
     let buttonText = "Please login to comment";
-    if (tokenExists()) buttonText = "Share";
+    if (tokenExists()) buttonText = "Submit";
     if (isLoading) buttonText = "Saving Comment";
-    if (userHasRated)
-      buttonText = "You have already rated. You cannot rate an Idea twice.";
+    if (userHasRated) buttonText = "Submit";
     if (!user) buttonText = "You must sign in to rate an idea";
     return buttonText;
   };
@@ -195,6 +194,9 @@ const RatingInput = ({
           >
             {buttonTextOutput()}
           </Button>
+          {userHasRated && (
+            <div style={{ marginTop: "1rem" }}>You have already submitted.</div>
+          )}
         </Col>
       </Row>
     </Container>

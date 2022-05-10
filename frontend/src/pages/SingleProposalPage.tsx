@@ -20,9 +20,10 @@ interface SingleIdeaPageProps
     proposalId: string;
   }> {
   // Add custom added props here
+  ideaId: string;
 }
 
-const SingleProposalPage: React.FC<SingleIdeaPageProps> = (props) => {
+const SingleProposalPage = (props: any) => {
   // Destructured props
   const {
     match: {
@@ -102,6 +103,7 @@ const SingleProposalPage: React.FC<SingleIdeaPageProps> = (props) => {
         <SingleProposalPageContent
           ideaData={data}
           proposalData={proposalData}
+          ideaId={ideaStringId}
         />
       )}
     </div>

@@ -23,10 +23,32 @@ const ProposalTile: React.FC<proposalTileProps> = ({
   const { idea, id } = proposalData;
   console.log("proposalData", proposalData);
   console.log("idea", idea);
+
+  const oneWeek = 604800000;
+  const postDate = new Date(idea.updatedAt);
+  const currentTime = new Date();
+  const date = currentTime.getTime() - postDate.getTime();
+
+  const isNew = date < oneWeek;
+
   return (
     // <Card style={{ width: '18rem' }}>
     <Card>
       {/* <Card.Img variant="top" src="https://via.placeholder.com/300x150" /> */}
+      <style>
+        {`
+          .new-banner {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: #93cb6e;
+            color: #fff;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+          }
+        `}
+      </style>
+      {isNew && <div className="new-banner">NEW</div>}
       <Card.Body>
         <div style={{ textAlign: "left", color: "gray" }}>{postType}</div>
         <Card.Title>{idea ? truncateString(idea.title, 50) : "N/A"}</Card.Title>

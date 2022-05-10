@@ -32,7 +32,10 @@ import ImageUploader from "react-images-upload";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import SubmitDirectProposalPage from "src/pages/SubmitDirectProposalPage";
-import { getDirectProposal } from "src/lib/api/proposalRoutes";
+import {
+  getDirectProposal,
+  postCreateProposal,
+} from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 
 interface SubmitDirectProposalPageContentProps {
@@ -104,14 +107,57 @@ const SubmitDirectProposalPageContent: React.FC<
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
-      const res = await postCreateIdea(values, user!.banned, token);
-      console.log(res);
-
+      //const ideaValues with <ICreateIdeaInput> interface
+      const ideaValues: ICreateIdeaInput = {
+        categoryId: values.categoryId,
+        title: values.title,
+        userType: values.userType,
+        description: values.description,
+        artsImpact: values.artsImpact,
+        communityImpact: values.communityImpact,
+        energyImpact: values.energyImpact,
+        manufacturingImpact: values.manufacturingImpact,
+        natureImpact: values.natureImpact,
+        address: {
+          streetAddress: values.address!.streetAddress,
+          streetAddress2: values.address!.streetAddress2,
+          city: values.address!.city,
+          postalCode: values.address!.postalCode,
+          country: values.address!.country,
+        },
+        geo: {
+          lat: values.geo!.lat,
+          lon: values.geo!.lon,
+        },
+        segmentId: values.segmentId,
+        subSegmentId: values.subSegmentId,
+        superSegmentId: values.superSegmentId,
+        state: "PROPOSAL",
+      };
+      const idea = await postCreateIdea(ideaValues, user!.banned, token);
+      const proposalValues = {
+        ideaId: idea.id,
+        needCollaborators: values.needCollaborators,
+        needVolunteers: values.needVolunteers,
+        needDonations: values.needDonations,
+        needFeedback: values.needFeedback,
+        needSuggestions: values.needSuggestions,
+        location: values.location,
+      };
+      console.log("proposalValues", proposalValues);
+      const proposal = await postCreateProposal(
+        proposalValues,
+        user!.banned,
+        token
+      );
+      console.log(idea);
+      console.log(proposal);
       setError(null);
-      history.push("/ideas/" + res.id);
+      history.push("/proposals/" + proposal.id);
       formik.resetForm();
     } catch (error) {
-      const genericMessage = "An error occured while trying to create an Idea.";
+      const genericMessage =
+        "An error occured while trying to create a Proposal.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {
@@ -157,9 +203,16 @@ const SubmitDirectProposalPageContent: React.FC<
       segmentId: undefined,
       subSegmentId: undefined,
       superSegmentId: undefined,
+      needCollaborators: false,
+      needVolunteers: false,
+      needDonations: false,
+      needFeedback: false,
+      needSuggestions: false,
+      location: "",
     },
     onSubmit: submitHandler,
   });
+
   useEffect(() => {
     if (segData) {
       handleCommunityChange(0);
@@ -224,7 +277,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 name="title"
                 onChange={formik.handleChange}
                 value={formik.values.title}
-                placeholder="Enter the title of your propposal"
+                placeholder="Enter the title of your proposal"
               />
             </Form.Group>
             <Form.Group>
@@ -476,43 +529,42 @@ const SubmitDirectProposalPageContent: React.FC<
                 >
                   Community Solicitation
                 </h3>
-                <div className="topping">
+                <div>
                   <input
+                    className="collaboration-checkbox"
                     type="checkbox"
-                    id="123"
-                    name="topping"
-                    value="Paneer"
+                    name="needCollaborators"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>
                     &nbsp;&nbsp;Project Team/Collaborators
                   </Form.Label>
                   <br />
                   <input
+                    className="volunteer-checkbox"
                     type="checkbox"
-                    id="234"
-                    name="topping"
-                    value="Paneer"
+                    name="needVolunteers"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>&nbsp;&nbsp;Volunteers</Form.Label> <br />
                   <input
+                    className="donation-checkbox"
                     type="checkbox"
-                    id="345"
-                    name="topping"
-                    value="Paneer"
+                    name="needDonations"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>&nbsp;&nbsp;Material Donations</Form.Label> <br />
                   <input
+                    className="suggestion-checkbox"
                     type="checkbox"
-                    id="456"
-                    name="topping"
-                    value="Paneer"
+                    name="needSuggestions"
+                    onChange={formik.handleChange}
                   />
                   <Form.Label>&nbsp;&nbsp;Idea Proposals</Form.Label> <br />
                   <input
+                    className="other-checkbox"
                     type="checkbox"
-                    id="456"
-                    name="topping"
-                    value="Paneer"
+                    name="needFeedback"
                     onClick={toggleExtraFeedback}
                   />
                   <Form.Label>
@@ -629,9 +681,6 @@ const SubmitDirectProposalPageContent: React.FC<
               </h3>
               <input
                 type="checkbox"
-                id="234"
-                name="topping"
-                value="Paneer"
                 onClick={() => toggleElement("location", "map")}
               />
               <Form.Label>&nbsp;&nbsp;Use Map</Form.Label>
@@ -640,7 +689,8 @@ const SubmitDirectProposalPageContent: React.FC<
                   type="text"
                   name="location"
                   onChange={formik.handleChange}
-                  value="Enter Location (Optional)"
+                  value={formik.values.location}
+                  placeholder="Enter Location (Optional)"
                   style={{ marginBottom: "1rem" }}
                 />
               </div>
