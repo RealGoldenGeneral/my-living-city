@@ -56,7 +56,6 @@ export interface IProposalWithRelationship extends IProposal {
   isChampionable?: boolean;
 }
 
-// Idea Breakdown (Used in Landing Page and Ideas Page) extends Root base Idea
 export interface IProposalWithAggregations {
   id: number;
   ideaId: number;

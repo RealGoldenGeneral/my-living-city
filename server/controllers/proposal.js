@@ -3,52 +3,58 @@ const passport = require('passport');
 const express = require('express');
 const proposalRouter = express.Router();
 const prisma = require('../lib/prismaClient');
-const { checkIdeaThresholds } = require('../lib/prismaFunctions');
-const { isInteger, isEmpty } = require('lodash');
 
 const fs = require('fs');
+const { collaborator } = require('../lib/prismaClient');
 
-const multer = require('multer');
-
-//multer storage policy, including file destination and file naming policy
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads/ideaImage');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-
-//file filter policy, only accept image file
-const theFileFilter = (req, file, cb) => {
-    console.log(file);
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp' || file.mimetype === 'image/jpg') {
-        cb(null, true);
-    } else {
-        cb(new Error('file format not supported'), false);
-    }
-}
-
-//const variable for 10MB max file size in bytes
-const maxFileSize = 10485760;
-
-//multer upload project, setting receiving mode and which key components to use
-const upload = multer({ storage: storage, limits: { fileSize: maxFileSize }, fileFilter: theFileFilter }).single('imagePath');
-
-
-// post request to create an idea
+// post request to create a proposal
 proposalRouter.post(
     '/create',
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
-            console.log("req.body", req);
-            res.status(200).json(req.body);
+            let {
+                ideaId,
+                banned,
+                needCollaborators,
+                needVolunteers,
+                needDonations,
+                needFeedback,
+                needSuggestions,
+                location
+            } = req.body;
+            const bannedBoolean = (banned === 'true');
+            const needCollaboratorsBoolean = (needCollaborators === 'true');
+            const needVolunteersBoolean = (needVolunteers === 'true');
+            const needDonationsBoolean = (needDonations === 'true');
+            const needFeedbackBoolean = (needFeedback === 'true');
+            const needSuggestionsBoolean = (needSuggestions === 'true');
+            if (banned === true) {
+                error += 'You are banned';
+                errorMessage += 'You must be un-banned before you can post ideas';
+                errorStack += 'Users can not post ideas with a pending ban status of true';
+            }
+            ideaId = parseInt(ideaId);
+
+            console.log("ideaId", ideaId);
+            const createdProposal = await prisma.proposal.create({
+                data: {
+                    ideaId: ideaId,
+                    needCollaborators: needCollaboratorsBoolean,
+                    needVolunteers: needVolunteersBoolean,
+                    needDonations: needDonationsBoolean,
+                    needFeedback: needFeedbackBoolean,
+                    needSuggestions: needSuggestionsBoolean,
+                    location: location,
+                }
+            });
+            console.log("createdProposal", createdProposal);
+            res.status(201).json(createdProposal);
+
         } catch (error) {
             console.error(error);
             res.status(400).json({
-                message: "An error occured while trying to create an Idea.",
+                message: "An error occured while trying to create an Proposal.",
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -185,9 +191,50 @@ proposalRouter.get(
                             }
                         },
                     },
-
-                },
-
+                    collaborations: {
+                        select: {
+                            experience: true,
+                            role: true,
+                            time: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    volunteers: {
+                        select: {
+                            experience: true,
+                            task: true,
+                            time: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    donors: {
+                        select: {
+                            donations: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                }
             });
             if (!foundProposal) {
                 return res.status(400).json({

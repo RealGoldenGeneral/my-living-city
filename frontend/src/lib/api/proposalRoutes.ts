@@ -46,21 +46,32 @@ export const postCreateProposal = async (
   banned: boolean,
   token: string | null
 ) => {
-  const { ideaId } = proposal;
+  const {
+    ideaId,
+    needCollaborators,
+    needVolunteers,
+    needDonations,
+    needFeedback,
+    needSuggestions,
+    location,
+  } = proposal;
 
-  console.log("checkHere", ideaId);
-  console.log(ideaId);
-
-  let formBody = new FormData();
-
-  formBody.append("ideaId", ideaId.toString());
+  let formBody = {
+    ideaId: ideaId.toString(),
+    needCollaborators: needCollaborators.toString(),
+    needVolunteers: needVolunteers.toString(),
+    needDonations: needDonations.toString(),
+    needFeedback: needFeedback.toString(),
+    needSuggestions: needSuggestions.toString(),
+    location: location.toString(),
+  };
 
   const res = await axios({
     method: "post",
     url: `${API_BASE_URL}/proposal/create`,
     data: formBody,
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },

@@ -29,12 +29,15 @@ import { API_BASE_URL } from "src/lib/constants";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
+  ideaId: string;
 }
 
 const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   ideaData,
+  ideaId,
 }) => {
   const {
+    id,
     title,
     description,
     imagePath,
@@ -93,6 +96,13 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     return !ideaData.champion && !!ideaData.isChampionable;
   };
 
+  const [followingPost, setFollowingPost] = useState(false);
+
+  const addIdeaToUserFollowList = () => {
+    console.log("addIdeaToUserFollowList");
+    setFollowingPost(!followingPost);
+  };
+
   return (
     <div className="single-idea-content pt-5">
       <Card>
@@ -107,9 +117,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
-                <h4 className="text-center my-auto text-muted">
-                  Status: <span>{state}</span>
-                </h4>
+                <Button
+                  style={{ height: "3rem" }}
+                  onClick={() => addIdeaToUserFollowList()}
+                >
+                  {followingPost ? "Unfollow" : "Follow"}
+                </Button>
               </div>
             </Card.Header>
             <Card.Body>
@@ -149,6 +162,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     </h4>
                   )}
                   {/* <h5 className='h5'>Created: {parsedDate.toLocaleDateString()}</h5> */}
+                  <h4 className="h5">
+                    Status: <span>{state}</span>
+                  </h4>
                   <br />
                   <p>{description}</p>
                   {communityImpact ? (
@@ -272,7 +288,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <RatingsSection />
       </Row>
       <Row>
-        <CommentsSection />
+        <CommentsSection ideaId={ideaId} />
       </Row>
     </div>
   );
