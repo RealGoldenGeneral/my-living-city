@@ -132,7 +132,7 @@ return (
                     })}>
                     <BForm.Group>
                         <BForm.Label>Select User Type</BForm.Label>
-                        <select name="userType" onChange={e => setUserType(e.target.value)} >
+                        <select name="userType" onChange={e => setUserType(e.target.value)} value={userType}>
                             <option value={USER_TYPES.RESIDENTIAL} label="Standard">Standard</option>
                             <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
                             <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
@@ -212,7 +212,8 @@ return (
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests} />
                 </FormikStep>
-            
+                
+                {userType === USER_TYPES.RESIDENTIAL &&
                 <FormikStep >
                     {!map 
                     ?   <div>
@@ -227,6 +228,7 @@ return (
                     <><Card.Title>Show us on the map where your work is (optional)</Card.Title>
                     <SimpleMap iconName={'work'} sendData={(markers:any)=>sendData(markers) } /></>}
                 </FormikStep>
+                }
 
                 {userType === USER_TYPES.RESIDENTIAL && 
                 <FormikStep>
@@ -269,6 +271,7 @@ return (
                 </FormikStep>
                 }
 
+                {userType === USER_TYPES.RESIDENTIAL && 
                 <FormikStep>
                     <BForm.Group>   
                         <BForm.Label>Your School Municipality is</BForm.Label>
@@ -289,7 +292,19 @@ return (
                         <p>Don't see your Municipality?<Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Click here</Button></p>
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={2} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>                   
+                </FormikStep>}
+
+                {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
+                <FormikStep>
+                    <p>Reach content</p>
                 </FormikStep>
+                }
+
+                {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
+                <FormikStep>
+                    <p>Create complementary Ad section</p>
+                </FormikStep>
+                }
 
                 <FormikStep>
                         <p>It takes a lot to bring an idea to form, and as a user on the MLC Community Discussion Platform the following agreements will enable the interactions that turn ideas into reality:</p>
@@ -382,17 +397,28 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     //InferStep keeps track of the step icons.
     //Since some steps will have multiple "steps" the infer step decreases dependant on if map selections have occured.
     const handleBackButton = () => {
-        if(step % 2 !== 0){
-            setInferStep(s=>s-1);
+        if (userType === USER_TYPES.RESIDENTIAL) {
+            if(step % 2 !== 0){
+                setInferStep(s=>s-1);
+            }
+            if(isLastStep()) setInferStep(s=>s-1);
+            if(step===7 && markers.school.lat === null){
+                setStep(s=>s-2);
+            }else if(step === 5 && markers.work.lat === null){
+                setStep(s=>s-2);
+            }else{
+                setStep(s=>s-1);
+            }
+        } else {
+            console.log(`From step: ${step}`);
+            if (step === 2) {
+                setStep(s=>s-1);
+            } else {
+                setStep(s=>s-1);
+                setInferStep(s=>s-1);
+            }
         }
-        if(isLastStep()) setInferStep(s=>s-1);
-        if(step===7 && markers.school.lat === null){
-            setStep(s=>s-2);
-        }else if(step === 5 && markers.work.lat === null){
-            setStep(s=>s-2);
-        }else{
-            setStep(s=>s-1);
-        }
+       
     }
     //This function calls the google api to receive data on the map location
     //The data is then searched in the back end for a matching segment
@@ -470,8 +496,7 @@ return(
         }else if(step=== 1){
             const seg = await setSegData(0);
             showMap(false);
-        }else if(step=== 3){
-            
+        }else if(step=== 3 && userType === USER_TYPES.RESIDENTIAL){
             if(markers.work.lat === null){
                 setStep(s=>s+2);
                 setInferStep(s=>s+1);
@@ -486,7 +511,7 @@ return(
                 //setStep(s=>s+1);
             }
             showMap(false);
-        }else if(step=== 5){
+        }else if(step=== 5 && userType === USER_TYPES.RESIDENTIAL){
             console.log(segIds);
             if(markers.school.lat === null){
                 setStep(s=>s+2);
