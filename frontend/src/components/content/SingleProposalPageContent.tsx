@@ -135,11 +135,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     window.location.href = `/submit?supportedProposal=${proposalId}`;
   }
 
-  const [donorIsOpen, setDonorIsOpen] = useState(false);
-  const togglePopupDonor = () => {
-    setDonorIsOpen(!donorIsOpen);
-  };
-
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
@@ -462,454 +457,464 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         </Row>
       </Card>
 
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <div>
-                <h4 className="h4">Collaborators</h4>
-                <p>Join to be part of the project team</p>
-              </div>
+      {needCollaborators && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h4 className="h4">Collaborators</h4>
+                  <p>Join to be part of the project team</p>
+                </div>
 
-              <h4 className="text-center my-auto text-muted">
-                <div className="collab">
-                  <Button
-                    variant="primary"
-                    onClick={() => setModalShowCollaborator(true)}
-                  >
-                    Join
-                  </Button>
-                  <Modal
-                    show={modalShowCollaborator}
-                    onHide={() => setModalShowCollaborator(false)}
-                    size="lg"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
-                  >
-                    <Modal.Header closeButton>
-                      <Modal.Title id="contained-modal-title-vcenter">
-                        Collaborate
-                      </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <Form onSubmit={formikCollaborator.handleSubmit}>
-                        <Form.Group>
-                          <p style={{ fontSize: "1rem" }}>Contact</p>
-                          <Form.Control
-                            type="text"
-                            name="contactInfo"
-                            onChange={formikCollaborator.handleChange}
-                            value={formikCollaborator.values.contactInfo}
-                            placeholder="What is your contact information (e-mail and/or phone number)?"
-                          />
-                          <br />
-                          <p style={{ fontSize: "1rem" }}>Time</p>
-                          <Form.Control
-                            type="text"
-                            name="time"
-                            onChange={formikCollaborator.handleChange}
-                            value={formikCollaborator.values.time}
-                            placeholder="How much time per week or per month do you have
+                <h4 className="text-center my-auto text-muted">
+                  <div className="collab">
+                    <Button
+                      variant="primary"
+                      onClick={() => setModalShowCollaborator(true)}
+                    >
+                      Join
+                    </Button>
+                    <Modal
+                      show={modalShowCollaborator}
+                      onHide={() => setModalShowCollaborator(false)}
+                      size="lg"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                          Collaborate
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <Form onSubmit={formikCollaborator.handleSubmit}>
+                          <Form.Group>
+                            <p style={{ fontSize: "1rem" }}>Contact</p>
+                            <Form.Control
+                              type="text"
+                              name="contactInfo"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or phone number)?"
+                            />
+                            <br />
+                            <p style={{ fontSize: "1rem" }}>Time</p>
+                            <Form.Control
+                              type="text"
+                              name="time"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.time}
+                              placeholder="How much time per week or per month do you have
                                 available?"
-                          />
-                          <br />
-                          <p style={{ fontSize: "1rem" }}>Experience</p>
-                          <Form.Control
-                            type="text"
-                            name="experience"
-                            onChange={formikCollaborator.handleChange}
-                            value={formikCollaborator.values.experience}
-                            placeholder="What experience and skills do you bring to the
+                            />
+                            <br />
+                            <p style={{ fontSize: "1rem" }}>Experience</p>
+                            <Form.Control
+                              type="text"
+                              name="experience"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.experience}
+                              placeholder="What experience and skills do you bring to the
                                 project?"
-                          />
-                          <br />
+                            />
+                            <br />
 
-                          <p style={{ fontSize: "1rem" }}>Role</p>
-                          <Form.Control
-                            type="text"
-                            name="role"
-                            onChange={formikCollaborator.handleChange}
-                            value={formikCollaborator.values.role}
-                            placeholder="What role or task would you would like to work on?"
-                          />
-                          <br />
+                            <p style={{ fontSize: "1rem" }}>Role</p>
+                            <Form.Control
+                              type="text"
+                              name="role"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.role}
+                              placeholder="What role or task would you would like to work on?"
+                            />
+                            <br />
 
-                          {error && (
-                            <Alert variant="danger" className="error-alert">
-                              {error.message}
-                            </Alert>
-                          )}
-                        </Form.Group>
-                        <Button
-                          variant="primary"
-                          type="submit"
-                          disabled={isLoading ? true : false}
-                        >
-                          {isLoading ? "Saving..." : "Submit"}
-                        </Button>
-                      </Form>
-                    </Modal.Body>
-                  </Modal>
-                </div>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <Accordion>
-              {collaborations.length > 0 ? (
-                collaborations.map((collaboration: any, index: number) => (
-                  <Card key={index}>
-                    <Accordion.Toggle
-                      as={Card.Header}
-                      variant="link"
-                      eventKey={index.toString()}
-                      className="mouse-pointer"
-                    >
-                      {collaboration.author.fname} {collaboration.author.lname}
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index.toString()}>
-                      <Card.Body>
-                        <Table style={{ margin: "0rem" }}>
-                          <thead>
-                            <tr>
-                              <th>Contact</th>
-                              <th>Time</th>
-                              <th>Experience</th>
-                              <th>Role</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>{collaboration.contactInfo}</td>
-                              <td>{collaboration.time}</td>
-                              <td>{collaboration.experience}</td>
-                              <td>{collaboration.role}</td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                ))
-              ) : (
-                <p style={{ margin: "0rem", textAlign: "center" }}>
-                  No collaborators yet, be the first!
-                </p>
-              )}
-            </Accordion>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <div>
-                <h4 className="h4">Volunteers</h4>
-                <p>Help support this project by becoming a volunteer</p>
+                            {error && (
+                              <Alert variant="danger" className="error-alert">
+                                {error.message}
+                              </Alert>
+                            )}
+                          </Form.Group>
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={isLoading ? true : false}
+                          >
+                            {isLoading ? "Saving..." : "Submit"}
+                          </Button>
+                        </Form>
+                      </Modal.Body>
+                    </Modal>
+                  </div>
+                </h4>
               </div>
-
-              <h4 className="text-center my-auto text-muted">
-                <div className="volunteer">
-                  <Button
-                    variant="primary"
-                    onClick={() => setModalShowVolunteer(true)}
-                  >
-                    Sign-up
-                  </Button>
-                  <Modal
-                    show={modalShowVolunteer}
-                    onHide={() => setModalShowVolunteer(false)}
-                    size="lg"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
-                  >
-                    <Modal.Header closeButton>
-                      <Modal.Title id="contained-modal-title-vcenter">
-                        Volunteer
-                      </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <Form onSubmit={formikVolunteer.handleSubmit}>
-                        <Form.Group>
-                          <p style={{ fontSize: "1rem" }}>Contact</p>
-                          <Form.Control
-                            type="text"
-                            name="contactInfo"
-                            onChange={formikVolunteer.handleChange}
-                            value={formikVolunteer.values.contactInfo}
-                            placeholder="What is your contact information (e-mail and/or phone number)?"
-                          />
-                          <br />
-                          <p style={{ fontSize: "1rem" }}>Time</p>
-                          <Form.Control
-                            type="text"
-                            name="time"
-                            onChange={formikVolunteer.handleChange}
-                            value={formikVolunteer.values.time}
-                            placeholder="How much time do you want to contribute?"
-                          />
-                          <br />
-
-                          <p style={{ fontSize: "1rem" }}>Experience</p>
-
-                          <Form.Control
-                            type="text"
-                            name="experience"
-                            onChange={formikVolunteer.handleChange}
-                            value={formikVolunteer.values.experience}
-                            placeholder="What experience and skills do you bring to the project?"
-                          />
-                          <br />
-
-                          <p style={{ fontSize: "1rem" }}>Task</p>
-                          <Form.Control
-                            type="text"
-                            name="task"
-                            onChange={formikVolunteer.handleChange}
-                            value={formikVolunteer.values.task}
-                            placeholder="What type of task would you like to work on?"
-                          />
-                          <br />
-
-                          {error && (
-                            <Alert variant="danger" className="error-alert">
-                              {error.message}
-                            </Alert>
-                          )}
-                        </Form.Group>
-                        <Button
-                          variant="primary"
-                          type="submit"
-                          disabled={isLoading ? true : false}
-                        >
-                          {isLoading ? "Saving..." : "Submit"}
-                        </Button>
-                      </Form>
-                    </Modal.Body>
-                  </Modal>
+            </Card.Header>
+            <Card.Body>
+              <Accordion>
+                {collaborations.length > 0 ? (
+                  collaborations.map((collaboration: any, index: number) => (
+                    <Card key={index}>
+                      <Accordion.Toggle
+                        as={Card.Header}
+                        variant="link"
+                        eventKey={index.toString()}
+                        className="mouse-pointer"
+                      >
+                        {collaboration.author.fname}{" "}
+                        {collaboration.author.lname}
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={index.toString()}>
+                        <Card.Body>
+                          <Table style={{ margin: "0rem" }}>
+                            <thead>
+                              <tr>
+                                <th>Contact</th>
+                                <th>Time</th>
+                                <th>Experience</th>
+                                <th>Role</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{collaboration.contactInfo}</td>
+                                <td>{collaboration.time}</td>
+                                <td>{collaboration.experience}</td>
+                                <td>{collaboration.role}</td>
+                              </tr>
+                            </tbody>
+                          </Table>
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  ))
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No collaborators yet, be the first!
+                  </p>
+                )}
+              </Accordion>
+            </Card.Body>
+          </Card>
+        </div>
+      )}
+      {needVolunteers && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h4 className="h4">Volunteers</h4>
+                  <p>Help support this project by becoming a volunteer</p>
                 </div>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <Accordion>
-              {volunteers.length > 0 ? (
-                volunteers.map((volunteer: any, index: number) => (
-                  <Card key={index}>
-                    <Accordion.Toggle
-                      as={Card.Header}
-                      variant="link"
-                      eventKey={index.toString()}
-                      className="mouse-pointer"
+
+                <h4 className="text-center my-auto text-muted">
+                  <div className="volunteer">
+                    <Button
+                      variant="primary"
+                      onClick={() => setModalShowVolunteer(true)}
                     >
-                      {volunteer.author.fname} {volunteer.author.lname}
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index.toString()}>
-                      <Card.Body>
-                        <Table style={{ margin: "0rem" }}>
-                          <thead>
-                            <tr>
-                              <th>Contact</th>
-                              <th>Time</th>
-                              <th>Experience</th>
-                              <th>Task</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>{volunteer.contactInfo}</td>
-                              <td>{volunteer.time}</td>
-                              <td>{volunteer.experience}</td>
-                              <td>{volunteer.task}</td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                ))
-              ) : (
-                <p style={{ margin: "0rem", textAlign: "center" }}>
-                  No volunteers yet, be the first!
-                </p>
-              )}
-            </Accordion>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <div>
-                <h4 className="h4">Donors</h4>
-                <p>Donate to help this project grow</p>
+                      Sign-up
+                    </Button>
+                    <Modal
+                      show={modalShowVolunteer}
+                      onHide={() => setModalShowVolunteer(false)}
+                      size="lg"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                          Volunteer
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <Form onSubmit={formikVolunteer.handleSubmit}>
+                          <Form.Group>
+                            <p style={{ fontSize: "1rem" }}>Contact</p>
+                            <Form.Control
+                              type="text"
+                              name="contactInfo"
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or phone number)?"
+                            />
+                            <br />
+                            <p style={{ fontSize: "1rem" }}>Time</p>
+                            <Form.Control
+                              type="text"
+                              name="time"
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.time}
+                              placeholder="How much time do you want to contribute?"
+                            />
+                            <br />
+
+                            <p style={{ fontSize: "1rem" }}>Experience</p>
+
+                            <Form.Control
+                              type="text"
+                              name="experience"
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.experience}
+                              placeholder="What experience and skills do you bring to the project?"
+                            />
+                            <br />
+
+                            <p style={{ fontSize: "1rem" }}>Task</p>
+                            <Form.Control
+                              type="text"
+                              name="task"
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.task}
+                              placeholder="What type of task would you like to work on?"
+                            />
+                            <br />
+
+                            {error && (
+                              <Alert variant="danger" className="error-alert">
+                                {error.message}
+                              </Alert>
+                            )}
+                          </Form.Group>
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={isLoading ? true : false}
+                          >
+                            {isLoading ? "Saving..." : "Submit"}
+                          </Button>
+                        </Form>
+                      </Modal.Body>
+                    </Modal>
+                  </div>
+                </h4>
               </div>
+            </Card.Header>
+            <Card.Body>
+              <Accordion>
+                {volunteers.length > 0 ? (
+                  volunteers.map((volunteer: any, index: number) => (
+                    <Card key={index}>
+                      <Accordion.Toggle
+                        as={Card.Header}
+                        variant="link"
+                        eventKey={index.toString()}
+                        className="mouse-pointer"
+                      >
+                        {volunteer.author.fname} {volunteer.author.lname}
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={index.toString()}>
+                        <Card.Body>
+                          <Table style={{ margin: "0rem" }}>
+                            <thead>
+                              <tr>
+                                <th>Contact</th>
+                                <th>Time</th>
+                                <th>Experience</th>
+                                <th>Task</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{volunteer.contactInfo}</td>
+                                <td>{volunteer.time}</td>
+                                <td>{volunteer.experience}</td>
+                                <td>{volunteer.task}</td>
+                              </tr>
+                            </tbody>
+                          </Table>
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  ))
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No volunteers yet, be the first!
+                  </p>
+                )}
+              </Accordion>
+            </Card.Body>
+          </Card>
+        </div>
+      )}
 
-              <h4 className="text-center my-auto text-muted">
-                <div className="donor">
-                  <Button
-                    variant="primary"
-                    onClick={() => setModalShowDonor(true)}
-                  >
-                    Donate
-                  </Button>
-                  <Modal
-                    show={modalShowDonor}
-                    onHide={() => setModalShowDonor(false)}
-                    size="lg"
-                    aria-labelledby="contained-modal-title-vcenter"
-                    centered
-                  >
-                    <Modal.Header closeButton>
-                      <Modal.Title id="contained-modal-title-vcenter">
-                        Donate
-                      </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <Form onSubmit={formikDonor.handleSubmit}>
-                        <Form.Group>
-                          <p style={{ fontSize: "1rem" }}>Donation</p>
-                          <Form.Control
-                            type="text"
-                            name="donations"
-                            onChange={formikDonor.handleChange}
-                            value={formikDonor.values.donations}
-                            placeholder="What would you like to contribute?"
-                          />
-                          <br />
-                          <p style={{ fontSize: "1rem" }}>Contact</p>
-                          <Form.Control
-                            type="text"
-                            name="contactInfo"
-                            onChange={formikDonor.handleChange}
-                            value={formikDonor.values.contactInfo}
-                            placeholder="What is your contact information (e-mail and/or phone number)?"
-                          />
-                          <br />
-                          {error && (
-                            <Alert variant="danger" className="error-alert">
-                              {error.message}
-                            </Alert>
-                          )}
-                        </Form.Group>
-                        <Button
-                          variant="primary"
-                          type="submit"
-                          disabled={isLoading ? true : false}
-                        >
-                          {isLoading ? "Saving..." : "Submit"}
-                        </Button>
-                      </Form>
-                    </Modal.Body>
-                  </Modal>
+      {needDonations && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h4 className="h4">Donors</h4>
+                  <p>Donate to help this project grow</p>
                 </div>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <Accordion>
-              {donors.length > 0 ? (
-                donors.map((donor: any, index: number) => (
-                  <Card key={index}>
-                    <Accordion.Toggle
-                      as={Card.Header}
-                      variant="link"
-                      eventKey={index.toString()}
-                      className="mouse-pointer"
-                    >
-                      {donor.author.fname} {donor.author.lname}
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index.toString()}>
-                      <Card.Body>
-                        <Table style={{ margin: "0rem" }}>
-                          <thead>
-                            <tr>
-                              <th>Contact</th>
-                              <th>Donation</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>{donor.contactInfo}</td>
-                              <td>{donor.donations}</td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                ))
-              ) : (
-                <p style={{ margin: "0rem", textAlign: "center" }}>
-                  No donations yet, be the first!
-                </p>
-              )}
-            </Accordion>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <h4 className="h4">Suggested Ideas</h4>
-              {/** create a textbox */}
 
-              <h4 className="text-center my-auto text-muted">
-                <Button onClick={() => redirectToIdeaSubmit()}>
-                  Propose Idea
-                </Button>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <Accordion>
-              {suggestedIdeas.length > 0 ? (
-                suggestedIdeas.map((idea: any, index: number) => (
-                  <Card key={index}>
-                    <Accordion.Toggle
-                      as={Card.Header}
-                      variant="link"
-                      eventKey={index.toString()}
-                      className="mouse-pointer"
+                <h4 className="text-center my-auto text-muted">
+                  <div className="donor">
+                    <Button
+                      variant="primary"
+                      onClick={() => setModalShowDonor(true)}
                     >
-                      {idea.author.fname} {idea.author.lname}
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index.toString()}>
-                      <Card.Body>
-                        <Table style={{ margin: "0rem" }}>
-                          <thead>
-                            <tr>
-                              <th>Author</th>
-                              <th>Idea</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
-                                {idea.author.fname} {idea.author.lname}
-                              </td>
-                              <td>
-                                <a href={"/ideas/" + idea.id}>{idea.title}</a>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </Card.Body>
-                    </Accordion.Collapse>
-                  </Card>
-                ))
-              ) : (
-                <p style={{ margin: "0rem", textAlign: "center" }}>
-                  No donations yet, be the first!
-                </p>
-              )}
-            </Accordion>
-          </Card.Body>
-        </Card>
-      </div>
+                      Donate
+                    </Button>
+                    <Modal
+                      show={modalShowDonor}
+                      onHide={() => setModalShowDonor(false)}
+                      size="lg"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                          Donate
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <Form onSubmit={formikDonor.handleSubmit}>
+                          <Form.Group>
+                            <p style={{ fontSize: "1rem" }}>Donation</p>
+                            <Form.Control
+                              type="text"
+                              name="donations"
+                              onChange={formikDonor.handleChange}
+                              value={formikDonor.values.donations}
+                              placeholder="What would you like to contribute?"
+                            />
+                            <br />
+                            <p style={{ fontSize: "1rem" }}>Contact</p>
+                            <Form.Control
+                              type="text"
+                              name="contactInfo"
+                              onChange={formikDonor.handleChange}
+                              value={formikDonor.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or phone number)?"
+                            />
+                            <br />
+                            {error && (
+                              <Alert variant="danger" className="error-alert">
+                                {error.message}
+                              </Alert>
+                            )}
+                          </Form.Group>
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={isLoading ? true : false}
+                          >
+                            {isLoading ? "Saving..." : "Submit"}
+                          </Button>
+                        </Form>
+                      </Modal.Body>
+                    </Modal>
+                  </div>
+                </h4>
+              </div>
+            </Card.Header>
+            <Card.Body>
+              <Accordion>
+                {donors.length > 0 ? (
+                  donors.map((donor: any, index: number) => (
+                    <Card key={index}>
+                      <Accordion.Toggle
+                        as={Card.Header}
+                        variant="link"
+                        eventKey={index.toString()}
+                        className="mouse-pointer"
+                      >
+                        {donor.author.fname} {donor.author.lname}
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={index.toString()}>
+                        <Card.Body>
+                          <Table style={{ margin: "0rem" }}>
+                            <thead>
+                              <tr>
+                                <th>Contact</th>
+                                <th>Donation</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{donor.contactInfo}</td>
+                                <td>{donor.donations}</td>
+                              </tr>
+                            </tbody>
+                          </Table>
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  ))
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No donations yet, be the first!
+                  </p>
+                )}
+              </Accordion>
+            </Card.Body>
+          </Card>
+        </div>
+      )}
+      {needSuggestions && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <h4 className="h4">Suggested Ideas</h4>
+                {/** create a textbox */}
+
+                <h4 className="text-center my-auto text-muted">
+                  <Button onClick={() => redirectToIdeaSubmit()}>
+                    Propose Idea
+                  </Button>
+                </h4>
+              </div>
+            </Card.Header>
+            <Card.Body>
+              <Accordion>
+                {suggestedIdeas.length > 0 ? (
+                  suggestedIdeas.map((idea: any, index: number) => (
+                    <Card key={index}>
+                      <Accordion.Toggle
+                        as={Card.Header}
+                        variant="link"
+                        eventKey={index.toString()}
+                        className="mouse-pointer"
+                      >
+                        {idea.author.fname} {idea.author.lname}
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={index.toString()}>
+                        <Card.Body>
+                          <Table style={{ margin: "0rem" }}>
+                            <thead>
+                              <tr>
+                                <th>Author</th>
+                                <th>Idea</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  {idea.author.fname} {idea.author.lname}
+                                </td>
+                                <td>
+                                  <a href={"/ideas/" + idea.id}>{idea.title}</a>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </Table>
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  ))
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No donations yet, be the first!
+                  </p>
+                )}
+              </Accordion>
+            </Card.Body>
+          </Card>
+        </div>
+      )}
 
       <Row>
         <RatingsSection />
