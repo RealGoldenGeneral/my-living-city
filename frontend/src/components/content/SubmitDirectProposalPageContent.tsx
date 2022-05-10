@@ -32,10 +32,7 @@ import ImageUploader from "react-images-upload";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import SubmitDirectProposalPage from "src/pages/SubmitDirectProposalPage";
-import {
-  getDirectProposal,
-  postCreateProposal,
-} from "src/lib/api/proposalRoutes";
+import { getDirectProposal } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 
 interface SubmitDirectProposalPageContentProps {
@@ -156,8 +153,7 @@ const SubmitDirectProposalPageContent: React.FC<
       history.push("/proposals/" + proposal.id);
       formik.resetForm();
     } catch (error) {
-      const genericMessage =
-        "An error occured while trying to create a Proposal.";
+      const genericMessage = "An error occured while trying to create an Idea.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {

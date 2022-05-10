@@ -23,6 +23,7 @@ export default function MyPostsPage() {
 
   console.log(loggedInUser.id);
 
+  //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
   const {
     data: uData,
     error: uError,
