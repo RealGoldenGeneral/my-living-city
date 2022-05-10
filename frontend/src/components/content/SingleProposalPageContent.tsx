@@ -1,4 +1,13 @@
-import { Button, Card, Col, Row, Image, Form, Modal } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Row,
+  Image,
+  Form,
+  Modal,
+  Alert,
+} from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
 import {
   capitalizeFirstLetterEachWord,
@@ -74,8 +83,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     needSuggestions,
     location,
   } = proposalData;
-  console.log(proposalData);
-  console.log(suggestedIdeas);
+  // console.log(proposalData);
+  // console.log(suggestedIdeas);
 
   const { title: catTitle } = category!;
 
@@ -133,12 +142,11 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const [error, setError] = useState<IFetchError | null>(null);
   const [crop, setCrop] = useState({ aspect: 16 / 9 });
 
-  const [modalShow, setModalShow] = React.useState(false);
+  const [modalShowCollaborator, setModalShowCollaborator] = useState(false);
 
   const collaboratorSubmitHandler = async (values: any) => {
     try {
       // Set loading and error state
-      console.log("Submitting collaborator...");
       console.log("values", values);
       setError(null);
       setIsLoading(true);
@@ -151,7 +159,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
       );
       console.log("Here" + res);
       setError(null);
-      //formikCollaborator.resetForm();
+      formikCollaborator.resetForm();
+      window.location.reload();
     } catch (error) {
       const genericMessage = "An error occured while trying to create an Idea.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
@@ -175,77 +184,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     console.log("addIdeaToUserFollowList");
     console.log("proposalData", proposalData);
   };
-
-  function CollaboratorModal(props: any) {
-    return (
-      <Modal
-        {...props}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Collaborate
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={() => formikCollaborator.handleSubmit}>
-            <Form.Group>
-              <p style={{ fontSize: "1rem" }}>Experience</p>
-
-              <Form.Control
-                type="text"
-                name="experience"
-                onChange={formikCollaborator.handleChange}
-                value={formikCollaborator.values.experience}
-                placeholder="What experience and skills do you bring to the
-                                project?"
-              />
-              <br />
-
-              <p style={{ fontSize: "1rem" }}>Role</p>
-              <Form.Control
-                type="text"
-                name="role"
-                onChange={formikCollaborator.handleChange}
-                value={formikCollaborator.values.role}
-                placeholder="What role or task would you would like to work on?"
-              />
-              <br />
-              <p style={{ fontSize: "1rem" }}>Time</p>
-              <Form.Control
-                type="text"
-                name="time"
-                onChange={formikCollaborator.handleChange}
-                value={formikCollaborator.values.time}
-                placeholder="How much time per week or per month do you have
-                                available?"
-              />
-              <br />
-              <p style={{ fontSize: "1rem" }}>Contact</p>
-              <Form.Control
-                type="text"
-                name="contactInfo"
-                onChange={formikCollaborator.handleChange}
-                value={formikCollaborator.values.contactInfo}
-                placeholder="What is your contact information (e-mail and/or
-                                phone number)?"
-              />
-              <br />
-            </Form.Group>
-            <Button
-              variant="primary"
-              type="submit"
-              onClick={() => formikCollaborator.handleSubmit}
-            >
-              Submit
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
-    );
-  }
 
   return (
     <div className="single-idea-content pt-5">
@@ -455,13 +393,83 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
               <h4 className="text-center my-auto text-muted">
                 <div className="collab">
-                  <Button variant="primary" onClick={() => setModalShow(true)}>
+                  <Button
+                    variant="primary"
+                    onClick={() => setModalShowCollaborator(true)}
+                  >
                     Join
                   </Button>
-                  <CollaboratorModal
-                    show={modalShow}
-                    onHide={() => setModalShow(false)}
-                  />
+                  <Modal
+                    show={modalShowCollaborator}
+                    onHide={() => setModalShowCollaborator(false)}
+                    size="lg"
+                    aria-labelledby="contained-modal-title-vcenter"
+                    centered
+                  >
+                    <Modal.Header closeButton>
+                      <Modal.Title id="contained-modal-title-vcenter">
+                        Collaborate
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form onSubmit={formikCollaborator.handleSubmit}>
+                        <Form.Group>
+                          <p style={{ fontSize: "1rem" }}>Experience</p>
+
+                          <Form.Control
+                            type="text"
+                            name="experience"
+                            onChange={formikCollaborator.handleChange}
+                            value={formikCollaborator.values.experience}
+                            placeholder="What experience and skills do you bring to the
+                                project?"
+                          />
+                          <br />
+
+                          <p style={{ fontSize: "1rem" }}>Role</p>
+                          <Form.Control
+                            type="text"
+                            name="role"
+                            onChange={formikCollaborator.handleChange}
+                            value={formikCollaborator.values.role}
+                            placeholder="What role or task would you would like to work on?"
+                          />
+                          <br />
+                          <p style={{ fontSize: "1rem" }}>Time</p>
+                          <Form.Control
+                            type="text"
+                            name="time"
+                            onChange={formikCollaborator.handleChange}
+                            value={formikCollaborator.values.time}
+                            placeholder="How much time per week or per month do you have
+                                available?"
+                          />
+                          <br />
+                          <p style={{ fontSize: "1rem" }}>Contact</p>
+                          <Form.Control
+                            type="text"
+                            name="contactInfo"
+                            onChange={formikCollaborator.handleChange}
+                            value={formikCollaborator.values.contactInfo}
+                            placeholder="What is your contact information (e-mail and/or phone number)?"
+                          />
+                          <br />
+                          {error && (
+                            <Alert variant="danger" className="error-alert">
+                              {error.message}
+                            </Alert>
+                          )}
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          disabled={isLoading ? true : false}
+                        >
+                          {isLoading ? "Saving..." : "Submit"}
+                        </Button>
+                      </Form>
+                    </Modal.Body>
+                  </Modal>
                 </div>
               </h4>
             </div>

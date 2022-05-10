@@ -36,9 +36,11 @@ export const postCreateCollabotator = async (
     contactInfo: contactInfo.toString(),
   };
 
+  console.log("collaboratorData", collaboratorData);
+
   const res = await axios({
     method: "post",
-    url: `${API_BASE_URL}/create/collaborator/${proposalId}`,
+    url: `${API_BASE_URL}/community/create/collaborator`,
     data: formBody,
     headers: {
       "Content-Type": "application/json",
@@ -52,5 +54,12 @@ export const postCreateCollabotator = async (
     throw new Error(res.data);
   }
   //return response data
+  return res.data;
+};
+
+export const getAllCollaboratorsUnderAProposal = async (proposalId: number) => {
+  const res = await axios.get(
+    `${API_BASE_URL}/community/collaborators/getAll/${proposalId}`
+  );
   return res.data;
 };
