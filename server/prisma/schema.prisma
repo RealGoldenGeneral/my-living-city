@@ -62,7 +62,7 @@ enum AdType {
 model UserGeo {
   // keys
   id     Int    @id @default(autoincrement())
-  userId String @map("user_id")
+  userId String @map("user_id") @unique
 
   // Columns
   lat        Decimal?
@@ -83,7 +83,7 @@ model UserGeo {
 model UserAddress {
   // keys
   id     Int    @id @default(autoincrement())
-  userId String @map("user_id")
+  userId String @map("user_id") @unique
 
   // Columns
   streetAddress  String?  @map("street_address")
@@ -129,10 +129,10 @@ model User {
   ideaComments        IdeaComment[]
   ideaCommentLikes    UserCommentLikes[]
   ideaCommentDislikes UserCommentDislikes[]
-  collaborators     Collaborator[] @relation("ideaCollaborator")
-  volunteers         Volunteer[]     @relation("ideaVolunteer")
-  donors             Donor[]         @relation("ideaDonor")
-  
+  collaborators       Collaborator[]        @relation("ideaCollaborator")
+  volunteers          Volunteer[]           @relation("ideaVolunteer")
+  donors              Donor[]               @relation("ideaDonor")
+
 
 
   // Model overwrites
@@ -146,7 +146,7 @@ model User {
 // user segment entity
 model UserSegments {
   id                   String        @id @default(cuid())
-  userId               String        @map("user_id")
+  userId               String        @map("user_id") @unique
   user                 User?         @relation(fields: [userId], references: [id])
   homeSuperSegId       Int?          @map("home_super_segment_id")
   homeSuperSegName     String?       @map("home_super_segment_name")
@@ -206,8 +206,8 @@ enum IdeaState {
 
 model IdeaGeo {
   // keys
-  id     Int @id @default(autoincrement())
-  ideaId Int? @map("idea_id")
+  id         Int  @id @default(autoincrement())
+  ideaId     Int? @map("idea_id") @unique
   proposalId Int? @map("proposal_id")
 
   // Columns
@@ -224,8 +224,8 @@ model IdeaGeo {
 
 model IdeaAddress {
   // keys
-  id     Int @id @default(autoincrement())
-  ideaId Int? @map("idea_id")
+  id         Int  @id @default(autoincrement())
+  ideaId     Int? @map("idea_id") @unique
   proposalId Int? @map("proposal_id")
 
   // Columns
@@ -245,77 +245,77 @@ model IdeaAddress {
 
 model Collaborator {
   // keys
-  id     Int @id @default(autoincrement())
-  proposalId Int @map("proposal_id")
-  authorId       String @map("author_id")
+  id         Int    @id @default(autoincrement())
+  proposalId Int    @map("proposal_id")
+  authorId   String @map("author_id")
 
-  experience String? @default("No experience")
-  role       String? @default("No role")
-  time       String? @default("No time")
+  experience  String? @default("No experience")
+  role        String? @default("No role")
+  time        String? @default("No time")
   contactInfo String? @default("No contact info")
 
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relationships
   proposal Proposal @relation("collab", fields: [proposalId], references: [id])
-  author       User         @relation("ideaCollaborator", fields: [authorId], references: [id])
+  author   User     @relation("ideaCollaborator", fields: [authorId], references: [id])
 
-  @@map(name: "collaborator")
   @@unique([proposalId, authorId], name: "collaborator_unique")
+  @@map(name: "collaborator")
 }
 
-model Volunteer{
-  id Int @id @default(autoincrement())
-  proposalId Int @map("proposal_id")
-  authorId       String  @map("author_id")
+model Volunteer {
+  id         Int    @id @default(autoincrement())
+  proposalId Int    @map("proposal_id")
+  authorId   String @map("author_id")
 
-  experience String? @default("No experience")
-  task       String? @default("No task")
-  time       String? @default("No time")
+  experience  String? @default("No experience")
+  task        String? @default("No task")
+  time        String? @default("No time")
   contactInfo String? @default("No contact info")
 
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relationships
   proposal Proposal @relation("volunteer", fields: [proposalId], references: [id])
-  author       User         @relation("ideaVolunteer", fields: [authorId], references: [id])
+  author   User     @relation("ideaVolunteer", fields: [authorId], references: [id])
 
-  @@map(name: "volunteer")
+
   @@unique([proposalId, authorId], name: "volunteer_unique")
-
+  @@map(name: "volunteer")
 }
 
 model Donor {
-  id Int @id @default(autoincrement())
-  proposalId Int @map("proposal_id")
-  authorId       String  @map("author_id")
+  id         Int    @id @default(autoincrement())
+  proposalId Int    @map("proposal_id")
+  authorId   String @map("author_id")
 
-  donations String? @default("No donations")
+  donations   String? @default("No donations")
   contactInfo String? @default("No contact info")
 
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-  updatedAt  DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
 
   // relationships
   proposal Proposal @relation("donor", fields: [proposalId], references: [id])
-  author       User         @relation("ideaDonor", fields: [authorId], references: [id])
+  author   User     @relation("ideaDonor", fields: [authorId], references: [id])
 
-  @@map(name: "donors")
   @@unique([proposalId, authorId], name: "donor_unique")
+  @@map(name: "donors")
 }
 
 model Idea {
   // Keys
-  id             Int     @id @default(autoincrement())
-  authorId       String  @map("author_id")
-  supportingProposalId Int? @map("supporting_proposal_id")
-  championId     String? @map("champion_id")
-  categoryId     Int     @map("category_id")
-  superSegmentId Int     @map("super_segment_id")
-  segmentId      Int?    @map("segment_id")
-  subSegmentId   Int?    @map("sub_segment_id")
+  id                   Int     @id @default(autoincrement())
+  authorId             String  @map("author_id")
+  supportingProposalId Int?    @map("supporting_proposal_id")
+  championId           String? @map("champion_id")
+  categoryId           Int     @map("category_id")
+  superSegmentId       Int     @map("super_segment_id")
+  segmentId            Int?    @map("segment_id")
+  subSegmentId         Int?    @map("sub_segment_id")
 
   // Values
   title               String
@@ -335,27 +335,27 @@ model Idea {
   // relations
   comments     IdeaComment[]
   ratings      IdeaRating[]
-  proposalInfo Proposal? @relation("proposal")
+  proposalInfo Proposal?     @relation("proposal")
   projectInfo  Project?
   address      IdeaAddress?
   geo          IdeaGeo?
 
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
-  author       User         @relation("ideaAuthor", fields: [authorId], references: [id])
-  supportedProposal Proposal? @relation("supportedProposal", fields: [supportingProposalId], references: [id])
-  champion     User?        @relation("ideaChampion", fields: [championId], references: [id])
-  category     Category     @relation(fields: [categoryId], references: [id])
-  superSegment SuperSegment @relation(fields: [superSegmentId], references: [superSegId])
-  segment      Segments?    @relation(fields: [segmentId], references: [segId])
-  subSegment   SubSegments? @relation(fields: [subSegmentId], references: [id])
+  author            User         @relation("ideaAuthor", fields: [authorId], references: [id])
+  supportedProposal Proposal?    @relation("supportedProposal", fields: [supportingProposalId], references: [id])
+  champion          User?        @relation("ideaChampion", fields: [championId], references: [id])
+  category          Category     @relation(fields: [categoryId], references: [id])
+  superSegment      SuperSegment @relation(fields: [superSegmentId], references: [superSegId])
+  segment           Segments?    @relation(fields: [segmentId], references: [segId])
+  subSegment        SubSegments? @relation(fields: [subSegmentId], references: [id])
 
   @@map(name: "idea")
 }
 
 model Proposal {
   id     Int @id @default(autoincrement())
-  ideaId Int @map("idea_id")
+  ideaId Int @map("idea_id") @unique
 
   needCollaborators Boolean @default(false)
   needVolunteers    Boolean @default(false)
@@ -364,27 +364,27 @@ model Proposal {
   needFeedback      Boolean @default(false)
 
   collaborations Collaborator[] @relation("collab")
-  volunteers      Volunteer[]    @relation("volunteer")
-  donors          Donor[]       @relation("donor")
+  volunteers     Volunteer[]    @relation("volunteer")
+  donors         Donor[]        @relation("donor")
 
-  feedback1  String? @map("feedback_1")
-  feedback2  String? @map("feedback_2")
-  feedback3  String? @map("feedback_3")
-  feedback4  String? @map("feedback_4")
-  feedback5  String? @map("feedback_5")
+  feedback1 String? @map("feedback_1")
+  feedback2 String? @map("feedback_2")
+  feedback3 String? @map("feedback_3")
+  feedback4 String? @map("feedback_4")
+  feedback5 String? @map("feedback_5")
 
-  location   String? @map("location")  
+  location       String? @map("location")
   // Relations
-  idea Idea @relation("proposal",fields: [ideaId], references: [id])
-  suggestedIdeas Idea[] @relation("supportedProposal")
-  
+  idea           Idea    @relation("proposal", fields: [ideaId], references: [id])
+  suggestedIdeas Idea[]  @relation("supportedProposal")
+
   @@map(name: "proposal")
 }
 
 model Project {
   // keys
   id     Int @id @default(autoincrement())
-  ideaId Int @map("idea_id")
+  ideaId Int @map("idea_id") @unique
 
   // fields
   // TODO: Add fields that would be in Project state
@@ -400,60 +400,65 @@ model Project {
 
 model IdeaRating {
   // Keys
-  id       Int    @id @default(autoincrement())
-  ideaId   Int    @map("idea_id")
-  authorId String @map("author_id")
+  id                Int      @id @default(autoincrement())
+  ideaId            Int      @map("idea_id")
+  authorId          String   @map("author_id")
   // Fields
   rating            Int      @default(0)
   ratingExplanation String?  @map("rating_explanation")
   createdAt         DateTime @default(now()) @map(name: "created_at")
   updatedAt         DateTime @default(now()) @updatedAt @map(name: "updated_at")
   // relations
-  author User @relation(fields: [authorId], references: [id])
-  idea   Idea @relation(fields: [ideaId], references: [id])
+  author            User     @relation(fields: [authorId], references: [id])
+  idea              Idea     @relation(fields: [ideaId], references: [id])
+
   @@map(name: "idea_rating")
 }
 
 model IdeaComment {
   // keys
-  id     Int @id @default(autoincrement())
-  ideaId Int @map("idea_id")
+  id             Int                   @id @default(autoincrement())
+  ideaId         Int                   @map("idea_id")
   // Fields
-  authorId       String   @map("author_id")
-  userSegId      String   @map("user_segment_id")
-  superSegmentId Int?     @map("super_segment_id")
-  segmentId      Int?     @map("segment_id")
-  subSegmentId   Int?     @map("sub_segment_id")
+  authorId       String                @map("author_id")
+  userSegId      String                @map("user_segment_id")
+  superSegmentId Int?                  @map("super_segment_id")
+  segmentId      Int?                  @map("segment_id")
+  subSegmentId   Int?                  @map("sub_segment_id")
   content        String
-  active         Boolean  @default(true)
-  createdAt      DateTime @default(now()) @map(name: "created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  active         Boolean               @default(true)
+  createdAt      DateTime              @default(now()) @map(name: "created_at")
+  updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
   // relations
-  author   User                  @relation(fields: [authorId], references: [id])
-  idea     Idea                  @relation(fields: [ideaId], references: [id])
-  userSeg  UserSegments          @relation(fields: [userSegId], references: [id])
-  likes    UserCommentLikes[]
-  dislikes UserCommentDislikes[]
+  author         User                  @relation(fields: [authorId], references: [id])
+  idea           Idea                  @relation(fields: [ideaId], references: [id])
+  userSeg        UserSegments          @relation(fields: [userSegId], references: [id])
+  likes          UserCommentLikes[]
+  dislikes       UserCommentDislikes[]
+
   @@map(name: "idea_comment")
 }
 
 model UserCommentLikes {
-  id            Int     @id @default(autoincrement())
-  ideaCommentId Int?    @map("idea_comment_id")
-  authorId      String? @map("author_id")
-  ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
-  author      User?        @relation(fields: [authorId], references: [id])
+  id            Int          @id @default(autoincrement())
+  ideaCommentId Int?         @map("idea_comment_id")
+  authorId      String?      @map("author_id")
+  ideaComment   IdeaComment? @relation(fields: [ideaCommentId], references: [id])
+  author        User?        @relation(fields: [authorId], references: [id])
+
   @@map(name: "user_comment_likes")
 }
 
 model UserCommentDislikes {
-  id            Int     @id @default(autoincrement())
-  ideaCommentId Int?    @map("idea_comment_id")
-  authorId      String? @map("author_id")
-  ideaComment IdeaComment? @relation(fields: [ideaCommentId], references: [id])
-  author      User?        @relation(fields: [authorId], references: [id])
+  id            Int          @id @default(autoincrement())
+  ideaCommentId Int?         @map("idea_comment_id")
+  authorId      String?      @map("author_id")
+  ideaComment   IdeaComment? @relation(fields: [ideaCommentId], references: [id])
+  author        User?        @relation(fields: [authorId], references: [id])
+
   @@map(name: "user_comment_dislikes")
 }
+
 model Advertisements {
   id       Int       @id @default(autoincrement())
   ownerId  String    @map("owner_id")
@@ -514,7 +519,7 @@ model SubSegments {
   name      String    @map("sub_segment_name")
   lat       Decimal?
   lon       Decimal?
-  radius    Decimal?      
+  radius    Decimal?
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @default(now()) @updatedAt @map("update_at")
 
