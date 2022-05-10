@@ -42,7 +42,11 @@ import { useHistory } from "react-router-dom";
 import "react-image-crop/dist/ReactCrop.css";
 import { handlePotentialAxiosError } from "../../lib/utilityFunctions";
 import { postCreateIdea } from "../../lib/api/ideaRoutes";
-import { postCreateCollabotator } from "src/lib/api/communityRoutes";
+import {
+  postCreateCollabotator,
+  postCreateVolunteer,
+  postCreateDonor,
+} from "src/lib/api/communityRoutes";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
@@ -83,6 +87,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     id: proposalId,
     suggestedIdeas,
     collaborations,
+    volunteers,
+    donors,
     needCollaborators,
     needVolunteers,
     needDonations,
@@ -129,16 +135,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     window.location.href = `/submit?supportedProposal=${proposalId}`;
   }
 
-  const [collaboratorIsOpen, setCollaboratorIsOpen] = useState(false);
-  const togglePopupCollaborator = () => {
-    setCollaboratorIsOpen(!collaboratorIsOpen);
-  };
-
-  const [volunteerIsOpen, setVolunteerIsOpen] = useState(false);
-  const togglePopupVoluteer = () => {
-    setVolunteerIsOpen(!volunteerIsOpen);
-  };
-
   const [donorIsOpen, setDonorIsOpen] = useState(false);
   const togglePopupDonor = () => {
     setDonorIsOpen(!donorIsOpen);
@@ -147,9 +143,10 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
-  const [crop, setCrop] = useState({ aspect: 16 / 9 });
 
   const [modalShowCollaborator, setModalShowCollaborator] = useState(false);
+  const [modalShowVolunteer, setModalShowVolunteer] = useState(false);
+  const [modalShowDonor, setModalShowDonor] = useState(false);
 
   const collaboratorSubmitHandler = async (values: any) => {
     try {
@@ -177,6 +174,58 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     }
   };
 
+  const volunteerSubmitHandler = async (values: any) => {
+    try {
+      // Set loading and error state
+      console.log("values", values);
+      setError(null);
+      setIsLoading(true);
+      setTimeout(() => console.log("timeout"), 5000);
+      const res = await postCreateVolunteer(
+        proposalId,
+        values,
+        user!.banned,
+        token
+      );
+      console.log("Here" + res);
+      setError(null);
+      formikVolunteer.resetForm();
+      window.location.reload();
+    } catch (error) {
+      const genericMessage = "An error occured while trying to create an Idea.";
+      const errorObj = handlePotentialAxiosError(genericMessage, error);
+      setError(errorObj);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const donorSubmitHandler = async (values: any) => {
+    try {
+      // Set loading and error state
+      console.log("values", values);
+      setError(null);
+      setIsLoading(true);
+      setTimeout(() => console.log("timeout"), 5000);
+      const res = await postCreateDonor(
+        proposalId,
+        values,
+        user!.banned,
+        token
+      );
+      console.log("Here" + res);
+      setError(null);
+      formikDonor.resetForm();
+      window.location.reload();
+    } catch (error) {
+      const genericMessage = "An error occured while trying to create an Idea.";
+      const errorObj = handlePotentialAxiosError(genericMessage, error);
+      setError(errorObj);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const formikCollaborator = useFormik({
     initialValues: {
       experience: "",
@@ -187,10 +236,29 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     onSubmit: collaboratorSubmitHandler,
   });
 
+  const formikVolunteer = useFormik({
+    initialValues: {
+      experience: "",
+      task: "",
+      time: "",
+      contactInfo: "",
+    },
+    onSubmit: volunteerSubmitHandler,
+  });
+
+  const formikDonor = useFormik({
+    initialValues: {
+      donations: "",
+      contactInfo: "",
+    },
+    onSubmit: donorSubmitHandler,
+  });
+
   const [followingPost, setFollowingPost] = useState(false);
 
   const addIdeaToUserFollowList = () => {
     console.log("addIdeaToUserFollowList");
+    console.log("proposalData", proposalData);
     setFollowingPost(!followingPost);
   };
 
@@ -540,66 +608,131 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <h4 className="h4">Volunteers</h4>
                 <p>Help support this project by becoming a volunteer</p>
               </div>
+
               <h4 className="text-center my-auto text-muted">
                 <div className="volunteer">
-                  <Button onClick={togglePopupVoluteer}>Sign Up</Button>
-                  {volunteerIsOpen && (
-                    <Popup
-                      content={
-                        <Form>
-                          <Form.Group>
-                            <p style={{ textAlign: "center" }}>Volunteer</p>
-                            <p style={{ fontSize: "1rem" }}>Experience</p>
+                  <Button
+                    variant="primary"
+                    onClick={() => setModalShowVolunteer(true)}
+                  >
+                    Sign-up
+                  </Button>
+                  <Modal
+                    show={modalShowVolunteer}
+                    onHide={() => setModalShowVolunteer(false)}
+                    size="lg"
+                    aria-labelledby="contained-modal-title-vcenter"
+                    centered
+                  >
+                    <Modal.Header closeButton>
+                      <Modal.Title id="contained-modal-title-vcenter">
+                        Volunteer
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form onSubmit={formikVolunteer.handleSubmit}>
+                        <Form.Group>
+                          <p style={{ fontSize: "1rem" }}>Experience</p>
 
-                            <Form.Control
-                              type="text"
-                              name="experience"
-                              value=""
-                              placeholder="What experience and skills do you bring to the project?"
-                            />
-                            <br />
+                          <Form.Control
+                            type="text"
+                            name="experience"
+                            onChange={formikVolunteer.handleChange}
+                            value={formikVolunteer.values.experience}
+                            placeholder="What experience and skills do you bring to the project?"
+                          />
+                          <br />
 
-                            <p style={{ fontSize: "1rem" }}>Task</p>
-                            <Form.Control
-                              type="text"
-                              name="role"
-                              value=""
-                              placeholder="What type of task would you like to work on?"
-                            />
-                            <br />
-                            <p style={{ fontSize: "1rem" }}>Time</p>
-                            <Form.Control
-                              type="text"
-                              name="time"
-                              value=""
-                              placeholder="How much time do you want to contribute?"
-                            />
-                            <br />
-                            <p style={{ fontSize: "1rem" }}>Contact</p>
-                            <Form.Control
-                              type="text"
-                              name="contactInfo"
-                              value=""
-                              placeholder="What is your contact information (e-mail and/or phone number)?"
-                            />
-                            <br />
-                          </Form.Group>
-                          <Button variant="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Form>
-                      }
-                      handleClose={togglePopupVoluteer}
-                    />
-                  )}
+                          <p style={{ fontSize: "1rem" }}>Task</p>
+                          <Form.Control
+                            type="text"
+                            name="task"
+                            onChange={formikVolunteer.handleChange}
+                            value={formikVolunteer.values.task}
+                            placeholder="What type of task would you like to work on?"
+                          />
+                          <br />
+                          <p style={{ fontSize: "1rem" }}>Time</p>
+                          <Form.Control
+                            type="text"
+                            name="time"
+                            onChange={formikVolunteer.handleChange}
+                            value={formikVolunteer.values.time}
+                            placeholder="How much time do you want to contribute?"
+                          />
+                          <br />
+                          <p style={{ fontSize: "1rem" }}>Contact</p>
+                          <Form.Control
+                            type="text"
+                            name="contactInfo"
+                            onChange={formikVolunteer.handleChange}
+                            value={formikVolunteer.values.contactInfo}
+                            placeholder="What is your contact information (e-mail and/or phone number)?"
+                          />
+                          <br />
+                          {error && (
+                            <Alert variant="danger" className="error-alert">
+                              {error.message}
+                            </Alert>
+                          )}
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          disabled={isLoading ? true : false}
+                        >
+                          {isLoading ? "Saving..." : "Submit"}
+                        </Button>
+                      </Form>
+                    </Modal.Body>
+                  </Modal>
                 </div>
               </h4>
             </div>
           </Card.Header>
           <Card.Body>
-            <p style={{ padding: "0px", textAlign: "center", margin: "0rem" }}>
-              No volunteers yet, be the first!
-            </p>
+            <Accordion>
+              {volunteers.length > 0 ? (
+                volunteers.map((volunteer: any, index: number) => (
+                  <Card key={index}>
+                    <Accordion.Toggle
+                      as={Card.Header}
+                      variant="link"
+                      eventKey={index.toString()}
+                      className="mouse-pointer"
+                    >
+                      {volunteer.author.fname} {volunteer.author.lname}
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey={index.toString()}>
+                      <Card.Body>
+                        <Table style={{ margin: "0rem" }}>
+                          <thead>
+                            <tr>
+                              <th>Experience</th>
+                              <th>Task</th>
+                              <th>Time</th>
+                              <th>Contact</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{volunteer.experience}</td>
+                              <td>{volunteer.task}</td>
+                              <td>{volunteer.time}</td>
+                              <td>{volunteer.contactInfo}</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                ))
+              ) : (
+                <p style={{ margin: "0rem", textAlign: "center" }}>
+                  No volunteers yet, be the first!
+                </p>
+              )}
+            </Accordion>
           </Card.Body>
         </Card>
       </div>
@@ -611,49 +744,107 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <h4 className="h4">Donors</h4>
                 <p>Donate to help this project grow</p>
               </div>
+
               <h4 className="text-center my-auto text-muted">
                 <div className="donor">
-                  <Button onClick={togglePopupDonor}>Sign Up</Button>
-                  {donorIsOpen && (
-                    <Popup
-                      content={
-                        <Form>
-                          <Form.Group>
-                            <p style={{ textAlign: "center" }}>Donate</p>
-                            <p style={{ fontSize: "1rem" }}>Contribution</p>
-
-                            <Form.Control
-                              type="text"
-                              name="experience"
-                              placeholder="What would you like to contribute?"
-                            />
-
-                            <br />
-                            <p style={{ fontSize: "1rem" }}>Contact</p>
-                            <Form.Control
-                              type="text"
-                              name="contactInfo"
-                              placeholder="What is your contact information (e-mail and/or
-                          phone number)?"
-                            />
-                            <br />
-                          </Form.Group>
-                          <Button variant="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Form>
-                      }
-                      handleClose={togglePopupDonor}
-                    />
-                  )}
+                  <Button
+                    variant="primary"
+                    onClick={() => setModalShowDonor(true)}
+                  >
+                    Donate
+                  </Button>
+                  <Modal
+                    show={modalShowDonor}
+                    onHide={() => setModalShowDonor(false)}
+                    size="lg"
+                    aria-labelledby="contained-modal-title-vcenter"
+                    centered
+                  >
+                    <Modal.Header closeButton>
+                      <Modal.Title id="contained-modal-title-vcenter">
+                        Donate
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form onSubmit={formikDonor.handleSubmit}>
+                        <Form.Group>
+                          <p style={{ fontSize: "1rem" }}>Donation</p>
+                          <Form.Control
+                            type="text"
+                            name="donations"
+                            onChange={formikDonor.handleChange}
+                            value={formikDonor.values.donations}
+                            placeholder="What would you like to contribute?"
+                          />
+                          <br />
+                          <p style={{ fontSize: "1rem" }}>Contact</p>
+                          <Form.Control
+                            type="text"
+                            name="contactInfo"
+                            onChange={formikDonor.handleChange}
+                            value={formikDonor.values.contactInfo}
+                            placeholder="What is your contact information (e-mail and/or phone number)?"
+                          />
+                          <br />
+                          {error && (
+                            <Alert variant="danger" className="error-alert">
+                              {error.message}
+                            </Alert>
+                          )}
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          disabled={isLoading ? true : false}
+                        >
+                          {isLoading ? "Saving..." : "Submit"}
+                        </Button>
+                      </Form>
+                    </Modal.Body>
+                  </Modal>
                 </div>
               </h4>
             </div>
           </Card.Header>
           <Card.Body>
-            <p style={{ padding: "0px", textAlign: "center", margin: "0rem" }}>
-              No donations yet, be the first!
-            </p>
+            <Accordion>
+              {donors.length > 0 ? (
+                donors.map((donor: any, index: number) => (
+                  <Card key={index}>
+                    <Accordion.Toggle
+                      as={Card.Header}
+                      variant="link"
+                      eventKey={index.toString()}
+                      className="mouse-pointer"
+                    >
+                      {donor.author.fname} {donor.author.lname}
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey={index.toString()}>
+                      <Card.Body>
+                        <Table style={{ margin: "0rem" }}>
+                          <thead>
+                            <tr>
+                              <th>Donation</th>
+                              <th>Contact</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{donor.donations}</td>
+                              <td>{donor.contactInfo}</td>
+                            </tr>
+                          </tbody>
+                        </Table>
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                ))
+              ) : (
+                <p style={{ margin: "0rem", textAlign: "center" }}>
+                  No donations yet, be the first!
+                </p>
+              )}
+            </Accordion>
           </Card.Body>
         </Card>
       </div>

@@ -205,7 +205,35 @@ proposalRouter.get(
                                 }
                             }
                         },
-                    }
+                    },
+                    volunteers: {
+                        select: {
+                            experience: true,
+                            task: true,
+                            time: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    donors: {
+                        select: {
+                            donations: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
                 }
             });
             if (!foundProposal) {
