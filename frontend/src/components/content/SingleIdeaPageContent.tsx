@@ -29,12 +29,15 @@ import { API_BASE_URL } from "src/lib/constants";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
+  ideaId: string;
 }
 
 const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   ideaData,
+  ideaId,
 }) => {
   const {
+    id,
     title,
     description,
     imagePath,
@@ -93,8 +96,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     return !ideaData.champion && !!ideaData.isChampionable;
   };
 
+  const [followingPost, setFollowingPost] = useState(false);
+
   const addIdeaToUserFollowList = () => {
     console.log("addIdeaToUserFollowList");
+    setFollowingPost(!followingPost);
   };
 
   return (
@@ -115,7 +121,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   style={{ height: "3rem" }}
                   onClick={() => addIdeaToUserFollowList()}
                 >
-                  Follow
+                  {followingPost ? "Unfollow" : "Follow"}
                 </Button>
               </div>
             </Card.Header>
@@ -282,7 +288,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <RatingsSection />
       </Row>
       <Row>
-        <CommentsSection />
+        <CommentsSection ideaId={ideaId} />
       </Row>
     </div>
   );

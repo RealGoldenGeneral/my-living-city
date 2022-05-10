@@ -212,6 +212,7 @@ const SubmitDirectProposalPageContent: React.FC<
     },
     onSubmit: submitHandler,
   });
+
   useEffect(() => {
     if (segData) {
       handleCommunityChange(0);

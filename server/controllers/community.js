@@ -9,13 +9,25 @@ const fs = require('fs');
 
 // post request to create a collaborator
 communityRouter.post(
-    '/create/collaborator/:proposalId',
+    '/create/collaborator',
     passport.authenticate('jwt', { session: false }),
     async (req, res, next) => {
         try {
-            const { email, id: loggedInUserId } = req.user;
-            const { content } = req.body;
-            const parsedProposalId = parseInt(req.params.proposalId);
+
+            console.log('create collaborator');
+
+            const { id: loggedInUserId } = req.user;
+            const {
+                proposalId,
+                experience,
+                role,
+                time,
+                contactInfo,
+            } = req.body;
+
+            console.log("collabValues: ", proposalId, experience, role, time, contactInfo);
+
+            const parsedProposalId = parseInt(proposalId);
 
             // check if id is valid
             if (!parsedProposalId) {
@@ -31,21 +43,37 @@ communityRouter.post(
                 });
             }
 
-            const createdCollaborator = await prisma.collaborator.create({
-                data: {
-                    author: loggedInUserId,
-                    proposal: parsedProposalId,
-                    experience: content,
-                    role: 'collaborator',
+            const createdCollaborator = await prisma.collaborator.upsert({
+                where: {
+                    collaborator_unique: {
+                        proposalId: parsedProposalId,
+                        authorId: loggedInUserId,
+                    },
+                },
+                update: {
+                    experience: experience,
+                    role: role,
+                    time: time,
+                    contactInfo: contactInfo,
+                },
+                create: {
+                    authorId: loggedInUserId,
+                    proposalId: parsedProposalId,
+                    experience: experience,
+                    role: role,
+                    time: time,
+                    contactInfo: contactInfo,
                 },
             });
 
 
 
             res.status(200).json(createdCollaborator);
+
         } catch (error) {
+            console.log(error);
             res.status(400).json({
-                message: `An error occured while trying to create a comment for idea ${req.params.proposalId}.`,
+                message: `Error creating collaborator: ${error}`,
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
@@ -55,6 +83,31 @@ communityRouter.post(
             await prisma.$disconnect();
         }
     }
+)
 
+communityRouter.get(
+    '/collaborators/getAll/:proposalId',
+    async (req, res, next) => {
+        try {
+            const { proposalId } = req.params;
+            const parsedProposalId = parseInt(proposalId);
+            const collaborators = await prisma.collaborator.findMany({
+                where: {
+                    proposalId: parsedProposalId,
+                },
+            });
+            res.status(200).json(collaborators);
+        } catch (error) {
+            res.status(400).json({
+                message: `Cannot get collaborators.`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
 )
 module.exports = communityRouter;
