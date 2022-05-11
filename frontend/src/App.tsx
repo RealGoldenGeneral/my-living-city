@@ -20,12 +20,14 @@ import SubmitAdvertisementPage from "./pages/SubmitAdvertisementPage";
 import ResetPasswordContent from "./pages/ResetPasswordPage";
 import SegmentManagementPage from "./pages/SegmentManagementPage";
 import AllAdsPage from "./pages/AllAdsPage";
+import UserAdsPage from "./pages/UserAdsPage";
 import EditAdsPage from "./pages/EditAdsPage";
 import AdminRoute from "./components/utility/AdminRoute";
 import UserManagementPage from "./pages/UserManagementPage";
 import SubmitDirectProposalPage from "./pages/SubmitDirectProposalPage";
 import DashboardPage from "./pages/DashboardPage";
 import MyPostsPage from "./pages/MyPostsPage";
+import BusinessRoute from "./components/utility/BusinessRoute";
 
 function App() {
   return (
@@ -62,6 +64,8 @@ function App() {
           />
           <PrivateRoute path={ROUTES.My_POSTS} component={MyPostsPage} />
           <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} />
+
+          <BusinessRoute path={ROUTES.USER_ADVERTISEMENTS} component={UserAdsPage} />
 
           <AdminRoute
             path={ROUTES.SUBMIT_ADVERTISEMENT}
