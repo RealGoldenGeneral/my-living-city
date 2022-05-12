@@ -14,8 +14,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ }) => {
     jwtAuthToken: token!,
     shouldTrigger: token != null
   });
-  
-
   if (isLoading) {
     return (
       <div className="wrapper">
@@ -23,7 +21,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ }) => {
       </div>
     )
   }
-
   if (isError) {
     return (
       <div className="wrapper">
@@ -31,7 +28,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ }) => {
       </div>
     )
   }
-
   return (
     <div className="wrapper">
       {user ? (

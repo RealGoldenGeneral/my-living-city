@@ -285,7 +285,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
         </Row>
       </Card>
       <Row>
-        <RatingsSection />
+        <RatingsSection ideaId={ideaId} />
       </Row>
       <Row>
         <CommentsSection ideaId={ideaId} />

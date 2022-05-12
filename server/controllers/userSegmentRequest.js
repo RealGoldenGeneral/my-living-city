@@ -25,27 +25,22 @@ userSegmentRequestRouter.post(
                     }
                 })
             }
-
             const {country,province,segmentName,subSegmentName} = req.body;
-
             if(!country||!isString(country)){
                 error+='country field is not in the request body. ';
-                errorMessage+='Creating a segment request must explicitly be supplied with a valid contry field.'
-                errorStack+='country must be provided in the body with a valid value. '
+                errorMessage+='Creating a segment request must explicitly be supplied with a valid country field.';
+                errorStack+='country must be provided in the body with a valid value. ';
             }
-
             if(!province||!isString(province)){
                 error+='province field is not in the request body. ';
                 errorMessage+='Creating a segment request must explicitly be supplied with a valid province field. ';
                 errorStack+='province must be provided in the body with a valid value. ';
             }
-
             if(!segmentName||!isString(segmentName)){
                 error+='segmentName field is not in the request body. ';
                 errorMessage+='Creating a segment request must explicitly be supplied with a valid segmentName field. ';
                 errorStack+='segmentName must be provided in the body with a valid value. ';
             }
-
             //If there's error in error holder
             if(error||errorMessage||errorStack){
                 return res.status(400).json({
