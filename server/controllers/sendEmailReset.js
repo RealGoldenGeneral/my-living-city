@@ -10,13 +10,11 @@ sendEmailRouter.post(
             const foundUser = await prisma.user.findUnique({
 				where: { email }
 			});
-            //console.log(foundUser);
             if (foundUser){
                 var mailOptions = {
                     from: process.env.EMAIL_USERNAME,
                     to: email,
                     subject: 'MyLivingCity Password Reset',
-                    //text: `Confirmation code: ${foundUser.id.substr(foundUser.id.length-6)}`
                     text: `${process.env.CORS_ORIGIN}/user/reset-password?passCode=${foundUser.passCode}`
                 };
                 var transporter = nodemailer.createTransport({

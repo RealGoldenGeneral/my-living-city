@@ -7,7 +7,7 @@ const Marker = (obj: any) => {
   }
       return (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
-        <path style={{fill:"#98cc74"}} d={iconPath[obj.icon]}/></svg>
+        <path style={{fill:"#549762"}} d={iconPath[obj.icon]}/></svg>
       )
     }
 export default Marker;
