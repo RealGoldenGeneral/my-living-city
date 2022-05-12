@@ -5,6 +5,8 @@ import { API_BASE_URL } from 'src/lib/constants';
 import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import {STRIPE_PUBLIC_KEY,STRIPE_PRODUCT_40} from "src/lib/constants"
 
 interface ProfileContentProps {
   user: IUser;
@@ -29,7 +31,42 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
     country,
   } = address!;
   const [show, setShow] = useState(false);
+  const [stripeLoading, setStripeLoading] = useState<boolean>(false);
+  const [stripeError, setStripeError] = useState(null);
   const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
+  const item = {
+    price: STRIPE_PRODUCT_40,
+    quantity: 1
+  };
+    
+  let stripePromise: any;
+
+  const getStripe = async ()  => {
+    if (!stripePromise) {
+      stripePromise = await loadStripe(STRIPE_PUBLIC_KEY);
+    }
+    return stripePromise;
+  };
+
+  const checkoutOptions = {
+    lineItems: [item],
+    mode: "payment",
+    successUrl: window.location.href,
+    cancelUrl: window.location.href
+  };
+
+  const redirectToCheckout = async () => {
+    setStripeLoading(true);
+    const stripe = await getStripe();
+    const { error } = await stripe.redirectToCheckout(checkoutOptions);
+    console.log("Stripe checkout error", error);
+
+    if (error) setStripeError(error.message);
+    setStripeLoading(false);
+  };
+
+  if (stripeError) alert(stripeError);
+
   useEffect(()=>{
     if(segmentRequests.length > 0){
       postUserSegmentRequest(segmentRequests, token);
@@ -52,7 +89,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
             </Row>
             <Card.Title className='mt-3'>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</Card.Title>
             <Card.Text className='mb-3'>{ email }</Card.Text>
+              <button type="button" className="btn btn-primary btn-lg m-4" onClick={redirectToCheckout} disabled={stripeLoading}>
+                  {stripeLoading ? "Loading..." : "Upgrade Now"}
+              </button>
           </Card>
+        
           
         <Card style={{ width: '40rem'}}>
           <Row className='justify-content-center mt-3'>
