@@ -917,7 +917,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
       )}
 
       <Row>
-        <RatingsSection />
+        <RatingsSection ideaId={parsedIdeaId} />
       </Row>
       <Row>
         <CommentsSection ideaId={parsedIdeaId} />
