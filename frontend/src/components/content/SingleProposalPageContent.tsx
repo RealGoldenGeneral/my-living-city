@@ -257,6 +257,14 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     setFollowingPost(!followingPost);
   };
 
+  let isPostAuthor = false;
+
+  if (user) {
+    isPostAuthor = author!.id === user!.id;
+  }
+
+  console.log("isPostAuthor", isPostAuthor);
+
   return (
     <div className="single-idea-content pt-5">
       <style>
@@ -550,51 +558,71 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 </h4>
               </div>
             </Card.Header>
-            <Card.Body>
-              <Accordion>
+            {isPostAuthor ? (
+              <Card.Body>
                 {collaborations.length > 0 ? (
-                  collaborations.map((collaboration: any, index: number) => (
-                    <Card key={index}>
-                      <Accordion.Toggle
-                        as={Card.Header}
-                        variant="link"
-                        eventKey={index.toString()}
-                        className="mouse-pointer"
-                      >
-                        {collaboration.author.fname}{" "}
-                        {collaboration.author.lname}
-                      </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={index.toString()}>
-                        <Card.Body>
-                          <Table style={{ margin: "0rem" }}>
-                            <thead>
-                              <tr>
-                                <th>Contact</th>
-                                <th>Time</th>
-                                <th>Experience</th>
-                                <th>Role</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>{collaboration.contactInfo}</td>
-                                <td>{collaboration.time}</td>
-                                <td>{collaboration.experience}</td>
-                                <td>{collaboration.role}</td>
-                              </tr>
-                            </tbody>
-                          </Table>
-                        </Card.Body>
-                      </Accordion.Collapse>
-                    </Card>
-                  ))
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Collaborator</th>
+                        <th>Contact</th>
+                        <th>Time</th>
+                        <th>Experience</th>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {collaborations.map(
+                        (collaboration: any, index: number) => (
+                          <tr>
+                            <td>
+                              {collaboration.author.fname}{" "}
+                              {collaboration.author.lname}
+                            </td>
+                            <td>{collaboration.contactInfo}</td>
+                            <td>{collaboration.time}</td>
+                            <td>{collaboration.experience}</td>
+                            <td>{collaboration.role}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
                 ) : (
                   <p style={{ margin: "0rem", textAlign: "center" }}>
                     No collaborators yet, be the first!
                   </p>
                 )}
-              </Accordion>
-            </Card.Body>
+              </Card.Body>
+            ) : (
+              <Card.Body>
+                {collaborations.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Collaborator</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {collaborations.map(
+                        (collaboration: any, index: number) => (
+                          <tr>
+                            <td>
+                              {collaboration.author.fname}{" "}
+                              {collaboration.author.lname}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No collaborators yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
+            )}
           </Card>
         </div>
       )}
@@ -691,50 +719,65 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 </h4>
               </div>
             </Card.Header>
-            <Card.Body>
-              <Accordion>
+            {isPostAuthor ? (
+              <Card.Body>
                 {volunteers.length > 0 ? (
-                  volunteers.map((volunteer: any, index: number) => (
-                    <Card key={index}>
-                      <Accordion.Toggle
-                        as={Card.Header}
-                        variant="link"
-                        eventKey={index.toString()}
-                        className="mouse-pointer"
-                      >
-                        {volunteer.author.fname} {volunteer.author.lname}
-                      </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={index.toString()}>
-                        <Card.Body>
-                          <Table style={{ margin: "0rem" }}>
-                            <thead>
-                              <tr>
-                                <th>Contact</th>
-                                <th>Time</th>
-                                <th>Experience</th>
-                                <th>Task</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>{volunteer.contactInfo}</td>
-                                <td>{volunteer.time}</td>
-                                <td>{volunteer.experience}</td>
-                                <td>{volunteer.task}</td>
-                              </tr>
-                            </tbody>
-                          </Table>
-                        </Card.Body>
-                      </Accordion.Collapse>
-                    </Card>
-                  ))
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Volunteer</th>
+                        <th>Contact</th>
+                        <th>Time</th>
+                        <th>Experience</th>
+                        <th>Task</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {volunteers.map((volunteer: any, index: number) => (
+                        <tr>
+                          <td>
+                            {volunteer.author.fname} {volunteer.author.lname}
+                          </td>
+                          <td>{volunteer.contactInfo}</td>
+                          <td>{volunteer.time}</td>
+                          <td>{volunteer.experience}</td>
+                          <td>{volunteer.task}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 ) : (
                   <p style={{ margin: "0rem", textAlign: "center" }}>
                     No volunteers yet, be the first!
                   </p>
                 )}
-              </Accordion>
-            </Card.Body>
+              </Card.Body>
+            ) : (
+              <Card.Body>
+                {volunteers.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Volunteer</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {volunteers.map((volunteer: any, index: number) => (
+                        <tr>
+                          <td>
+                            {volunteer.author.fname} {volunteer.author.lname}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No volunteers yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
+            )}
           </Card>
         </div>
       )}
@@ -810,49 +853,65 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 </h4>
               </div>
             </Card.Header>
-            <Card.Body>
-              <Accordion>
+            {isPostAuthor ? (
+              <Card.Body>
                 {donors.length > 0 ? (
-                  donors.map((donor: any, index: number) => (
-                    <Card key={index}>
-                      <Accordion.Toggle
-                        as={Card.Header}
-                        variant="link"
-                        eventKey={index.toString()}
-                        className="mouse-pointer"
-                      >
-                        {donor.author.fname} {donor.author.lname}
-                      </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={index.toString()}>
-                        <Card.Body>
-                          <Table style={{ margin: "0rem" }}>
-                            <thead>
-                              <tr>
-                                <th>Contact</th>
-                                <th>Donation</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>{donor.contactInfo}</td>
-                                <td>{donor.donations}</td>
-                              </tr>
-                            </tbody>
-                          </Table>
-                        </Card.Body>
-                      </Accordion.Collapse>
-                    </Card>
-                  ))
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Donor</th>
+                        <th>Contact</th>
+                        <th>Donation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {donors.map((donor: any, index: number) => (
+                        <tr>
+                          <td>
+                            {donor.author.fname} {donor.author.lname}
+                          </td>
+                          <td>{donor.contactInfo}</td>
+                          <td>{donor.donations}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 ) : (
                   <p style={{ margin: "0rem", textAlign: "center" }}>
-                    No donations yet, be the first!
+                    No donors yet, be the first!
                   </p>
                 )}
-              </Accordion>
-            </Card.Body>
+              </Card.Body>
+            ) : (
+              <Card.Body>
+                {donors.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Donor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {donors.map((donor: any, index: number) => (
+                        <tr>
+                          <td>
+                            {donor.author.fname} {donor.author.lname}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No donors yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
+            )}
           </Card>
         </div>
       )}
+
       {needSuggestions && (
         <div style={{ marginTop: "2rem" }}>
           <Card>
@@ -869,48 +928,34 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
               </div>
             </Card.Header>
             <Card.Body>
-              <Accordion>
-                {suggestedIdeas.length > 0 ? (
-                  suggestedIdeas.map((idea: any, index: number) => (
-                    <Card key={index}>
-                      <Accordion.Toggle
-                        as={Card.Header}
-                        variant="link"
-                        eventKey={index.toString()}
-                        className="mouse-pointer"
-                      >
-                        {idea.author.fname} {idea.author.lname}
-                      </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={index.toString()}>
-                        <Card.Body>
-                          <Table style={{ margin: "0rem" }}>
-                            <thead>
-                              <tr>
-                                <th>Author</th>
-                                <th>Idea</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>
-                                  {idea.author.fname} {idea.author.lname}
-                                </td>
-                                <td>
-                                  <a href={"/ideas/" + idea.id}>{idea.title}</a>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </Table>
-                        </Card.Body>
-                      </Accordion.Collapse>
-                    </Card>
-                  ))
-                ) : (
-                  <p style={{ margin: "0rem", textAlign: "center" }}>
-                    No donations yet, be the first!
-                  </p>
-                )}
-              </Accordion>
+              {suggestedIdeas.length > 0 ? (
+                <Table style={{ margin: "0rem" }} hover>
+                  <thead>
+                    <tr>
+                      <th>Author</th>
+                      <th>Idea</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {suggestedIdeas.map((suggestion: any, index: number) => (
+                      <tr>
+                        <td>
+                          {suggestion.author.fname} {suggestion.author.lname}
+                        </td>
+                        <td>
+                          <a href={"/ideas/" + suggestion.id}>
+                            {suggestion.title}
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : (
+                <p style={{ margin: "0rem", textAlign: "center" }}>
+                  No suggestions yet, be the first!
+                </p>
+              )}
             </Card.Body>
           </Card>
         </div>
