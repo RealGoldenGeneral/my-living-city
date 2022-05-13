@@ -1,9 +1,7 @@
 export const __prod__ = process.env.NODE_ENV === "production";
 export const API_BASE_URL =
   process.env.REACT_APP_BASE_API_URL || "http://localhost:3001";
-export const GOOGLE_PHYSICAL_MAP_KEY =
-  process.env.GOOGLE_PHYSICAL_MAP_API_KEY || "";
-
+export const MAP_KEY = "AIzaSyBL0eyMR3xMdqjesBSprUv2yQDq-4j3tCM";
 // UTILITY defaults
 export const UTIL_FUNCTIONS = {
   delayDefault: Number(process.env.REACT_APP_UTIL_FUNC_DELAY ?? 2000),
@@ -60,6 +58,7 @@ export const ROUTES = {
   TEAM404: "/*",
   SUBMIT_ADVERTISEMENT: "/advertisement/submit",
   ALL_ADVERTISEMENT: "/advertisement/all", //
+  USER_ADVERTISEMENTS: "/advertisement/user", //
   EDIT_ADVERTISEMENT: "/advertisement/edit",
   SEND_EMAIL: "/sendEmail",
   RESET_PASSWORD: "/user/reset-password",

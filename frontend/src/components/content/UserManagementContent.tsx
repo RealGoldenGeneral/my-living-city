@@ -41,7 +41,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
-            
             <tbody>
             {users?.map((req: IUser, index: number) => (
                 <tr key={req.id}>
