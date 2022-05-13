@@ -73,6 +73,7 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({ ideaId }) => {
       {user && (
         <Row className="py-5 bg-mlc-shade-grey">
           <RatingInput
+            ideaId={ideaId}
             userHasRated={userHasRated}
             userSubmittedRating={userSubmittedRating}
           />

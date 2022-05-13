@@ -95,7 +95,9 @@ ideaRouter.post(
           //TODO
         } = req.body;
 
-        supportingProposalId = parseInt(supportingProposalId);
+        if (supportingProposalId) {
+          supportingProposalId = parseInt(supportingProposalId);
+        }
         categoryId = parseInt(categoryId);
 
         if (subSegmentId) {
