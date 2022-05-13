@@ -83,7 +83,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       history.push("/ideas/" + res.id);
       formik.resetForm();
     } catch (error) {
-      const genericMessage = "An error occured while trying to create an Idea.";
+      const genericMessage =
+        "An error occured while trying to create an Proposal.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {

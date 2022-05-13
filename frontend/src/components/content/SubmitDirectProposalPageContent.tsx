@@ -242,16 +242,6 @@ const SubmitDirectProposalPageContent: React.FC<
       });
   }
 
-  useEffect(() => {
-    reverseGeocode();
-  }, [markers.home.lat, markers.home.lon]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      formik.setFieldValue("location", "Enter a location");
-    }, 500);
-  }, []);
-
   return (
     <Container className="submit-idea-page-content">
       <Row className="mb-4 mt-4 justify-content-center">
@@ -631,7 +621,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -647,7 +636,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -663,7 +651,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -679,7 +666,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -695,7 +681,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -722,7 +707,6 @@ const SubmitDirectProposalPageContent: React.FC<
                   type="text"
                   name="location"
                   onChange={formik.handleChange}
-                  value={formik.values.location}
                   placeholder="Enter Location (Optional)"
                   style={{ marginBottom: "1rem" }}
                 />
