@@ -62,7 +62,7 @@ enum AdType {
 model UserGeo {
   // keys
   id     Int    @id @default(autoincrement())
-  userId String @map("user_id") @unique
+  userId String @unique @map("user_id")
 
   // Columns
   lat        Decimal?
@@ -83,7 +83,7 @@ model UserGeo {
 model UserAddress {
   // keys
   id     Int    @id @default(autoincrement())
-  userId String @map("user_id") @unique
+  userId String @unique @map("user_id")
 
   // Columns
   streetAddress  String?  @map("street_address")
@@ -146,7 +146,7 @@ model User {
 // user segment entity
 model UserSegments {
   id                   String        @id @default(cuid())
-  userId               String        @map("user_id") @unique
+  userId               String        @unique @map("user_id")
   user                 User?         @relation(fields: [userId], references: [id])
   homeSuperSegId       Int?          @map("home_super_segment_id")
   homeSuperSegName     String?       @map("home_super_segment_name")
@@ -207,7 +207,7 @@ enum IdeaState {
 model IdeaGeo {
   // keys
   id         Int  @id @default(autoincrement())
-  ideaId     Int? @map("idea_id") @unique
+  ideaId     Int? @unique @map("idea_id")
   proposalId Int? @map("proposal_id")
 
   // Columns
@@ -225,7 +225,7 @@ model IdeaGeo {
 model IdeaAddress {
   // keys
   id         Int  @id @default(autoincrement())
-  ideaId     Int? @map("idea_id") @unique
+  ideaId     Int? @unique @map("idea_id")
   proposalId Int? @map("proposal_id")
 
   // Columns
@@ -355,7 +355,7 @@ model Idea {
 
 model Proposal {
   id     Int @id @default(autoincrement())
-  ideaId Int @map("idea_id") @unique
+  ideaId Int @unique @map("idea_id")
 
   needCollaborators Boolean @default(false)
   needVolunteers    Boolean @default(false)
@@ -384,7 +384,7 @@ model Proposal {
 model Project {
   // keys
   id     Int @id @default(autoincrement())
-  ideaId Int @map("idea_id") @unique
+  ideaId Int @unique @map("idea_id")
 
   // fields
   // TODO: Add fields that would be in Project state
