@@ -1,20 +1,21 @@
 import { useContext } from 'react'
 import { RouteProps, Route, Redirect } from 'react-router-dom'
 import { UserProfileContext } from '../../contexts/UserProfile.Context';
-import { ROUTES } from '../../lib/constants';
+import { ROUTES, USER_TYPES } from '../../lib/constants';
 
 /**
  * Private Route Higher Order Component that checks if the user is logged in 
  * and redirects them to the desired authenticated page or redirects them to login page
  * if they are not authenticated. 
  */
-interface BusinessRouteProps {
+interface CustomRouteProps {
     redirectPath?: string;
     path: RouteProps['path'];
     component: React.ElementType
+    userTypes: USER_TYPES[]
     }
 
-    const BusinessRoute: React.FC<BusinessRouteProps> = ({
+    const AdminRoute: React.FC<CustomRouteProps> = ({
     redirectPath,
     component: Component,
     ...routeProps
@@ -33,7 +34,7 @@ interface BusinessRouteProps {
         <Route
         {...routeProps}
         render={(props) =>
-            isLoggedIn && user!.userType === "BUSINESS" ? (
+            isLoggedIn && routeProps.userTypes.includes(user!.userType) ? (
             <ComponentToRender {...props} />
             ) : (
             <Redirect to={ redirectPath || ROUTES.LOGIN } />
@@ -43,4 +44,4 @@ interface BusinessRouteProps {
     );
 }
 
-export default BusinessRoute
+export default AdminRoute

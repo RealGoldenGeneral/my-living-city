@@ -16,7 +16,7 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import ImageUploader from 'react-images-upload';
-import { USER_TYPES } from 'src/lib/constants';
+import { ROUTES, USER_TYPES } from 'src/lib/constants';
 interface RegisterPageContentProps {
 }
 
@@ -38,6 +38,7 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const [avatar, setAvatar] = useState(undefined);
     const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
     const [userType, setUserType] = useState<string>(USER_TYPES.RESIDENTIAL);
+    const [createAdAfter, setCreateAdAfter] = useState<boolean>(false);
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
@@ -51,9 +52,13 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
             }  
     }
 
+    // useEffect(() => {
+    //     console.log(`User Type: ${userType}`);
+    // }, [userType]);
+
     useEffect(() => {
-        console.log(`User Type: ${userType}`);
-    }, [userType]);
+        console.log(`Create Ad after?: ${createAdAfter}`);
+    }, [createAdAfter]);
     
 return (
     <div className='register-page-content'>
@@ -84,7 +89,7 @@ return (
                     homeSubSegmentId: undefined,
                     workSubSegmentId: undefined,
                     schoolSubSegmentId: undefined,
-                    userType: "Standard",
+                    userType: USER_TYPES.RESIDENTIAL,
                 }}  
                 markers={markers}
                 setSegment={setSegment}
@@ -108,9 +113,12 @@ return (
                         const { token, user } = await postRegisterUser(values, segmentRequests, avatar);
                         storeUserAndTokenInLocalStorage(token, user);
                         storeTokenExpiryInLocalStorage();
-                        setToken(token);
-                        setUser(user);
-                        // await postAvatarImage(selectedFile, token);
+
+                        createAdAfter ? window.location.replace(ROUTES.SUBMIT_ADVERTISEMENT) : window.location.replace(ROUTES.LANDING);
+                        createAdAfter ? console.log("Forward to ad happening"): console.log("Forward to ad not happening");
+                       
+                        // setToken(token);
+                        // setUser(user);
                         } catch (error) {
                             console.log(error);
                             wipeLocalStorage();
@@ -132,11 +140,12 @@ return (
                     })}>
                     <BForm.Group>
                         <BForm.Label>Select User Type</BForm.Label>
-                        <select name="userType" onChange={e => setUserType(e.target.value)} value={userType}>
-                            <option value={USER_TYPES.RESIDENTIAL} label="Standard">Standard</option>
-                            <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
-                            <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
-                        </select>
+                        <BForm.Control required name="userType" as="select"
+                            onChange={e => {setUserType(e.target.value)}} value={userType}> 
+                                <option value={USER_TYPES.RESIDENTIAL} label="Standard">Standard</option>
+                                <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
+                                <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
+                        </BForm.Control>
                     </BForm.Group>
                     <BForm.Group>
                         <BForm.Label>Email address</BForm.Label> 
@@ -302,7 +311,11 @@ return (
 
                 {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
                 <FormikStep>
-                    <p>Create complementary Ad section</p>
+                    <BForm.Group>
+                        <h4>Would you like to setup Complementary Ad afterwards?</h4>
+                        <BForm.Check inline name="createAdRadio" label="No" type="radio" id="inline-checkbox"  onClick={()=>{setCreateAdAfter(false)}} />
+                        <BForm.Check inline name="createAdRadio" label="Yes" type="radio" id="inline-checkbox" onClick={()=>{setCreateAdAfter(true)}} />
+                    </BForm.Group>
                 </FormikStep>
                 }
 
@@ -410,7 +423,6 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                 setStep(s=>s-1);
             }
         } else {
-            console.log(`From step: ${step}`);
             if (step === 2) {
                 setStep(s=>s-1);
             } else {
@@ -488,6 +500,11 @@ return(
     validationSchema={currentChild?.props.validationSchema}
     onSubmit={async(values, helpers)=>{
 
+        if (step===0) {
+            values.userType = userType;
+            console.log(values.userType);
+        }
+
         if(isLastStep()){
             setIsLoading(true);
             await new Promise(r => setTimeout(r, 2000));
@@ -527,7 +544,9 @@ return(
                 //setStep(s=>s+1);
             }
             setIsLoading(false);
-        }else if(step===7){
+        }else if((step===7 && userType === USER_TYPES.RESIDENTIAL) 
+            || (step===5 && userType === USER_TYPES.COMMUNITY)
+            || (step===5 && userType === USER_TYPES.BUSINESS)){
             setIsLoading(true);
             //Field setters for the external inputs. Formik can only handle native form elements.
             //These fields must be added manually.

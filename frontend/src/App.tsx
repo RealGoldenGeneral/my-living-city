@@ -3,7 +3,7 @@ import Footer from "./components/ui/Footer";
 import Header from "./components/ui/Header";
 
 // Pages
-import { ROUTES } from "./lib/constants";
+import { ROUTES, USER_TYPES } from "./lib/constants";
 import LandingPage from "./pages/LandingPage";
 import ConversationsPage from "./pages/ConversationsPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -22,7 +22,7 @@ import SegmentManagementPage from "./pages/SegmentManagementPage";
 import AllAdsPage from "./pages/AllAdsPage";
 import EditAdsPage from "./pages/EditAdsPage";
 import AdminRoute from "./components/utility/AdminRoute";
-import BusinessRoute from "./components/utility/BusinessRoute";
+import CustomRoute from "./components/utility/CustomRoute";
 import UserManagementPage from "./pages/UserManagementPage";
 import SubmitDirectProposalPage from "./pages/SubmitDirectProposalPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -64,9 +64,10 @@ function App() {
           <PrivateRoute path={ROUTES.My_POSTS} component={MyPostsPage} />
           <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} />
 
-          <AdminRoute
+          <CustomRoute
             path={ROUTES.SUBMIT_ADVERTISEMENT}
             component={SubmitAdvertisementPage}
+            userTypes={[USER_TYPES.BUSINESS, USER_TYPES.COMMUNITY, USER_TYPES.ADMIN]}
           />
           <AdminRoute path={ROUTES.ALL_ADVERTISEMENT} component={AllAdsPage} />
           <AdminRoute
@@ -82,7 +83,10 @@ function App() {
             component={UserManagementPage}
           />
 
-          <BusinessRoute path={ROUTES.MY_ADVERTISMENT} component={AllAdsPage} ></BusinessRoute>
+          <CustomRoute 
+            path={ROUTES.MY_ADVERTISMENT} 
+            component={AllAdsPage}
+            userTypes={[USER_TYPES.BUSINESS, USER_TYPES.COMMUNITY]} />
 
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>

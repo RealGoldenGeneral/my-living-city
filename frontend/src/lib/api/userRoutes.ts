@@ -92,6 +92,7 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
     homeSubSegmentId,
     workSubSegmentId,
     schoolSubSegmentId,
+    userType,
   } = registerData;
   let request3 = null;
   let request4 = null;
@@ -104,7 +105,7 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
   if (password !== confirmPassword) {
     throw new Error("Both your passwords must match. Please ensure both passwords match to register.")
   }
-  const request = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo});
+  const request = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo, userType});
   const request2 = await axios({
     method: "post",
     url: `${API_BASE_URL}/userSegment/create`,
@@ -146,7 +147,7 @@ if(requestData){
     })
 }
 }
-const request6 = await postAvatarImage(avatar, request.data.token);
+const request6 = avatar ? await postAvatarImage(avatar, request.data.token) : null;
 axios.all([request, request2, request3, request4, request5, request6]).then((...responses)=>{
   console.log(responses);
 })

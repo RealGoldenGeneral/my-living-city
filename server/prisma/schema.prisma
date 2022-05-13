@@ -37,6 +37,7 @@ enum UserType {
   WORKER
   ASSOCIATE
   DEVELOPER
+  COMMUNITY
 
   @@map(name: "user_type")
 }
