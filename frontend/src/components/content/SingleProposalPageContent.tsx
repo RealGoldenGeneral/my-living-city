@@ -161,7 +161,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
       formikCollaborator.resetForm();
       window.location.reload();
     } catch (error) {
-      const genericMessage = "An error occured while trying to create an Idea.";
+      const genericMessage =
+        "An error occured while trying to create an Proposal.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
       setError(errorObj);
     } finally {
