@@ -17,6 +17,8 @@ import { IRegisterInput } from '../../lib/types/input/register.input';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import ImageUploader from 'react-images-upload';
 import { ROUTES, USER_TYPES } from 'src/lib/constants';
+import {  RegisterPageContentReach, CheckBoxItem } from "./RegisterPageContentReach";
+
 interface RegisterPageContentProps {
 }
 
@@ -49,16 +51,34 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
             }
             if(subSegments2 && subSegments2[0].segId === id){
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
-            }  
+            }
     }
 
     // useEffect(() => {
     //     console.log(`User Type: ${userType}`);
     // }, [userType]);
 
-    useEffect(() => {
-        console.log(`Create Ad after?: ${createAdAfter}`);
-    }, [createAdAfter]);
+    // useEffect(() => {
+    //     console.log(`Create Ad after?: ${createAdAfter}`);
+    // }, [createAdAfter]);
+
+    const getReachData = (): CheckBoxItem[] => {
+        let data: CheckBoxItem[] = [];
+        
+        if (segment) {
+            let seg1Data: CheckBoxItem = {"label": segment?.name, "value": "segment1", 
+                "children": subSegments?.map(e => {return {"label": e.name, "value": e.id}})}
+            data.push(seg1Data);
+        }
+
+        if (segment2) {
+            let seg2Data: CheckBoxItem = {"label": segment2?.name, "value": "segment2", 
+                "children": subSegments2?.map(e => {return {"label": e.name, "value": e.id}})}
+            data.push(seg2Data);
+        }
+        console.log(`Reach data: ${JSON.stringify(data)}`);
+        return data;
+    }
     
 return (
     <div className='register-page-content'>
@@ -305,7 +325,7 @@ return (
 
                 {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
                 <FormikStep>
-                    <p>Reach content</p>
+                    <RegisterPageContentReach data={getReachData()}/>
                 </FormikStep>
                 }
 
@@ -460,13 +480,14 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             if(googleQuery.city2){
                 const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
                 if(seg2){
-                    console.log('here');
                     props.setSegment2(seg2);
                     refactorStateArray(segIds, index, seg2.segId, setSegIds);
                     
                     //refactorSegIds(index,seg2.segId);
                     const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
                     props.setSubSegments2(sub2);
+                    // console.log(`Seg2: ${JSON.stringify(seg2)}`);
+                    // console.log(`SubSeg2: ${JSON.stringify(sub2)}`)
                 }else{
                     props.setSegment2(null);
                     props.setSubSegments2(null);
@@ -480,6 +501,8 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                     //refactorSegIds(index,seg.segId);
                     const sub = await findSubsegmentsBySegmentId(seg.segId);
                     props.setSubSegments(sub);
+                    // console.log(`Seg: ${JSON.stringify(seg)}`);
+                    // console.log(`SubSeg1: ${JSON.stringify(sub)}`)
                 }else{
                     props.setSegment(null);
                     props.setSubSegments(null);

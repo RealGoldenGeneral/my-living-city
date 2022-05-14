@@ -83,11 +83,6 @@ function App() {
             component={UserManagementPage}
           />
 
-          <CustomRoute 
-            path={ROUTES.MY_ADVERTISMENT} 
-            component={AllAdsPage}
-            userTypes={[USER_TYPES.BUSINESS, USER_TYPES.COMMUNITY]} />
-
           <Route path={ROUTES.TEAM404} component={Team404Page} />
         </Switch>
       </div>
