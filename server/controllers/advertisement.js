@@ -61,7 +61,7 @@ advertisementRouter.post(
             });
 
             //test to see if the user is an admin or business user
-            if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS"){
+            if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS" || theUser.userType=="COMMUNITY"){
 
                 //if there's no object in the request body
                 if(isEmpty(req.body)){
