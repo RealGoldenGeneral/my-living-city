@@ -53,29 +53,28 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }
     }
+    const [selectedSubSegId, setSelectedSubSegId] = useState<any>([]);
 
-    // useEffect(() => {
-    //     console.log(`User Type: ${userType}`);
-    // }, [userType]);
-
-    // useEffect(() => {
-    //     console.log(`Create Ad after?: ${createAdAfter}`);
-    // }, [createAdAfter]);
+    useEffect(() => {
+        console.log(selectedSubSegId);
+    }, [selectedSubSegId]);
 
     const getReachData = (): CheckBoxItem[] => {
         let data: CheckBoxItem[] = [];
+        let region: CheckBoxItem = {"label": "Region", "value": "Region", "children": []};
         
         if (segment) {
             let seg1Data: CheckBoxItem = {"label": segment?.name, "value": "segment1", 
                 "children": subSegments?.map(e => {return {"label": e.name, "value": e.id}})}
-            data.push(seg1Data);
+            region.children && region.children.push(seg1Data);
         }
 
         if (segment2) {
             let seg2Data: CheckBoxItem = {"label": segment2?.name, "value": "segment2", 
                 "children": subSegments2?.map(e => {return {"label": e.name, "value": e.id}})}
-            data.push(seg2Data);
+            region.children && region.children.push(seg2Data);
         }
+        data.push(region);
         console.log(`Reach data: ${JSON.stringify(data)}`);
         return data;
     }
@@ -325,7 +324,7 @@ return (
 
                 {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
                 <FormikStep>
-                    <RegisterPageContentReach data={getReachData()}/>
+                    <RegisterPageContentReach data={getReachData()} selected={selectedSubSegId} setSelected={setSelectedSubSegId}/>
                 </FormikStep>
                 }
 
@@ -525,7 +524,7 @@ return(
 
         if (step===0) {
             values.userType = userType;
-            console.log(values.userType);
+            console.log(`User type: ${values.userType}`);
         }
 
         if(isLastStep()){

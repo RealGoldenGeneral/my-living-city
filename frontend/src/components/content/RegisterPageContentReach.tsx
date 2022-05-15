@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react"
+import React, { Dispatch, useEffect, useState } from "react"
 import { Form } from "react-bootstrap";
-import { capitalizeFirstLetterEachWord } from "./../../lib/utilityFunctions";
+import { capitalizeFirstLetterEachWord, getDuplicatesRemoved } from "./../../lib/utilityFunctions";
 import CSS from "csstype";
 
 
@@ -12,34 +12,27 @@ export type CheckBoxItem = {
 
 interface RegisterPageContentReachProps {
     data: CheckBoxItem[]
+    selected: any
+    setSelected: Dispatch<any>
 }
 
 export const RegisterPageContentReach: 
-    React.FC<RegisterPageContentReachProps> = ({data}) => {
-        const [selected, setSelected] = useState<any>([]);
-
-        useEffect(() => {
-            console.log(selected);
-        }, [selected])
-
+    React.FC<RegisterPageContentReachProps> = ({data, selected, setSelected}) => {
         return (
             <div>
-                <h3>Please select your advertisement target reach users:</h3>
-                <CheckboxTree data={data} selected={selected} setSelected={setSelected}/>
+                <h3>Please select your advertisement targeted users:</h3>
+                <CheckboxTree data={data} parent={null} selected={selected} setSelected={setSelected}/>
             </div>
         );
 }
 
 interface CheckBoxTreeProps {
     data: CheckBoxItem[]
+    parent: CheckBoxItem | null
     [key: string]:any
 }
 
-export const CheckboxTree: React.FC<CheckBoxTreeProps> = ({data, ...props}: CheckBoxTreeProps) => {
-
-    const treeDiv: CSS.Properties = {
-        marginLeft: "20px",
-    }
+export const CheckboxTree: React.FC<CheckBoxTreeProps> = ({data, parent, ...props}: CheckBoxTreeProps) => {
 
     /**
      * Note: this function does not return the leaf children, instead it populates it with
@@ -57,23 +50,34 @@ export const CheckboxTree: React.FC<CheckBoxTreeProps> = ({data, ...props}: Chec
         });
     }
 
-    const onChangeCallback = (e: any, childrenItems: CheckBoxItem[] | undefined) => {
-        // console.log(e.target.checked);
+    /**
+     * Set the items' checked attribute to the value in isChecked
+     * @param items list of CheckboxItems
+     * @param isChecked whether the items are going to be checked or not
+     */
+    const setCheckboxesChecked = (items: CheckBoxItem[], isChecked: boolean) => {
+        items.forEach(item=> {
+            let itemElement = document.getElementById(`${item.value}`) as HTMLInputElement | null;
+            if (itemElement !== null) itemElement.checked = isChecked;
+        });
+    }
+
+    /**
+     * Handles when a checkbox is checked or unchecked
+     * @param e event
+     * @param childrenItems list of immediate children of the element inw which the event is triggered from
+     */
+    const onChangeCallback = (e: any, childrenItems: CheckBoxItem[] | undefined, siblings: CheckBoxItem[] | undefined) => {
         const isCheckboxChecked: boolean = e.target.checked;
 
-        // Check whats the value of the checkbox is
-        // if there is children
-            // for every leave children add/remove that children's id to selected var
-            // set the checked property of an element with that id to true/false
-        //else
-            // add/remove this element id to the selected
-            // set the checked property of an element with this id to true/false
         let selectedCopy = props.selected;
         if (childrenItems && childrenItems.length > 0) {
             let leafChildren: CheckBoxItem[] = [];
             getAllLeaveChildrenItems(childrenItems, leafChildren);
-            // console.log(`Leaf children: `)
-            // leafChildren.map((child) => (console.log(child)))xw
+            
+            let allChildren: CheckBoxItem[] = [...childrenItems, ...leafChildren];
+            allChildren = getDuplicatesRemoved(allChildren); // leafChildren can be childrenItems
+            setCheckboxesChecked(allChildren, isCheckboxChecked);
 
             if (isCheckboxChecked) { // Checked
                 leafChildren.forEach(child => {
@@ -87,18 +91,44 @@ export const CheckboxTree: React.FC<CheckBoxTreeProps> = ({data, ...props}: Chec
                     }
                 });
             }
-
         } else {
-            // console.log(`No children`);
             if (isCheckboxChecked) { // Checked
-                props.setSelected([...props.selected, Number(e.target.id)]);
+                if (!selectedCopy.includes(Number(e.target.id))) selectedCopy = [...selectedCopy, Number(e.target.id)];
             } else { // Unchecked
                 const index = selectedCopy.indexOf(Number(e.target.id));
                 if (index !== -1) selectedCopy.splice(index, 1);
             }
         }
-
         props.setSelected([...selectedCopy]);
+
+        // Update parent's checkbox
+        if (parent !== null) {
+            let areSiblingsChecked = true;
+            siblings && siblings.forEach(sibling => {
+                const siblingElem = document.getElementById(`${sibling.value}`) as HTMLInputElement | null;
+                if (siblingElem !== null) {
+                    areSiblingsChecked = areSiblingsChecked && siblingElem.checked;
+                }
+            });
+
+            let parentElem = document.getElementById(`${parent.value}`) as HTMLInputElement;
+            parentElem.checked = isCheckboxChecked && areSiblingsChecked;
+        }
+    }
+
+    /**
+     * Return the siblings of this item
+     * @param item a CheckboxItem
+     * @returns siblings of this Checkbox item
+     */
+    const getSiblings = (item: CheckBoxItem) => {
+        const siblings = data.filter(element => element !== item);
+        return siblings;
+       
+    }
+
+    const treeDiv: CSS.Properties = {
+        marginLeft: "20px",
     }
 
     return (
@@ -106,9 +136,9 @@ export const CheckboxTree: React.FC<CheckBoxTreeProps> = ({data, ...props}: Chec
             {data && data.map((item, i) => {
                 return(
                     <div key={i}>
-                        <input type="checkbox" id={item.value} onChange={(e) => {onChangeCallback(e, item.children)}}/>
+                        <input type="checkbox" id={item.value} onChange={(e) => {onChangeCallback(e, item.children, getSiblings(item))}}/>
                         <Form.Label>{capitalizeFirstLetterEachWord(item.label)}</Form.Label>
-                        {item.children && <CheckboxTree data={item.children} selected={props.selected} setSelected={props.setSelected}/>}
+                        {item.children && <CheckboxTree data={item.children} parent={item} selected={props.selected} setSelected={props.setSelected}/>}
                     </div>
                 )
             })}
