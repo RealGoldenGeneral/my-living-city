@@ -4,7 +4,7 @@ import { ErrorMessage, Field, Form, Formik, FormikConfig } from 'formik';
 import React, { useContext, useEffect, useState } from 'react';
 import SimpleMap from '../map/SimpleMap';
 import { capitalizeFirstLetterEachWord, capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
-import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
+import { findSegmentByName, findSubsegmentsBySegmentId, getAllSegmentsWithSuperSegId } from 'src/lib/api/segmentRoutes';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import * as Yup from 'yup';
 import Stepper from 'react-stepper-horizontal';
@@ -53,31 +53,32 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
             }
     }
-    const [selectedSubSegId, setSelectedSubSegId] = useState<any>([]);
+    const [selectedSegId, setselectedSegId] = useState<any>([]);
+    const [reachData, setReachData] = useState<CheckBoxItem[]>([]);
 
-    useEffect(() => {
-        console.log(selectedSubSegId);
-    }, [selectedSubSegId]);
-
-    const getReachData = (): CheckBoxItem[] => {
+    const getReachData = async () => {
         let data: CheckBoxItem[] = [];
-        let region: CheckBoxItem = {"label": "Region", "value": "Region", "children": []};
-        
-        if (segment) {
-            let seg1Data: CheckBoxItem = {"label": segment?.name, "value": "segment1", 
-                "children": subSegments?.map(e => {return {"label": e.name, "value": e.id}})}
-            region.children && region.children.push(seg1Data);
-        }
+        let region: CheckBoxItem = {"label": segment?.province, "value": "Region", "children": []};
 
-        if (segment2) {
-            let seg2Data: CheckBoxItem = {"label": segment2?.name, "value": "segment2", 
-                "children": subSegments2?.map(e => {return {"label": e.name, "value": e.id}})}
-            region.children && region.children.push(seg2Data);
-        }
+        const res = await getAllSegmentsWithSuperSegId(segment?.superSegId);
+
+        res.forEach(segment => {
+            region.children?.push({
+                "label": segment?.name,
+                "value": segment?.segId
+            })
+        });
+        
         data.push(region);
         console.log(`Reach data: ${JSON.stringify(data)}`);
-        return data;
+        setReachData(data);
     }
+
+    useEffect(() => {
+        if (segment !== null && (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY)) {
+            getReachData()
+        }
+    }, [segment]);
     
 return (
     <div className='register-page-content'>
@@ -109,6 +110,7 @@ return (
                     workSubSegmentId: undefined,
                     schoolSubSegmentId: undefined,
                     userType: USER_TYPES.RESIDENTIAL,
+                    reachSegmentIds: [],
                 }}  
                 markers={markers}
                 setSegment={setSegment}
@@ -124,20 +126,16 @@ return (
                 schoolTransfer={schoolTransfer}
                 avatar={avatar}
                 userType={userType}
+                reachSegmentIds={selectedSegId}
                 onSubmit={async(values,helpers)=>{
                     // const {email, password, confirmPassword} = values;
                     try {
                         console.log(values);
                         setIsLoading(true);
-                        const { token, user } = await postRegisterUser(values, segmentRequests, avatar);
-                        storeUserAndTokenInLocalStorage(token, user);
-                        storeTokenExpiryInLocalStorage();
+                        await postRegisterUser(values, segmentRequests, avatar);
+                        if (createAdAfter) {window.location.href =ROUTES.SUBMIT_ADVERTISEMENT}
+                        else {window.location.href = ROUTES.LANDING};
 
-                        createAdAfter ? window.location.replace(ROUTES.SUBMIT_ADVERTISEMENT) : window.location.replace(ROUTES.LANDING);
-                        createAdAfter ? console.log("Forward to ad happening"): console.log("Forward to ad not happening");
-                       
-                        // setToken(token);
-                        // setUser(user);
                         } catch (error) {
                             console.log(error);
                             wipeLocalStorage();
@@ -324,7 +322,7 @@ return (
 
                 {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
                 <FormikStep>
-                    <RegisterPageContentReach data={getReachData()} selected={selectedSubSegId} setSelected={setSelectedSubSegId}/>
+                    <RegisterPageContentReach data={reachData} selected={selectedSegId} setSelected={setselectedSegId}/>
                 </FormikStep>
                 }
 
@@ -334,6 +332,7 @@ return (
                         <h4>Would you like to setup Complementary Ad afterwards?</h4>
                         <BForm.Check inline name="createAdRadio" label="No" type="radio" id="inline-checkbox"  onClick={()=>{setCreateAdAfter(false)}} />
                         <BForm.Check inline name="createAdRadio" label="Yes" type="radio" id="inline-checkbox" onClick={()=>{setCreateAdAfter(true)}} />
+                        <p>You would need to setup account payment first at the submission step</p>
                     </BForm.Group>
                 </FormikStep>
                 }
@@ -387,8 +386,9 @@ export interface FormikStepperProps extends FormikConfig<IRegisterInput> {
     schoolTransfer: boolean;
     avatar: any;
     userType: any;
+    reachSegmentIds: any;
 }
-export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, avatar, userType, ...props }: FormikStepperProps) {
+export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, avatar, userType, reachSegmentIds, ...props }: FormikStepperProps) {
     const childrenArray = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[];
     const [step, setStep] = useState(0);
     const [inferStep, setInferStep]=useState(0);
@@ -523,8 +523,11 @@ return(
     onSubmit={async(values, helpers)=>{
 
         if (step===0) {
-            values.userType = userType;
-            console.log(`User type: ${values.userType}`);
+            values.userType = (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) ?  USER_TYPES.IN_PROGRESS : USER_TYPES.RESIDENTIAL;
+        }
+
+        if (step===3 && (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY)) {
+            values.reachSegmentIds = reachSegmentIds;
         }
 
         if(isLastStep()){

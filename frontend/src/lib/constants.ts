@@ -46,6 +46,7 @@ export enum USER_TYPES {
   DEVELOPER = "DEVELOPER",
   RESIDENTIAL = "RESIDENTIAL",
   COMMUNITY = "COMMUNITY",
+  IN_PROGRESS = "IN_PROGRESS",
 }
 // Routes should be placed here and called into "path" in Route component
 export const ROUTES = {

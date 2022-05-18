@@ -18,6 +18,7 @@ export interface IRegisterInput {
   workSubSegmentId?: number;
   schoolSubSegmentId?: number;
   userType: string;
+  reachSegmentIds: any[];
 }
 export interface IUserRegisterData {
   email: string;

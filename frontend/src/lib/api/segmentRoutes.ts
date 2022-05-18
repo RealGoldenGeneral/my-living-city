@@ -1,6 +1,12 @@
 import axios from "axios"
 import { API_BASE_URL } from "../constants"
 import { ISegment, ISubSegment } from "../types/data/segment.type"
+
+export const getAllSegmentsWithSuperSegId = async (superSegId: any) => {
+  const res = await axios.get<ISegment[]>(`${API_BASE_URL}/segment/getBySuperSegId/${superSegId}`);
+  return res.data;
+}
+
 export const getAllSegments = async () => {
   const res = await axios.get<ISegment[]>(`${API_BASE_URL}/segment/getall`);
   return res.data;
@@ -21,7 +27,7 @@ export const createSegment = async (segData: any, token:any) =>{
       withCredentials: true
   })
   if(!(res.status===201 || res.status===200)){
-      throw new Error(res.data);    
+      throw new Error(res.data);
   }
   return res.data;
 }
