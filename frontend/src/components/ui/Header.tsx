@@ -44,6 +44,10 @@ export default function Header() {
 
                 <NavDropdown title="Submit" id="nav-dropdown">
                   <Nav.Link href="/submit">Submit Idea</Nav.Link>
+                      {/*if user == BUSINESS
+                      if user.availableProposals == 0
+                      <Nav.Link href="/no-proposals-left">Submit proposal</Nav.Link>
+                    else*/}
                   <Nav.Link href="/submit-direct-proposal">
                     Submit Proposal
                   </Nav.Link>
