@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import CSS from "csstype";
 import {
   NavDropdown,
   Nav,
@@ -17,9 +18,23 @@ export default function Header() {
     shouldTrigger: token != null,
   });
   console.log(data);
+
+  const paymentNotificationStyling: CSS.Properties = {
+    backgroundColor: "#f7e4ab", 
+    justifyContent: "center",
+    padding: "0.2rem",
+    whiteSpace: "pre",
+  }
+
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
+      {user?.userType === "IN_PROGRESS" && 
+        (<Nav style={paymentNotificationStyling}>
+          You have not paid your account payment. To upgrade your account, please go to the <a href="/profile">profile</a> section.
+        </Nav>)
+      }
+    
       <Navbar className="inner-header" bg="light" expand="sm">
         <Navbar.Brand href="/">
           <img

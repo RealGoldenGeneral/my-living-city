@@ -26,6 +26,7 @@ passport.use(
           return done({ message: "You must supply a password."})
         }
 
+        console.log("Request body create user");
         console.log(req.body);
 
         // hash password
