@@ -4,14 +4,12 @@ const accountRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
 accountRouter.get(
-    '/:userId',
+    '/details',
     async (req, res) => {
         try {
             const result = await prisma.userStripe.findFirst({
                 where: {
-                    userId: {
-                        equals: req.userId
-                    }
+                    userId: req.body.userId
                 }
             })
 
