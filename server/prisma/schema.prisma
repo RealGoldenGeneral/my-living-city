@@ -121,22 +121,6 @@ model User {
   userType UserType @default(RESIDENTIAL) @map("user_type")
 
   // Fields
-<<<<<<< HEAD
-  email     String   @unique
-  password  String
-  fname     String?  @map("f_name")
-  lname     String?  @map("l_name")
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
-  imagePath String?
-  passCode  String?  @default(cuid())
-  banned    Boolean  @default(false)
-  // Relationships
-
-  address         UserAddress?
-  geo             UserGeo?
-  userReach       UserReach[]
-=======
   email        String   @unique
   password     String
   fname        String?  @map("f_name")
@@ -155,7 +139,7 @@ model User {
   // Relationship
   address             UserAddress?
   geo                 UserGeo?
->>>>>>> parent of 4dc510b (Revert "initial commit of capstone 2022 dev branch with database changes for testing")
+  userReach           UserReach[]
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
   ideas               Idea[]                @relation("ideaAuthor")
   championedIdeas     Idea[]                @relation("ideaChampion")
@@ -562,13 +546,13 @@ model Segments {
 // UserReach
 model UserReach {
   // Columns
-  id          String    @id @default(cuid())
-  userId      String    @map("user_id")
-  segId       Int       
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  segId  Int
 
   // Relations
-  user User             @relation(references: [id], fields: [userId])
-  segment Segments      @relation(references: [segId], fields: [segId])    
+  user    User     @relation(references: [id], fields: [userId])
+  segment Segments @relation(references: [segId], fields: [segId])
 
   @@unique([userId, segId], name: "user_reach_unique")
   @@map(name: "user_reach")
