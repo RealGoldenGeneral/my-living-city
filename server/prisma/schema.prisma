@@ -1,5 +1,5 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: https://pris.ly/d/prisma-schem
 
 datasource db {
   provider = "postgresql"
@@ -26,7 +26,6 @@ model Report {
 
 // User Entity
 enum UserType {
-  SUPER_ADMIN
   ADMIN
   MOD
   SEG_ADMIN
@@ -101,17 +100,6 @@ model UserAddress {
   @@map(name: "user_address")
 }
 
-// ADDED FOR MODERATOR FUNCTIONALITY
-model Ban {
-  id         String   @id @default(cuid())
-  userId     String //@map("user_id")
-  user       User?    @relation(fields: [userId], references: [id])
-  banDate    DateTime @default(now()) @map(name: "ban_date")
-  banUntil   DateTime @map(name: "banned_until")
-  banMessage String?  @map(name: "ban_message")
-
-}
-
 model User {
   // Keys
   id       String   @id @default(cuid())
@@ -119,28 +107,23 @@ model User {
   userType UserType @default(RESIDENTIAL) @map("user_type")
 
   // Fields
-  email        String   @unique
-  password     String
-  fname        String?  @map("f_name")
-  lname        String?  @map("l_name")
-  createdAt    DateTime @default(now()) @map(name: "created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map(name: "updated_at")
-  imagePath    String?
-  passCode     String?  @default(cuid())
-  //useful fields for moderation:
-  banned       Boolean  @default(false)
-  // NEW FIELDS FOR MODERATOR FUNCTIONALITY
-  totalFlagged Int      @default(0) @map("total_flagged")
-  hasFlagged   Int      @default(0) @map("has_flagged")
+  email     String   @unique
+  password  String
+  fname     String?  @map("f_name")
+  lname     String?  @map("l_name")
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map(name: "updated_at")
+  imagePath String?
+  passCode  String?  @default(cuid())
+  banned    Boolean  @default(false)
+  // Relationships
 
-
-  // Relationship
-  address             UserAddress?
-  geo                 UserGeo?
+  address         UserAddress?
+  geo             UserGeo?
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
-  ideas               Idea[]                @relation("ideaAuthor")
-  championedIdeas     Idea[]                @relation("ideaChampion")
-  bans                Ban[]
+  ideas           Idea[]       @relation("ideaAuthor")
+  championedIdeas Idea[]       @relation("ideaChampion")
+
   // championedIdeas     Idea[]                @relation("championedIdeas")
   ideaRatings         IdeaRating[]
   ideaComments        IdeaComment[]
@@ -357,10 +340,6 @@ model Idea {
   address      IdeaAddress?
   geo          IdeaGeo?
 
-  // Moderator Fields
-  ideaFlagNumber Int     @default(0) @map("idea_flag_num")
-  bannedIdea     Boolean @default(false) @map("banned_idea")
-
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
   author            User         @relation("ideaAuthor", fields: [authorId], references: [id])
@@ -438,29 +417,24 @@ model IdeaRating {
 
 model IdeaComment {
   // keys
-  id             Int      @id @default(autoincrement())
-  ideaId         Int      @map("idea_id")
+  id             Int                   @id @default(autoincrement())
+  ideaId         Int                   @map("idea_id")
   // Fields
-  authorId       String   @map("author_id")
-  userSegId      String   @map("user_segment_id")
-  superSegmentId Int?     @map("super_segment_id")
-  segmentId      Int?     @map("segment_id")
-  subSegmentId   Int?     @map("sub_segment_id")
+  authorId       String                @map("author_id")
+  userSegId      String                @map("user_segment_id")
+  superSegmentId Int?                  @map("super_segment_id")
+  segmentId      Int?                  @map("segment_id")
+  subSegmentId   Int?                  @map("sub_segment_id")
   content        String
-  active         Boolean  @default(true)
-  createdAt      DateTime @default(now()) @map(name: "created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at")
-
-  // Moderator Fields
-
-  commentFlagNumber Int                   @default(0) @map("comment_flag_num")
-  bannedComment     Boolean               @default(false) @map("banned_comment")
+  active         Boolean               @default(true)
+  createdAt      DateTime              @default(now()) @map(name: "created_at")
+  updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
   // relations
-  author            User                  @relation(fields: [authorId], references: [id])
-  idea              Idea                  @relation(fields: [ideaId], references: [id])
-  userSeg           UserSegments          @relation(fields: [userSegId], references: [id])
-  likes             UserCommentLikes[]
-  dislikes          UserCommentDislikes[]
+  author         User                  @relation(fields: [authorId], references: [id])
+  idea           Idea                  @relation(fields: [ideaId], references: [id])
+  userSeg        UserSegments          @relation(fields: [userSegId], references: [id])
+  likes          UserCommentLikes[]
+  dislikes       UserCommentDislikes[]
 
   @@map(name: "idea_comment")
 }
