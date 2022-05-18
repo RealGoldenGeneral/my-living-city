@@ -15,17 +15,20 @@ import {
 interface RatingInputProps {
   userHasRated: boolean;
   userSubmittedRating: number | null;
+  ideaId: string;
 }
 
 const RatingInput = ({
+  ideaId,
   userHasRated,
   userSubmittedRating,
 }: RatingInputProps) => {
   const { token, user } = useContext(UserProfileContext);
-  const { ideaId } = useParams<{ ideaId: string }>();
   const [ratingValue, setRatingValue] = useState<number>(
     userSubmittedRating ?? 0
   );
+
+  console.log("ideaId", ideaId);
 
   // =================== SUBMITTING RATING MUTATION ==========================
   const { submitRatingMutation, isLoading, isError, error, isSuccess } =
