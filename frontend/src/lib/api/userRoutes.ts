@@ -1,7 +1,8 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { API_BASE_URL } from "../constants";
+import axios, { AxiosResponse } from "axios";
+import { API_BASE_URL, USER_TYPES } from "../constants";
 import { IUser } from "../types/data/user.type";
 import { IRegisterInput, IUserRegisterData, IUserSegmentRequest } from "../types/input/register.input";
+import { delay, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage } from "../utilityFunctions";
 import { postAvatarImage } from "./avatarRoutes";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 export interface LoginData {
@@ -92,6 +93,8 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
     homeSubSegmentId,
     workSubSegmentId,
     schoolSubSegmentId,
+    userType,
+    reachSegmentIds,
   } = registerData;
   let request3 = null;
   let request4 = null;
@@ -104,7 +107,7 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
   if (password !== confirmPassword) {
     throw new Error("Both your passwords must match. Please ensure both passwords match to register.")
   }
-  const request = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo});
+  const request = await axios.post<LoginResponse>(`${API_BASE_URL}/user/signup`, {email,password,confirmPassword,fname,lname,address,geo, userType});
   const request2 = await axios({
     method: "post",
     url: `${API_BASE_URL}/userSegment/create`,
@@ -146,27 +149,31 @@ export const postRegisterUser = async(registerData: IRegisterInput, requestData:
       })
   }
 }
+const request6 = avatar ? await postAvatarImage(avatar, request.data.token) : null;
 
-  const request6 = avatar ? await postAvatarImage(avatar, request.data.token) : null;
-  axios.all([request, request2, request3, request4, request5, request6]).then((...responses)=>{
-    console.log(responses);
+let request7: AxiosResponse<any>[] = [];
+if (userType === USER_TYPES.IN_PROGRESS || userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) {
+  reachSegmentIds?.forEach(async (segId) => {
+    const newUserReachReq = await axios({
+      method: "post",
+      url: `${API_BASE_URL}/reach/create`,
+      data: {
+        segId: segId,
+        userId: request.data.user.address?.userId,
+      },
+      headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": request.data.token},
+      withCredentials: true,
+    });
+    request7.push(newUserReachReq);
   })
-  return request.data;
-  
-    // .then(res=> (
-    //   axios({
-    //     method: "post",
-    //     url: `${API_BASE_URL}/userSegment/create`,
-    //     data: { 
-            // homeSegmentId,
-            // workSegmentId,
-            // schoolSegmentId,
-            // homeSubSegmentId,
-            // workSubSegmentId,
-            // schoolSubSegmentId
-    //     },
-    //     headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": res.data.token},
-    //     withCredentials: true
-    // }))
-  
+} 
+
+Promise.all([request, request2, request3, request4, request5, request6, ...request7]).then((...responses)=>{
+  console.log(responses);
+})
+const {token, user} = request.data;
+storeUserAndTokenInLocalStorage(token, user);
+storeTokenExpiryInLocalStorage();
+await delay(2000);
+return request.data;
 }
