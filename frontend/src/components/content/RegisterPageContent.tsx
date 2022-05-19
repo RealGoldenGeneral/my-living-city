@@ -18,6 +18,7 @@ import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import ImageUploader from 'react-images-upload';
 import { ROUTES, USER_TYPES } from 'src/lib/constants';
 import {  RegisterPageContentReach, CheckBoxItem } from "./RegisterPageContentReach";
+import CSS from "csstype";
 
 interface RegisterPageContentProps {
 }
@@ -40,7 +41,6 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const [avatar, setAvatar] = useState(undefined);
     const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
     const [userType, setUserType] = useState<string>(USER_TYPES.RESIDENTIAL);
-    const [createAdAfter, setCreateAdAfter] = useState<boolean>(false);
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
@@ -58,7 +58,7 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
 
     const getReachData = async () => {
         let data: CheckBoxItem[] = [];
-        let region: CheckBoxItem = {"label": segment?.province, "value": "Region", "children": []};
+        let region: CheckBoxItem = {"label": segment?.superSegName, "value": "SuperSeg", "children": []};
 
         const res = await getAllSegmentsWithSuperSegId(segment?.superSegId);
 
@@ -79,6 +79,10 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
             getReachData()
         }
     }, [segment]);
+
+    const userTypeInfoContainerStyles: CSS.Properties = {
+        marginTop: "40px"
+    }
     
 return (
     <div className='register-page-content'>
@@ -133,18 +137,32 @@ return (
                         console.log(`Sign up values: ${values}`);
                         setIsLoading(true);
                         await postRegisterUser(values, segmentRequests, avatar);
-                        if (createAdAfter) {window.location.href =ROUTES.SUBMIT_ADVERTISEMENT}
-                        else {window.location.href = ROUTES.LANDING};
-
-                        } catch (error) {
-                            console.log(error);
-                            wipeLocalStorage();
-                        }finally{
-                            setIsLoading(false);
-                        }
+                        if (userType === USER_TYPES.RESIDENTIAL) {window.location.href = ROUTES.LANDING};
+                    } catch (error) {
+                        console.log(error);
+                        wipeLocalStorage();
+                    }finally{
+                        setIsLoading(false);
+                    }
                 }
             }
             >
+                <FormikStep>
+                    <h3>Please select your account type:</h3>
+                    <BForm.Group>
+                        <BForm.Control required name="userType" as="select"
+                            onChange={e => {setUserType(e.target.value)}} value={userType}> 
+                                <option value={USER_TYPES.RESIDENTIAL} label="Standard">Standard</option>
+                                <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
+                                <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
+                        </BForm.Control>
+                        <div style={userTypeInfoContainerStyles}>
+                            <p><strong>Standard (FREE): </strong>For individuals to engage with the community by submitting ideas, ratings of ideas and commenting on</p>
+                            <p><strong>Business ($100/yr): </strong>For businesses to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                            <p><strong>Community ($50/yr): </strong>For community organizations and nonprofits to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                        </div>
+                    </BForm.Group>
+                </FormikStep>
                 <FormikStep validationSchema={Yup.object().shape({
                     password: Yup.string().min(8, 'Password is too short, 8 characters minimum'),
                     confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
@@ -155,15 +173,6 @@ return (
                             .then(res => {res === 200 ? resolve(false) : resolve(true)})
                         })})
                     })}>
-                    <BForm.Group>
-                        <BForm.Label>Select User Type</BForm.Label>
-                        <BForm.Control required name="userType" as="select"
-                            onChange={e => {setUserType(e.target.value)}} value={userType}> 
-                                <option value={USER_TYPES.RESIDENTIAL} label="Standard">Standard</option>
-                                <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
-                                <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
-                        </BForm.Control>
-                    </BForm.Group>
                     <BForm.Group>
                         <BForm.Label>Email address</BForm.Label> 
                         <Field required name="email" type="email" as={BForm.Control}/>
@@ -222,8 +231,6 @@ return (
                         <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
                             refactorStateArray(segIds, 0, parseInt(e.target.value), setSegIds);
                             refactorStateArray(subIds, 0, null, setSubIds);
-                            // refactorSegIds(0,parseInt(e.target.value));
-                            // refactorSubIds(0, null);
                             }}>
                             {segment && <option value={segment?.segId}>{capitalizeFirstLetterEachWord(segment?.name)}</option>}
                             {segment2 && <option value={segment2?.segId}>{capitalizeFirstLetterEachWord(segment2?.name)}</option>}
@@ -327,17 +334,6 @@ return (
                 </FormikStep>
                 }
 
-                {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
-                <FormikStep>
-                    <BForm.Group>
-                        <h4>Would you like to setup Complementary Ad afterwards?</h4>
-                        <BForm.Check inline name="createAdRadio" label="No" type="radio" id="inline-checkbox"  onClick={()=>{setCreateAdAfter(false)}} />
-                        <BForm.Check inline name="createAdRadio" label="Yes" type="radio" id="inline-checkbox" onClick={()=>{setCreateAdAfter(true)}} />
-                        <p>You would need to setup account payment first at the submission step</p>
-                    </BForm.Group>
-                </FormikStep>
-                }
-
                 <FormikStep>
                         <p>It takes a lot to bring an idea to form, and as a user on the MLC Community Discussion Platform the following agreements will enable the interactions that turn ideas into reality:</p>
                         <p><strong> 1. Ideas, comments and people are treated with respect;</strong></p>
@@ -352,8 +348,18 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                        <h3>To complete your registration click submit</h3>
+                        <h3>To complete your account registration click submit</h3>
                 </FormikStep>
+
+                {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
+                <FormikStep>
+                    <BForm.Group>
+                        <h4>Would you like to setup Complementary Ad afterwards?</h4>
+                        <BForm.Check inline name="createAdRadio" label="Yes" type="radio" id="inline-checkbox"  onClick={()=>{window.location.href = ROUTES.SUBMIT_ADVERTISEMENT}} />
+                        <BForm.Check inline name="createAdRadio" label="No" type="radio" id="inline-checkbox" onClick={()=>{window.location.href = ROUTES.LANDING}} />
+                    </BForm.Group>
+                </FormikStep>
+                }
 
             </FormikStepper>
 
@@ -401,7 +407,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     const isLastStep = () => { return step === childrenArray.length - 1 };
     const nextOrLoading = () => { return isLoading ? 'Loading...' : 'Next' };
     const submitOrSubmitting = () => { return isLoading ? 'Submitting...':'Submit' };
-    const isHomeMarkerSet = () => { return (step===1 && markers.home.lat === null) };
+    const isHomeMarkerSet = () => { return (step===2 && markers.home.lat === null) };
     const getStepHeader = (step: number) => {
         switch(step) {
             case 0:
@@ -411,11 +417,11 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             case 2:
                 return userType === USER_TYPES.RESIDENTIAL ? "Work Location" : "Reach";
             case 3:
-                return userType === USER_TYPES.RESIDENTIAL ? "School Location" : "Complementary Ad Setup"
+                return userType === USER_TYPES.RESIDENTIAL ? "School Location" : "Privacy Policy"
             case 4:
-                return "Privacy Policy"
+                return userType === USER_TYPES.RESIDENTIAL? "Privacy Policy" : "Submit"
             case 5:
-                return "Submit"
+                return userType === USER_TYPES.RESIDENTIAL? "Submit" : "Create Complementary Ad"
             default:
                 return ""
         }
@@ -431,19 +437,19 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     //Since some steps will have multiple "steps" the infer step decreases dependant on if map selections have occured.
     const handleBackButton = () => {
         if (userType === USER_TYPES.RESIDENTIAL) {
-            if(step % 2 !== 0){
+            if(step % 2 === 0 && step !== 0){
                 setInferStep(s=>s-1);
             }
             if(isLastStep()) setInferStep(s=>s-1);
-            if(step===7 && markers.school.lat === null){
+            if(step===8 && markers.school.lat === null){
                 setStep(s=>s-2);
-            }else if(step === 5 && markers.work.lat === null){
+            }else if(step === 6 && markers.work.lat === null){
                 setStep(s=>s-2);
             }else{
                 setStep(s=>s-1);
             }
         } else {
-            if (step === 2) {
+            if (step === 3 || step === 1) {
                 setStep(s=>s-1);
             } else {
                 setStep(s=>s-1);
@@ -517,29 +523,31 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
         }
         
     }
+
 return(
     <Formik
     {...props}
     validationSchema={currentChild?.props.validationSchema}
     onSubmit={async(values, helpers)=>{
-
-        if (step===0) {
-            values.userType = (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) ?  USER_TYPES.IN_PROGRESS : USER_TYPES.RESIDENTIAL;
-        }
-
-        if (step===3 && (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY)) {
+        if (step===4 && (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY)) {
             values.reachSegmentIds = reachSegmentIds;
         }
 
-        if(isLastStep()){
+        if (step===0) {
+            values.userType = (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) ?  USER_TYPES.IN_PROGRESS : USER_TYPES.RESIDENTIAL;
+            setStep(s=>s+1);
+        } else if ((isLastStep() && userType === USER_TYPES.RESIDENTIAL) || ((userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && step===6)) {
             setIsLoading(true);
             await new Promise(r => setTimeout(r, 2000));
             await props.onSubmit(values, helpers);
-            
-        }else if(step=== 1){
+            if (userType !== USER_TYPES.RESIDENTIAL) {
+                setStep(s=>s+1);
+                setInferStep(s=>s+1);
+            }
+        }else if(step=== 2){
             const seg = await setSegData(0);
             showMap(false);
-        }else if(step=== 3 && userType === USER_TYPES.RESIDENTIAL){
+        }else if(step=== 4 && userType === USER_TYPES.RESIDENTIAL){
             if(markers.work.lat === null){
                 setStep(s=>s+2);
                 setInferStep(s=>s+1);
@@ -554,7 +562,7 @@ return(
                 //setStep(s=>s+1);
             }
             showMap(false);
-        }else if(step=== 5 && userType === USER_TYPES.RESIDENTIAL){
+        }else if(step=== 6 && userType === USER_TYPES.RESIDENTIAL){
             console.log(segIds);
             if(markers.school.lat === null){
                 setStep(s=>s+2);
@@ -570,7 +578,7 @@ return(
                 //setStep(s=>s+1);
             }
             setIsLoading(false);
-        }else if((step===7 && userType === USER_TYPES.RESIDENTIAL) 
+        }else if((step===8 && userType === USER_TYPES.RESIDENTIAL) 
             || (step===5 && userType === USER_TYPES.COMMUNITY)
             || (step===5 && userType === USER_TYPES.BUSINESS)){
             setIsLoading(true);
@@ -631,11 +639,14 @@ return(
         {currentChild}
         {error && (<Alert variant='danger' className="error-alert">{ error.message }</Alert>)}
         <div className="text-center">
-        {step > 0 ? <Button className="float-left mt-3" size="lg" variant="outline-primary" onClick={()=>{handleBackButton()}}>Back</Button> : null}
-        <Button className="float-right mt-3 d-flex align-items-center" size="lg" type="submit" disabled={isLoading||isHomeMarkerSet()}>
-        {isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
-        {isLastStep() ? submitOrSubmitting() : nextOrLoading()}
-        </Button>
+        {(step > 0 && userType === USER_TYPES.RESIDENTIAL) || ((!isLastStep() && step > 0) && userType !== USER_TYPES.RESIDENTIAL) ? <Button className="float-left mt-3" size="lg" variant="outline-primary" onClick={()=>{handleBackButton()}}>Back</Button> : null}
+
+        {isLastStep() && userType !== USER_TYPES.RESIDENTIAL ? null : 
+            <Button className="float-right mt-3 d-flex align-items-center" size="lg" type="submit" disabled={isLoading||isHomeMarkerSet()}>
+            {isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+            {(isLastStep() && userType === USER_TYPES.RESIDENTIAL) || (userType !== USER_TYPES.RESIDENTIAL && step===6) ? submitOrSubmitting() : nextOrLoading()}
+            </Button>
+        }
         </div>
 
     </Form>
