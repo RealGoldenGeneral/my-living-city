@@ -18,6 +18,7 @@ import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import ImageUploader from 'react-images-upload';
 import { ROUTES, USER_TYPES } from 'src/lib/constants';
 import {  RegisterPageContentReach, CheckBoxItem } from "./RegisterPageContentReach";
+import CSS from "csstype";
 
 interface RegisterPageContentProps {
 }
@@ -78,6 +79,10 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
             getReachData()
         }
     }, [segment]);
+
+    const userTypeInfoContainerStyles: CSS.Properties = {
+        marginTop: "40px"
+    }
     
 return (
     <div className='register-page-content'>
@@ -151,6 +156,11 @@ return (
                                 <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
                                 <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
                         </BForm.Control>
+                        <div style={userTypeInfoContainerStyles}>
+                            <p><strong>Standard (FREE): </strong>For individuals to engage with the community by submitting ideas, ratings of ideas and commenting on</p>
+                            <p><strong>Business ($100/yr): </strong>For businesses to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                            <p><strong>Community ($50/yr): </strong>For community organizations and nonprofits to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                        </div>
                     </BForm.Group>
                 </FormikStep>
                 <FormikStep validationSchema={Yup.object().shape({
@@ -221,8 +231,6 @@ return (
                         <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
                             refactorStateArray(segIds, 0, parseInt(e.target.value), setSegIds);
                             refactorStateArray(subIds, 0, null, setSubIds);
-                            // refactorSegIds(0,parseInt(e.target.value));
-                            // refactorSubIds(0, null);
                             }}>
                             {segment && <option value={segment?.segId}>{capitalizeFirstLetterEachWord(segment?.name)}</option>}
                             {segment2 && <option value={segment2?.segId}>{capitalizeFirstLetterEachWord(segment2?.name)}</option>}
