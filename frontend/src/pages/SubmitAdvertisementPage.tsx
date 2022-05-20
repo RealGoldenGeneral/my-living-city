@@ -30,10 +30,6 @@ const SubmitAdvertisementPage: React.FC<SubmitAdvertisementPageProps> = ({}) => 
       
       getSegmentData();
     }, []);
-
-    // useEffect(() => {
-    //   console.log(segmentData);
-    // }, [segmentData]);
   
     if (isLoading) {
       return(
