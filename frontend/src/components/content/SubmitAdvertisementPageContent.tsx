@@ -125,7 +125,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Label>Segment</Form.Label>
               <Form.Control as="select" name="adPosition" onChange={handleChange} value={values.adPosition}>
                 {segmentOptions && segmentOptions.map((segment, i) => {
-                  return <option key={i} value={segment.segId}>{capitalizeFirstLetterEachWord(segment.name)}</option>
+                  return <option key={i} value={segment.name}>{capitalizeFirstLetterEachWord(segment.name)}</option>
                 })}
               </Form.Control>
             </Form.Group>

@@ -139,8 +139,7 @@ export const getSingleSubSegmentBySubSegmentId = async (SubSegmentId: number | u
   return res.data;
 }
 
-export const getUserReachSegmentsByUserId = async (userId: string, token: string) => {
-  // const res = await axios.post<ISegment[]>(`${API_BASE_URL}/reach/getUserSegments/${userId}`);
+export const getUserReachSegmentsByUserId = async (userId: string | undefined, token: string | null) => {
   const res = await axios({
     method: "post",
     url: `${API_BASE_URL}/reach/getUserSegments`,
