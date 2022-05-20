@@ -261,3 +261,15 @@ export const refactorStateArray = (stateArray: any, index: number, newVal: any, 
 	console.log(stateArray);
 	stateSetter(newArr);
 }
+
+/**
+ * Remove all duplicated values for a given array
+ * @param arr array
+ */
+export const getDuplicatesRemoved = (arr: any[]) => {
+
+	const unique = arr.filter((element, index, self) => {
+		return index === self.indexOf(element);
+	});
+	return unique;
+}

@@ -20,12 +20,6 @@ export const useAllSegmentRequests = (token: string | null) => {
         () => findSegmentRequests(token),
     )
 }
-// export const useAllSegments = () => {
-//     return useQuery<ISegment[], IFetchError>(
-//       'name', 
-//       getAllSegments(),
-//     );
-//   }
 
 export const useSingleSegmentBySegmentId = (segmentId: number) => {
     return useQuery<ISegment, IFetchError>(

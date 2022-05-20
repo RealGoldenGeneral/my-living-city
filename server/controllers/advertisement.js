@@ -61,7 +61,7 @@ advertisementRouter.post(
             });
 
             //test to see if the user is an admin or business user
-            if (theUser.userType == "ADMIN" || theUser.userType == "BUSINESS") {
+            if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS" || theUser.userType=="COMMUNITY"){
 
                 //if there's no object in the request body
                 if (isEmpty(req.body)) {
@@ -375,6 +375,30 @@ advertisementRouter.get(
     }
 )
 
+// Get all ads created by an ownerId
+advertisementRouter.get(
+    '/getAdsByOwner/:ownerId',
+    async (req, res) => {
+        try {
+            const { ownerId } = req.params;
+            console.log(`Get ads by owner id: ${ownerId}`);
+            const result = await prisma.advertisements.findMany({
+                where:{ownerId: ownerId}
+            })
+            res.status(200).json(result);
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve the adsId.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
 advertisementRouter.put(
     '/update/:advertisementId',
     passport.authenticate('jwt', { session: false }),
@@ -398,8 +422,8 @@ advertisementRouter.put(
             });
             const { adType, adTitle, adDuration, adPosition, externalLink, published } = req.body;
 
-            if (theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS') {
-                const { advertisementId } = req.params;
+            if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS' || theUser.userType == "COMMUNITY"){
+                const {advertisementId} = req.params;
                 const parsedAdvertisementId = parseInt(advertisementId);
 
                 let endDate;
