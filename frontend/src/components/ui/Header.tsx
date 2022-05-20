@@ -68,13 +68,13 @@ export default function Header() {
 
                 {user.userType === "ADMIN" && (
                   <NavDropdown title="Admin Tools" id="nav-dropdown">
-                    <Nav.Link href="/advertisement/all">Ads</Nav.Link>
+                    <Nav.Link href="/advertisement/all">Ad Manager</Nav.Link>
                     <Nav.Link href="/segment/management">Segments</Nav.Link>
                     <Nav.Link href="/user/management">Users</Nav.Link>
                   </NavDropdown>
                 )}
                 {(user.userType === "BUSINESS" || user.userType === "COMMUNITY") && (
-                  <Nav.Link href="/advertisement/user">Ad Manager</Nav.Link>
+                  <Nav.Link href="/advertisement/user">My Ads</Nav.Link>
                 )}
                 {user.userType === "SEG_ADMIN" && (
                   <NavDropdown title="Seg-Admin Tools" id="nav-dropdown">
