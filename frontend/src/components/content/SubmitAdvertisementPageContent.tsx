@@ -116,18 +116,15 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} placeholder="Your advertisement title" isInvalid={!!errors.adTitle}/>
               <Form.Control.Feedback type="invalid">{errors.adTitle}</Form.Control.Feedback>
             </Form.Group>
-            {/* <Form.Group controlId="validateAdPosition">
-              <Form.Label>Segment</Form.Label>
-              <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
-              <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
-            </Form.Group> */}
             <Form.Group controlId="validateAdPosition">
               <Form.Label>Segment</Form.Label>
               <Form.Control as="select" name="adPosition" onChange={handleChange} value={values.adPosition}>
                 {segmentOptions && segmentOptions.map((segment, i) => {
-                  return <option key={i} value={segment.name}>{capitalizeFirstLetterEachWord(segment.name)}</option>
+                  if (i === 0) {values.adPosition = segment.name; console.log("called")}
+                  return <option key={i} value={capitalizeFirstLetterEachWord(segment.name)}>{capitalizeFirstLetterEachWord(segment.name)}</option>
                 })}
               </Form.Control>
+              <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
             </Form.Group>
 
             {String(values.adType) === "BASIC" 
