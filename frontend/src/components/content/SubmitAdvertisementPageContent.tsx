@@ -7,17 +7,18 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { postCreateAdvertisement } from 'src/lib/api/advertisementRoutes';
 import { IAdvertisement } from '../../lib/types/data/advertisement.type';
 import { IFetchError } from '../../lib/types/types';
-import { capitalizeString, handlePotentialAxiosError } from '../../lib/utilityFunctions';
+import { capitalizeString, handlePotentialAxiosError, capitalizeFirstLetterEachWord } from '../../lib/utilityFunctions';
 import ImageUploader from 'react-images-upload';
 import * as Yup from 'yup';
 import { values } from 'lodash';
 
 import '../../scss/content/_createAds.scss'
+import { ISegment } from 'src/lib/types/data/segment.type';
 
 
 
 interface SubmitAdvertisementPageContentProps {
-    
+    segmentOptions: ISegment[] | undefined;
 };
 //formik form input validation schema
 const schema = Yup.object().shape({
@@ -27,7 +28,7 @@ const schema = Yup.object().shape({
   externalLink: Yup.string().url('please type in a valid url').required('external link is needed!')
 });
 
-const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentProps> = () => {
+const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentProps> = ({segmentOptions}: SubmitAdvertisementPageContentProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState<IFetchError | null>(null);
@@ -115,10 +116,18 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Control type="text" name="adTitle" onChange={handleChange} value={values.adTitle} placeholder="Your advertisement title" isInvalid={!!errors.adTitle}/>
               <Form.Control.Feedback type="invalid">{errors.adTitle}</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group controlId="validateAdPosition">
+            {/* <Form.Group controlId="validateAdPosition">
               <Form.Label>Segment</Form.Label>
               <Form.Control type="text" name="adPosition" onChange={handleChange} value={values.adPosition} placeholder="Your target position" isInvalid={!!errors.adPosition}/>
               <Form.Control.Feedback type="invalid">{errors.adPosition}</Form.Control.Feedback>
+            </Form.Group> */}
+            <Form.Group controlId="validateAdPosition">
+              <Form.Label>Segment</Form.Label>
+              <Form.Control as="select" name="adPosition" onChange={handleChange} value={values.adPosition}>
+                {segmentOptions && segmentOptions.map((segment, i) => {
+                  return <option key={i} value={segment.name}>{capitalizeFirstLetterEachWord(segment.name)}</option>
+                })}
+              </Form.Control>
             </Form.Group>
 
             {String(values.adType) === "BASIC" 

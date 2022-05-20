@@ -66,7 +66,10 @@ function App() {
           <PrivateRoute path={ROUTES.My_POSTS} component={MyPostsPage} />
           <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} />
 
-          <BusinessRoute path={ROUTES.USER_ADVERTISEMENTS} component={UserAdsPage} />
+          <CustomRoute 
+            path={ROUTES.USER_ADVERTISEMENTS} 
+            component={UserAdsPage}
+            userTypes={[USER_TYPES.BUSINESS, USER_TYPES.COMMUNITY]}/>
           
           <CustomRoute
             path={ROUTES.SUBMIT_ADVERTISEMENT}
