@@ -64,7 +64,7 @@ const MyPosts: React.FC<MyPostsProps> = ({
                 lg={4}
                 className="pt-3 align-items-stretch"
               >
-                <IdeaTile ideaData={idea} showFooter={true} postType="Idea" />
+                <IdeaTile ideaData={idea} showFooter={true} postType={idea.state === "IDEA" ?  "Idea" : "Proposal"} />
               </Col>
             ))
           : [...Array(6)].map((x, i) => (
