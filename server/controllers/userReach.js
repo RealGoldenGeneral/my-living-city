@@ -108,5 +108,49 @@ userReachRouter.post(
     }
 )
 
+userReachRouter.post(
+    '/getUserSegments',
+    // passport.authenticate('jwt', {session: false}),
+    async (req, res) => {
+        try {
+            if (isEmpty(req.body)) {
+                return res.status(400).json({
+                    message: 'The objects in the request body are missing'
+                })
+            }
+
+            const { userId } = req.body;
+
+            if (!userId) {
+                return res.status(400).json({
+                    message: 'UserId is missing in request body'
+                })
+            }
+
+            const theUser = await prisma.user.findUnique({ where: {id: userId}});
+            if (!theUser) {
+                return res.status(400).json({
+                    message: `The user with id ${userId} cannot be found!`
+                });
+            }
+            
+            const userReaches = await prisma.userReach.findMany({ where: {userId: userId} });
+            let segments = [];
+            for await (const reach of userReaches) {
+                segments.push(await prisma.segments.findUnique({where: {segId: reach.segId}}))
+            }
+            res.status(200).json(segments);
+        } catch (error) {
+            console.log("Error encountered when getting user reach segments!");
+            console.log(error);
+            res.status(400).json({
+                message: "Error encountered when getting user reach segments!"
+            })
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
+)
+
 
 module.exports = userReachRouter;

@@ -73,7 +73,7 @@ export default function Header() {
                     <Nav.Link href="/user/management">Users</Nav.Link>
                   </NavDropdown>
                 )}
-                {user.userType === "BUSINESS" && (
+                {(user.userType === "BUSINESS" || user.userType === "COMMUNITY") && (
                   <Nav.Link href="/advertisement/user">Ad Manager</Nav.Link>
                 )}
                 {user.userType === "SEG_ADMIN" && (
