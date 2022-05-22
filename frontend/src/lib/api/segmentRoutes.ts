@@ -11,6 +11,15 @@ export const getAllSegments = async () => {
   const res = await axios.get<ISegment[]>(`${API_BASE_URL}/segment/getall`);
   return res.data;
 }
+
+export const getAllSuperSegments = async () => {
+  const res = await axios({
+    method: "get",
+    url: `${API_BASE_URL}/superSegment/getAll`,
+  })
+  return res.data;
+}
+
 export const getAllSubSegmentsWithId = async (segId: any) => {
   const res = await axios.get<ISubSegment[]>(`${API_BASE_URL}/subSegment/getBySegmentId/${segId}`);
   return res.data;
