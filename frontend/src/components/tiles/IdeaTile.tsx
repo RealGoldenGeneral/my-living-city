@@ -61,8 +61,6 @@ const IdeaTile: React.FC<ideaTileProps> = ({
 
   const isNew = date < oneWeek;
 
-  console.log(isNew);
-
   //console.log(ideaData);
   return (
     // <Card style={{ width: '18rem' }}>

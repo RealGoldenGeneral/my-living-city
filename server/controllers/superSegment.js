@@ -89,7 +89,6 @@ superSegmentRouter.post(
 
 superSegmentRouter.get(
     '/getAll',
-    passport.authenticate('jwt',{session:false}),
     async(req,res) => {
         try{
             const superSegments = await prisma.superSegment.findMany();

@@ -32,8 +32,6 @@ export default function Dashboard() {
     isLoading: uLoading,
   } = useUserIdeas(loggedInUser.id);
 
-  console.log(uData);
-
   return (
     <div className="wrapper">
       <DashboardPageContent
