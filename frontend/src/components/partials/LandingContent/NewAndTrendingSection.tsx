@@ -253,7 +253,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
             </Collapse>
             <br />
 
-            <h5 onClick={() => {setSuperSegOpen(!isSuperSegOpen)}} onMouseOver={mouseHoverPointer}>SuperSegment</h5>
+            <h5 onClick={() => {setSuperSegOpen(!isSuperSegOpen)}} onMouseOver={mouseHoverPointer}>District</h5>
             <hr />
             <Collapse in={isSuperSegOpen}>
             <div>
@@ -276,7 +276,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
             </div>
           </Collapse>
           <br />
-            <h5 onClick={() => {setSegOpen(!isSegOpen)}} onMouseOver={mouseHoverPointer}>Segment</h5>
+            <h5 onClick={() => {setSegOpen(!isSegOpen)}} onMouseOver={mouseHoverPointer}>Municipality</h5>
             <hr />
             <Collapse in={isSegOpen}>
             <div>
