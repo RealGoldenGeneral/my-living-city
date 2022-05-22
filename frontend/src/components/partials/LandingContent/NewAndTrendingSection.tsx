@@ -1,4 +1,4 @@
-import { Container, Row, Col, Carousel, Modal } from "react-bootstrap";
+import { Container, Row, Col, Carousel, Modal, Collapse } from "react-bootstrap";
 import PlaceholderIdeaTile from "src/components/tiles/PlaceholderIdeaTile";
 import { IIdeaWithAggregations } from "../../../lib/types/data/idea.type";
 import IdeaTile from "../../tiles/IdeaTile";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { ICategory } from "src/lib/types/data/category.type";
 import { useCategories} from "src/hooks/categoryHooks";
 import { capitalizeFirstLetterEachWord } from "./../../../lib/utilityFunctions";
-
+import { useAllSuperSegments, useAllSegments } from "./../../../hooks/segmentHooks";
 
 
 interface NewAndTrendingProps {
@@ -23,22 +23,96 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
   postType,
   isDashboard,
 }) => {
-
   const [showModal, setShowModal] = useState<boolean>(false);
   const [filterConfig, setFilterConfig] = useState<any>({
     category: [],
-    community: [],
     impactArea: [],
+    superSeg: [],
+    seg: [],
   });
-
+  const [isCategoriesOpen, setCategoriesOpen] = useState<any>(true);
+  const [isImpactOpen, setImpactOpen] = useState<any>(false);
+  const [isSuperSegOpen, setSuperSegOpen] = useState<any>(false);
+  const [isSegOpen, setSegOpen] = useState<any>(false);
 
   const handleModalCancel = () => {setShowModal(false)};
-  const handleModalSave = () => {setShowModal(false)};
   const { data: categories, isLoading, error, isError } = useCategories();
+  const { data: allSegments } = useAllSegments();
+  const { data: allSuperSegments } = useAllSuperSegments();
 
-  // useEffect(() => {
-  //   console.log(categories);
-  // }, [categories]);
+  const handleCategory = (e: any, value: any) => {
+    let configCopy = filterConfig;
+    if (e.target.checked) {
+      if (!configCopy.category.includes(value)) {configCopy.category = [...configCopy.category, value]}
+    } else {
+      if (configCopy.category.includes(value)) {
+        const indexOfValue = configCopy.category.indexOf(value);
+        if (indexOfValue > -1) {configCopy.category.splice(indexOfValue, 1)}
+      }
+    }
+    setFilterConfig(configCopy);
+  }
+
+  const handleImpactArea = (e: any, value: any) => {
+    let configCopy = filterConfig;
+    if (e.target.checked) {
+      if (!configCopy.impactArea.includes(value)) {configCopy.impactArea = [...configCopy.impactArea, value]}
+    } else {
+      if (configCopy.impactArea.includes(value)) {
+        const indexOfValue = configCopy.impactArea.indexOf(value);
+        if (indexOfValue > -1) {configCopy.impactArea.splice(indexOfValue, 1)}
+      }
+    }
+    setFilterConfig(configCopy);
+  }
+
+  const handleSuperSeg = (e: any, value: any) => {
+    let configCopy = filterConfig;
+    if (e.target.checked) {
+      if (!configCopy.superSeg.includes(value)) {configCopy.superSeg = [...configCopy.superSeg, value]}
+    } else {
+      if (configCopy.superSeg.includes(value)) {
+        const indexOfValue = configCopy.superSeg.indexOf(value);
+        if (indexOfValue > -1) {configCopy.superSeg.splice(indexOfValue, 1)}
+      }
+    }
+    setFilterConfig(configCopy);
+  }
+
+  const handleSeg = (e: any, value: any) => {
+    let configCopy = filterConfig;
+    if (e.target.checked) {
+      if (!configCopy.seg.includes(value)) {configCopy.seg = [...configCopy.seg, value]}
+    } else {
+      if (configCopy.seg.includes(value)) {
+        const indexOfValue = configCopy.seg.indexOf(value);
+        if (indexOfValue > -1) {configCopy.seg.splice(indexOfValue, 1)}
+      }
+    }
+    setFilterConfig(configCopy);
+  }
+
+  const doesIdeaPassFilter = (idea: IIdeaWithAggregations): boolean => {
+    if (filterConfig.category.length !== 0 && !filterConfig.category.includes(idea.categoryId)) {
+      return false;
+    } 
+    if (filterConfig.impactArea.length !== 0) {
+      let doesIdeaPassImpact = true;
+      filterConfig.impactArea.forEach((impactArea: string) => {
+        if (!idea[impactArea as keyof IIdeaWithAggregations]) {
+          doesIdeaPassImpact = false;
+        }
+      });
+      if (!doesIdeaPassImpact) {return false};
+    }
+    if (filterConfig.superSeg.length !== 0 && !filterConfig.superSeg.includes(idea.superSegId)) {
+      return false;
+    }
+    if (filterConfig.seg.length !== 0 && !filterConfig.seg.includes(idea.segId)) {
+      return false;
+    }
+    return true;
+  }
 
   const titleStyle: CSS.Properties = {
     display: "inline",
@@ -46,6 +120,10 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
   
   const filterButtonStyle: CSS.Properties = {
     float: "right"
+  }
+
+  const mouseHoverPointer = (e: any) => {
+    e.target.style.cursor = "pointer"
   }
 
   return (
@@ -80,16 +158,19 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
           <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>
         </div>
       ) : (
-        <h2 className="pb-1 border-bottom display-6 text-center">
-          New and Trending
-        </h2>
+        <div className="pb-1 border-bottom display-6 text-center">
+          <h2 style={titleStyle}>New and Trending</h2>
+          <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>
+        </div>
       )}
 
-      <Carousel controls={true} interval={null}>
+      <Carousel controls={true} interval={null} slide={false} fade={false}>
         {[...Array(4)].map((x, i) => (
           <Carousel.Item key={i}>
             {topIdeas
-              ? topIdeas.slice(i * 3, i * 3 + 3).map((idea) => (
+              ? topIdeas.slice(i * 3, i * 3 + 3).map((idea) => {
+                return doesIdeaPassFilter(idea) ? 
+                (
                   <Col
                     key={idea.id}
                     md={6}
@@ -102,7 +183,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                       postType="Idea"
                     />
                   </Col>
-                ))
+                ) : null})
               : [...Array(12)].map((x, i) => (
                   <Col
                     key={i}
@@ -116,58 +197,109 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
           </Carousel.Item>
         ))}
       </Carousel>
-      <Row className="g-5 py-3 justify-content-center">
-        {/* <a className='pt-5 text-align-center' href="/ideas">
-          <h5>View all ideas and conversations</h5>
-        </a> */}
-      </Row>
+
       <Modal show={showModal} onHide={handleModalCancel} animation={false}>
         <Modal.Header closeButton>
           <Modal.Title>Customize New and Trending</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* <input type="checkbox" id="test" name="test" value="test" />
-          <label htmlFor="test">Test</label> */}
-          <h5>Categories</h5>
+          <h5 onClick={() => {setCategoriesOpen(!isCategoriesOpen)}} onMouseOver={mouseHoverPointer}>Categories</h5>
           <hr />
-          {categories &&
-            categories.map((category) => {
-              return (
+          <Collapse in={isCategoriesOpen}>
+            <div>
+            {categories &&
+              categories.map((category, i) => {
+                return (
+                  <div key={i}>
+                    <input defaultChecked={filterConfig.category.includes(category.id)} 
+                      type="checkbox"
+                      id={category.title} 
+                      name={category.title} 
+                      value={category.id} 
+                      onClick={(e) => handleCategory(e, category.id)}/>
+                    <label htmlFor={category.title}>{capitalizeFirstLetterEachWord(category.title)}</label>
+                  </div>
+                )
+              })
+            }
+            </div>
+          </Collapse>
+           <br />
+          <h5 onClick={() => {setImpactOpen(!isImpactOpen)}} onMouseOver={mouseHoverPointer}>Impact Areas</h5>
+          <hr />
+          <Collapse in={isImpactOpen}>
+              <div>
                 <div>
-                  <input type="checkbox" id={category.title} name={category.title} value={category.id} />
-                  <label htmlFor={category.title}>{capitalizeFirstLetterEachWord(category.title)}</label>
+                  <input defaultChecked={filterConfig.impactArea.includes("communityImpact")} type="checkbox" id="communityAndPlace" name="communityAndPlace" value="communityImpact" onClick={(e) => handleImpactArea(e, "communityImpact")}/>
+                  <label htmlFor="communityAndPlace">Community and Place</label>
                 </div>
-              )
-            })
-          } <br />
-          <h5>Impact Areas</h5>
-          <hr />
+                <div>
+                  <input defaultChecked={filterConfig.impactArea.includes("natureImpact")} type="checkbox" id="natureAndFoodSecurity" name="natureAndFoodSecurity" value="natureImpact" onClick={(e) => handleImpactArea(e, "natureImpact")}/>
+                  <label htmlFor="natureAndFoodSecurity">Nature and Food Security</label>
+                </div>
+                <div>
+                  <input defaultChecked={filterConfig.impactArea.includes("artsImpact")} type="checkbox" id="artsCultureAndEducation" name="artsCultureAndEducation" value="artsImpact" onClick={(e) => handleImpactArea(e, "artsImpact")}/>
+                  <label htmlFor="artsCultureAndEducation">Arts, Culture, and Education</label>
+                </div>
+                <div>
+                  <input defaultChecked={filterConfig.impactArea.includes("energyImpact")} type="checkbox" id="waterAndEnergy" name="waterAndEnergy" value="energyImpact" onClick={(e) => handleImpactArea(e, "energyImpact")}/>
+                  <label htmlFor="waterAndEnergy">Water and Energy</label>
+                </div>
+                <div>
+                  <input defaultChecked={filterConfig.impactArea.includes("manufacturingImpact")} type="checkbox" id="manufacturingAndWaste" name="manufacturingAndWaste" value="manufacturingImpact" onClick={(e) => handleImpactArea(e, "manufacturingImpact")}/>
+                  <label htmlFor="manufacturingAndWaste">Manufacturing and Waste</label>
+                </div>
+              </div>
+            </Collapse>
+            <br />
+
+            <h5 onClick={() => {setSuperSegOpen(!isSuperSegOpen)}} onMouseOver={mouseHoverPointer}>SuperSegment</h5>
+            <hr />
+            <Collapse in={isSuperSegOpen}>
             <div>
-              <input type="checkbox" id="communityAndPlace" name="communityAndPlace" value="community_impact" />
-              <label htmlFor="communityAndPlace">Community and Place</label>
+            {allSuperSegments &&
+              allSuperSegments.map((superSeg, i) => {
+                return (
+                  <div key={i}>
+                    <input defaultChecked={filterConfig.superSeg.includes(superSeg.superSegId)}
+                      type="checkbox"
+                      id={superSeg.name} 
+                      name={superSeg.name}
+                      value={superSeg.superSegId} 
+                      onClick={(e) => {handleSuperSeg(e, superSeg.superSegId)}}
+                      />
+                    <label htmlFor={superSeg.name}>{capitalizeFirstLetterEachWord(superSeg.name)}</label>
+                  </div>
+                )
+              })
+            }
             </div>
+          </Collapse>
+          <br />
+            <h5 onClick={() => {setSegOpen(!isSegOpen)}} onMouseOver={mouseHoverPointer}>Segment</h5>
+            <hr />
+            <Collapse in={isSegOpen}>
             <div>
-              <input type="checkbox" id="natureAndFoodSecurity" name="natureAndFoodSecurity" value="nature_impact" />
-              <label htmlFor="natureAndFoodSecurity">Nature and Food Security</label>
+            {allSegments &&
+              allSegments.map((seg, i) => {
+                return (
+                  <div key={i}>
+                    <input type="checkbox" 
+                      defaultChecked={filterConfig.seg.includes(seg.segId)}
+                      id={seg.name}
+                      name={seg.name}
+                      value={seg.segId} 
+                      onClick={e => handleSeg(e, seg.segId)}/>
+                    <label htmlFor={seg.name}>{capitalizeFirstLetterEachWord(seg.name)}</label>
+                  </div>
+                )
+              })
+            }
             </div>
-            <div>
-              <input type="checkbox" id="artsCultureAndEducation" name="artsCultureAndEducation" value="arts_impact" />
-              <label htmlFor="artsCultureAndEducation">Arts, Culture, and Education</label>
-            </div>
-            <div>
-              <input type="checkbox" id="waterAndEnergy" name="waterAndEnergy" value="energy_impact" />
-              <label htmlFor="waterAndEnergy">Water and Energy</label>
-            </div>
-            <div>
-              <input type="checkbox" id="manufacturingAndWaste" name="manufacturingAndWaste" value="manufacturing_impact" />
-              <label htmlFor="manufacturingAndWaste">Manufacturing and Waste</label>
-            </div>
+          </Collapse>
+          <br />
+
         </Modal.Body>
-        <Modal.Footer >
-          <Button variant="primary" onClick={handleModalSave}>
-            Save
-          </Button>
-        </Modal.Footer>
       </Modal>
     </Container>
   );
