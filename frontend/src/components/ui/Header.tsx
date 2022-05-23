@@ -59,7 +59,7 @@ export default function Header() {
 
                 <NavDropdown title="Submit" id="nav-dropdown">
                   <Nav.Link href="/submit">Submit Idea</Nav.Link>
-                  {(user.userType === "BUSINESS"|| user.userType === "MUNICIPAL") && (
+                  {(user.userType === "BUSINESS"|| user.userType === "MUNICIPAL"|| user.userType === "COMMUNITY") && (
                     <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
                   )}
                 </NavDropdown>
