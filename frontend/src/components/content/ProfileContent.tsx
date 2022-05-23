@@ -5,6 +5,7 @@ import { API_BASE_URL } from 'src/lib/constants';
 import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
+import StripeCheckoutButton from "src/components/partials/StripeCheckoutButton";
 
 interface ProfileContentProps {
   user: IUser;
@@ -52,7 +53,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
             </Row>
             <Card.Title className='mt-3'>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</Card.Title>
             <Card.Text className='mb-3'>{ email }</Card.Text>
+              <StripeCheckoutButton />
           </Card>
+        
           
         <Card style={{ width: '40rem'}}>
           <Row className='justify-content-center mt-3'>

@@ -647,4 +647,47 @@ advertisementRouter.delete(
         }
     }
 )
+
+advertisementRouter.get(
+    '/pricing',
+
+    // passport.authenticate('jwt', { session: false }),
+
+    async (req, res) => {
+        try {
+            const segmentUserCounts = await prisma.userSegments.groupBy({
+                by: ['homeSegmentId'],
+                _count: {
+                    userId: true
+                },
+                orderBy: {
+                    homeSegmentId: "asc"
+                }
+            });
+
+            const segments = await prisma.segments.findMany({
+                distinct: ['segId'],
+                orderBy: {
+                    segId: "asc"
+                }
+            });
+
+            const mapped = segmentUserCounts.map((segmentUserCount) => {
+                return {
+                    name: segments[segmentUserCount.homeSegmentId - 1].name,
+                    segId: segments[segmentUserCount.homeSegmentId - 1].segId,
+                    count: segmentUserCount._count.userId
+                }
+            });
+
+            res.status(200).json(mapped)
+        } catch (error) {
+            console.log(error)
+            res.status(400)
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
+)
+
 module.exports = advertisementRouter;
