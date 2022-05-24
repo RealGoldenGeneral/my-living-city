@@ -6,7 +6,7 @@ import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import StripeCheckoutButton from "src/components/partials/StripeCheckoutButton";
-
+import axios from "axios";
 interface ProfileContentProps {
   user: IUser;
   token: string;
@@ -53,7 +53,20 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
             </Row>
             <Card.Title className='mt-3'>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</Card.Title>
             <Card.Text className='mb-3'>{ email }</Card.Text>
-              <StripeCheckoutButton />
+              {/* <StripeCheckoutButton /> */}
+              <Button
+              onClick={async () => {
+                const res = await axios.post(
+                  `${API_BASE_URL}/account/activate`,
+                  {
+                    userId:user.id
+                  }
+                )
+                window.location.href = res.data.url;
+              }}
+              >
+                Activate
+              </Button>
           </Card>
         
           

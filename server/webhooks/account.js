@@ -2,6 +2,7 @@ const express = require('express');
 const { startsWith } = require('lodash');
 const accountRouter = express.Router();
 const prisma = require('../lib/prismaClient');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 accountRouter.get(
     '/details',
@@ -83,6 +84,37 @@ accountRouter.post(
             })
 
             res.status(200).json(createUserStripe);
+
+        } catch (error) {
+            console.log(error);
+            res.status(400).end();
+        } finally {
+            await prisma.$disconnect;
+        }
+    }
+)
+
+accountRouter.post(
+    '/activate',
+    async (req, res) => {
+        try {
+            const result = await prisma.userStripe.findFirst({
+                where: {
+                    userId: req.body.userId
+                }
+            })
+
+            const session = await stripe.checkout.sessions.create({
+                success_url: 'http://localhost:3000',
+                cancel_url: 'http://localhost:3000',
+                line_items: [
+                  {price: 'price_1KyfAKDabqllr9PHaxnGcKSm', quantity: 1},
+                ],
+                customer: result.stripeId,
+                mode: "subscription"
+              });
+
+            res.status(200).json(session);
 
         } catch (error) {
             console.log(error);
