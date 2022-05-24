@@ -90,6 +90,16 @@ passport.use(
               status: 'incomplete'
           }
         })
+        const session = await stripe.checkout.sessions.create({
+          success_url: 'http://localhost:3000/register',
+          cancel_url: 'http://localhost:3000/register',
+          line_items: [
+            {price: 'price_1KyfAKDabqllr9PHaxnGcKSm', quantity: 1},
+          ],
+          customer: newStripCustomer.id,
+          mode: "subscription"
+        });
+        console.log(session.url)
         return done(null, createdUser);
       } catch (error) {
         // console.log("ERROR")
