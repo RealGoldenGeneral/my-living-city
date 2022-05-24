@@ -5,7 +5,7 @@ import IdeaTile from "../../tiles/IdeaTile";
 import {BsFilter} from "react-icons/bs";
 import CSS from "csstype";
 import { Button } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ICategory } from "src/lib/types/data/category.type";
 import { useCategories} from "src/hooks/categoryHooks";
 import { capitalizeFirstLetterEachWord } from "./../../../lib/utilityFunctions";
@@ -29,16 +29,19 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
     impactArea: [],
     superSeg: [],
     seg: [],
+    status: [],
   });
-  const [isCategoriesOpen, setCategoriesOpen] = useState<any>(true);
-  const [isImpactOpen, setImpactOpen] = useState<any>(false);
-  const [isSuperSegOpen, setSuperSegOpen] = useState<any>(false);
-  const [isSegOpen, setSegOpen] = useState<any>(false);
+  const [isCategoriesOpen, setCategoriesOpen] = useState<boolean>(true);
+  const [isImpactOpen, setImpactOpen] = useState<boolean>(false);
+  const [isSuperSegOpen, setSuperSegOpen] = useState<boolean>(false);
+  const [isSegOpen, setSegOpen] = useState<boolean>(false);
+  const [isPostStatusOpen, setPostStatusOpen] = useState<boolean>(false);
 
   const handleModalCancel = () => {setShowModal(false)};
   const { data: categories, isLoading, error, isError } = useCategories();
   const { data: allSegments } = useAllSegments();
   const { data: allSuperSegments } = useAllSuperSegments();
+  const postStatuses = ["IDEA", "PROPOSAL", "PROJECT"];
 
   const handleCategory = (e: any, value: any) => {
     let configCopy = filterConfig;
@@ -92,6 +95,19 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
     setFilterConfig(configCopy);
   }
 
+  const handlePostStatus = (e: any, value: any) => {
+    let configCopy = filterConfig;
+    if (e.target.checked) {
+      if (!configCopy.status.includes(value)) {configCopy.status = [...configCopy.status, value]}
+    } else {
+      if (configCopy.status.includes(value)) {
+        const indexOfValue = configCopy.status.indexOf(value);
+        if (indexOfValue > -1) {configCopy.status.splice(indexOfValue, 1)}
+      }
+    }
+    setFilterConfig(configCopy);
+  }
+
   const doesIdeaPassFilter = (idea: IIdeaWithAggregations): boolean => {
     if (filterConfig.category.length !== 0 && !filterConfig.category.includes(idea.categoryId)) {
       return false;
@@ -109,6 +125,9 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
       return false;
     }
     if (filterConfig.seg.length !== 0 && !filterConfig.seg.includes(idea.segId)) {
+      return false;
+    }
+    if (filterConfig.status.length !== 0 && !filterConfig.status.includes(capitalizeFirstLetterEachWord(idea.state))) {
       return false;
     }
     return true;
@@ -298,6 +317,31 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
             </div>
           </Collapse>
           <br />
+
+          <h5 onClick={() => {setPostStatusOpen(!isPostStatusOpen)}} onMouseOver={mouseHoverPointer}>Post Status</h5>
+            <hr />
+            <Collapse in={isPostStatusOpen}>
+            <div>
+            {postStatuses &&
+              postStatuses.map((status, i) => {
+                return (
+                  <div key={i}>
+                    <input type="checkbox" 
+                      defaultChecked={filterConfig.status.includes(status)}
+                      id={status}
+                      name={status}
+                      value={status} 
+                      onClick={e => handlePostStatus(e, status)}/>
+                    <label htmlFor={status}>{capitalizeFirstLetterEachWord(status)}</label>
+                  </div>
+                )
+              })
+            }
+            </div>
+          </Collapse>
+          <br />
+
+          
 
         </Modal.Body>
       </Modal>
