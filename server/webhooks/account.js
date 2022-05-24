@@ -10,7 +10,7 @@ accountRouter.get(
         try {
             const result = await prisma.userStripe.findFirst({
                 where: {
-                    userId: req.body.userId
+                    userId: req.query.userId
                 }
             })
 
@@ -70,20 +70,20 @@ accountRouter.post(
                 case 'payment_intent.succeeded':
                     stripeId = event.data.object.customer;
                     console.log(`PaymentIntent success for customer ${stripeId}`);
+                    await prisma.userStripe.updateMany({
+                        where:{
+                            stripeId: stripeId
+                        },
+                        data: {
+                            status:"active"
+                        }
+                    })
                     break;
                 default:
                     return res.status(400).end();
             }
-
-            let createUserStripe = await prisma.userStripe.create({
-                data: {
-                    userId: 'cl2nyodqn0004psun25iapajh',
-                    stripeId: stripeId,
-                    status: 'ACTIVE'
-                }
-            })
-
-            res.status(200).json(createUserStripe);
+          
+            res.status(200).json({});
 
         } catch (error) {
             console.log(error);
