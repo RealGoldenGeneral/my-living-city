@@ -8,9 +8,9 @@ const { UserType } = require('@prisma/client');
 
 segmentRouter.post(
     '/create',
-    passport.authenticate('jwt',{session:false}),
-    async(req,res) => {
-        try{
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
             let error = '';
             let errorMessage = '';
             let errorStack = '';
@@ -18,19 +18,19 @@ segmentRouter.post(
             const { email, id } = req.user;
             //find the requesting user in the database
             const theUser = await prisma.user.findUnique({
-                where:{id:id},
-                select:{userType:true}
+                where: { id: id },
+                select: { userType: true }
             });
             //User must be admin to create segment
-            if (theUser.userType == 'ADMIN'){
-                const {country,province,name,superSegName} = req.body;
+            if (theUser.userType == 'ADMIN') {
+                const { country, province, name, superSegName } = req.body;
 
                 console.log(req.body);
 
                 let theSuperSegId;
 
                 //if there's no object in the request body
-                if(isEmpty(req.body)){
+                if (isEmpty(req.body)) {
                     return res.status(400).json({
                         message: 'The objects in the request body are missing',
                         details: {
@@ -40,74 +40,74 @@ segmentRouter.post(
                     })
                 }
                 //if country field is missing
-                if(!country||!isString(country)){
-                    error+='A segment must has a country field. ';
-                    errorMessage+='Creating a segment must explicitly be supplied with a country field. ';
-                    errorStack+='cuntry must be provided in the body with a valid value. ';
+                if (!country || !isString(country)) {
+                    error += 'A segment must has a country field. ';
+                    errorMessage += 'Creating a segment must explicitly be supplied with a country field. ';
+                    errorStack += 'cuntry must be provided in the body with a valid value. ';
                 }
 
                 //if province is missing
-                if(!province||!isString(province)){
-                    error+='A segment must has a province field. ';
-                    errorMessage+='Creating a segment must explicitly be supplied with a province field. ';
-                    errorStack+='province must be provided in the body with a valid value. ';
+                if (!province || !isString(province)) {
+                    error += 'A segment must has a province field. ';
+                    errorMessage += 'Creating a segment must explicitly be supplied with a province field. ';
+                    errorStack += 'province must be provided in the body with a valid value. ';
                 }
 
-                if(!name||!isString(province)){
-                    error+='A segment must has a name field. ';
-                    errorMessage+='Creating a segment must explicitly be supplied with a name field. ';
-                    errorStack+='name must be provided in the body with a valid value. ';
+                if (!name || !isString(province)) {
+                    error += 'A segment must has a name field. ';
+                    errorMessage += 'Creating a segment must explicitly be supplied with a name field. ';
+                    errorStack += 'name must be provided in the body with a valid value. ';
                 }
 
-                if(!superSegName||!isString(superSegName)){
-                    error+='A segment must has a super segment name field. ';
-                    errorMessage+='Creating a segment must explicitly be supplied with a super segment name field. ';
-                    errorStack+='Super segment name must be provided in the body with a valid value. ';
-                }else{
-                    theSuperSeg = await prisma.superSegment.findFirst({where:{name:superSegName.toUpperCase()}});
+                if (!superSegName || !isString(superSegName)) {
+                    error += 'A segment must has a super segment name field. ';
+                    errorMessage += 'Creating a segment must explicitly be supplied with a super segment name field. ';
+                    errorStack += 'Super segment name must be provided in the body with a valid value. ';
+                } else {
+                    theSuperSeg = await prisma.superSegment.findFirst({ where: { name: superSegName.toUpperCase() } });
 
-                    if(!theSuperSeg){
-                        error+='A segment must has a valid super segment name field. ';
-                        errorMessage+='Creating a segment must explicitly be supplied with a valid super segment name field. ';
-                        errorStack+='Super segment name must be provided in the body with a valid value, which can match a super segment in the database. ';
-                    }else{
+                    if (!theSuperSeg) {
+                        error += 'A segment must has a valid super segment name field. ';
+                        errorMessage += 'Creating a segment must explicitly be supplied with a valid super segment name field. ';
+                        errorStack += 'Super segment name must be provided in the body with a valid value, which can match a super segment in the database. ';
+                    } else {
                         theSuperSegId = theSuperSeg.superSegId;
                     }
                 }
 
                 //If there's error in error holder
-                if(error||errorMessage||errorStack){
+                if (error || errorMessage || errorStack) {
                     return res.status(400).json({
                         message: error,
                         details: {
-                          errorMessage: errorMessage,
-                          errorStack: errorStack
+                            errorMessage: errorMessage,
+                            errorStack: errorStack
                         }
                     });
                 }
 
                 //create a segement table item
                 const createSegment = await prisma.segments.create({
-                    data:{
-                        country:country,
-                        province:province,
-                        name:name,
-                        superSegId:theSuperSegId,
-                        superSegName:superSegName
+                    data: {
+                        country: country,
+                        province: province,
+                        name: name,
+                        superSegId: theSuperSegId,
+                        superSegName: superSegName
                     }
                 })
 
                 res.status(200).json(createSegment);
-            }else{
+            } else {
                 return res.status(403).json({
                     message: "You don't have the right to add a segment!",
                     details: {
-                      errorMessage: 'In order to create a segment, you must be an admin user.',
-                      errorStack: 'user must be an admin if they want to create a segment',
+                        errorMessage: 'In order to create a segment, you must be an admin user.',
+                        errorStack: 'user must be an admin if they want to create a segment',
                     }
                 });
             }
-        }catch(error){
+        } catch (error) {
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to create a segment.",
@@ -116,7 +116,7 @@ segmentRouter.post(
                     errorStack: error.stack,
                 }
             });
-        }finally{
+        } finally {
             await prisma.$disconnect();
         }
     }
@@ -124,12 +124,12 @@ segmentRouter.post(
 
 segmentRouter.get(
     '/getAll',
-    async(req,res) => {
-        try{
+    async (req, res) => {
+        try {
             const result = await prisma.segments.findMany();
             console.log(result);
             res.status(200).send(result);
-        }catch(error){
+        } catch (error) {
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to retrieve segments.",
@@ -138,7 +138,7 @@ segmentRouter.get(
                     errorStack: error.stack,
                 }
             });
-        }finally{
+        } finally {
             await prisma.$disconnect();
         }
     }
@@ -170,23 +170,23 @@ segmentRouter.get(
 
 segmentRouter.get(
     '/getBySuperSegId/:superSegId',
-    async(req,res) => {
-        const {superSegId} = req.params;
+    async (req, res) => {
+        const { superSegId } = req.params;
 
-        if(!isInteger(superSegId)){
+        if (!isInteger(superSegId)) {
             return res.status(400).json("super segment id is invalid. ")
         }
 
         const theSuperSegment = await prisma.superSegment.findUnique({
-            where:{superSegId:superSegId}
+            where: { superSegId: superSegId }
         })
 
-        if(!theSuperSegment){
+        if (!theSuperSegment) {
             return res.status(404).json("super segment id is not in the database! ")
         }
 
         const segments = await prisma.segments.findMany({
-            where:{superSegId:superSegId}
+            where: { superSegId: superSegId }
         });
 
         res.status(200).json(segments);
@@ -195,136 +195,136 @@ segmentRouter.get(
 
 segmentRouter.get(
     '/getBySegmentId/:segmentId',
-        async (req, res, next) => {
-            try {
+    async (req, res, next) => {
+        try {
             const parsedSegId = parseInt(req.params.segmentId);
 
             // Check if id is valid
             if (!parsedSegId) {
                 return res.status(400).json({
-                message: `A valid segmentId must be specified in the route parameter`
+                    message: `A valid segmentId must be specified in the route parameter`
                 });
             }
-            if (parsedSegId){
+            if (parsedSegId) {
                 const foundSegment = await prisma.segments.findUnique({
                     where: { segId: parsedSegId }
                 });
-                if(foundSegment){
+                if (foundSegment) {
                     res.status(200).json(foundSegment);
                 }
                 if (!foundSegment) {
                     return res.status(400).json({
-                    message: `The segment with listed ID (${parsedSegId}) does not exist.`,
+                        message: `The segment with listed ID (${parsedSegId}) does not exist.`,
                     });
                 }
             } else {
                 res.status(404).json("segmentId is not found!");
             }
-            
 
-            
 
-            
-            } catch (error) {
+
+
+
+        } catch (error) {
             res.status(400).json({
                 message: "An error occured while trying to fetch all segments",
                 details: {
-                errorMessage: error.message,
-                errorStack: error.stack,
+                    errorMessage: error.message,
+                    errorStack: error.stack,
                 }
             });
-            } finally {
+        } finally {
             await prisma.$disconnect();
-            }
         }
+    }
 )
 
 segmentRouter.get(
-'/getBySubSegmentId/:SubSegmentId',
+    '/getBySubSegmentId/:SubSegmentId',
     async (req, res, next) => {
         try {
-        const parsedSubSegId = parseInt(req.params.SubSegmentId);
+            const parsedSubSegId = parseInt(req.params.SubSegmentId);
 
-        // // Check if id is valid
-        // if (!parsedSubSegId) {
-        //     res.status(404).json("subSegmentId is not found!");
-        //     //return res.sendStatus(204);
-        // }
+            // // Check if id is valid
+            // if (!parsedSubSegId) {
+            //     res.status(404).json("subSegmentId is not found!");
+            //     //return res.sendStatus(204);
+            // }
 
-        if(parsedSubSegId) {
-            const foundSubSegment = await prisma.subSegments.findUnique({
-                where: { id: parsedSubSegId }
-            });
-            if(foundSubSegment){
-                res.status(200).json(foundSubSegment);
-            }
-            if (!foundSubSegment) {
-                return res.status(404).json({
-                message: `The subSegment with listed ID (${parsedSubSegId}) does not exist.`,
+            if (parsedSubSegId) {
+                const foundSubSegment = await prisma.subSegments.findUnique({
+                    where: { id: parsedSubSegId }
                 });
-            }
-            
-        } else {
-            res.status(404).json("subSegmentId is not found!");
-        }
+                if (foundSubSegment) {
+                    res.status(200).json(foundSubSegment);
+                }
+                if (!foundSubSegment) {
+                    return res.status(404).json({
+                        message: `The subSegment with listed ID (${parsedSubSegId}) does not exist.`,
+                    });
+                }
 
-        
+            } else {
+                res.status(404).json("subSegmentId is not found!");
+            }
+
+
         } catch (error) {
             res.status(400).json({
                 message: "An error occured while trying to fetch all subSegments",
                 details: {
-                errorMessage: error.message,
-                errorStack: error.stack,
+                    errorMessage: error.message,
+                    errorStack: error.stack,
                 }
             });
         } finally {
-        await prisma.$disconnect();
+            await prisma.$disconnect();
         }
     }
 )
 
 segmentRouter.delete(
     '/delete/:segmentId',
-    passport.authenticate('jwt',{session:false}),
-    async(req,res) => {
-        try{
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
             //get email and user id from request
             const { email, id } = req.user;
             //find the requesting user in the database
             const theUser = await prisma.user.findUnique({
-                where:{id:id},
-                select:{userType:true}
+                where: { id: id },
+                select: { userType: true }
             });
             //Only admin can delete segment
-            if(theUser.userType == 'ADMIN'){
-                const {segmentId} = req.params;
+            if (theUser.userType == 'ADMIN') {
+                const { segmentId } = req.params;
                 const parsedSegmentId = parseInt(segmentId);
                 const theSegment = await prisma.segments.findUnique({
-                    where:{
-                        segId:parsedSegmentId
+                    where: {
+                        segId: parsedSegmentId
                     }
                 });
 
-                if(!theSegment){
+                if (!theSegment) {
                     return res.status(404).json("the segment need to be deleted not found!");
-                }else{
+                } else {
                     await prisma.segments.delete({
-                        where:{
-                            segId:parsedSegmentId
+                        where: {
+                            segId: parsedSegmentId
                         }
                     });
                     res.sendStatus(204);
                 }
-            }else{
+            } else {
                 return res.status(403).json({
                     message: "You don't have the right to delete a segment!",
                     details: {
-                      errorMessage: 'In order to delete a segment, you must be an admin user.',
-                      errorStack: 'user must be an admin if they want to delete a segment',
+                        errorMessage: 'In order to delete a segment, you must be an admin user.',
+                        errorStack: 'user must be an admin if they want to delete a segment',
                     }
                 });
             }
-        }catch(error){
+        } catch (error) {
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to delete a segment.",
@@ -333,7 +333,7 @@ segmentRouter.delete(
                     errorStack: error.stack,
                 }
             });
-        }finally{
+        } finally {
             await prisma.$disconnect();
         }
     }
@@ -341,23 +341,23 @@ segmentRouter.delete(
 
 segmentRouter.post(
     '/update/:segmentId',
-    passport.authenticate('jwt',{session:false}),
-    async(req,res) => {
-        try{
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
             //get email and user id from request
             const { email, id } = req.user;
             //find the requesting user in the database
             const theUser = await prisma.user.findUnique({
-                where:{id:id},
-                select:{userType:true}
+                where: { id: id },
+                select: { userType: true }
             });
             //User must be admin to create segment
-            if(theUser.userType == 'ADMIN'){
-                const {segmentId} = req.params;
+            if (theUser.userType == 'ADMIN') {
+                const { segmentId } = req.params;
 
                 const parsedSegmentId = parseInt(segmentId);
 
-                const {country,province,name,superSegId,superSegName} = req.body;
+                const { country, province, name, superSegId, superSegName } = req.body;
 
                 console.log(req.body);
 
@@ -366,7 +366,7 @@ segmentRouter.post(
                 let errorStack = '';
 
                 //if there's no object in the request body
-                if(isEmpty(req.body)){
+                if (isEmpty(req.body)) {
                     return res.status(400).json({
                         message: 'The objects in the request body are missing',
                         details: {
@@ -377,88 +377,88 @@ segmentRouter.post(
                 }
                 //find the segment which need to be updated
                 const theSegment = await prisma.segments.findUnique({
-                    where:{
-                        segId:parsedSegmentId
+                    where: {
+                        segId: parsedSegmentId
                     }
                 });
 
-                if(!theSegment){
+                if (!theSegment) {
                     res.status(404).json("the segment need to be updated not found!");
-                }else{
+                } else {
 
-                    if(country&&!isString(country)){
-                        error+='A segment must has a country field. ';
-                        errorMessage+='Updating a segment must explicitly be supplied with a country field. ';
-                        errorStack+='cuntry must be provided in the body with a valid value. ';
+                    if (country && !isString(country)) {
+                        error += 'A segment must has a country field. ';
+                        errorMessage += 'Updating a segment must explicitly be supplied with a country field. ';
+                        errorStack += 'cuntry must be provided in the body with a valid value. ';
                     }
-    
-                    if(province&&!isString(province)){
-                        error+='A segment must has a province field. ';
-                        errorMessage+='Updating a segment must explicitly be supplied with a province field. ';
-                        errorStack+='province must be provided in the body with a valid value. ';
+
+                    if (province && !isString(province)) {
+                        error += 'A segment must has a province field. ';
+                        errorMessage += 'Updating a segment must explicitly be supplied with a province field. ';
+                        errorStack += 'province must be provided in the body with a valid value. ';
                     }
-    
-                    if(name&&!isString(name)){
-                        error+='A segment must has a name field. ';
-                        errorMessage+='Updating a segment must explicitly be supplied with a name field. ';
-                        errorStack+='name must be provided in the body with a valid value. ';
+
+                    if (name && !isString(name)) {
+                        error += 'A segment must has a name field. ';
+                        errorMessage += 'Updating a segment must explicitly be supplied with a name field. ';
+                        errorStack += 'name must be provided in the body with a valid value. ';
                     }
-    
-                    if(superSegId&&!isInteger(superSegId)){
-                        error+='A segment must has a super segment id. ';
-                        errorMessage+='Updating a segment must explicitly be supplied with a super segment id. '
-                        errorStack+='super segment id must be provided in the body with a valid value. '
-                    }else if(segmentId&&isInteger(superSegId)){
+
+                    if (superSegId && !isInteger(superSegId)) {
+                        error += 'A segment must has a super segment id. ';
+                        errorMessage += 'Updating a segment must explicitly be supplied with a super segment id. '
+                        errorStack += 'super segment id must be provided in the body with a valid value. '
+                    } else if (segmentId && isInteger(superSegId)) {
                         const theSuperSegment = await prisma.superSegment.findUnique({
-                            where:{superSegId:superSegId}
+                            where: { superSegId: superSegId }
                         });
-        
-                        if(!theSuperSegment){
-                            error+='A segment must has a valid super segment id. ';
-                            errorMessage+='Updating a segment must explicitly be supplied with a valid super segment id. '
-                            errorStack+='Valid super segment id must be provided in the body. '
+
+                        if (!theSuperSegment) {
+                            error += 'A segment must has a valid super segment id. ';
+                            errorMessage += 'Updating a segment must explicitly be supplied with a valid super segment id. '
+                            errorStack += 'Valid super segment id must be provided in the body. '
                         }
                     }
 
-                    if(superSegName&&!isString(superSegName)){
-                        error+='A segment must has a super segment name as string. ';
-                        errorMessage+='Updating a segment must explicitly be supplied with a super segment name as string. '
-                        errorStack+='super segment id must be provided in the body with a valid value and type. '
+                    if (superSegName && !isString(superSegName)) {
+                        error += 'A segment must has a super segment name as string. ';
+                        errorMessage += 'Updating a segment must explicitly be supplied with a super segment name as string. '
+                        errorStack += 'super segment id must be provided in the body with a valid value and type. '
                     }
 
                     //If there's error in error holder
-                    if(error||errorMessage||errorStack){
+                    if (error || errorMessage || errorStack) {
                         return res.status(400).json({
                             message: error,
                             details: {
-                            errorMessage: errorMessage,
-                            errorStack: errorStack
+                                errorMessage: errorMessage,
+                                errorStack: errorStack
                             }
                         });
                     }
 
                     const result = await prisma.segments.update({
-                        where:{segId:parsedSegmentId},
-                        data:{
-                            country:country,
-                            province:province,
-                            name:name,
-                            superSegId:superSegId,
-                            superSegName:superSegName
+                        where: { segId: parsedSegmentId },
+                        data: {
+                            country: country,
+                            province: province,
+                            name: name,
+                            superSegId: superSegId,
+                            superSegName: superSegName
                         }
                     });
                     res.status(200).json(result);
                 }
-            }else{
+            } else {
                 return res.status(403).json({
                     message: "You don't have the right to update a segment!",
                     details: {
-                      errorMessage: 'In order to delete a segment, you must be an admin or business user.',
-                      errorStack: 'user must be an admin if they want to delete a segment',
+                        errorMessage: 'In order to delete a segment, you must be an admin or business user.',
+                        errorStack: 'user must be an admin if they want to delete a segment',
                     }
                 });
             }
-        }catch(error){
+        } catch (error) {
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to update a segment.",
@@ -467,7 +467,7 @@ segmentRouter.post(
                     errorStack: error.stack,
                 }
             });
-        }finally{
+        } finally {
             await prisma.$disconnect();
         }
     }
@@ -477,13 +477,13 @@ segmentRouter.post(
 
 segmentRouter.post(
     '/getByName',
-    async(req,res) => {
+    async (req, res) => {
         let error = '';
         let errorMessage = '';
         let errorStack = '';
-        try{
+        try {
             //if there's no object in the request body
-            if(isEmpty(req.body)){
+            if (isEmpty(req.body)) {
                 return res.status(400).json({
                     message: 'The objects in the request body are missing',
                     details: {
@@ -493,60 +493,60 @@ segmentRouter.post(
                 })
             }
 
-            const {country,province,segName} = req.body;
+            const { country, province, segName } = req.body;
 
-            if(!country){
-                error+='Query must has a country field. ';
-                errorMessage+='Query must explicitly be supplied with a country field. ';
-                errorStack+='cuntry must be provided in the body with a valid value. ';
+            if (!country) {
+                error += 'Query must has a country field. ';
+                errorMessage += 'Query must explicitly be supplied with a country field. ';
+                errorStack += 'cuntry must be provided in the body with a valid value. ';
             }
 
-            if(!isString(country)||country.length<2||country.length>40){
-                error+='Country value must be valid ';
-                errorMessage+='Country must be string with 2-40 characters ';
-                errorStack+='Country must be string with 2-40 characters ';
+            if (!isString(country) || country.length < 2 || country.length > 40) {
+                error += 'Country value must be valid ';
+                errorMessage += 'Country must be string with 2-40 characters ';
+                errorStack += 'Country must be string with 2-40 characters ';
             }
 
-            if(!province){
-                error+='Query must has a province field. ';
-                errorMessage+='Query must explicitly be supplied with a province field. ';
-                errorStack+='Province must be provided in the body with a valid value. ';
+            if (!province) {
+                error += 'Query must has a province field. ';
+                errorMessage += 'Query must explicitly be supplied with a province field. ';
+                errorStack += 'Province must be provided in the body with a valid value. ';
             }
 
-            if(!isString(province)||province.length<2||province.length>40){
-                error+='Province value must be valid ';
-                errorMessage+='Province must be string with 2-40 characters ';
-                errorStack+='Province must be string with 2-40 characters ';
+            if (!isString(province) || province.length < 2 || province.length > 40) {
+                error += 'Province value must be valid ';
+                errorMessage += 'Province must be string with 2-40 characters ';
+                errorStack += 'Province must be string with 2-40 characters ';
             }
 
-            if(!segName){
-                error+='Query must has a segName field. ';
-                errorMessage+='Query must explicitly be supplied with a segName field. ';
-                errorStack+='segName must be provided in the body with a valid value. ';
+            if (!segName) {
+                error += 'Query must has a segName field. ';
+                errorMessage += 'Query must explicitly be supplied with a segName field. ';
+                errorStack += 'segName must be provided in the body with a valid value. ';
             }
 
-            if(!isString(segName)||segName.length<2||segName.length>40){
-                error+='segName value must be valid ';
-                errorMessage+='segName must be string with 2-40 characters ';
-                errorStack+='segName must be string with 2-40 characters ';
+            if (!isString(segName) || segName.length < 2 || segName.length > 40) {
+                error += 'segName value must be valid ';
+                errorMessage += 'segName must be string with 2-40 characters ';
+                errorStack += 'segName must be string with 2-40 characters ';
             }
 
             //If there's error in error holder
-            if(error||errorMessage||errorStack){
+            if (error || errorMessage || errorStack) {
                 return res.status(400).json({
                     message: error,
                     details: {
-                    errorMessage: errorMessage,
-                    errorStack: errorStack
+                        errorMessage: errorMessage,
+                        errorStack: errorStack
                     }
                 });
             }
 
             const result = await prisma.segments.findFirst({
-                where:{
-                    country:country,
-                    province:province,
-                    name:{contains:segName}
+                where: {
+                    country: country,
+                    province: province,
+                    name: { contains: segName }
                 }
             });
 
@@ -555,7 +555,7 @@ segmentRouter.post(
             // }
 
             res.status(200).json(result);
-        }catch(error){
+        } catch (error) {
             console.log(error);
             res.status(400).json({
                 message: "An error occured while trying to find a segment.",
@@ -565,7 +565,95 @@ segmentRouter.post(
                     errorStack: error.stack,
                 }
             });
-        }finally{
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
+)
+
+segmentRouter.get(
+    '/aggregateInfo/:segmentId',
+    async (req, res) => {
+        try {
+            const home = await prisma.userSegments.aggregate({
+                where: {
+                    homeSegmentId: parseInt(req.params.segmentId)
+                },
+                _count: true
+            })
+
+            const work = await prisma.userSegments.aggregate({
+                where: {
+                    workSegmentId: parseInt(req.params.segmentId)
+                },
+                _count: true
+            })
+
+            const student = await prisma.userSegments.aggregate({
+                where: {
+                    schoolSegmentId: parseInt(req.params.segmentId)
+                },
+                _count: true
+            })
+
+            const idea = await prisma.idea.findMany({
+                where: {
+                    segmentId: parseInt(req.params.segmentId)
+                }
+            })
+
+            const ideaIds = idea.map((idea) => idea.id);
+
+            const proposal = await prisma.proposal.aggregate({
+                where: {
+                    ideaId: {
+                        in: ideaIds
+                    }
+                },
+                _count: true
+            })
+
+            const project = await prisma.project.aggregate({
+                where: {
+                    ideaId: {
+                        in: ideaIds
+                    }
+                },
+                _count: true
+            })
+
+            const subSegments = await prisma.subSegments.findMany({
+                where: {
+                    segId: parseInt(req.params.segmentId)
+                }
+            })
+
+            const superSegment = await prisma.segments.findFirst({
+                where: {
+                    segId: parseInt(req.params.segmentId)
+                }
+            })
+
+            const subsegmentNames = subSegments.map((subSegment) => subSegment.name);
+
+            const result = {
+                "residents": home._count,
+                "workers": work._count,
+                "students": student._count,
+                "ideas": ideaIds.length,
+                "proposals": proposal._count,
+                "projects": project._count,
+                "superSegmentName": superSegment.superSegName,
+                "subSegmentsCount": subSegments.length,
+                "subSegments": subsegmentNames,
+            }
+
+            res.status(200).json(result);
+
+        } catch (error) {
+            console.log(error);
+            res.status(400).end();
+        } finally {
             await prisma.$disconnect();
         }
     }
