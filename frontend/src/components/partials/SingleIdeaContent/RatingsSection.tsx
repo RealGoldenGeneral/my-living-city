@@ -14,12 +14,13 @@ import LoadingSpinner from "../../ui/LoadingSpinner";
 import RatingDisplay from "./RatingDisplay";
 import RatingInput from "./RatingInput";
 
-interface RatingsSectionProps {}
+interface RatingsSectionProps {
+  ideaId: string;
+}
 
-const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
+const RatingsSection: React.FC<RatingsSectionProps> = ({ ideaId }) => {
   const { user } = useContext(UserProfileContext);
-  const { ideaId } = useParams<{ ideaId: string }>();
-
+  console.log("ideaId", ideaId);
   const {
     data: ratings,
     isLoading,
@@ -72,6 +73,7 @@ const RatingsSection: React.FC<RatingsSectionProps> = ({}) => {
       {user && (
         <Row className="py-5 bg-mlc-shade-grey">
           <RatingInput
+            ideaId={ideaId}
             userHasRated={userHasRated}
             userSubmittedRating={userSubmittedRating}
           />

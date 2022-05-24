@@ -64,9 +64,23 @@ export const getAllAdvertisement = async () => {
     const res = await axios.get<IAdvertisement[]>(`${API_BASE_URL}/advertisement/getAll`);
     return res.data;
 }
+export const getPublishedAdvertisement = async () => {
+    const res = await axios.get<IAdvertisement[]>(`${API_BASE_URL}/advertisement/getAllPublished`);
+    return res.data;
+}
+
+export const getAdsByUserId = async (userId: any) => {
+    const res = await axios.get<IAdvertisement[]>(`${API_BASE_URL}/advertisement/getAllUser/${userId}`);
+    return res.data;
+}
 
 export const getAdvertisementById = async (adsId: any) => {
     const res = await axios.get<IAdvertisement>(`${API_BASE_URL}/advertisement/get/${adsId}`);
+    return res.data;
+}
+
+export const getAdvertisementByOwnerId = async (ownerId: any) => {
+    const res = await axios.get<IAdvertisement[]>(`${API_BASE_URL}/advertisement/getAdsByOwner/${ownerId}`);
     return res.data;
 }
 

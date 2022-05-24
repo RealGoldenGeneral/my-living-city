@@ -170,10 +170,17 @@ segmentRouter.get(
 
 segmentRouter.get(
     '/getBySuperSegId/:superSegId',
+<<<<<<< HEAD
     async (req, res) => {
         const { superSegId } = req.params;
 
         if (!isInteger(superSegId)) {
+=======
+    async(req,res) => {
+        let {superSegId} = req.params;
+        superSegId = parseInt(superSegId, 10);
+        if(!isInteger(superSegId)){
+>>>>>>> development
             return res.status(400).json("super segment id is invalid. ")
         }
 

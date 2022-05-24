@@ -1,9 +1,7 @@
 export const __prod__ = process.env.NODE_ENV === "production";
 export const API_BASE_URL =
   process.env.REACT_APP_BASE_API_URL || "http://localhost:3001";
-export const GOOGLE_PHYSICAL_MAP_KEY =
-  process.env.GOOGLE_PHYSICAL_MAP_API_KEY || "";
-
+export const MAP_KEY = "AIzaSyBL0eyMR3xMdqjesBSprUv2yQDq-4j3tCM";
 // UTILITY defaults
 export const UTIL_FUNCTIONS = {
   delayDefault: Number(process.env.REACT_APP_UTIL_FUNC_DELAY ?? 2000),
@@ -45,6 +43,8 @@ export enum USER_TYPES {
   ASSOCIATE = "ASSOCIATE",
   DEVELOPER = "DEVELOPER",
   RESIDENTIAL = "RESIDENTIAL",
+  COMMUNITY = "COMMUNITY",
+  IN_PROGRESS = "IN_PROGRESS",
 }
 // Routes should be placed here and called into "path" in Route component
 export const ROUTES = {
@@ -60,6 +60,7 @@ export const ROUTES = {
   TEAM404: "/*",
   SUBMIT_ADVERTISEMENT: "/advertisement/submit",
   ALL_ADVERTISEMENT: "/advertisement/all", //
+  USER_ADVERTISEMENTS: "/advertisement/user", //
   EDIT_ADVERTISEMENT: "/advertisement/edit",
   SEND_EMAIL: "/sendEmail",
   RESET_PASSWORD: "/user/reset-password",
@@ -68,4 +69,5 @@ export const ROUTES = {
   SUBMIT_DIRECT_PROPOSAL: "/submit-direct-proposal",
   DASHBOARD: "/dashboard",
   My_POSTS: "/dashboard/my-posts",
+  MY_ADVERTISMENT: "/advertisement/my-ads",
 };

@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import CSS from "csstype";
 import {
   NavDropdown,
   Nav,
@@ -17,9 +18,23 @@ export default function Header() {
     shouldTrigger: token != null,
   });
   console.log(data);
+
+  const paymentNotificationStyling: CSS.Properties = {
+    backgroundColor: "#f7e4ab", 
+    justifyContent: "center",
+    padding: "0.2rem",
+    whiteSpace: "pre",
+  }
+
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
+      {user?.userType === "IN_PROGRESS" && 
+        (<Nav style={paymentNotificationStyling}>
+          You have not paid your account payment. To upgrade your account, please go to the <a href="/profile">profile</a> section.
+        </Nav>)
+      }
+    
       <Navbar className="inner-header" bg="light" expand="sm">
         <Navbar.Brand href="/">
           <img
@@ -44,19 +59,22 @@ export default function Header() {
 
                 <NavDropdown title="Submit" id="nav-dropdown">
                   <Nav.Link href="/submit">Submit Idea</Nav.Link>
-                  <Nav.Link href="/submit-direct-proposal">
-                    Submit Proposal
-                  </Nav.Link>
+                  {(user.userType === "BUSINESS"|| user.userType === "MUNICIPAL"|| user.userType === "COMMUNITY") && (
+                    <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
+                  )}
                 </NavDropdown>
 
                 <Nav.Link href="/profile">Profile</Nav.Link>
 
                 {user.userType === "ADMIN" && (
                   <NavDropdown title="Admin Tools" id="nav-dropdown">
-                    <Nav.Link href="/advertisement/all">Ads</Nav.Link>
+                    <Nav.Link href="/advertisement/all">Ad Manager</Nav.Link>
                     <Nav.Link href="/segment/management">Segments</Nav.Link>
                     <Nav.Link href="/user/management">Users</Nav.Link>
                   </NavDropdown>
+                )}
+                {(user.userType === "BUSINESS" || user.userType === "COMMUNITY") && (
+                  <Nav.Link href="/advertisement/user">My Ads</Nav.Link>
                 )}
                 {user.userType === "SEG_ADMIN" && (
                   <NavDropdown title="Seg-Admin Tools" id="nav-dropdown">

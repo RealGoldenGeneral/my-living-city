@@ -61,7 +61,7 @@ advertisementRouter.post(
             });
 
             //test to see if the user is an admin or business user
-            if (theUser.userType == "ADMIN" || theUser.userType == "BUSINESS") {
+            if (theUser.userType == "ADMIN" || theUser.userType == "BUSINESS" || theUser.userType == "COMMUNITY") {
 
                 //if there's no object in the request body
                 if (isEmpty(req.body)) {
@@ -278,6 +278,74 @@ advertisementRouter.get(
     }
 );
 
+//for retriving all published advertisements.
+advertisementRouter.get(
+    '/getAllPublished',
+    async (req, res) => {
+        try {
+            const allAd = await prisma.advertisements.findMany({
+                where: {
+                    OR: [{
+                        adType: "BASIC",
+                    },
+                    {
+                        published: true,
+                    }
+                    ]
+
+                }
+            });
+            if (allAd) {
+                return res.status(200).json(allAd);
+            } else {
+                return res.status(404).send("there's no advertisement belongs to you!");
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({
+                message: "An error occured while trying to get advertisements.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
+);
+
+advertisementRouter.get(
+    '/getAllUser/:userId',
+    async (req, res) => {
+        try {
+            const userId = req.params.userId;
+            console.log("YELLOW");
+            console.log(userId);
+            const result = await prisma.advertisements.findMany({
+                where: { ownerId: userId }
+
+            })
+
+            if (!result) {
+                res.status(204).json("adsId not found!");
+            }
+            if (result) {
+                res.status(200).json(result);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve the adsId.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
 advertisementRouter.get(
     '/get/:adsId',
     async (req, res) => {
@@ -294,6 +362,30 @@ advertisementRouter.get(
             if (result) {
                 res.status(200).json(result);
             }
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({
+                message: "An error occured while trying to retrieve the adsId.",
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
+// Get all ads created by an ownerId
+advertisementRouter.get(
+    '/getAdsByOwner/:ownerId',
+    async (req, res) => {
+        try {
+            const { ownerId } = req.params;
+            console.log(`Get ads by owner id: ${ownerId}`);
+            const result = await prisma.advertisements.findMany({
+                where: { ownerId: ownerId }
+            })
+            res.status(200).json(result);
         } catch (err) {
             console.log(err);
             res.status(400).json({
@@ -330,7 +422,7 @@ advertisementRouter.put(
             });
             const { adType, adTitle, adDuration, adPosition, externalLink, published } = req.body;
 
-            if (theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS') {
+            if (theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS' || theUser.userType == "COMMUNITY") {
                 const { advertisementId } = req.params;
                 const parsedAdvertisementId = parseInt(advertisementId);
 
@@ -556,11 +648,10 @@ advertisementRouter.delete(
     }
 )
 
+// Experimental
 advertisementRouter.get(
     '/pricing',
-
-    // passport.authenticate('jwt', { session: false }),
-
+    passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
             const segmentUserCounts = await prisma.userSegments.groupBy({

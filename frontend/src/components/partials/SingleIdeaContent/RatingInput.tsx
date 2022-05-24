@@ -15,17 +15,20 @@ import {
 interface RatingInputProps {
   userHasRated: boolean;
   userSubmittedRating: number | null;
+  ideaId: string;
 }
 
 const RatingInput = ({
+  ideaId,
   userHasRated,
   userSubmittedRating,
 }: RatingInputProps) => {
   const { token, user } = useContext(UserProfileContext);
-  const { ideaId } = useParams<{ ideaId: string }>();
   const [ratingValue, setRatingValue] = useState<number>(
     userSubmittedRating ?? 0
   );
+
+  console.log("ideaId", ideaId);
 
   // =================== SUBMITTING RATING MUTATION ==========================
   const { submitRatingMutation, isLoading, isError, error, isSuccess } =
@@ -195,7 +198,7 @@ const RatingInput = ({
             {buttonTextOutput()}
           </Button>
           {userHasRated && (
-            <div style={{ marginTop: "1rem" }}>You have already rated.</div>
+            <div style={{ marginTop: "1rem" }}>You have already submitted.</div>
           )}
         </Col>
       </Row>

@@ -37,6 +37,7 @@ import {
   postCreateProposal,
 } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
+import { MAP_KEY } from "../../lib/constants";
 
 interface SubmitDirectProposalPageContentProps {
   categories: ICategory[] | undefined;
@@ -54,9 +55,8 @@ const SubmitDirectProposalPageContent: React.FC<
 > = ({ categories, segData }) => {
   const [markers, sendData]: any = useState({
     home: { lat: null, lon: null },
-    work: { lat: null, lon: null },
-    school: { lat: null, lon: null },
   });
+
   const [map, showMap] = useState(false);
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -212,11 +212,35 @@ const SubmitDirectProposalPageContent: React.FC<
     },
     onSubmit: submitHandler,
   });
+
   useEffect(() => {
     if (segData) {
       handleCommunityChange(0);
     }
   }, []);
+
+  function reverseGeocode() {
+    setIsLoading(true);
+    fetch(
+      "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
+        (markers.home.lat ? markers.home.lat : "48.4284") +
+        "," +
+        (markers.home.lng ? markers.home.lng : "-123.3656") +
+        "&key=" +
+        MAP_KEY
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        let address = data.results[0].formatted_address;
+        console.log(address);
+        formik.setFieldValue("location", address);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log("error", error);
+        setIsLoading(false);
+      });
+  }
 
   return (
     <Container className="submit-idea-page-content">
@@ -597,7 +621,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -613,7 +636,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -629,7 +651,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -645,7 +666,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -661,7 +681,6 @@ const SubmitDirectProposalPageContent: React.FC<
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
-                            value={formik.values.title}
                             placeholder="Extra Feedback"
                           />
                         </div>
@@ -688,13 +707,16 @@ const SubmitDirectProposalPageContent: React.FC<
                   type="text"
                   name="location"
                   onChange={formik.handleChange}
-                  value={formik.values.location}
                   placeholder="Enter Location (Optional)"
                   style={{ marginBottom: "1rem" }}
                 />
               </div>
 
-              <div id="map" style={{ display: "none" }}>
+              <div
+                id="map"
+                style={{ display: "none" }}
+                onClick={() => reverseGeocode()}
+              >
                 <SimpleMap
                   iconName={"home"}
                   sendData={(markers: any) => sendData(markers)}

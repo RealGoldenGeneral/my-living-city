@@ -81,4 +81,13 @@ export interface IIdeaWithAggregations {
 
   ratings?: IRating[];
   comments?: IComment[];
+  superSegId?: number;
+  segId?: number;
+  subSegId?: number;
+  communityImpact?: string;
+  natureImpact?: string;
+  artsImpact?: string;
+  energyImpact?: string;
+  manufacturingImpact?: string;
+  
 }

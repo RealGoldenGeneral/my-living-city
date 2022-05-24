@@ -62,6 +62,9 @@ const main = async () => {
 	const proposalRouter = require('./controllers/proposal');
 	const communityRouter = require('./controllers/community');
 	const dashboardRouter = require('./controllers/dashboard');
+	const userReachRouter = require('./controllers/userReach');
+
+	//Webhooks
 	const accountRouter = require('./webhooks/account');
 
 
@@ -91,7 +94,11 @@ const main = async () => {
 	apiRouter.use('/proposal', proposalRouter);
 	apiRouter.use('/community', communityRouter);
 	apiRouter.use('/dashboard', dashboardRouter);
+<<<<<<< HEAD
 	apiRouter.use('/account', accountRouter);
+=======
+	apiRouter.use('/reach', userReachRouter);
+>>>>>>> development
 
 
 	// Listen to server

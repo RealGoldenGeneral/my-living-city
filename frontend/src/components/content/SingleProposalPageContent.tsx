@@ -1,4 +1,15 @@
-import { Button, Card, Col, Row, Image, Form } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Row,
+  Image,
+  Form,
+  Modal,
+  Alert,
+  Accordion,
+  Table,
+} from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
 import {
   capitalizeFirstLetterEachWord,
@@ -31,16 +42,22 @@ import { useHistory } from "react-router-dom";
 import "react-image-crop/dist/ReactCrop.css";
 import { handlePotentialAxiosError } from "../../lib/utilityFunctions";
 import { postCreateIdea } from "../../lib/api/ideaRoutes";
-import { postCreateCollabotator } from "src/lib/api/communityRoutes";
+import {
+  postCreateCollabotator,
+  postCreateVolunteer,
+  postCreateDonor,
+} from "src/lib/api/communityRoutes";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
   proposalData: any;
+  ideaId: string;
 }
 
 const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   ideaData,
   proposalData,
+  ideaId,
 }) => {
   const {
     title,
@@ -64,9 +81,14 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     projectInfo,
   } = ideaData;
 
+  const parsedIdeaId = ideaId;
+
   const {
     id: proposalId,
     suggestedIdeas,
+    collaborations,
+    volunteers,
+    donors,
     needCollaborators,
     needVolunteers,
     needDonations,
@@ -74,8 +96,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     needSuggestions,
     location,
   } = proposalData;
-  console.log(proposalData);
-  console.log(suggestedIdeas);
+  // console.log(proposalData);
+  // console.log(suggestedIdeas);
 
   const { title: catTitle } = category!;
 
@@ -113,30 +135,18 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     window.location.href = `/submit?supportedProposal=${proposalId}`;
   }
 
-  const [collaboratorIsOpen, setCollaboratorIsOpen] = useState(false);
-  const togglePopupCollaborator = () => {
-    setCollaboratorIsOpen(!collaboratorIsOpen);
-  };
-
-  const [volunteerIsOpen, setVolunteerIsOpen] = useState(false);
-  const togglePopupVoluteer = () => {
-    setVolunteerIsOpen(!volunteerIsOpen);
-  };
-
-  const [donorIsOpen, setDonorIsOpen] = useState(false);
-  const togglePopupDonor = () => {
-    setDonorIsOpen(!donorIsOpen);
-  };
-
-  const [map, showMap] = useState(false);
   const { token, user } = useContext(UserProfileContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);
-  const [crop, setCrop] = useState({ aspect: 16 / 9 });
+
+  const [modalShowCollaborator, setModalShowCollaborator] = useState(false);
+  const [modalShowVolunteer, setModalShowVolunteer] = useState(false);
+  const [modalShowDonor, setModalShowDonor] = useState(false);
 
   const collaboratorSubmitHandler = async (values: any) => {
     try {
       // Set loading and error state
+      console.log("values", values);
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -148,7 +158,61 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
       );
       console.log("Here" + res);
       setError(null);
-      //formikCollaborator.resetForm();
+      formikCollaborator.resetForm();
+      window.location.reload();
+    } catch (error) {
+      const genericMessage =
+        "An error occured while trying to create an Proposal.";
+      const errorObj = handlePotentialAxiosError(genericMessage, error);
+      setError(errorObj);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const volunteerSubmitHandler = async (values: any) => {
+    try {
+      // Set loading and error state
+      console.log("values", values);
+      setError(null);
+      setIsLoading(true);
+      setTimeout(() => console.log("timeout"), 5000);
+      const res = await postCreateVolunteer(
+        proposalId,
+        values,
+        user!.banned,
+        token
+      );
+      console.log("Here" + res);
+      setError(null);
+      formikVolunteer.resetForm();
+      window.location.reload();
+    } catch (error) {
+      const genericMessage = "An error occured while trying to create an Idea.";
+      const errorObj = handlePotentialAxiosError(genericMessage, error);
+      setError(errorObj);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const donorSubmitHandler = async (values: any) => {
+    try {
+      // Set loading and error state
+      console.log("values", values);
+      setError(null);
+      setIsLoading(true);
+      setTimeout(() => console.log("timeout"), 5000);
+      const res = await postCreateDonor(
+        proposalId,
+        values,
+        user!.banned,
+        token
+      );
+      console.log("Here" + res);
+      setError(null);
+      formikDonor.resetForm();
+      window.location.reload();
     } catch (error) {
       const genericMessage = "An error occured while trying to create an Idea.";
       const errorObj = handlePotentialAxiosError(genericMessage, error);
@@ -168,10 +232,39 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     onSubmit: collaboratorSubmitHandler,
   });
 
+  const formikVolunteer = useFormik({
+    initialValues: {
+      experience: "",
+      task: "",
+      time: "",
+      contactInfo: "",
+    },
+    onSubmit: volunteerSubmitHandler,
+  });
+
+  const formikDonor = useFormik({
+    initialValues: {
+      donations: "",
+      contactInfo: "",
+    },
+    onSubmit: donorSubmitHandler,
+  });
+
+  const [followingPost, setFollowingPost] = useState(false);
+
   const addIdeaToUserFollowList = () => {
     console.log("addIdeaToUserFollowList");
     console.log("proposalData", proposalData);
+    setFollowingPost(!followingPost);
   };
+
+  let isPostAuthor = false;
+
+  if (user) {
+    isPostAuthor = author!.id === user!.id;
+  }
+
+  console.log("isPostAuthor", isPostAuthor);
 
   return (
     <div className="single-idea-content pt-5">
@@ -179,6 +272,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         {`
         .canvasjs-chart-credit {
           display: none;
+        }
+        .mouse-pointer:hover {
+          cursor: pointer;
         }
         `}
       </style>
@@ -198,7 +294,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   style={{ height: "3rem" }}
                   onClick={() => addIdeaToUserFollowList()}
                 >
-                  Follow
+                  {followingPost ? "Unfollow" : "Follow"}
                 </Button>
               </div>
             </Card.Header>
@@ -370,33 +466,66 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         </Row>
       </Card>
 
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <div>
-                <h4 className="h4">Collaborators</h4>
-                <p>Join to be part of the project team</p>
-              </div>
+      {needCollaborators && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h4 className="h4">Collaborators</h4>
+                  <p>Join to be part of the project team</p>
+                </div>
 
-              <h4 className="text-center my-auto text-muted">
-                <div className="collab">
-                  <Button onClick={togglePopupCollaborator}>Join</Button>
-                  {collaboratorIsOpen && (
-                    <Popup
-                      content={
-                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
+                <h4 className="text-center my-auto text-muted">
+                  <div className="collab">
+                    <Button
+                      variant="primary"
+                      onClick={() => setModalShowCollaborator(true)}
+                    >
+                      Join
+                    </Button>
+                    <Modal
+                      show={modalShowCollaborator}
+                      onHide={() => setModalShowCollaborator(false)}
+                      size="lg"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                          Collaborate
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <Form onSubmit={formikCollaborator.handleSubmit}>
                           <Form.Group>
-                            <p style={{ textAlign: "center" }}>Collaborate</p>
+                            <p style={{ fontSize: "1rem" }}>Contact</p>
+                            <Form.Control
+                              type="text"
+                              name="contactInfo"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or phone number)?"
+                            />
+                            <br />
+                            <p style={{ fontSize: "1rem" }}>Time</p>
+                            <Form.Control
+                              type="text"
+                              name="time"
+                              onChange={formikCollaborator.handleChange}
+                              value={formikCollaborator.values.time}
+                              placeholder="How much time per week or per month do you have
+                                available?"
+                            />
+                            <br />
                             <p style={{ fontSize: "1rem" }}>Experience</p>
-
                             <Form.Control
                               type="text"
                               name="experience"
                               onChange={formikCollaborator.handleChange}
                               value={formikCollaborator.values.experience}
                               placeholder="What experience and skills do you bring to the
-                              project?"
+                                project?"
                             />
                             <br />
 
@@ -409,68 +538,154 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                               placeholder="What role or task would you would like to work on?"
                             />
                             <br />
-                            <p style={{ fontSize: "1rem" }}>Time</p>
-                            <Form.Control
-                              type="text"
-                              name="time"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.time}
-                              placeholder="How much time per week or per month do you have
-                              available?"
-                            />
-                            <br />
+
+                            {error && (
+                              <Alert variant="danger" className="error-alert">
+                                {error.message}
+                              </Alert>
+                            )}
+                          </Form.Group>
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={isLoading ? true : false}
+                          >
+                            {isLoading ? "Saving..." : "Submit"}
+                          </Button>
+                        </Form>
+                      </Modal.Body>
+                    </Modal>
+                  </div>
+                </h4>
+              </div>
+            </Card.Header>
+            {isPostAuthor ? (
+              <Card.Body>
+                {collaborations.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Collaborator</th>
+                        <th>Contact</th>
+                        <th>Time</th>
+                        <th>Experience</th>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {collaborations.map(
+                        (collaboration: any, index: number) => (
+                          <tr>
+                            <td>
+                              {collaboration.author.fname}{" "}
+                              {collaboration.author.lname}
+                            </td>
+                            <td>{collaboration.contactInfo}</td>
+                            <td>{collaboration.time}</td>
+                            <td>{collaboration.experience}</td>
+                            <td>{collaboration.role}</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No collaborators yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
+            ) : (
+              <Card.Body>
+                {collaborations.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Collaborator</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {collaborations.map(
+                        (collaboration: any, index: number) => (
+                          <tr>
+                            <td>
+                              {collaboration.author.fname}{" "}
+                              {collaboration.author.lname}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No collaborators yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
+            )}
+          </Card>
+        </div>
+      )}
+      {needVolunteers && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h4 className="h4">Volunteers</h4>
+                  <p>Help support this project by becoming a volunteer</p>
+                </div>
+
+                <h4 className="text-center my-auto text-muted">
+                  <div className="volunteer">
+                    <Button
+                      variant="primary"
+                      onClick={() => setModalShowVolunteer(true)}
+                    >
+                      Sign-up
+                    </Button>
+                    <Modal
+                      show={modalShowVolunteer}
+                      onHide={() => setModalShowVolunteer(false)}
+                      size="lg"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                          Volunteer
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <Form onSubmit={formikVolunteer.handleSubmit}>
+                          <Form.Group>
                             <p style={{ fontSize: "1rem" }}>Contact</p>
                             <Form.Control
                               type="text"
                               name="contactInfo"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.contactInfo}
-                              placeholder="What is your contact information (e-mail and/or
-                              phone number)?"
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.contactInfo}
+                              placeholder="What is your contact information (e-mail and/or phone number)?"
                             />
                             <br />
-                          </Form.Group>
-                          <Button variant="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Form>
-                      }
-                      handleClose={togglePopupCollaborator}
-                    />
-                  )}
-                </div>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <p style={{ padding: "0px" }}>Collaborator1@test ave</p>
-            <p style={{ padding: "0px" }}>Collaborator2@test ave</p>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <div>
-                <h4 className="h4">Volunteers</h4>
-                <p>Help support this project by becoming a volunteer</p>
-              </div>
-              <h4 className="text-center my-auto text-muted">
-                <div className="volunteer">
-                  <Button onClick={togglePopupVoluteer}>Sign Up</Button>
-                  {volunteerIsOpen && (
-                    <Popup
-                      content={
-                        <Form>
-                          <Form.Group>
-                            <p style={{ textAlign: "center" }}>Volunteer</p>
+                            <p style={{ fontSize: "1rem" }}>Time</p>
+                            <Form.Control
+                              type="text"
+                              name="time"
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.time}
+                              placeholder="How much time do you want to contribute?"
+                            />
+                            <br />
+
                             <p style={{ fontSize: "1rem" }}>Experience</p>
 
                             <Form.Control
                               type="text"
                               name="experience"
-                              value={formikCollaborator.values.experience}
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.experience}
                               placeholder="What experience and skills do you bring to the project?"
                             />
                             <br />
@@ -478,144 +693,280 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                             <p style={{ fontSize: "1rem" }}>Task</p>
                             <Form.Control
                               type="text"
-                              name="role"
-                              value={formikCollaborator.values.role}
+                              name="task"
+                              onChange={formikVolunteer.handleChange}
+                              value={formikVolunteer.values.task}
                               placeholder="What type of task would you like to work on?"
                             />
                             <br />
-                            <p style={{ fontSize: "1rem" }}>Time</p>
+
+                            {error && (
+                              <Alert variant="danger" className="error-alert">
+                                {error.message}
+                              </Alert>
+                            )}
+                          </Form.Group>
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={isLoading ? true : false}
+                          >
+                            {isLoading ? "Saving..." : "Submit"}
+                          </Button>
+                        </Form>
+                      </Modal.Body>
+                    </Modal>
+                  </div>
+                </h4>
+              </div>
+            </Card.Header>
+            {isPostAuthor ? (
+              <Card.Body>
+                {volunteers.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Volunteer</th>
+                        <th>Contact</th>
+                        <th>Time</th>
+                        <th>Experience</th>
+                        <th>Task</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {volunteers.map((volunteer: any, index: number) => (
+                        <tr>
+                          <td>
+                            {volunteer.author.fname} {volunteer.author.lname}
+                          </td>
+                          <td>{volunteer.contactInfo}</td>
+                          <td>{volunteer.time}</td>
+                          <td>{volunteer.experience}</td>
+                          <td>{volunteer.task}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No volunteers yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
+            ) : (
+              <Card.Body>
+                {volunteers.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Volunteer</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {volunteers.map((volunteer: any, index: number) => (
+                        <tr>
+                          <td>
+                            {volunteer.author.fname} {volunteer.author.lname}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No volunteers yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
+            )}
+          </Card>
+        </div>
+      )}
+
+      {needDonations && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h4 className="h4">Donors</h4>
+                  <p>Donate to help this project grow</p>
+                </div>
+
+                <h4 className="text-center my-auto text-muted">
+                  <div className="donor">
+                    <Button
+                      variant="primary"
+                      onClick={() => setModalShowDonor(true)}
+                    >
+                      Donate
+                    </Button>
+                    <Modal
+                      show={modalShowDonor}
+                      onHide={() => setModalShowDonor(false)}
+                      size="lg"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                    >
+                      <Modal.Header closeButton>
+                        <Modal.Title id="contained-modal-title-vcenter">
+                          Donate
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <Form onSubmit={formikDonor.handleSubmit}>
+                          <Form.Group>
+                            <p style={{ fontSize: "1rem" }}>Donation</p>
                             <Form.Control
                               type="text"
-                              name="time"
-                              value={formikCollaborator.values.time}
-                              placeholder="How much time do you want to contribute?"
+                              name="donations"
+                              onChange={formikDonor.handleChange}
+                              value={formikDonor.values.donations}
+                              placeholder="What would you like to contribute?"
                             />
                             <br />
                             <p style={{ fontSize: "1rem" }}>Contact</p>
                             <Form.Control
                               type="text"
                               name="contactInfo"
-                              value={formikCollaborator.values.contactInfo}
+                              onChange={formikDonor.handleChange}
+                              value={formikDonor.values.contactInfo}
                               placeholder="What is your contact information (e-mail and/or phone number)?"
                             />
                             <br />
+                            {error && (
+                              <Alert variant="danger" className="error-alert">
+                                {error.message}
+                              </Alert>
+                            )}
                           </Form.Group>
-                          <Button variant="primary" type="submit">
-                            Submit
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={isLoading ? true : false}
+                          >
+                            {isLoading ? "Saving..." : "Submit"}
                           </Button>
                         </Form>
-                      }
-                      handleClose={togglePopupVoluteer}
-                    />
-                  )}
-                </div>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
-            <p style={{ padding: "0px" }}>Volunteer@test ave</p>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <div>
-                <h4 className="h4">Donors</h4>
-                <p>Donate to help this project grow</p>
+                      </Modal.Body>
+                    </Modal>
+                  </div>
+                </h4>
               </div>
-              <h4 className="text-center my-auto text-muted">
-                <div className="donor">
-                  <Button onClick={togglePopupDonor}>Sign Up</Button>
-                  {donorIsOpen && (
-                    <Popup
-                      content={
-                        <Form onSubmit={() => formikCollaborator.handleSubmit}>
-                          <Form.Group>
-                            <p style={{ textAlign: "center" }}>Donate</p>
-                            <p style={{ fontSize: "1rem" }}>Contribution</p>
-
-                            <Form.Control
-                              type="text"
-                              name="experience"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.experience}
-                              placeholder="What would you like to contribute?"
-                            />
-
-                            <br />
-                            <p style={{ fontSize: "1rem" }}>Contact</p>
-                            <Form.Control
-                              type="text"
-                              name="contactInfo"
-                              onChange={formikCollaborator.handleChange}
-                              value={formikCollaborator.values.contactInfo}
-                              placeholder="What is your contact information (e-mail and/or
-                          phone number)?"
-                            />
-                            <br />
-                          </Form.Group>
-                          <Button variant="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Form>
-                      }
-                      handleClose={togglePopupDonor}
-                    />
-                  )}
-                </div>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            <p style={{ padding: "0px" }}>Donor@test ave</p>
-          </Card.Body>
-        </Card>
-      </div>
-      <div style={{ marginTop: "2rem" }}>
-        <Card>
-          <Card.Header>
-            <div className="d-flex justify-content-between">
-              <h4 className="h4">Suggested Ideas</h4>
-              {/** create a textbox */}
-
-              <h4 className="text-center my-auto text-muted">
-                <Button onClick={() => redirectToIdeaSubmit()}>
-                  Propose Idea
-                </Button>
-              </h4>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            {suggestedIdeas.length ? (
-              suggestedIdeas.map((idea: any) => (
-                <Row>
-                  <Col>
-                    {idea.author.fname} {idea.author.lname}
-                  </Col>
-                  <Col>
-                    <a href={"/ideas/" + idea.id}>{idea.title}</a>
-                  </Col>
-                </Row>
-              ))
+            </Card.Header>
+            {isPostAuthor ? (
+              <Card.Body>
+                {donors.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Donor</th>
+                        <th>Contact</th>
+                        <th>Donation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {donors.map((donor: any, index: number) => (
+                        <tr>
+                          <td>
+                            {donor.author.fname} {donor.author.lname}
+                          </td>
+                          <td>{donor.contactInfo}</td>
+                          <td>{donor.donations}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No donors yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
             ) : (
-              <Row>
-                <Col style={{ textAlign: "center" }}>No suggestions yet</Col>
-              </Row>
+              <Card.Body>
+                {donors.length > 0 ? (
+                  <Table style={{ margin: "0rem" }} hover>
+                    <thead>
+                      <tr>
+                        <th>Donor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {donors.map((donor: any, index: number) => (
+                        <tr>
+                          <td>
+                            {donor.author.fname} {donor.author.lname}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p style={{ margin: "0rem", textAlign: "center" }}>
+                    No donors yet, be the first!
+                  </p>
+                )}
+              </Card.Body>
             )}
-          </Card.Body>
-        </Card>
-      </div>
+          </Card>
+        </div>
+      )}
+
+      {needSuggestions && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <h4 className="h4">Suggested Ideas</h4>
+                {/** create a textbox */}
+
+                <h4 className="text-center my-auto text-muted">
+                  <Button onClick={() => redirectToIdeaSubmit()}>
+                    Propose Idea
+                  </Button>
+                </h4>
+              </div>
+            </Card.Header>
+            <Card.Body>
+              {suggestedIdeas.length > 0 ? (
+                <Table style={{ margin: "0rem" }} hover>
+                  <thead>
+                    <tr>
+                      <th>Author</th>
+                      <th>Idea</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {suggestedIdeas.map((suggestion: any, index: number) => (
+                      <tr>
+                        <td>
+                          {suggestion.author.fname} {suggestion.author.lname}
+                        </td>
+                        <td>
+                          <a href={"/ideas/" + suggestion.id}>
+                            {suggestion.title}
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : (
+                <p style={{ margin: "0rem", textAlign: "center" }}>
+                  No suggestions yet, be the first!
+                </p>
+              )}
+            </Card.Body>
+          </Card>
+        </div>
+      )}
 
       <Row>
-        <RatingsSection />
+        <RatingsSection ideaId={parsedIdeaId} />
       </Row>
       <Row>
-        <CommentsSection />
+        <CommentsSection ideaId={parsedIdeaId} />
       </Row>
     </div>
   );

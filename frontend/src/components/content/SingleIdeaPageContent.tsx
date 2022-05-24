@@ -24,17 +24,24 @@ import ChampionSubmit from "../partials/SingleIdeaContent/ChampionSubmit";
 import { useSingleSegmentBySegmentId } from "src/hooks/segmentHooks";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import { ISegment } from "src/lib/types/data/segment.type";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { API_BASE_URL } from "src/lib/constants";
+import { UserProfileContext } from "src/contexts/UserProfile.Context";
+import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser } from "src/lib/api/ideaRoutes";
+import CSS from "csstype"
+import { useCheckIdeaFollowedByUser } from "src/hooks/ideaHooks";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
+  ideaId: string;
 }
 
 const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   ideaData,
+  ideaId,
 }) => {
   const {
+    id,
     title,
     description,
     imagePath,
@@ -92,9 +99,29 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
     return !ideaData.champion && !!ideaData.isChampionable;
   };
+  
+  const [followingPost, setFollowingPost] = useState(false);
+  const {user, token} = useContext(UserProfileContext);
+  const {data: isFollowingPost, isLoading: isFollowingPostLoading} = useCheckIdeaFollowedByUser(token, (user ? user.id : user), ideaId);
 
-  const addIdeaToUserFollowList = () => {
-    console.log("addIdeaToUserFollowList");
+  useEffect(() => {
+    if (!isFollowingPostLoading) {
+      setFollowingPost(isFollowingPost.isFollowed);
+    }
+
+  }, [isFollowingPostLoading, isFollowingPost])
+
+  const handleFollowUnfollow = async () => {
+    console.log("handleFollowUnfollow");
+    let res;
+    if (user && token) {
+      if (followingPost) {
+        res = await unfollowIdeaByUser(token, user.id, ideaId);
+      } else {
+        res = await followIdeaByUser(token, user.id, ideaId);
+      }
+      setFollowingPost(!followingPost);
+    }
   };
 
   return (
@@ -111,12 +138,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
-                <Button
+                {user && token ? <Button
                   style={{ height: "3rem" }}
-                  onClick={() => addIdeaToUserFollowList()}
+                  onClick={async () => await handleFollowUnfollow()}
                 >
-                  Follow
-                </Button>
+                  {followingPost ? "Unfollow" : "Follow"}
+                </Button> : null}
               </div>
             </Card.Header>
             <Card.Body>
@@ -279,10 +306,10 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
         </Row>
       </Card>
       <Row>
-        <RatingsSection />
+        <RatingsSection ideaId={ideaId} />
       </Row>
       <Row>
-        <CommentsSection />
+        {/* <CommentsSection ideaId={ideaId} /> */}
       </Row>
     </div>
   );

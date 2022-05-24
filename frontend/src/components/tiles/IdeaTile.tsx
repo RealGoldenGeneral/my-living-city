@@ -29,11 +29,11 @@ const IdeaTile: React.FC<ideaTileProps> = ({
     firstName,
     streetAddress,
     updatedAt,
-    ratingAvg = -1,
-    ratingCount = -1,
+    ratingAvg = 0,
+    ratingCount = 0,
     commentCount = 0,
-    posRatings = -1,
-    negRatings = -1,
+    posRatings = 0,
+    negRatings = 0,
     ratings,
     comments,
   } = ideaData;
@@ -61,8 +61,6 @@ const IdeaTile: React.FC<ideaTileProps> = ({
 
   const isNew = date < oneWeek;
 
-  console.log(isNew);
-
   //console.log(ideaData);
   return (
     // <Card style={{ width: '18rem' }}>
@@ -72,8 +70,8 @@ const IdeaTile: React.FC<ideaTileProps> = ({
         {`
           .new-banner {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 1rem;
+            right: 1rem;
             background-color: #93cb6e;
             color: #fff;
             padding: 0.5rem;

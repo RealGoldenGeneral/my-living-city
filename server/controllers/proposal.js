@@ -5,6 +5,7 @@ const proposalRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
 const fs = require('fs');
+const { collaborator } = require('../lib/prismaClient');
 
 // post request to create a proposal
 proposalRouter.post(
@@ -190,9 +191,50 @@ proposalRouter.get(
                             }
                         },
                     },
-
-                },
-
+                    collaborations: {
+                        select: {
+                            experience: true,
+                            role: true,
+                            time: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    volunteers: {
+                        select: {
+                            experience: true,
+                            task: true,
+                            time: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    donors: {
+                        select: {
+                            donations: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                }
             });
             if (!foundProposal) {
                 return res.status(400).json({

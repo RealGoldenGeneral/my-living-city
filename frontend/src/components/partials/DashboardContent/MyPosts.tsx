@@ -55,7 +55,7 @@ const MyPosts: React.FC<MyPostsProps> = ({
       )}
 
       <h2 className="pb-1 border-bottom display-6">My Posts</h2>
-      <Row className="g-5 py-3 justify-content-center">
+      <Row className="g-5 py-3 justify-content-left">
         {parsedPosts
           ? parsedPosts.map((idea: any) => (
               <Col
@@ -64,7 +64,7 @@ const MyPosts: React.FC<MyPostsProps> = ({
                 lg={4}
                 className="pt-3 align-items-stretch"
               >
-                <IdeaTile ideaData={idea} showFooter={true} postType="Idea" />
+                <IdeaTile ideaData={idea} showFooter={true} postType={idea.state === "IDEA" ?  "Idea" : "Proposal"} />
               </Col>
             ))
           : [...Array(6)].map((x, i) => (

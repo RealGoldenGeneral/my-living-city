@@ -17,6 +17,7 @@ interface LandingPageContentProps {
   ideasIsError: boolean;
   ideasError: IFetchError | null;
   userIdeas: any;
+  userFollowedideas: IIdeaWithAggregations[] | undefined
 }
 
 const DashboardPageContent: React.FC<LandingPageContentProps> = ({
@@ -25,6 +26,7 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
   ideasIsError,
   ideasError,
   userIdeas,
+  userFollowedideas,
 }) => {
   return (
     <Container className="landing-page-content">
@@ -34,7 +36,7 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
       </Row>
       <Row as="article" className="new-and-trending">
         <MyPosts userIdeas={userIdeas!} numPosts={6} isDashboard={true} />
-        <div className="centered" style={{ margin: "0 auto" }}>
+        <div className="" style={{ margin: "0rem 1rem 3rem 1rem" }}>
           <Button
             onClick={() => (window.location.href = "/dashboard/my-posts")}
             size="lg"
@@ -46,8 +48,9 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
       <Row as="article" className="new-and-trending">
         <NewAndTrendingSection topIdeas={topIdeas!} isDashboard={true} />
       </Row>
+      <br/><br/>
       <Row as="article" className="system-updates">
-        <SystemUpdates topIdeas={topIdeas!} />
+        <SystemUpdates userFollowedideas={userFollowedideas!} />
       </Row>
     </Container>
   );

@@ -33,7 +33,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
   useEffect(()=>{
     if(segmentRequests.length > 0){
       postUserSegmentRequest(segmentRequests, token);
-      console.log('called');
     }
   },[segmentRequests])
   return (
@@ -76,7 +75,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
                 <ListGroup.Item>{ postalCode ? postalCode.toUpperCase() : "Unknown" }</ListGroup.Item>
                 <ListGroup.Item><Button variant="link" onClick={()=>setShow(b=>!b)}>Request your Community!</Button></ListGroup.Item>
               </ListGroup>
-              <RequestSegmentModal showModal={show} setShowModal={setShow} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
+              <RequestSegmentModal showModal={show} setShowModal={setShow} index={0} 
+              setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
           </Row>
         </Card>
       </Row>
