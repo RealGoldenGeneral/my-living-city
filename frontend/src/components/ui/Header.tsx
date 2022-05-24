@@ -87,7 +87,15 @@ export default function Header() {
                     id="nav-dropdown"
                   ></NavDropdown>
                 )}
-                <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                {(user.userType === "RESIDENTIAL" || user.userType === "COMMUNITY" || user.userType === "BUSINESS") && (
+                  <NavDropdown 
+                    title="Dashboard" 
+                    id="dashboard-dropdown">
+                        <Nav.Link href="/dashboard">My Dashboard</Nav.Link>
+                        <Nav.Link href="/community-dashboard/1">Community Dashboard</Nav.Link>
+                  </NavDropdown>
+                )}
+                {/* <Nav.Link href="/dashboard">Dashboard</Nav.Link> */}
                 <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
                   Help
                 </Nav.Link>

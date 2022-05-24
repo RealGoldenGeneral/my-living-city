@@ -28,7 +28,7 @@ import UserManagementPage from "./pages/UserManagementPage";
 import SubmitDirectProposalPage from "./pages/SubmitDirectProposalPage";
 import DashboardPage from "./pages/DashboardPage";
 import MyPostsPage from "./pages/MyPostsPage";
-import BusinessRoute from "./components/utility/BusinessRoute";
+import CommunityDashboardPage from "./pages/CommunityDashboardPage";
 
 function App() {
   return (
@@ -70,12 +70,17 @@ function App() {
             path={ROUTES.USER_ADVERTISEMENTS} 
             component={UserAdsPage}
             userTypes={[USER_TYPES.BUSINESS, USER_TYPES.COMMUNITY]}/>
-          
           <CustomRoute
             path={ROUTES.SUBMIT_ADVERTISEMENT}
             component={SubmitAdvertisementPage}
             userTypes={[USER_TYPES.BUSINESS, USER_TYPES.COMMUNITY, USER_TYPES.ADMIN]}
           />
+          <CustomRoute 
+            path={ROUTES.COMMUNITY_DASHBOARD}
+            component={CommunityDashboardPage}
+            userTypes={[USER_TYPES.RESIDENTIAL, USER_TYPES.BUSINESS, USER_TYPES.COMMUNITY]}
+          />
+
           <AdminRoute path={ROUTES.ALL_ADVERTISEMENT} component={AllAdsPage} />
           <AdminRoute
             path={ROUTES.EDIT_ADVERTISEMENT}
