@@ -8,6 +8,7 @@ import {
   getSingleIdea,
   postAllIdeasWithBreakdown,
   getUserIdeas,
+  getIdeasFollowedByUser,
 } from "../lib/api/ideaRoutes";
 
 // export const useIdeas = (
@@ -56,3 +57,8 @@ export const useUserIdeas = (userId: string) => {
     getUserIdeas(userId)
   );
 };
+
+export const useUserFollowedIdeas = (userId: string) => {
+  return useQuery<IIdeaWithAggregations[], IFetchError>("user_followed-ideas", () => 
+  getIdeasFollowedByUser(userId))
+}

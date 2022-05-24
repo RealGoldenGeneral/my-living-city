@@ -164,7 +164,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
         </div>
       )}
 
-      <Carousel controls={true} interval={null} slide={false} fade={false}>
+      <Carousel controls={true} interval={null} slide={true} fade={false}>
         {[...Array(4)].map((x, i) => (
           <Carousel.Item key={i}>
             {topIdeas
@@ -180,7 +180,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                     <IdeaTile
                       ideaData={idea}
                       showFooter={true}
-                      postType="Idea"
+                      postType={idea.state === "IDEA" ? "Idea" : "Proposal"}
                     />
                   </Col>
                 ) : null})

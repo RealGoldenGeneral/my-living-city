@@ -81,9 +81,6 @@ export const postCreateIdea = async (
     supportingProposalId,
     state,
   } = ideaData;
-  // const parsedCatId = Number(categoryId);
-  // const parsedSegId = Number(segmentId);
-  // const parsedSubId = Number(subSegmentId);
 
   if (!categoryId || !title || !description) {
     throw new Error(
@@ -179,29 +176,55 @@ export const postCreateIdea = async (
   }
   //return response data
   return res.data;
+};
 
-  /* const parsedPayload = {
-    ...ideaData,
-    categoryId: parsedCatId,
-    segmentId: parsedSegId,
-    subSegmentId: parsedSubId,
-    superSegmentId: parsedSuperId,
-    banned: banned
-  }
+export const isIdeaFollowedByUser = async (token: string, userId: string, ideaId: string) => {
   const res = await axios({
     method: "post",
-    url: `${API_BASE_URL}/idea/create`,
-    data: parsedPayload,
-    headers: { "Content-Type": "multipart/form-data", "x-auth-token": token},
-    withCredentials: true
-})
-return res.data;
-  } */
+    url: `${API_BASE_URL}/idea/isFollowed`,
+    headers: {
+      "x-auth-token": token,
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: {userId: userId, ideaId: ideaId},
+    withCredentials: true,
+  })
+  return res.data;
+}
 
-  /* const res = await axios.post<IIdeaWithRelationship>(
-    `${API_BASE_URL}/idea/create`, 
-    parsedPayload, 
-    getAxiosJwtRequestOption(token)
-  );
-  return res.data; */
-};
+export const followIdeaByUser = async (token: string, userId: string, ideaId: string) => {
+  const res = await axios({
+    method: "post",
+    url: `${API_BASE_URL}/idea/follow`,
+    headers: {
+      "x-auth-token": token,
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: {userId: userId, ideaId: ideaId},
+    withCredentials: true,
+  })
+  return res.data;
+}
+
+export const unfollowIdeaByUser = async (token: string, userId: string, ideaId: string) => {
+  const res = await axios({
+    method: "post",
+    url: `${API_BASE_URL}/idea/unfollow`,
+    headers: {
+      "x-auth-token": token,
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: {userId: userId, ideaId: ideaId},
+    withCredentials: true,
+  })
+  return res.data;
+}
+
+export const getIdeasFollowedByUser = async (userId: string) => {
+  const res = await axios({
+    method: "get",
+    url: `${API_BASE_URL}/idea/getAllFollowedByUser/${userId}`,
+    withCredentials: true,
+  })
+  return res.data;
+}
