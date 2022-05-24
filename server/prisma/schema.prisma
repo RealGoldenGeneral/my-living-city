@@ -123,6 +123,7 @@ model User {
   address         UserAddress?
   geo             UserGeo?
   userReach       UserReach[]
+  userIdeaFollow  UserIdeaFollow[]
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
   ideas           Idea[]       @relation("ideaAuthor")
   championedIdeas Idea[]       @relation("ideaChampion")
@@ -336,12 +337,13 @@ model Idea {
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
 
   // relations
-  comments     IdeaComment[]
-  ratings      IdeaRating[]
-  proposalInfo Proposal?     @relation("proposal")
-  projectInfo  Project?
-  address      IdeaAddress?
-  geo          IdeaGeo?
+  comments        IdeaComment[]
+  ratings         IdeaRating[]
+  proposalInfo    Proposal?     @relation("proposal")
+  projectInfo     Project?
+  address         IdeaAddress?
+  geo             IdeaGeo?
+  userIdeaFollow  UserIdeaFollow[]
 
   // Multiple relationships pointing to same User Model
   // https://github.com/prisma/prisma/discussions/2073
@@ -530,6 +532,22 @@ model UserReach {
 
   @@unique([userId, segId], name: "user_reach_unique")
   @@map(name: "user_reach")
+}
+
+// UserIdeaFollow
+model UserIdeaFollow {
+  // Columns
+  id            Int       @id @default(autoincrement()) @map("id")
+  userId        String    @map("user_id")
+  ideaId        Int       @map("idea_id")
+  followedAt    DateTime  @default(now()) @map("followed_at")
+
+  // Relations
+  user          User      @relation(references: [id], fields: [userId])
+  idea          Idea      @relation(references: [id], fields: [ideaId])
+
+  @@unique([userId, ideaId], name: "user_idea_follow_unique")
+  @@map(name: "user_idea_follow")
 }
 
 model SubSegments {
