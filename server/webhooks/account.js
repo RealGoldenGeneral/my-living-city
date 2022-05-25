@@ -113,7 +113,7 @@ accountRouter.post(
             })
             const session = await stripe.checkout.sessions.create({
                 success_url: req.headers.origin,
-                cancel_url: req.headers.origin,
+                cancel_url: req.headers.origin + "/profile",
                 line_items: [
                   {price: STRIPE_PRODUCTS[user.userType], quantity: 1},
                 ],
@@ -142,7 +142,7 @@ accountRouter.post(
                 }
             })
             const session = await stripe.billingPortal.sessions.create({
-                return_url: 'http://localhost:3000',
+                return_url:  req.headers.origin,
                 customer: result.stripeId,
               });
 
