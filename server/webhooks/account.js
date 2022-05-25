@@ -3,6 +3,7 @@ const { startsWith } = require('lodash');
 const accountRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { STRIPE_PRODUCTS } = require("../lib/constants");
 
 accountRouter.get(
     '/details',
@@ -105,12 +106,16 @@ accountRouter.post(
                     userId: req.body.userId
                 }
             })
-
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: req.body.userId
+                }
+            })
             const session = await stripe.checkout.sessions.create({
-                success_url: 'http://localhost:3000',
-                cancel_url: 'http://localhost:3000',
+                success_url: req.headers.origin,
+                cancel_url: req.headers.origin,
                 line_items: [
-                  {price: 'price_1KyfAKDabqllr9PHaxnGcKSm', quantity: 1},
+                  {price: STRIPE_PRODUCTS[user.userType], quantity: 1},
                 ],
                 customer: result.stripeId,
                 mode: "subscription"
