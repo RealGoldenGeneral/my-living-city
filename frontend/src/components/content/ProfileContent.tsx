@@ -35,7 +35,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
   const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
 
   useEffect(()=>{
-    getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status))
+    getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status)).catch(e => console.log(e))
     if(segmentRequests.length > 0){
       postUserSegmentRequest(segmentRequests, token);
     }
@@ -57,8 +57,13 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
             </Row>
             <Card.Title className='mt-3'>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</Card.Title>
             <Card.Text className='mb-3'>{ email }</Card.Text>
-              <p>Subscription Status: {stripeStatus=== "active"? "Active" : "Not Active"}</p>
-              <StripeCheckoutButton status={stripeStatus} user={user}/>
+            {
+              stripeStatus !== "" &&
+              <>
+                <p>Subscription Status: {stripeStatus=== "active"? "Active" : "Not Active"}</p>
+                <StripeCheckoutButton status={stripeStatus} user={user}/>
+              </>
+            }
            
           </Card>
         

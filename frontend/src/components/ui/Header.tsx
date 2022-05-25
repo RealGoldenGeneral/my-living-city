@@ -31,14 +31,14 @@ export default function Header() {
 
   useEffect(()=>{
     if(user){
-      getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status))
+      getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status)).catch(e => console.log(e))
     }
   },[user])
 
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
-      {stripeStatus !== "active" && 
+      {stripeStatus !== "" && stripeStatus !== "active" && 
         (<Nav style={paymentNotificationStyling}>
           You have not paid your account payment. To upgrade your account, please go to the <a href="/profile">profile</a> section.
         </Nav>)
