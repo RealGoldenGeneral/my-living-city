@@ -12,24 +12,24 @@ const multer = require('multer');
 
 //multer storage policy, including file destination and file naming policy
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, './uploads/adImage');
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
 
 //file filter policy, only accept image file
 const theFileFilter = (req, file, cb) => {
-        console.log(file);
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp' || file.mimetype === 'image/jpg') {
-            cb(null, true);
-        } else {
-            cb(new Error('file format not supported'), false);
-        }
+    console.log(file);
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/tiff' || file.mimetype === 'image/webp' || file.mimetype === 'image/jpg') {
+        cb(null, true);
+    } else {
+        cb(new Error('file format not supported'), false);
     }
-    //const variable for 10MB max file size in bytes
+}
+//const variable for 10MB max file size in bytes
 const maxFileSize = 10485760;
 //multer upload project, setting receiving mode and which key components to use
 const upload = multer({ storage: storage, limits: { fileSize: maxFileSize }, fileFilter: theFileFilter }).single('imagePath');
@@ -41,9 +41,9 @@ let errorStack = '';
 advertisementRouter.post(
     '/create',
     passport.authenticate('jwt', { session: false }),
-    async(req, res) => {
+    async (req, res) => {
         //multer error handling method
-        upload(req, res, function(err) {
+        upload(req, res, function (err) {
             if (err) {
                 console.log(err);
                 error += err + ' ';
@@ -61,7 +61,7 @@ advertisementRouter.post(
             });
 
             //test to see if the user is an admin or business user
-            if(theUser.userType=="ADMIN" || theUser.userType=="BUSINESS" || theUser.userType=="COMMUNITY"){
+            if (theUser.userType == "ADMIN" || theUser.userType == "BUSINESS" || theUser.userType == "COMMUNITY") {
 
                 //if there's no object in the request body
                 if (isEmpty(req.body)) {
@@ -255,7 +255,7 @@ advertisementRouter.post(
 //for retriving all advertisement table item for user.
 advertisementRouter.get(
     '/getAll',
-    async(req, res) => {
+    async (req, res) => {
         try {
             const allAd = await prisma.advertisements.findMany({});
             if (allAd) {
@@ -281,16 +281,16 @@ advertisementRouter.get(
 //for retriving all published advertisements.
 advertisementRouter.get(
     '/getAllPublished',
-    async(req, res) => {
+    async (req, res) => {
         try {
             const allAd = await prisma.advertisements.findMany({
                 where: {
                     OR: [{
-                            adType: "BASIC",
-                        },
-                        {
-                            published: true,
-                        }
+                        adType: "BASIC",
+                    },
+                    {
+                        published: true,
+                    }
                     ]
 
                 }
@@ -317,7 +317,7 @@ advertisementRouter.get(
 
 advertisementRouter.get(
     '/getAllUser/:userId',
-    async(req, res) => {
+    async (req, res) => {
         try {
             const userId = req.params.userId;
             console.log("YELLOW");
@@ -348,7 +348,7 @@ advertisementRouter.get(
 
 advertisementRouter.get(
     '/get/:adsId',
-    async(req, res) => {
+    async (req, res) => {
         try {
             const { Int: adsId } = req.params;
             console.log(adsId);
@@ -383,7 +383,7 @@ advertisementRouter.get(
             const { ownerId } = req.params;
             console.log(`Get ads by owner id: ${ownerId}`);
             const result = await prisma.advertisements.findMany({
-                where:{ownerId: ownerId}
+                where: { ownerId: ownerId }
             })
             res.status(200).json(result);
         } catch (err) {
@@ -402,9 +402,9 @@ advertisementRouter.get(
 advertisementRouter.put(
     '/update/:advertisementId',
     passport.authenticate('jwt', { session: false }),
-    async(req, res) => {
+    async (req, res) => {
         //multer error handling method
-        upload(req, res, function(err) {
+        upload(req, res, function (err) {
             if (err) {
                 console.log(err);
                 error += err + ' ';
@@ -422,8 +422,8 @@ advertisementRouter.put(
             });
             const { adType, adTitle, adDuration, adPosition, externalLink, published } = req.body;
 
-            if(theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS' || theUser.userType == "COMMUNITY"){
-                const {advertisementId} = req.params;
+            if (theUser.userType == 'ADMIN' || theUser.userType == 'BUSINESS' || theUser.userType == "COMMUNITY") {
+                const { advertisementId } = req.params;
                 const parsedAdvertisementId = parseInt(advertisementId);
 
                 let endDate;
@@ -579,7 +579,7 @@ advertisementRouter.put(
 advertisementRouter.delete(
     '/delete/:advertisementId',
     passport.authenticate('jwt', { session: false }),
-    async(req, res) => {
+    async (req, res) => {
         try {
             const { id: loggedInUserId, email } = req.user;
             const parsedAdvertisementId = parseInt(req.params.advertisementId);
@@ -647,4 +647,46 @@ advertisementRouter.delete(
         }
     }
 )
+
+// Experimental
+advertisementRouter.get(
+    '/pricing',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
+            const segmentUserCounts = await prisma.userSegments.groupBy({
+                by: ['homeSegmentId'],
+                _count: {
+                    userId: true
+                },
+                orderBy: {
+                    homeSegmentId: "asc"
+                }
+            });
+
+            const segments = await prisma.segments.findMany({
+                distinct: ['segId'],
+                orderBy: {
+                    segId: "asc"
+                }
+            });
+
+            const mapped = segmentUserCounts.map((segmentUserCount) => {
+                return {
+                    name: segments[segmentUserCount.homeSegmentId - 1].name,
+                    segId: segments[segmentUserCount.homeSegmentId - 1].segId,
+                    count: segmentUserCount._count.userId
+                }
+            });
+
+            res.status(200).json(mapped)
+        } catch (error) {
+            console.log(error)
+            res.status(400)
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
+)
+
 module.exports = advertisementRouter;

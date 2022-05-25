@@ -64,6 +64,9 @@ const main = async () => {
 	const dashboardRouter = require('./controllers/dashboard');
 	const userReachRouter = require('./controllers/userReach');
 
+	//Webhooks
+	const accountRouter = require('./webhooks/account');
+
 
 	const apiRouter = express.Router();
 	app.use('/', apiRouter);
@@ -91,6 +94,7 @@ const main = async () => {
 	apiRouter.use('/proposal', proposalRouter);
 	apiRouter.use('/community', communityRouter);
 	apiRouter.use('/dashboard', dashboardRouter);
+	apiRouter.use('/account', accountRouter);
 	apiRouter.use('/reach', userReachRouter);
 
 

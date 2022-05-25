@@ -158,3 +158,11 @@ export const getUserReachSegmentsByUserId = async (userId: string | undefined, t
   })
   return res.data;
 }
+
+export const getSegmentAgggregateInfo = async (segmentId: number) => {
+  const res = await axios({
+    method: "get",
+    url: `${API_BASE_URL}/segment/aggregateInfo/${segmentId}`,
+  })
+  return res.data;
+}

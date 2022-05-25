@@ -70,4 +70,5 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   My_POSTS: "/dashboard/my-posts",
   MY_ADVERTISMENT: "/advertisement/my-ads",
+  COMMUNITY_DASHBOARD: "/community-dashboard/:segId"
 };
