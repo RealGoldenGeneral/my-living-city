@@ -137,7 +137,7 @@ export const CheckboxTree: React.FC<CheckBoxTreeProps> = ({data, parent, ...prop
                 return(
                     <div key={i}>
                         <input type="checkbox" id={item.value} onChange={(e) => {onChangeCallback(e, item.children, getSiblings(item))}}/>
-                        <Form.Label>{item.label && capitalizeFirstLetterEachWord(item.label)}</Form.Label>
+                        <Form.Label style={{paddingLeft: "10px"}}>{item.label && capitalizeFirstLetterEachWord(item.label)}</Form.Label>
                         {item.children && <CheckboxTree data={item.children} parent={item} selected={props.selected} setSelected={props.setSelected}/>}
                     </div>
                 )
