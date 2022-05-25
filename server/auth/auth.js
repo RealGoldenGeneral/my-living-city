@@ -79,18 +79,19 @@ passport.use(
             //userRole: true,
           }
         });
-        //Add check to only create Stripe account for paid account.
-        const newStripCustomer = await stripe.customers.create({
-          email: createdUser.email
-        });
-        await prisma.userStripe.create({
-          data: {
-              userId: createdUser.id,
-              stripeId: newStripCustomer.id,
-              status: 'incomplete'
-          }
-        })
-        
+        //Check to only create Stripe account for paid accounts.
+        if(parsedMainData.userType === "BUISNESS" || parsedMainData.userType === "COMMUNITY"){
+          const newStripCustomer = await stripe.customers.create({
+            email: createdUser.email
+          });
+          await prisma.userStripe.create({
+            data: {
+                userId: createdUser.id,
+                stripeId: newStripCustomer.id,
+                status: 'incomplete'
+            }
+          })
+        }
         return done(null, createdUser);
       } catch (error) {
         // console.log("ERROR")
