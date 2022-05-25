@@ -80,7 +80,7 @@ passport.use(
           }
         });
         //Check to only create Stripe account for paid accounts.
-        if(parsedMainData.userType === "BUISNESS" || parsedMainData.userType === "COMMUNITY"){
+        if(parsedMainData.userType === "BUSINESS" || parsedMainData.userType === "COMMUNITY"){
           const newStripCustomer = await stripe.customers.create({
             email: createdUser.email
           });

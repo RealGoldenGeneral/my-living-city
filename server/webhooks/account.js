@@ -35,20 +35,22 @@ accountRouter.post(
             switch (event.type) {
                 case 'customer.subscription.deleted':
                     parsedStripeId = event.data.object.customer;
-                    console.log(`subscription deleted for stripe customer ${parsedStripeId}`);
+                    await prisma.userStripe.updateMany({
+                        where: {
+                            stripeId: parsedStripeId
+                        },
+                        data: {
+                            status:"incomplete"
+                        }
+                    })
                     break;
 
                 default:
                     return res.status(400).end();
             }
 
-            const deleteStripeId = await prisma.userStripe.deleteMany({
-                where: {
-                    stripeId: parsedStripeId
-                }
-            })
 
-            res.status(200).json(deleteStripeId);
+            res.status(200).json({});
 
         } catch (error) {
             console.log(error);
