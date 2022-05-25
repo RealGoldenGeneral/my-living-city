@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import CSS from "csstype";
 import {
   NavDropdown,
@@ -11,7 +11,10 @@ import {
 import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { useUserWithJwtVerbose } from "src/hooks/userHooks";
 import { UserProfileContext } from "../../contexts/UserProfile.Context";
+import {getUserSubscriptionStatus} from 'src/lib/api/userRoutes'
+
 export default function Header() {
+  const [stripeStatus, setStripeStatus] = useState("");
   const { logout, user, token } = useContext(UserProfileContext);
   const { data } = useUserWithJwtVerbose({
     jwtAuthToken: token!,
@@ -26,10 +29,16 @@ export default function Header() {
     whiteSpace: "pre",
   }
 
+  useEffect(()=>{
+    if(user){
+      getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status))
+    }
+  },[user])
+
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
-      {user?.userType === "IN_PROGRESS" && 
+      {stripeStatus !== "active" && 
         (<Nav style={paymentNotificationStyling}>
           You have not paid your account payment. To upgrade your account, please go to the <a href="/profile">profile</a> section.
         </Nav>)
