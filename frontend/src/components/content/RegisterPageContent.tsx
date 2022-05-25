@@ -19,6 +19,7 @@ import ImageUploader from 'react-images-upload';
 import { ROUTES, USER_TYPES } from 'src/lib/constants';
 import {  RegisterPageContentReach, CheckBoxItem } from "./RegisterPageContentReach";
 import CSS from "csstype";
+import PricingPlanSelector from '../partials/PricingPlanSelector';
 
 interface RegisterPageContentProps {
 }
@@ -158,8 +159,9 @@ return (
             >
                 <FormikStep>
                     <h3>Please select your account type:</h3>
-                    <BForm.Group>
-                        <div style={userTypeInfoContainerStyles}>
+                    <BForm.Group   className="m-4">
+                        <PricingPlanSelector onClickParam={(type:any) => setUserType(type)} />
+                        {/* <div style={userTypeInfoContainerStyles}>
                             <div style={marginBot}>
                                 <input checked={userType === USER_TYPES.RESIDENTIAL} type="radio" name="userTypeRadio" id="standard" onClick={()=>{setUserType(USER_TYPES.RESIDENTIAL)}}/>
                                 <label htmlFor="standard" style={inline}>
@@ -178,7 +180,7 @@ return (
                                     <p style={inline}><strong>Community ($50/yr): </strong>For community organizations and nonprofits to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
                                 </label>
                             </div>
-                        </div>
+                        </div> */}
                     </BForm.Group>
                 </FormikStep>
                 <FormikStep validationSchema={Yup.object().shape({
