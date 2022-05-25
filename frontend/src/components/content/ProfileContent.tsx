@@ -5,8 +5,7 @@ import { API_BASE_URL } from 'src/lib/constants';
 import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
-import StripeCheckoutButton from "src/components/partials/StripeCheckoutButton";
-import axios from "axios";
+import StripeCheckoutButton from "src/components/partials/StripeCheckoutButton"
 import {getUserSubscriptionStatus} from 'src/lib/api/userRoutes'
 interface ProfileContentProps {
   user: IUser;
@@ -58,38 +57,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
             </Row>
             <Card.Title className='mt-3'>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</Card.Title>
             <Card.Text className='mb-3'>{ email }</Card.Text>
-              {/* <StripeCheckoutButton /> */}
-              <p>Subscription status: {stripeStatus}</p>
-              {
-                stripeStatus === "active" ?
-                <Button
-                onClick={async () => {
-                  const res = await axios.post(
-                    `${API_BASE_URL}/account/update`,
-                    {
-                      userId:user.id
-                    }
-                    )
-                    window.location.href = res.data.url;
-                  }}
-                  >
-                Modify
-              </Button>
-                :
-                <Button
-                onClick={async () => {
-                  const res = await axios.post(
-                    `${API_BASE_URL}/account/activate`,
-                    {
-                      userId:user.id
-                    }
-                    )
-                    window.location.href = res.data.url;
-                  }}
-                  >
-                Activate
-              </Button>
-              }
+              <p>Subscription Status: {stripeStatus=== "active"? "Active" : "Not Active"}</p>
+              <StripeCheckoutButton status={stripeStatus} user={user}/>
+           
           </Card>
         
           
