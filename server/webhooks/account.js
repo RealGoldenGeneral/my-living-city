@@ -125,4 +125,29 @@ accountRouter.post(
     }
 )
 
+accountRouter.post(
+    '/update',
+    async (req, res) => {
+        try {
+            const result = await prisma.userStripe.findFirst({
+                where: {
+                    userId: req.body.userId
+                }
+            })
+            const session = await stripe.billingPortal.sessions.create({
+                return_url: 'http://localhost:3000',
+                customer: result.stripeId,
+              });
+
+            res.status(200).json(session);
+
+        } catch (error) {
+            console.log(error);
+            res.status(400).end();
+        } finally {
+            await prisma.$disconnect;
+        }
+    }
+)
+
 module.exports = accountRouter;

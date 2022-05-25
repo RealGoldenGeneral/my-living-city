@@ -60,19 +60,36 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
             <Card.Text className='mb-3'>{ email }</Card.Text>
               {/* <StripeCheckoutButton /> */}
               <p>Subscription status: {stripeStatus}</p>
-              <Button
-              onClick={async () => {
-                const res = await axios.post(
-                  `${API_BASE_URL}/account/activate`,
-                  {
-                    userId:user.id
-                  }
-                )
-                window.location.href = res.data.url;
-              }}
-              >
+              {
+                stripeStatus === "active" ?
+                <Button
+                onClick={async () => {
+                  const res = await axios.post(
+                    `${API_BASE_URL}/account/update`,
+                    {
+                      userId:user.id
+                    }
+                    )
+                    window.location.href = res.data.url;
+                  }}
+                  >
+                Modify
+              </Button>
+                :
+                <Button
+                onClick={async () => {
+                  const res = await axios.post(
+                    `${API_BASE_URL}/account/activate`,
+                    {
+                      userId:user.id
+                    }
+                    )
+                    window.location.href = res.data.url;
+                  }}
+                  >
                 Activate
               </Button>
+              }
           </Card>
         
           
