@@ -58,6 +58,7 @@ export interface ISegmentData {
 }
 
 export interface ISegmentAggregateInfo {
+  totalUsers: number,
   residents: number;
   workers: number;
   students: number;

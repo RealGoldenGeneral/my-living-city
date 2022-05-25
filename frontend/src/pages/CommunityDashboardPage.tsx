@@ -1,7 +1,9 @@
 import { RouteComponentProps } from "react-router-dom";
 import CommunityDashboardContent from "./../components/content/CommunityDashboardContent";
-import {ISegmentAggregateInfo} from "./../lib/types/data/segment.type";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import { useSegmentInfoAggregate, useSingleSegmentBySegmentId } from "./../hooks/segmentHooks";
+import { useIdeasHomepage } from "src/hooks/ideaHooks";
+import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 
 
 interface CommunityDashboardPageProps extends RouteComponentProps<{
@@ -16,44 +18,57 @@ const CommunityDashboardPage: React.FC<CommunityDashboardPageProps> = (props) =>
         },
     } = props;
 
-    const testAggregateData: ISegmentAggregateInfo = {
-        "residents": 1,
-        "workers": 1,
-        "students": 1,
-        "ideas": 1,
-        "proposals": 1,
-        "projects": 1,
-        "superSegmentName": "CRD",
-        "subSegmentsCount": 2,
-        "subSegments": ["Test1", "Test2"],
-    };
-    // const isError = true;
-    // const isLoading = true;
+    const {data: segmentAggregatData,
+            error, 
+            isLoading: isAggregateLoading, 
+            isError: isAggregateError
+        } = useSegmentInfoAggregate(parseInt(segId));
+    const {data: segmentInfoData,
+        error: segmentInfoError,
+        isLoading: isSegmentInfoLoading,
+        isError: isSegmentInfoError,
+        } = useSingleSegmentBySegmentId(parseInt(segId));
 
-    // const {data: segmentAggregatData, error, isLoading, isError} =
+    const {
+        data: iData,
+        error: iError,
+        isLoading: iLoading,
+        isError: iIsError,
+        } = useIdeasHomepage();
     
-    // if (isError) {
-    //     return (
-    //       <div className="wrapper">
-    //         <p>
-    //           Error occured while trying to retrieve community info. Please try again later.
-    //         </p>
-    //       </div>
-    //     );
-    // }
+    if (isAggregateError || isSegmentInfoError || iError) {
+        return (
+          <div className="wrapper">
+            <p>
+              Error occured while trying to retrieve community info. Please try again later.
+            </p>
+          </div>
+        );
+    }
 
-    // if (isLoading) {
-    //     return (
-    //       <div className="wrapper">
-    //         <LoadingSpinner />
-    //       </div>
-    //     );
-    // }
+    if (isAggregateLoading || isSegmentInfoLoading || iLoading) {
+        return (
+          <div className="wrapper">
+            <LoadingSpinner />
+          </div>
+        );
+    }
+
+    const filteredTopIdeas = () => {
+        const segmentId = segmentInfoData?.segId;
+        const filteredTopIdeas: IIdeaWithAggregations[] = [];
+        iData && iData.forEach(idea => {
+            if (idea.segId && idea.segId === segmentId) {
+                filteredTopIdeas.push(idea);
+            }
+        });
+        return filteredTopIdeas;
+    }
 
     return (
         <>
             <div className="wrapper">
-                <CommunityDashboardContent data={testAggregateData} />
+                <CommunityDashboardContent topIdeas={filteredTopIdeas()} data={segmentAggregatData!} segmenData={segmentInfoData!} />
             </div>
         </>
     );

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CSS from "csstype";
 import {
   NavDropdown,
@@ -11,13 +11,42 @@ import {
 import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { useUserWithJwtVerbose } from "src/hooks/userHooks";
 import { UserProfileContext } from "../../contexts/UserProfile.Context";
+import { searchForLocation } from 'src/lib/api/googleMapQuery';
+import { useGoogleMapSearchLocation } from "src/hooks/googleMapHooks";
+import { useSingleSegmentByName } from "src/hooks/segmentHooks";
+import { findSegmentByName } from "src/lib/api/segmentRoutes";
+
+
 export default function Header() {
   const { logout, user, token } = useContext(UserProfileContext);
   const { data } = useUserWithJwtVerbose({
     jwtAuthToken: token!,
     shouldTrigger: token != null,
   });
-  console.log(data);
+  // console.log(data);
+
+  const {data: googleQuery, isLoading: googleQueryLoading} = useGoogleMapSearchLocation({lat: data?.geo?.lat, lon: data?.geo?.lon}, (data != null && data.geo != null));
+  console.log(googleQuery);
+
+  // const segData = useSingleSegmentByName({
+  //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country 
+  // }, googleQuery.data != null)
+  // console.log(segData);
+  const [userSegId, setUserSegId] = useState<any>(1);
+  
+  useEffect(() => {
+    const querySegmentData = async () => {
+      if (googleQueryLoading === false && googleQuery != null) {
+        const segmentData = await findSegmentByName({
+          segName: googleQuery.city, province: googleQuery.province, country: googleQuery.country,
+        })
+        console.log(segmentData);
+        setUserSegId(segmentData.segId);
+      }
+    }
+    querySegmentData();
+  }, [googleQuery, googleQueryLoading])
+  
 
   const paymentNotificationStyling: CSS.Properties = {
     backgroundColor: "#f7e4ab", 
@@ -92,7 +121,7 @@ export default function Header() {
                     title="Dashboard" 
                     id="dashboard-dropdown">
                         <Nav.Link href="/dashboard">My Dashboard</Nav.Link>
-                        <Nav.Link href="/community-dashboard/1">Community Dashboard</Nav.Link>
+                        <Nav.Link href={`/community-dashboard/${userSegId}`}>Community Dashboard</Nav.Link>
                   </NavDropdown>
                 )}
                 {/* <Nav.Link href="/dashboard">Dashboard</Nav.Link> */}

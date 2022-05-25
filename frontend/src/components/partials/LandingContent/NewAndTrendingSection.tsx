@@ -16,12 +16,14 @@ interface NewAndTrendingProps {
   topIdeas: IIdeaWithAggregations[];
   postType?: string;
   isDashboard?: boolean;
+  showCustomFilter?: boolean;
 }
 
 const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
   topIdeas,
   postType,
   isDashboard,
+  showCustomFilter,
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [filterConfig, setFilterConfig] = useState<any>({
@@ -174,12 +176,14 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
       {isDashboard ? (
         <div className="pb-1 border-bottom display-6">
           <h2 style={titleStyle}>New and Trending</h2>
-          <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>
+          {showCustomFilter === false ? null : <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>}
         </div>
       ) : (
         <div className="pb-1 border-bottom display-6 text-center">
           <h2 style={titleStyle}>New and Trending</h2>
-          <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>
+          {/* <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button> */}
+          {showCustomFilter === false ? null : <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>}
+
         </div>
       )}
 
@@ -217,7 +221,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
         ))}
       </Carousel>
 
-      <Modal show={showModal} onHide={handleModalCancel} animation={false}>
+        <Modal show={showModal} onHide={handleModalCancel} animation={false}>
         <Modal.Header closeButton>
           <Modal.Title>Customize New and Trending</Modal.Title>
         </Modal.Header>
@@ -243,7 +247,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
             }
             </div>
           </Collapse>
-           <br />
+          <br />
           <h5 onClick={() => {setImpactOpen(!isImpactOpen)}} onMouseOver={mouseHoverPointer}>Impact Areas</h5>
           <hr />
           <Collapse in={isImpactOpen}>
@@ -345,6 +349,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
 
         </Modal.Body>
       </Modal>
+      
     </Container>
   );
 };
