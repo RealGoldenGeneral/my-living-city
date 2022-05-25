@@ -80,7 +80,7 @@ const CategoriesSection = (props: CategoriesSectionProps) => {
 
   return (
     <Container className="py-5">
-      <h2 className="pb-1 border-bottom display-6 text-center">Impact Areas</h2>
+      <h2 className="pb-1 border-bottom display-6 text-left">Impact Areas</h2>
       <Row className='justify-content-center g-5 pt-4'>
         <Col xs={6} sm={4} lg={2}>
         <a href="javascript:void(0)"><Toastie header={CONTENT.nature.header} subHeader={CONTENT.nature.subHeader} body={CONTENT.nature.body} img="/categories/MLC-Icons-Green-01.png"/></a>

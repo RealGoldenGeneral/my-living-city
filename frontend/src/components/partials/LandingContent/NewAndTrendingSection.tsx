@@ -1,8 +1,9 @@
-import { Container, Row, Col, Carousel, Modal, Collapse } from "react-bootstrap";
+import { Container, Row, Col, Carousel, Modal, Collapse, Accordion } from "react-bootstrap";
 import PlaceholderIdeaTile from "src/components/tiles/PlaceholderIdeaTile";
 import { IIdeaWithAggregations } from "../../../lib/types/data/idea.type";
 import IdeaTile from "../../tiles/IdeaTile";
 import {BsFilter} from "react-icons/bs";
+import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import CSS from "csstype";
 import { Button } from "react-bootstrap";
 import { useState } from "react";
@@ -147,6 +148,14 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
     e.target.style.cursor = "pointer"
   }
 
+  const modalSectionTitle: CSS.Properties = {
+    display: "inline",
+  }
+
+  const modalSectionIcon: CSS.Properties = {
+    float: "right",
+  }
+
   return (
     <Container className="system" id="hanging-icons">
       <style>
@@ -176,13 +185,12 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
       {isDashboard ? (
         <div className="pb-1 border-bottom display-6">
           <h2 style={titleStyle}>New and Trending</h2>
-          {showCustomFilter === false ? null : <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>}
+          {showCustomFilter === false ? null : <BsFilter onMouseOver={mouseHoverPointer} style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}} size={30} />}
         </div>
       ) : (
-        <div className="pb-1 border-bottom display-6 text-center">
+        <div className="pb-1 border-bottom display-6 text-left">
           <h2 style={titleStyle}>New and Trending</h2>
-          {/* <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button> */}
-          {showCustomFilter === false ? null : <Button style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}}><BsFilter size={20} /></Button>}
+          {showCustomFilter === false ? null : <BsFilter onMouseOver={mouseHoverPointer} style={filterButtonStyle} onClick={() => {setShowModal(!showModal)}} size={30} />}
 
         </div>
       )}
@@ -226,7 +234,12 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
           <Modal.Title>Customize New and Trending</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h5 onClick={() => {setCategoriesOpen(!isCategoriesOpen)}} onMouseOver={mouseHoverPointer}>Categories</h5>
+          <div onClick={() => {setCategoriesOpen(!isCategoriesOpen)}} onMouseOver={mouseHoverPointer}>
+            <h5 style={modalSectionTitle} >Categories</h5>
+            <div style={modalSectionIcon}>
+              {isCategoriesOpen ? <IoIosArrowDown /> : <IoIosArrowUp/>}
+            </div>
+          </div>
           <hr />
           <Collapse in={isCategoriesOpen}>
             <div>
@@ -240,7 +253,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                       name={category.title} 
                       value={category.id} 
                       onClick={(e) => handleCategory(e, category.id)}/>
-                    <label htmlFor={category.title}>{capitalizeFirstLetterEachWord(category.title)}</label>
+                    <label style={{paddingLeft:"10px"}} htmlFor={category.title}>{capitalizeFirstLetterEachWord(category.title)}</label>
                   </div>
                 )
               })
@@ -248,35 +261,47 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
             </div>
           </Collapse>
           <br />
-          <h5 onClick={() => {setImpactOpen(!isImpactOpen)}} onMouseOver={mouseHoverPointer}>Impact Areas</h5>
+          {/* <h5 onClick={() => {setImpactOpen(!isImpactOpen)}} onMouseOver={mouseHoverPointer}>Impact Areas</h5> */}
+          <div onClick={() => {setImpactOpen(!isImpactOpen)}} onMouseOver={mouseHoverPointer}>
+            <h5 style={modalSectionTitle} >Impact Areas</h5>
+            <div style={modalSectionIcon}>
+              {isImpactOpen ? <IoIosArrowDown /> : <IoIosArrowUp/>}
+            </div>
+          </div>
           <hr />
           <Collapse in={isImpactOpen}>
               <div>
                 <div>
                   <input defaultChecked={filterConfig.impactArea.includes("communityImpact")} type="checkbox" id="communityAndPlace" name="communityAndPlace" value="communityImpact" onClick={(e) => handleImpactArea(e, "communityImpact")}/>
-                  <label htmlFor="communityAndPlace">Community and Place</label>
+                  <label style={{paddingLeft:"10px"}} htmlFor="communityAndPlace">Community and Place</label>
                 </div>
                 <div>
                   <input defaultChecked={filterConfig.impactArea.includes("natureImpact")} type="checkbox" id="natureAndFoodSecurity" name="natureAndFoodSecurity" value="natureImpact" onClick={(e) => handleImpactArea(e, "natureImpact")}/>
-                  <label htmlFor="natureAndFoodSecurity">Nature and Food Security</label>
+                  <label style={{paddingLeft:"10px"}} htmlFor="natureAndFoodSecurity">Nature and Food Security</label>
                 </div>
                 <div>
                   <input defaultChecked={filterConfig.impactArea.includes("artsImpact")} type="checkbox" id="artsCultureAndEducation" name="artsCultureAndEducation" value="artsImpact" onClick={(e) => handleImpactArea(e, "artsImpact")}/>
-                  <label htmlFor="artsCultureAndEducation">Arts, Culture, and Education</label>
+                  <label style={{paddingLeft:"10px"}} htmlFor="artsCultureAndEducation">Arts, Culture, and Education</label>
                 </div>
                 <div>
                   <input defaultChecked={filterConfig.impactArea.includes("energyImpact")} type="checkbox" id="waterAndEnergy" name="waterAndEnergy" value="energyImpact" onClick={(e) => handleImpactArea(e, "energyImpact")}/>
-                  <label htmlFor="waterAndEnergy">Water and Energy</label>
+                  <label style={{paddingLeft:"10px"}} htmlFor="waterAndEnergy">Water and Energy</label>
                 </div>
                 <div>
                   <input defaultChecked={filterConfig.impactArea.includes("manufacturingImpact")} type="checkbox" id="manufacturingAndWaste" name="manufacturingAndWaste" value="manufacturingImpact" onClick={(e) => handleImpactArea(e, "manufacturingImpact")}/>
-                  <label htmlFor="manufacturingAndWaste">Manufacturing and Waste</label>
+                  <label style={{paddingLeft:"10px"}} htmlFor="manufacturingAndWaste">Manufacturing and Waste</label>
                 </div>
               </div>
             </Collapse>
             <br />
 
-            <h5 onClick={() => {setSuperSegOpen(!isSuperSegOpen)}} onMouseOver={mouseHoverPointer}>District</h5>
+            {/* <h5 onClick={() => {setSuperSegOpen(!isSuperSegOpen)}} onMouseOver={mouseHoverPointer}>District</h5> */}
+            <div onClick={() => {setSuperSegOpen(!isSuperSegOpen)}} onMouseOver={mouseHoverPointer}>
+            <h5 style={modalSectionTitle} >District</h5>
+            <div style={modalSectionIcon}>
+              {isSuperSegOpen ? <IoIosArrowDown /> : <IoIosArrowUp/>}
+            </div>
+          </div>
             <hr />
             <Collapse in={isSuperSegOpen}>
             <div>
@@ -291,7 +316,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                       value={superSeg.superSegId} 
                       onClick={(e) => {handleSuperSeg(e, superSeg.superSegId)}}
                       />
-                    <label htmlFor={superSeg.name}>{capitalizeFirstLetterEachWord(superSeg.name)}</label>
+                    <label style={{paddingLeft:"10px"}} htmlFor={superSeg.name}>{capitalizeFirstLetterEachWord(superSeg.name)}</label>
                   </div>
                 )
               })
@@ -299,7 +324,13 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
             </div>
           </Collapse>
           <br />
-            <h5 onClick={() => {setSegOpen(!isSegOpen)}} onMouseOver={mouseHoverPointer}>Municipality</h5>
+            {/* <h5 onClick={() => {setSegOpen(!isSegOpen)}} onMouseOver={mouseHoverPointer}>Municipality</h5> */}
+            <div onClick={() => {setSegOpen(!isSegOpen)}} onMouseOver={mouseHoverPointer}>
+            <h5 style={modalSectionTitle} >Municipality</h5>
+            <div style={modalSectionIcon}>
+              {isSegOpen ? <IoIosArrowDown /> : <IoIosArrowUp/>}
+            </div>
+          </div>
             <hr />
             <Collapse in={isSegOpen}>
             <div>
@@ -313,7 +344,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                       name={seg.name}
                       value={seg.segId} 
                       onClick={e => handleSeg(e, seg.segId)}/>
-                    <label htmlFor={seg.name}>{capitalizeFirstLetterEachWord(seg.name)}</label>
+                    <label style={{paddingLeft:"10px"}} htmlFor={seg.name}>{capitalizeFirstLetterEachWord(seg.name)}</label>
                   </div>
                 )
               })
@@ -322,9 +353,15 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
           </Collapse>
           <br />
 
-          <h5 onClick={() => {setPostStatusOpen(!isPostStatusOpen)}} onMouseOver={mouseHoverPointer}>Post Status</h5>
+          {/* <h5 onClick={() => {setPostStatusOpen(!isPostStatusOpen)}} onMouseOver={mouseHoverPointer}>Post Status</h5> */}
+          <div onClick={() => {setPostStatusOpen(!isPostStatusOpen)}} onMouseOver={mouseHoverPointer}>
+            <h5 style={modalSectionTitle} >Post Status</h5>
+            <div style={modalSectionIcon}>
+              {isPostStatusOpen ? <IoIosArrowDown /> : <IoIosArrowUp/>}
+            </div>
+          </div>
             <hr />
-            <Collapse in={isPostStatusOpen}>
+            <Collapse in={isPostStatusOpen} >
             <div>
             {postStatuses &&
               postStatuses.map((status, i) => {
@@ -336,7 +373,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                       name={status}
                       value={status} 
                       onClick={e => handlePostStatus(e, status)}/>
-                    <label htmlFor={status}>{capitalizeFirstLetterEachWord(status)}</label>
+                    <label style={{paddingLeft:"10px"}} htmlFor={status}>{capitalizeFirstLetterEachWord(status)}</label>
                   </div>
                 )
               })
