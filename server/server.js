@@ -63,6 +63,7 @@ const main = async () => {
 	const communityRouter = require('./controllers/community');
 	const dashboardRouter = require('./controllers/dashboard');
 	const userReachRouter = require('./controllers/userReach');
+	const accountRouter = require('./webhooks/account');
 
 	//Webhooks
 	const accountRouter = require('./webhooks/account');
@@ -96,6 +97,7 @@ const main = async () => {
 	apiRouter.use('/dashboard', dashboardRouter);
 	apiRouter.use('/account', accountRouter);
 	apiRouter.use('/reach', userReachRouter);
+	apiRouter.use('/account', accountRouter);
 
 
 	// Listen to server

@@ -20,6 +20,12 @@ const PROPOSAL_RATING_AVG = parseInt(env_proposal_rating_avg);
 const PROJECT_RATING_COUNT = parseInt(env_project_rating_count);
 const PROJECT_RATING_AVG = parseInt(env_project_rating_avg);
 
+// Dictonary of userTypes to subscription stripe product key
+const STRIPE_PRODUCTS = {
+  "BUSINESS":process.env.STRIPE_BUSINESS_PRODUCT_KEY,
+  "COMMUNITY":process.env.STRIPE_COMMUNITY_PRODUCT_KEY
+}
+
 module.exports = {
   // mandatory application configuration
   __prod__,
@@ -32,4 +38,6 @@ module.exports = {
   PROPOSAL_RATING_COUNT,
   PROJECT_RATING_AVG,
   PROJECT_RATING_COUNT,
+  STRIPE_PRODUCTS
 }
+

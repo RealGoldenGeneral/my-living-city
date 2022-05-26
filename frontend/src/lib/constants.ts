@@ -6,6 +6,9 @@ export const MAP_KEY = "AIzaSyBL0eyMR3xMdqjesBSprUv2yQDq-4j3tCM";
 export const UTIL_FUNCTIONS = {
   delayDefault: Number(process.env.REACT_APP_UTIL_FUNC_DELAY ?? 2000),
 };
+export const STRIPE_PUBLIC_KEY = String(process.env.REACT_APP_STRIPE_KEY);
+export const STRIPE_PRODUCT_40 = "price_1KyU20Dabqllr9PHxIInGgjr";
+
 
 // Basic styles
 export const MLC_COLOUR_THEME = {

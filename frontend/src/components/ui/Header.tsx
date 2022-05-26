@@ -16,8 +16,10 @@ import { useGoogleMapSearchLocation } from "src/hooks/googleMapHooks";
 import { useSingleSegmentByName } from "src/hooks/segmentHooks";
 import { findSegmentByName } from "src/lib/api/segmentRoutes";
 
+import {getUserSubscriptionStatus} from 'src/lib/api/userRoutes'
 
 export default function Header() {
+  const [stripeStatus, setStripeStatus] = useState("");
   const { logout, user, token } = useContext(UserProfileContext);
   const { data } = useUserWithJwtVerbose({
     jwtAuthToken: token!,
@@ -55,10 +57,16 @@ export default function Header() {
     whiteSpace: "pre",
   }
 
+  useEffect(()=>{
+    if(user){
+      getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status)).catch(e => console.log(e))
+    }
+  },[user])
+
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
-      {user?.userType === "IN_PROGRESS" && 
+      {stripeStatus !== "" && stripeStatus !== "active" && 
         (<Nav style={paymentNotificationStyling}>
           You have not paid your account payment. To upgrade your account, please go to the <a href="/profile">profile</a> section.
         </Nav>)

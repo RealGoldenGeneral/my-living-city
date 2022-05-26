@@ -585,14 +585,13 @@ model UserStripe {
   user      User    @relation(fields: [userId], references: [id])
   userId    String    
   stripeId  String
-  status    Status  @default(PENDING)
+  status    Status  @default(incomplete)
 
   @@id([userId, stripeId])
   @@map(name: "user_stripe")
 }
 
 enum Status {
-  PENDING
-  ACTIVE
-  CANCELLED
+  active
+  incomplete
 }
