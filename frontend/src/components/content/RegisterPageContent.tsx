@@ -19,6 +19,7 @@ import ImageUploader from 'react-images-upload';
 import { ROUTES, USER_TYPES } from 'src/lib/constants';
 import {  RegisterPageContentReach, CheckBoxItem } from "./RegisterPageContentReach";
 import CSS from "csstype";
+import PricingPlanSelector from '../partials/PricingPlanSelector';
 
 interface RegisterPageContentProps {
 }
@@ -83,6 +84,15 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const userTypeInfoContainerStyles: CSS.Properties = {
         marginTop: "40px"
     }
+
+    const inline: CSS.Properties = {
+        display: "inline",
+        marginLeft: "10px",
+    }
+
+    const marginBot: CSS.Properties = {
+        marginBottom: "20px",
+    }
     
 return (
     <div className='register-page-content'>
@@ -115,7 +125,7 @@ return (
                     schoolSubSegmentId: undefined,
                     userType: USER_TYPES.RESIDENTIAL,
                     reachSegmentIds: [],
-                }}  
+                }}
                 markers={markers}
                 setSegment={setSegment}
                 setSegment2={setSegment2}
@@ -149,18 +159,28 @@ return (
             >
                 <FormikStep>
                     <h3>Please select your account type:</h3>
-                    <BForm.Group>
-                        <BForm.Control required name="userType" as="select"
-                            onChange={e => {setUserType(e.target.value)}} value={userType}> 
-                                <option value={USER_TYPES.RESIDENTIAL} label="Standard">Standard</option>
-                                <option value={USER_TYPES.COMMUNITY} label="Community">Community</option>
-                                <option value={USER_TYPES.BUSINESS} label="Business">Business</option>
-                        </BForm.Control>
-                        <div style={userTypeInfoContainerStyles}>
-                            <p><strong>Standard (FREE): </strong>For individuals to engage with the community by submitting ideas, ratings of ideas and commenting on</p>
-                            <p><strong>Business ($100/yr): </strong>For businesses to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
-                            <p><strong>Community ($50/yr): </strong>For community organizations and nonprofits to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
-                        </div>
+                    <BForm.Group   className="m-4">
+                        <PricingPlanSelector onClickParam={(type:any) => setUserType(type)} />
+                        {/* <div style={userTypeInfoContainerStyles}>
+                            <div style={marginBot}>
+                                <input checked={userType === USER_TYPES.RESIDENTIAL} type="radio" name="userTypeRadio" id="standard" onClick={()=>{setUserType(USER_TYPES.RESIDENTIAL)}}/>
+                                <label htmlFor="standard" style={inline}>
+                                    <p style={inline}><strong>Standard (FREE): </strong>For individuals to engage with the community by submitting ideas, ratings of ideas and commenting on</p>
+                                </label>
+                            </div>
+                            <div style={marginBot}>
+                                <input checked={userType === USER_TYPES.BUSINESS} type="radio" name="userTypeRadio" id="business" onClick={()=>{setUserType(USER_TYPES.BUSINESS)}}/>
+                                <label htmlFor="business" style={inline}>
+                                    <p style={inline}><strong>Business ($100/yr): </strong>For businesses to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                                </label>
+                            </div>
+                            <div style={marginBot}>
+                                <input checked={userType === USER_TYPES.COMMUNITY} type="radio" name="userTypeRadio" id="community" onClick={()=>{setUserType(USER_TYPES.COMMUNITY)}}/>
+                                <label htmlFor="community" style={inline}>
+                                    <p style={inline}><strong>Community ($50/yr): </strong>For community organizations and nonprofits to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                                </label>
+                            </div>
+                        </div> */}
                     </BForm.Group>
                 </FormikStep>
                 <FormikStep validationSchema={Yup.object().shape({
@@ -354,7 +374,8 @@ return (
                 {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
                 <FormikStep>
                     <BForm.Group>
-                        <h4>Would you like to setup Complementary Ad afterwards?</h4>
+                        <h4>Would you like to setup Complementary Ad now?</h4>
+                        <p>You would be able to create ad later at the ad manager</p>
                         <BForm.Check inline name="createAdRadio" label="Yes" type="radio" id="inline-checkbox"  onClick={()=>{window.location.href = ROUTES.SUBMIT_ADVERTISEMENT}} />
                         <BForm.Check inline name="createAdRadio" label="No" type="radio" id="inline-checkbox" onClick={()=>{window.location.href = ROUTES.LANDING}} />
                     </BForm.Group>
@@ -421,7 +442,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             case 4:
                 return userType === USER_TYPES.RESIDENTIAL? "Privacy Policy" : "Submit"
             case 5:
-                return userType === USER_TYPES.RESIDENTIAL? "Submit" : "Create Complementary Ad"
+                return userType === USER_TYPES.RESIDENTIAL? "Submit" : "Create Ad" //Removed  "Complementary" due to sizing problems
             default:
                 return ""
         }
@@ -534,7 +555,8 @@ return(
         }
 
         if (step===0) {
-            values.userType = (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) ?  USER_TYPES.IN_PROGRESS : USER_TYPES.RESIDENTIAL;
+            // values.userType = (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) ?  USER_TYPES.IN_PROGRESS : USER_TYPES.RESIDENTIAL;
+            values.userType = userType;
             setStep(s=>s+1);
         } else if ((isLastStep() && userType === USER_TYPES.RESIDENTIAL) || ((userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && step===6)) {
             setIsLoading(true);

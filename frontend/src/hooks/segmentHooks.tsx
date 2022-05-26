@@ -1,10 +1,15 @@
 import { useQuery } from "react-query"
-import { ISegment, ISubSegment, ISegmentRequest } from "../lib/types/data/segment.type"
+import { ISegment, ISubSegment, ISegmentRequest, ISuperSegment, ISegmentAggregateInfo } from "../lib/types/data/segment.type"
 import { IFetchError } from "../lib/types/types"
-import { findSegmentRequests, getAllSegments, getSingleSegmentBySegmentId, getSingleSubSegmentBySubSegmentId} from "../lib/api/segmentRoutes"
+import { findSegmentRequests, getAllSegments, getSingleSegmentBySegmentId, getSingleSubSegmentBySubSegmentId, getAllSuperSegments, getSegmentAgggregateInfo, findSegmentByName} from "../lib/api/segmentRoutes"
 import {getAllSubSegmentsWithId} from "../lib/api/segmentRoutes"
+
 export const useAllSegments= () => {
     return useQuery<ISegment[], IFetchError>('segments', getAllSegments,);
+}
+
+export const useAllSuperSegments = () => {
+    return useQuery<ISuperSegment[], IFetchError>('superSegments', getAllSuperSegments,);
 }
 
 export const useAllSubSegmentsWithId= (segId:string) => {
@@ -20,12 +25,6 @@ export const useAllSegmentRequests = (token: string | null) => {
         () => findSegmentRequests(token),
     )
 }
-// export const useAllSegments = () => {
-//     return useQuery<ISegment[], IFetchError>(
-//       'name', 
-//       getAllSegments(),
-//     );
-//   }
 
 export const useSingleSegmentBySegmentId = (segmentId: number) => {
     return useQuery<ISegment, IFetchError>(
@@ -38,5 +37,20 @@ export const useSingleSubSegmentBySubSegmentId = (subSegmentId: number | undefin
     return useQuery<ISubSegment, IFetchError>(
         ['subSegmentId', subSegmentId],
         () => getSingleSubSegmentBySubSegmentId(subSegmentId),
+    )
+}
+
+export const useSegmentInfoAggregate = (segmentId: number) => {
+    return useQuery<ISegmentAggregateInfo, IFetchError>("segment-aggregate-info", () => 
+    getSegmentAgggregateInfo(segmentId));
+}
+
+export const useSingleSegmentByName = (data: any, trigger: boolean) => {
+    return useQuery<any, IFetchError>(
+        "segment-by-segment-name",
+        () => findSegmentByName(data),
+        {
+            enabled: trigger
+        }
     )
 }

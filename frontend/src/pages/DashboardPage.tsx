@@ -11,7 +11,7 @@ import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { useUserWithJwtVerbose } from "src/hooks/userHooks";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
 import DashboardPageContent from "../components/content/DashboardPageContent";
-import { useIdeasHomepage, useUserIdeas } from "../hooks/ideaHooks";
+import { useIdeasHomepage, useUserFollowedIdeas, useUserIdeas } from "../hooks/ideaHooks";
 import LoadingSpinner from "src/components/ui/LoadingSpinner";
 
 export default function Dashboard() {
@@ -32,7 +32,11 @@ export default function Dashboard() {
     isLoading: uLoading,
   } = useUserIdeas(loggedInUser.id);
 
-  console.log(uData);
+  const {
+    data: userFollowedData,
+    error: userFollowedError,
+    isLoading: userFollowedLoading,
+  } = useUserFollowedIdeas(loggedInUser.id)
 
   return (
     <div className="wrapper">
@@ -42,6 +46,7 @@ export default function Dashboard() {
         ideasIsError={iIsError}
         ideasError={iError}
         userIdeas={uData}
+        userFollowedideas={userFollowedData}
       />
     </div>
   );

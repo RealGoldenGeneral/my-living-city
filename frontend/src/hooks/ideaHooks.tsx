@@ -8,6 +8,8 @@ import {
   getSingleIdea,
   postAllIdeasWithBreakdown,
   getUserIdeas,
+  getIdeasFollowedByUser,
+  isIdeaFollowedByUser
 } from "../lib/api/ideaRoutes";
 
 // export const useIdeas = (
@@ -56,3 +58,13 @@ export const useUserIdeas = (userId: string) => {
     getUserIdeas(userId)
   );
 };
+
+export const useUserFollowedIdeas = (userId: string) => {
+  return useQuery<IIdeaWithAggregations[], IFetchError>("user-followed-ideas", () => 
+  getIdeasFollowedByUser(userId))
+}
+
+export const useCheckIdeaFollowedByUser = (token: string|null, userId: string|null, ideaId: string|null) => {
+  return useQuery<any, IFetchError>("is-idea-followed-by-user", () => 
+    isIdeaFollowedByUser(token, userId, ideaId))
+}

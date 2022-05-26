@@ -56,3 +56,16 @@ export interface ISegmentData {
   segType: "Segment" | "Sub-Segment" | "Super-Segment";
   userType: "Resident" | "Worker" | "Student";
 }
+
+export interface ISegmentAggregateInfo {
+  totalUsers: number,
+  residents: number;
+  workers: number;
+  students: number;
+  ideas: number;
+  proposals: number;
+  projects: number;
+  superSegmentName: string;
+  subSegmentsCount: number;
+  subSegments: string[];
+}
