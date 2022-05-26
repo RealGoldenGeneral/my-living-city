@@ -442,7 +442,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             case 4:
                 return userType === USER_TYPES.RESIDENTIAL? "Privacy Policy" : "Submit"
             case 5:
-                return userType === USER_TYPES.RESIDENTIAL? "Submit" : "Create Complementary Ad"
+                return userType === USER_TYPES.RESIDENTIAL? "Submit" : "Create Ad" //Removed  "Complementary" due to sizing problems
             default:
                 return ""
         }

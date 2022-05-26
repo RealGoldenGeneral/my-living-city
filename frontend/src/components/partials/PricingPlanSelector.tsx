@@ -51,9 +51,9 @@ const PricingPlanSelector: React.FC<any> = (params) => {
 
   const Plan = (props: any) => {
     return (
-      <div className="card shadow-sm m-2">
-        <div className="card-header">
-          <h4 className="my-0 font-weight-normal">{props.header}</h4>
+      <div className={`card shadow-sm ${props.outline ? "m-4":"m-2"} `} onClick={() => {props.onClickHandler(props.type)}}>
+        <div className={`card-header opacity-50 ${props.outline ? "":"bg-primary"}`} >
+          <h4 className={`my-0 font-weight-normal ${props.outline ? "":"text-white"}`}>{props.header}</h4>
         </div>
         <div className="card-body">
           <h1 className="card-title pricing-card-title">
@@ -65,15 +65,7 @@ const PricingPlanSelector: React.FC<any> = (params) => {
               <li key={i}>{feature}</li>
             ))}
           </ul>
-          <button
-            className={`btn btn-lg btn-block ${
-              props.outline ? "btn-outline-primary" : "btn-primary"
-            }`}
-            type="button"
-            onClick={() => {props.onClickHandler(props.type)}}
-          >
-            {props.buttonLabel}
-          </button>
+          
         </div>
       </div>
     );
