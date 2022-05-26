@@ -223,11 +223,11 @@ const SubmitDirectProposalPageContent: React.FC<
     setIsLoading(true);
     fetch(
       "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
-        (markers.home.lat ? markers.home.lat : "48.4284") +
-        "," +
-        (markers.home.lng ? markers.home.lng : "-123.3656") +
-        "&key=" +
-        MAP_KEY
+      (markers.home.lat ? markers.home.lat : "48.4284") +
+      "," +
+      (markers.home.lng ? markers.home.lng : "-123.3656") +
+      "&key=" +
+      MAP_KEY
     )
       .then((response) => response.json())
       .then((data) => {
@@ -595,6 +595,8 @@ const SubmitDirectProposalPageContent: React.FC<
                   </Form.Label>
                   {extraFeedback && (
                     <>
+
+                      {/* Remove Button 
                       <Button
                         color="danger"
                         size="sm"
@@ -602,7 +604,8 @@ const SubmitDirectProposalPageContent: React.FC<
                       >
                         -
                       </Button>
-                      &nbsp;&nbsp;
+                      &nbsp;&nbsp;*/}
+
                       <Button
                         color="success"
                         size="sm"
@@ -613,8 +616,18 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 0 && (
                         <div className="feedback-1">
                           <br />
-                          <Form.Label>
+                          <Form.Label
+                            style={{ display: "flex" }}
+                          >
                             &nbsp;&nbsp;Specific Feedback #1
+                            <Button
+                              style={{ marginLeft: "auto" }}
+                              color="danger"
+                              size="sm"
+                              onClick={() => toggleNumberOfFeedback(-1)}
+                            >
+                              -
+                            </Button>
                           </Form.Label>
                           <br />
                           <Form.Control
@@ -623,16 +636,29 @@ const SubmitDirectProposalPageContent: React.FC<
                             onChange={formik.handleChange}
                             placeholder="Extra Feedback"
                           />
+
                         </div>
                       )}
                       {numberOfFeedback > 1 && (
                         <div className="feedback-2">
                           <br />
-                          <Form.Label>
+                          <Form.Label
+                            style={{ display: "flex" }}
+                          >
                             &nbsp;&nbsp;Specific Feedback #2
+                            <Button
+                              style={{ marginLeft: "auto" }}
+
+                              color="danger"
+                              size="sm"
+                              onClick={() => toggleNumberOfFeedback(-1)}
+                            >
+                              -
+                            </Button>
                           </Form.Label>
                           <br />
                           <Form.Control
+                          
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
@@ -643,8 +669,19 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 2 && (
                         <div className="feedback-3">
                           <br />
-                          <Form.Label>
+                          <Form.Label
+                                                    style={{ display: "flex" }}
+                                                    >
                             &nbsp;&nbsp;Specific Feedback #3
+                            <Button
+                              style={{ marginLeft: "auto" }}
+
+                              color="danger"
+                              size="sm"
+                              onClick={() => toggleNumberOfFeedback(-1)}
+                            >
+                              -
+                            </Button>
                           </Form.Label>
                           <br />
                           <Form.Control
@@ -658,8 +695,19 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 3 && (
                         <div className="feedback-4">
                           <br />
-                          <Form.Label>
+                          <Form.Label
+                                                    style={{ display: "flex" }}
+                                                    >
                             &nbsp;&nbsp;Specific Feedback #4
+                            <Button
+                              style={{ marginLeft: "auto" }}
+
+                              color="danger"
+                              size="sm"
+                              onClick={() => toggleNumberOfFeedback(-1)}
+                            >
+                              -
+                            </Button>
                           </Form.Label>
                           <br />
                           <Form.Control
@@ -673,8 +721,20 @@ const SubmitDirectProposalPageContent: React.FC<
                       {numberOfFeedback > 4 && (
                         <div className="feedback-5">
                           <br />
-                          <Form.Label>
+                          <Form.Label
+                          
+                          style={{ display: "flex" }}
+                          >
                             &nbsp;&nbsp;Specific Feedback #5
+                            <Button
+                              style={{ marginLeft: "auto" }}
+
+                              color="danger"
+                              size="sm"
+                              onClick={() => toggleNumberOfFeedback(-1)}
+                            >
+                              -
+                            </Button>
                           </Form.Label>
                           <br />
                           <Form.Control
