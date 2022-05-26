@@ -65,8 +65,6 @@ const main = async () => {
 	const userReachRouter = require('./controllers/userReach');
 	const accountRouter = require('./webhooks/account');
 
-	//Webhooks
-	const accountRouter = require('./webhooks/account');
 
 
 	const apiRouter = express.Router();
