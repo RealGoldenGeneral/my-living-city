@@ -624,6 +624,7 @@ const SubmitDirectProposalPageContent: React.FC<
                               style={{ marginLeft: "auto" }}
                               color="danger"
                               size="sm"
+                              
                               onClick={() => toggleNumberOfFeedback(-1)}
                             >
                               -
