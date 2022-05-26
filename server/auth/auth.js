@@ -3,6 +3,7 @@ const localStrategy = require('passport-local').Strategy;
 const { JWT_SECRET } = require('../lib/constants');
 const prisma = require('../lib/prismaClient');
 const { argon2Hash, argon2ConfirmHash } = require('../lib/utilityFunctions');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 passport.use(
   'signup',
@@ -26,6 +27,7 @@ passport.use(
           return done({ message: "You must supply a password."})
         }
 
+        console.log("Request body create user");
         console.log(req.body);
 
         // hash password
@@ -77,7 +79,19 @@ passport.use(
             //userRole: true,
           }
         });
-
+        //Check to only create Stripe account for paid accounts.
+        if(parsedMainData.userType === "BUSINESS" || parsedMainData.userType === "COMMUNITY"){
+          const newStripCustomer = await stripe.customers.create({
+            email: createdUser.email
+          });
+          await prisma.userStripe.create({
+            data: {
+                userId: createdUser.id,
+                stripeId: newStripCustomer.id,
+                status: 'incomplete'
+            }
+          })
+        }
         return done(null, createdUser);
       } catch (error) {
         // console.log("ERROR")

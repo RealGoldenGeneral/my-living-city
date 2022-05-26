@@ -4,14 +4,16 @@ import PlaceholderIdeaTile from "src/components/tiles/PlaceholderIdeaTile";
 import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 
 interface SystemUpdatesProps {
-  topIdeas: IIdeaWithAggregations[];
+  userFollowedideas: IIdeaWithAggregations[];
   postType?: string;
 }
 
 const SystemUpdates: React.FC<SystemUpdatesProps> = ({
-  topIdeas,
+  userFollowedideas,
   postType,
 }) => {
+
+
   return (
     <Container className="system" id="hanging-icons">
       <style>
@@ -43,8 +45,8 @@ const SystemUpdates: React.FC<SystemUpdatesProps> = ({
       <Carousel controls={true} interval={null}>
         {[...Array(4)].map((x, i) => (
           <Carousel.Item key={i}>
-            {topIdeas
-              ? topIdeas.slice(i * 3, i * 3 + 3).map((idea) => (
+            {userFollowedideas
+              ? userFollowedideas.slice(i * 3, i * 3 + 3).map((idea) => (
                   <Col
                     key={idea.id}
                     md={6}
@@ -54,7 +56,7 @@ const SystemUpdates: React.FC<SystemUpdatesProps> = ({
                     <IdeaTile
                       ideaData={idea}
                       showFooter={true}
-                      postType="Idea"
+                      postType={idea.state === "IDEA" ? "Idea" : "Proposal"}
                     />
                   </Col>
                 ))

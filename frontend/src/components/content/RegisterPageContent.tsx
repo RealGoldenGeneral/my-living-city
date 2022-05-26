@@ -1,10 +1,10 @@
 import {Alert, Button, Card} from 'react-bootstrap';
 import {Form as BForm} from 'react-bootstrap';
-import { ErrorMessage, Field, Form, Formik, FormikConfig, FormikValues } from 'formik';
-import React, { useContext, useState } from 'react';
+import { ErrorMessage, Field, Form, Formik, FormikConfig } from 'formik';
+import React, { useContext, useEffect, useState } from 'react';
 import SimpleMap from '../map/SimpleMap';
 import { capitalizeFirstLetterEachWord, capitalizeString, refactorStateArray, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from 'src/lib/utilityFunctions';
-import { findSegmentByName, findSubsegmentsBySegmentId } from 'src/lib/api/segmentRoutes';
+import { findSegmentByName, findSubsegmentsBySegmentId, getAllSegmentsWithSuperSegId } from 'src/lib/api/segmentRoutes';
 import { ISegment, ISubSegment } from 'src/lib/types/data/segment.type';
 import * as Yup from 'yup';
 import Stepper from 'react-stepper-horizontal';
@@ -16,6 +16,11 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IRegisterInput } from '../../lib/types/input/register.input';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
 import ImageUploader from 'react-images-upload';
+import { ROUTES, USER_TYPES } from 'src/lib/constants';
+import {  RegisterPageContentReach, CheckBoxItem } from "./RegisterPageContentReach";
+import CSS from "csstype";
+import PricingPlanSelector from '../partials/PricingPlanSelector';
+
 interface RegisterPageContentProps {
 }
 
@@ -36,6 +41,7 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
     const [segIds, setSegIds] = useState<any[]>([]);
     const [avatar, setAvatar] = useState(undefined);
     const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
+    const [userType, setUserType] = useState<string>(USER_TYPES.RESIDENTIAL);
     //These two useState vars set if the values should be transferred from the one to the other before the form submits.
     //Used with the radio buttons.
     const [workTransfer, transferHomeToWork] = useState(false);
@@ -46,39 +52,81 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
             }
             if(subSegments2 && subSegments2[0].segId === id){
                 return (subSegments2?.map(subSeg=>(<option key={subSeg.id} value={subSeg.id}>{capitalizeFirstLetterEachWord(subSeg.name)}</option>)));
-            }  
+            }
     }
+    const [selectedSegId, setselectedSegId] = useState<any>([]);
+    const [reachData, setReachData] = useState<CheckBoxItem[]>([]);
+
+    const getReachData = async () => {
+        let data: CheckBoxItem[] = [];
+        let region: CheckBoxItem = {"label": segment?.superSegName, "value": "SuperSeg", "children": []};
+
+        const res = await getAllSegmentsWithSuperSegId(segment?.superSegId);
+
+        res.forEach(segment => {
+            region.children?.push({
+                "label": segment?.name,
+                "value": segment?.segId
+            })
+        });
+        
+        data.push(region);
+        console.log(`Reach data: ${JSON.stringify(data)}`);
+        setReachData(data);
+    }
+
+    useEffect(() => {
+        if (segment !== null && (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY)) {
+            getReachData()
+        }
+    }, [segment]);
+
+    const userTypeInfoContainerStyles: CSS.Properties = {
+        marginTop: "40px"
+    }
+
+    const inline: CSS.Properties = {
+        display: "inline",
+        marginLeft: "10px",
+    }
+
+    const marginBot: CSS.Properties = {
+        marginBottom: "20px",
+    }
+    
 return (
     <div className='register-page-content'>
             <FormikStepper initialValues={{
-                email: '',
-                password: '',
-                confirmPassword: '',
-                fname: '',
-                lname: '',
-                address: {
-                    streetAddress: '',
-                    streetAddress2: '',
-                    city: '',
-                    postalCode: '',
-                    country: '',
-                },
-                geo: {
-                    lon: undefined,
-                    lat: undefined,
-                    work_lat: undefined,
-                    work_lon: undefined,
-                    school_lat: undefined,
-                    school_lon: undefined,
-                },
-                homeSegmentId: undefined,
-                workSegmentId: undefined,
-                schoolSegmentId: undefined,
-                homeSubSegmentId: undefined,
-                workSubSegmentId: undefined,
-                schoolSubSegmentId: undefined,
-                
-            }}  markers={markers}
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                    fname: '',
+                    lname: '',
+                    address: {
+                        streetAddress: '',
+                        streetAddress2: '',
+                        city: '',
+                        postalCode: '',
+                        country: '',
+                    },
+                    geo: {
+                        lon: undefined,
+                        lat: undefined,
+                        work_lat: undefined,
+                        work_lon: undefined,
+                        school_lat: undefined,
+                        school_lon: undefined,
+                    },
+                    homeSegmentId: undefined,
+                    workSegmentId: undefined,
+                    schoolSegmentId: undefined,
+                    homeSubSegmentId: undefined,
+                    workSubSegmentId: undefined,
+                    schoolSubSegmentId: undefined,
+                    userType: USER_TYPES.RESIDENTIAL,
+                    reachSegmentIds: [],
+                }}
+                markers={markers}
                 setSegment={setSegment}
                 setSegment2={setSegment2}
                 setSubSegments={setSubSegments}
@@ -91,31 +139,55 @@ return (
                 workTransfer={workTransfer}
                 schoolTransfer={schoolTransfer}
                 avatar={avatar}
+                userType={userType}
+                reachSegmentIds={selectedSegId}
                 onSubmit={async(values,helpers)=>{
                     // const {email, password, confirmPassword} = values;
                     try {
-                        console.log(values);
+                        console.log(`Sign up values: ${values}`);
                         setIsLoading(true);
-                        const { token, user } = await postRegisterUser(values, segmentRequests, avatar);
-                        storeUserAndTokenInLocalStorage(token, user);
-                        storeTokenExpiryInLocalStorage();
-                        setToken(token);
-                        setUser(user);
-                        // await postAvatarImage(selectedFile, token);
-                        } catch (error) {
-                            console.log(error);
-                            wipeLocalStorage();
-                        }finally{
-                            setIsLoading(false);
-                        }
+                        await postRegisterUser(values, segmentRequests, avatar);
+                        if (userType === USER_TYPES.RESIDENTIAL) {window.location.href = ROUTES.LANDING};
+                    } catch (error) {
+                        console.log(error);
+                        wipeLocalStorage();
+                    }finally{
+                        setIsLoading(false);
+                    }
                 }
             }
             >
+                <FormikStep>
+                    <h3>Please select your account type:</h3>
+                    <BForm.Group   className="m-4">
+                        <PricingPlanSelector onClickParam={(type:any) => setUserType(type)} />
+                        {/* <div style={userTypeInfoContainerStyles}>
+                            <div style={marginBot}>
+                                <input checked={userType === USER_TYPES.RESIDENTIAL} type="radio" name="userTypeRadio" id="standard" onClick={()=>{setUserType(USER_TYPES.RESIDENTIAL)}}/>
+                                <label htmlFor="standard" style={inline}>
+                                    <p style={inline}><strong>Standard (FREE): </strong>For individuals to engage with the community by submitting ideas, ratings of ideas and commenting on</p>
+                                </label>
+                            </div>
+                            <div style={marginBot}>
+                                <input checked={userType === USER_TYPES.BUSINESS} type="radio" name="userTypeRadio" id="business" onClick={()=>{setUserType(USER_TYPES.BUSINESS)}}/>
+                                <label htmlFor="business" style={inline}>
+                                    <p style={inline}><strong>Business ($100/yr): </strong>For businesses to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                                </label>
+                            </div>
+                            <div style={marginBot}>
+                                <input checked={userType === USER_TYPES.COMMUNITY} type="radio" name="userTypeRadio" id="community" onClick={()=>{setUserType(USER_TYPES.COMMUNITY)}}/>
+                                <label htmlFor="community" style={inline}>
+                                    <p style={inline}><strong>Community ($50/yr): </strong>For community organizations and nonprofits to engage with the community by submitting ideas, ratings of ideas and commenting on, as well as submitting proposals, accessing free and paid advertisements to the community.</p>
+                                </label>
+                            </div>
+                        </div> */}
+                    </BForm.Group>
+                </FormikStep>
                 <FormikStep validationSchema={Yup.object().shape({
                     password: Yup.string().min(8, 'Password is too short, 8 characters minimum'),
                     confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
                     email: Yup.string().email('Invalid email')
-                    .test('Unique Email','Email already in use', 
+                    .test('Unique Email','Email already in use',
                         function(value){return new Promise((resolve, reject) => {
                             getUserWithEmail(value)
                             .then(res => {res === 200 ? resolve(false) : resolve(true)})
@@ -174,12 +246,11 @@ return (
 
                 <FormikStep >
                     <BForm.Group>
+                        {segment || segment2 ? null : <p>Your home municipality is not registered in our system.</p>}
                         <BForm.Label>Select your home municipality</BForm.Label>
                         <BForm.Control name="homeSegmentId" as="select" onChange={(e)=>{
                             refactorStateArray(segIds, 0, parseInt(e.target.value), setSegIds);
                             refactorStateArray(subIds, 0, null, setSubIds);
-                            // refactorSegIds(0,parseInt(e.target.value));
-                            // refactorSubIds(0, null);
                             }}>
                             {segment && <option value={segment?.segId}>{capitalizeFirstLetterEachWord(segment?.name)}</option>}
                             {segment2 && <option value={segment2?.segId}>{capitalizeFirstLetterEachWord(segment2?.name)}</option>}
@@ -195,7 +266,8 @@ return (
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={0} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests} />
                 </FormikStep>
-
+                
+                {userType === USER_TYPES.RESIDENTIAL &&
                 <FormikStep >
                     {!map 
                     ?   <div>
@@ -210,7 +282,9 @@ return (
                     <><Card.Title>Show us on the map where your work is (optional)</Card.Title>
                     <SimpleMap iconName={'work'} sendData={(markers:any)=>sendData(markers) } /></>}
                 </FormikStep>
+                }
 
+                {userType === USER_TYPES.RESIDENTIAL && 
                 <FormikStep>
                     <BForm.Group>
                         <BForm.Label>Your Work Municipality is</BForm.Label>
@@ -232,7 +306,9 @@ return (
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={1} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>
                 </FormikStep>
+                }
 
+                {userType === USER_TYPES.RESIDENTIAL && 
                 <FormikStep >
                     {!map 
                     ?   <div>
@@ -247,7 +323,9 @@ return (
                     <><Card.Title>Show us on the map where your school is (optional)</Card.Title>
                     <SimpleMap iconName={'school'} sendData={(markers:any)=>sendData(markers) } /></>}
                 </FormikStep>
+                }
 
+                {userType === USER_TYPES.RESIDENTIAL && 
                 <FormikStep>
                     <BForm.Group>   
                         <BForm.Label>Your School Municipality is</BForm.Label>
@@ -268,7 +346,13 @@ return (
                         <p>Don't see your Municipality?<Button onClick={()=>{setShowModal(true)}}variant="link text-primary">Click here</Button></p>
                     </BForm.Group>
                     <RequestSegmentModal showModal={showModal} setShowModal={setShowModal} index={2} setSegmentRequests={setSegmentRequests} segmentRequests={segmentRequests}/>                   
+                </FormikStep>}
+
+                {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
+                <FormikStep>
+                    <RegisterPageContentReach data={reachData} selected={selectedSegId} setSelected={setselectedSegId}/>
                 </FormikStep>
+                }
 
                 <FormikStep>
                         <p>It takes a lot to bring an idea to form, and as a user on the MLC Community Discussion Platform the following agreements will enable the interactions that turn ideas into reality:</p>
@@ -284,8 +368,19 @@ return (
                 </FormikStep>
 
                 <FormikStep>
-                        <h3>To complete your registration click submit</h3>
+                        <h3>To complete your account registration click submit</h3>
                 </FormikStep>
+
+                {(userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && 
+                <FormikStep>
+                    <BForm.Group>
+                        <h4>Would you like to setup Complementary Ad now?</h4>
+                        <p>You would be able to create ad later at the ad manager</p>
+                        <BForm.Check inline name="createAdRadio" label="Yes" type="radio" id="inline-checkbox"  onClick={()=>{window.location.href = ROUTES.SUBMIT_ADVERTISEMENT}} />
+                        <BForm.Check inline name="createAdRadio" label="No" type="radio" id="inline-checkbox" onClick={()=>{window.location.href = ROUTES.LANDING}} />
+                    </BForm.Group>
+                </FormikStep>
+                }
 
             </FormikStepper>
 
@@ -318,8 +413,10 @@ export interface FormikStepperProps extends FormikConfig<IRegisterInput> {
     workTransfer: boolean;
     schoolTransfer: boolean;
     avatar: any;
+    userType: any;
+    reachSegmentIds: any;
 }
-export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, avatar, ...props }: FormikStepperProps) {
+export function FormikStepper({ children, markers, showMap, subIds, segIds, schoolTransfer, workTransfer,setSubIds, setSegIds, avatar, userType, reachSegmentIds, ...props }: FormikStepperProps) {
     const childrenArray = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[];
     const [step, setStep] = useState(0);
     const [inferStep, setInferStep]=useState(0);
@@ -331,7 +428,7 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     const isLastStep = () => { return step === childrenArray.length - 1 };
     const nextOrLoading = () => { return isLoading ? 'Loading...' : 'Next' };
     const submitOrSubmitting = () => { return isLoading ? 'Submitting...':'Submit' };
-    const isHomeMarkerSet = () => { return (step===1 && markers.home.lat === null) };
+    const isHomeMarkerSet = () => { return (step===2 && markers.home.lat === null) };
     const getStepHeader = (step: number) => {
         switch(step) {
             case 0:
@@ -339,13 +436,13 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             case 1:
                 return "Home Location"
             case 2:
-                return "Work Location"
+                return userType === USER_TYPES.RESIDENTIAL ? "Work Location" : "Reach";
             case 3:
-                return "School Location"
+                return userType === USER_TYPES.RESIDENTIAL ? "School Location" : "Privacy Policy"
             case 4:
-                return "Privacy Policy"
+                return userType === USER_TYPES.RESIDENTIAL? "Privacy Policy" : "Submit"
             case 5:
-                return "Submit"
+                return userType === USER_TYPES.RESIDENTIAL? "Submit" : "Create Ad" //Removed  "Complementary" due to sizing problems
             default:
                 return ""
         }
@@ -360,17 +457,27 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
     //InferStep keeps track of the step icons.
     //Since some steps will have multiple "steps" the infer step decreases dependant on if map selections have occured.
     const handleBackButton = () => {
-        if(step % 2 !== 0){
-            setInferStep(s=>s-1);
+        if (userType === USER_TYPES.RESIDENTIAL) {
+            if(step % 2 === 0 && step !== 0){
+                setInferStep(s=>s-1);
+            }
+            if(isLastStep()) setInferStep(s=>s-1);
+            if(step===8 && markers.school.lat === null){
+                setStep(s=>s-2);
+            }else if(step === 6 && markers.work.lat === null){
+                setStep(s=>s-2);
+            }else{
+                setStep(s=>s-1);
+            }
+        } else {
+            if (step === 3 || step === 1) {
+                setStep(s=>s-1);
+            } else {
+                setStep(s=>s-1);
+                setInferStep(s=>s-1);
+            }
         }
-        if(isLastStep()) setInferStep(s=>s-1);
-        if(step===7 && markers.school.lat === null){
-            setStep(s=>s-2);
-        }else if(step === 5 && markers.work.lat === null){
-            setStep(s=>s-2);
-        }else{
-            setStep(s=>s-1);
-        }
+       
     }
     //This function calls the google api to receive data on the map location
     //The data is then searched in the back end for a matching segment
@@ -400,13 +507,14 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
             if(googleQuery.city2){
                 const seg2 = await findSegmentByName({segName:googleQuery.city2, province:googleQuery.province, country:googleQuery.country });
                 if(seg2){
-                    console.log('here');
                     props.setSegment2(seg2);
                     refactorStateArray(segIds, index, seg2.segId, setSegIds);
                     
                     //refactorSegIds(index,seg2.segId);
                     const sub2 = await findSubsegmentsBySegmentId(seg2.segId);
                     props.setSubSegments2(sub2);
+                    // console.log(`Seg2: ${JSON.stringify(seg2)}`);
+                    // console.log(`SubSeg2: ${JSON.stringify(sub2)}`)
                 }else{
                     props.setSegment2(null);
                     props.setSubSegments2(null);
@@ -420,6 +528,8 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
                     //refactorSegIds(index,seg.segId);
                     const sub = await findSubsegmentsBySegmentId(seg.segId);
                     props.setSubSegments(sub);
+                    // console.log(`Seg: ${JSON.stringify(seg)}`);
+                    // console.log(`SubSeg1: ${JSON.stringify(sub)}`)
                 }else{
                     props.setSegment(null);
                     props.setSubSegments(null);
@@ -434,22 +544,32 @@ export function FormikStepper({ children, markers, showMap, subIds, segIds, scho
         }
         
     }
+
 return(
     <Formik
     {...props}
     validationSchema={currentChild?.props.validationSchema}
     onSubmit={async(values, helpers)=>{
+        if (step===4 && (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY)) {
+            values.reachSegmentIds = reachSegmentIds;
+        }
 
-        if(isLastStep()){
+        if (step===0) {
+            // values.userType = (userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) ?  USER_TYPES.IN_PROGRESS : USER_TYPES.RESIDENTIAL;
+            values.userType = userType;
+            setStep(s=>s+1);
+        } else if ((isLastStep() && userType === USER_TYPES.RESIDENTIAL) || ((userType === USER_TYPES.BUSINESS || userType === USER_TYPES.COMMUNITY) && step===6)) {
             setIsLoading(true);
             await new Promise(r => setTimeout(r, 2000));
             await props.onSubmit(values, helpers);
-            
-        }else if(step=== 1){
+            if (userType !== USER_TYPES.RESIDENTIAL) {
+                setStep(s=>s+1);
+                setInferStep(s=>s+1);
+            }
+        }else if(step=== 2){
             const seg = await setSegData(0);
             showMap(false);
-        }else if(step=== 3){
-            
+        }else if(step=== 4 && userType === USER_TYPES.RESIDENTIAL){
             if(markers.work.lat === null){
                 setStep(s=>s+2);
                 setInferStep(s=>s+1);
@@ -464,7 +584,7 @@ return(
                 //setStep(s=>s+1);
             }
             showMap(false);
-        }else if(step=== 5){
+        }else if(step=== 6 && userType === USER_TYPES.RESIDENTIAL){
             console.log(segIds);
             if(markers.school.lat === null){
                 setStep(s=>s+2);
@@ -480,7 +600,9 @@ return(
                 //setStep(s=>s+1);
             }
             setIsLoading(false);
-        }else if(step===7){
+        }else if((step===8 && userType === USER_TYPES.RESIDENTIAL) 
+            || (step===5 && userType === USER_TYPES.COMMUNITY)
+            || (step===5 && userType === USER_TYPES.BUSINESS)){
             setIsLoading(true);
             //Field setters for the external inputs. Formik can only handle native form elements.
             //These fields must be added manually.
@@ -514,12 +636,12 @@ return(
     <div>
     <div className="stepper mb-4">
     <Stepper steps={ [
-        {title: 'Create Account'}, 
-        {title: 'Home Location'}, 
-        {title: 'Work Location'},
-        {title: 'School Location'},
-        {title: 'Privacy Policy'},
-        {title: 'Submit'}] } 
+        {title: `${getStepHeader(0)}`}, 
+        {title: `${getStepHeader(1)}`}, 
+        {title: `${getStepHeader(2)}`},
+        {title: `${getStepHeader(3)}`},
+        {title: `${getStepHeader(4)}`},
+        {title: `${getStepHeader(5)}`}] } 
         activeStep={ inferStep }
         circleTop={0}
         lineMarginOffset={8}
@@ -539,11 +661,14 @@ return(
         {currentChild}
         {error && (<Alert variant='danger' className="error-alert">{ error.message }</Alert>)}
         <div className="text-center">
-        {step > 0 ? <Button className="float-left mt-3" size="lg" variant="outline-primary" onClick={()=>{handleBackButton()}}>Back</Button> : null}
-        <Button className="float-right mt-3 d-flex align-items-center" size="lg" type="submit" disabled={isLoading||isHomeMarkerSet()}>
-        {isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
-        {isLastStep() ? submitOrSubmitting() : nextOrLoading()}
-        </Button>
+        {(step > 0 && userType === USER_TYPES.RESIDENTIAL) || ((!isLastStep() && step > 0) && userType !== USER_TYPES.RESIDENTIAL) ? <Button className="float-left mt-3" size="lg" variant="outline-primary" onClick={()=>{handleBackButton()}}>Back</Button> : null}
+
+        {isLastStep() && userType !== USER_TYPES.RESIDENTIAL ? null : 
+            <Button className="float-right mt-3 d-flex align-items-center" size="lg" type="submit" disabled={isLoading||isHomeMarkerSet()}>
+            {isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+            {(isLastStep() && userType === USER_TYPES.RESIDENTIAL) || (userType !== USER_TYPES.RESIDENTIAL && step===6) ? submitOrSubmitting() : nextOrLoading()}
+            </Button>
+        }
         </div>
 
     </Form>

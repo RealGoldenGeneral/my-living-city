@@ -6,6 +6,9 @@ export const MAP_KEY = "AIzaSyBL0eyMR3xMdqjesBSprUv2yQDq-4j3tCM";
 export const UTIL_FUNCTIONS = {
   delayDefault: Number(process.env.REACT_APP_UTIL_FUNC_DELAY ?? 2000),
 };
+export const STRIPE_PUBLIC_KEY = String(process.env.REACT_APP_STRIPE_KEY);
+export const STRIPE_PRODUCT_40 = "price_1KyU20Dabqllr9PHxIInGgjr";
+
 
 // Basic styles
 export const MLC_COLOUR_THEME = {
@@ -43,6 +46,8 @@ export enum USER_TYPES {
   ASSOCIATE = "ASSOCIATE",
   DEVELOPER = "DEVELOPER",
   RESIDENTIAL = "RESIDENTIAL",
+  COMMUNITY = "COMMUNITY",
+  IN_PROGRESS = "IN_PROGRESS",
 }
 // Routes should be placed here and called into "path" in Route component
 export const ROUTES = {
@@ -67,4 +72,6 @@ export const ROUTES = {
   SUBMIT_DIRECT_PROPOSAL: "/submit-direct-proposal",
   DASHBOARD: "/dashboard",
   My_POSTS: "/dashboard/my-posts",
+  MY_ADVERTISMENT: "/advertisement/my-ads",
+  COMMUNITY_DASHBOARD: "/community-dashboard/:segId"
 };

@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import CSS from "csstype";
 import {
   NavDropdown,
   Nav,
@@ -10,16 +11,67 @@ import {
 import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { useUserWithJwtVerbose } from "src/hooks/userHooks";
 import { UserProfileContext } from "../../contexts/UserProfile.Context";
+import { searchForLocation } from 'src/lib/api/googleMapQuery';
+import { useGoogleMapSearchLocation } from "src/hooks/googleMapHooks";
+import { useSingleSegmentByName } from "src/hooks/segmentHooks";
+import { findSegmentByName } from "src/lib/api/segmentRoutes";
+
+import {getUserSubscriptionStatus} from 'src/lib/api/userRoutes'
+
 export default function Header() {
+  const [stripeStatus, setStripeStatus] = useState("");
   const { logout, user, token } = useContext(UserProfileContext);
   const { data } = useUserWithJwtVerbose({
     jwtAuthToken: token!,
     shouldTrigger: token != null,
   });
-  console.log(data);
+  // console.log(data);
+
+  const {data: googleQuery, isLoading: googleQueryLoading} = useGoogleMapSearchLocation({lat: data?.geo?.lat, lon: data?.geo?.lon}, (data != null && data.geo != null));
+  console.log(googleQuery);
+
+  // const segData = useSingleSegmentByName({
+  //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country 
+  // }, googleQuery.data != null)
+  // console.log(segData);
+  const [userSegId, setUserSegId] = useState<any>(1);
+  
+  useEffect(() => {
+    const querySegmentData = async () => {
+      if (googleQueryLoading === false && googleQuery != null) {
+        const segmentData = await findSegmentByName({
+          segName: googleQuery.city, province: googleQuery.province, country: googleQuery.country,
+        })
+        console.log(segmentData);
+        setUserSegId(segmentData.segId);
+      }
+    }
+    querySegmentData();
+  }, [googleQuery, googleQueryLoading])
+  
+
+  const paymentNotificationStyling: CSS.Properties = {
+    backgroundColor: "#f7e4ab", 
+    justifyContent: "center",
+    padding: "0.2rem",
+    whiteSpace: "pre",
+  }
+
+  useEffect(()=>{
+    if(user){
+      getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status)).catch(e => console.log(e))
+    }
+  },[user])
+
   // Here Items are not coming Inline
   return (
     <div className="outer-header">
+      {stripeStatus !== "" && stripeStatus !== "active" && 
+        (<Nav style={paymentNotificationStyling}>
+          You have not paid your account payment. To upgrade your account, please go to the <a href="/profile">profile</a> section.
+        </Nav>)
+      }
+    
       <Navbar className="inner-header" bg="light" expand="sm">
         <Navbar.Brand href="/">
           <img
@@ -44,22 +96,22 @@ export default function Header() {
 
                 <NavDropdown title="Submit" id="nav-dropdown">
                   <Nav.Link href="/submit">Submit Idea</Nav.Link>
-                  <Nav.Link href="/submit-direct-proposal">
-                    Submit Proposal
-                  </Nav.Link>
+                  {(user.userType === "BUSINESS"|| user.userType === "MUNICIPAL"|| user.userType === "COMMUNITY") && (
+                    <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
+                  )}
                 </NavDropdown>
 
                 <Nav.Link href="/profile">Profile</Nav.Link>
 
                 {user.userType === "ADMIN" && (
                   <NavDropdown title="Admin Tools" id="nav-dropdown">
-                    <Nav.Link href="/advertisement/all">Ads</Nav.Link>
+                    <Nav.Link href="/advertisement/all">Ad Manager</Nav.Link>
                     <Nav.Link href="/segment/management">Segments</Nav.Link>
                     <Nav.Link href="/user/management">Users</Nav.Link>
                   </NavDropdown>
                 )}
-                {user.userType === "BUSINESS" && (
-                  <Nav.Link href="/advertisement/user">Ad Manager</Nav.Link>
+                {(user.userType === "BUSINESS" || user.userType === "COMMUNITY") && (
+                  <Nav.Link href="/advertisement/user">My Ads</Nav.Link>
                 )}
                 {user.userType === "SEG_ADMIN" && (
                   <NavDropdown title="Seg-Admin Tools" id="nav-dropdown">
@@ -72,7 +124,15 @@ export default function Header() {
                     id="nav-dropdown"
                   ></NavDropdown>
                 )}
-                <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                {(user.userType === "RESIDENTIAL" || user.userType === "COMMUNITY" || user.userType === "BUSINESS") && (
+                  <NavDropdown 
+                    title="Dashboard" 
+                    id="dashboard-dropdown">
+                        <Nav.Link href="/dashboard">My Dashboard</Nav.Link>
+                        <Nav.Link href={`/community-dashboard/${userSegId}`}>Community Dashboard</Nav.Link>
+                  </NavDropdown>
+                )}
+                {/* <Nav.Link href="/dashboard">Dashboard</Nav.Link> */}
                 <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
                   Help
                 </Nav.Link>

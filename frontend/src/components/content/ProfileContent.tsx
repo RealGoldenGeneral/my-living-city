@@ -5,7 +5,8 @@ import { API_BASE_URL } from 'src/lib/constants';
 import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
-
+import StripeCheckoutButton from "src/components/partials/StripeCheckoutButton"
+import {getUserSubscriptionStatus} from 'src/lib/api/userRoutes'
 interface ProfileContentProps {
   user: IUser;
   token: string;
@@ -20,6 +21,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
     userSegments,
     imagePath,
   } = user;
+   
 
   const {
     streetAddress,
@@ -29,8 +31,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
     country,
   } = address!;
   const [show, setShow] = useState(false);
+  const [stripeStatus, setStripeStatus] = useState("");
   const [segmentRequests, setSegmentRequests] = useState<any[]>([]);
+
   useEffect(()=>{
+    getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status)).catch(e => console.log(e))
     if(segmentRequests.length > 0){
       postUserSegmentRequest(segmentRequests, token);
     }
@@ -52,7 +57,16 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
             </Row>
             <Card.Title className='mt-3'>{ fname ? capitalizeString(fname) : "Unknown" } { lname ? capitalizeString(lname) : "Unknown" }</Card.Title>
             <Card.Text className='mb-3'>{ email }</Card.Text>
+            {
+              stripeStatus !== "" &&
+              <>
+                <p>Subscription Status: {stripeStatus=== "active"? "Active" : "Not Active"}</p>
+                <StripeCheckoutButton status={stripeStatus} user={user}/>
+              </>
+            }
+           
           </Card>
+        
           
         <Card style={{ width: '40rem'}}>
           <Row className='justify-content-center mt-3'>

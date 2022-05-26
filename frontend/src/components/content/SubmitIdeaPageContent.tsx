@@ -128,7 +128,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       subSegmentId: undefined,
       superSegmentId: undefined,
       //supportingProposalId that is not null
-      supportingProposalId: parsedProposalId ? parsedProposalId : 2,
+      supportingProposalId: parsedProposalId,
     },
     onSubmit: submitHandler,
   });
