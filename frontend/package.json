@@ -21,7 +21,7 @@
     "google-map-react": "^2.1.9",
     "image-type": "^4.1.0",
     "moment": "^2.29.1",
-    "node-sass": "^5.0.0",
+    "node-sass": "^7.0.1",
     "rc-banner-anim": "^2.4.5",
     "rc-queue-anim": "^1.8.5",
     "react": "^17.0.1",

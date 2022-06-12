@@ -119,10 +119,12 @@ export default function Header() {
                   </NavDropdown>
                 )}
                 {user.userType === "MOD" && (
-                  <NavDropdown
-                    title="Mod Tools"
-                    id="nav-dropdown"
-                  ></NavDropdown>
+                  <NavDropdown title="Mod Tools" id="nav-dropdown">
+                    <Nav.Link href="/user/management">Users</Nav.Link>
+                    {/*Nav.Link href="/moderator/queue" */}
+                    {/*Nav.Link href="/moderator/management" */}
+                    {/*Nav.Link href="/moderator/management" */}
+                  </NavDropdown>
                 )}
                 {(user.userType === "RESIDENTIAL" || user.userType === "COMMUNITY" || user.userType === "BUSINESS") && (
                   <NavDropdown 
