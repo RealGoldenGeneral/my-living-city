@@ -1,3 +1,6 @@
+-- AlterEnum
+ALTER TYPE "user_type" ADD VALUE 'SUPER_ADMIN';
+
 -- DropForeignKey
 ALTER TABLE "UserSegments" DROP CONSTRAINT "UserSegments_user_id_fkey";
 
@@ -94,11 +97,33 @@ ALTER TABLE "volunteer" DROP CONSTRAINT "volunteer_author_id_fkey";
 -- DropForeignKey
 ALTER TABLE "volunteer" DROP CONSTRAINT "volunteer_proposal_id_fkey";
 
+-- AlterTable
+ALTER TABLE "idea_comment" ADD COLUMN     "banned_comment" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "comment_flag_num" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "user" ADD COLUMN     "has_flagged" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "total_flagged" INTEGER NOT NULL DEFAULT 0;
+
+-- CreateTable
+CREATE TABLE "Ban" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "ban_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "banned_until" TIMESTAMP(3) NOT NULL,
+    "ban_message" TEXT,
+
+    CONSTRAINT "Ban_pkey" PRIMARY KEY ("id")
+);
+
 -- AddForeignKey
 ALTER TABLE "user_geo" ADD CONSTRAINT "user_geo_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "user_address" ADD CONSTRAINT "user_address_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Ban" ADD CONSTRAINT "Ban_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserSegments" ADD CONSTRAINT "UserSegments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
