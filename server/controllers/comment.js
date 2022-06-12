@@ -144,7 +144,7 @@ commentRouter.get(
         orderBy: [
           {
             likes: {
-              count: 'desc'
+              _count: 'desc'
             }
           },
           {
@@ -413,12 +413,12 @@ commentRouter.get(
       const parsedIdeaId = parseInt(req.params.ideaId);
       const aggregations = await prisma.ideaComment.aggregate({
         where: { ideaId: parsedIdeaId },
-        count: {
+        _count: {
           _all: true,
         }
       })
       const result = {
-        count: aggregations.count._all,
+        count: aggregations._count._all,
       }
       res.status(200).json(result);
     } catch (error) {
