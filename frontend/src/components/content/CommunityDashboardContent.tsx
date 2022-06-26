@@ -5,14 +5,19 @@ import { capitalizeFirstLetterEachWord } from "./../../lib/utilityFunctions";
 import NewAndTrendingSection from "../partials/LandingContent/NewAndTrendingSection";
 import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 import DropdownItem from "react-bootstrap/esm/DropdownItem";
+import { IUser } from "src/lib/types/data/user.type";
 
 interface CommunityDashboardContentProps {
+    userData: IUser
     data: ISegmentAggregateInfo,
     segmenData: ISegment,
     topIdeas: IIdeaWithAggregations[]
 }
 
-const CommunityDashboardContent: React.FC<CommunityDashboardContentProps> = ({data, segmenData, topIdeas} : CommunityDashboardContentProps) => {
+const CommunityDashboardContent: React.FC<CommunityDashboardContentProps> = ({userData, data, segmenData, topIdeas} : CommunityDashboardContentProps) => {
+
+    console.log("I am printing user data");
+    console.log(userData);
     return (
         <Container className="user-profile-content w-100">
             <Row className='mb-4 mt-4 justify-content-left'>
