@@ -5,7 +5,7 @@ import { ICreateCommentInput } from "../types/input/createComment.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 
 export const getAllComments = async (): Promise<IComment[]> => {
-  const res = await axios.get<IComment[]>(`${API_BASE_URL}/comments/getall`);
+  const res = await axios.get<IComment[]>(`${API_BASE_URL}/comment/getall`);
   return res.data;
 };
 
@@ -61,3 +61,17 @@ export const createCommentUnderIdea = async (
 
   return res.data;
 };
+
+export const updateCommentStatus = async(token: String | null, userId: string|undefined, commentId: string|null, active: boolean|null) => {
+  const res = await axios({
+    method: "put",
+    url: `${API_BASE_URL}/comment/updateState/${commentId}`,
+    headers: {
+      "x-auth-token": token,
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: {userId: userId, commentId: commentId, active: active},
+    withCredentials: true,
+  })
+  return res.data;
+}

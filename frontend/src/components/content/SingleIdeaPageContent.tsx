@@ -58,6 +58,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     superSegment,
     author,
     state,
+    active,
 
     // Proposal and Project info
 
@@ -123,7 +124,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
       setFollowingPost(!followingPost);
     }
   };
-
+  if(!active){
+    return(
+      <div>Idea Is Currently Inactive</div>
+    )
+  }
   return (
     <div className="single-idea-content pt-5">
       <Card>

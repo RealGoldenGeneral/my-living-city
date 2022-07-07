@@ -69,7 +69,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                         req.banned = e.target.checked;
                         }} id="ban-switch"/></td>  
                     </>
-                }
+                    }
 
                     <td>
                     {req.id !== hideControls ?

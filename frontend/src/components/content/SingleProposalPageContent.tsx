@@ -76,6 +76,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     superSegment,
     author,
     state,
+    active,
     // Proposal and Project info
 
     projectInfo,
@@ -265,6 +266,12 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
 
   console.log("isPostAuthor", isPostAuthor);
+
+  if(!active){
+    return (
+      <div>Proposal Is Currently Inactive</div>
+    )
+  }
 
   return (
     <div className="single-idea-content pt-5">

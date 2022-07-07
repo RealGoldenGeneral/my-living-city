@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
+import { updateIdeaStatus } from 'src/lib/api/ideaRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { USER_TYPES } from 'src/lib/constants';
+import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
+import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 
@@ -12,9 +15,11 @@ interface ProposalManagementContentProps {
     users: IUser[] | undefined;
     token: string | null;
     user: IUser | null;
+    proposals: IProposalWithAggregations[] | undefined;
+    ideas: IIdeaWithAggregations[] | undefined;
 }
 
-export const ProposalManagementContent: React.FC<ProposalManagementContentProps> = ({users, token, user}) => {
+export const ProposalManagementContent: React.FC<ProposalManagementContentProps> = ({users, token, user, proposals, ideas}) => {
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
@@ -25,8 +30,29 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
         setEmail(email);
         setId(id);
     }
+    const ProposalURL = '/proposals/';
     const userTypes = Object.keys(USER_TYPES);
-    
+    let userEmails: String[] = [];
+    let proposalIdeas: IIdeaWithAggregations[] = [];
+
+    if(ideas){
+        for(let i = 0; i < ideas.length; i++){
+            if(ideas[i].state === "PROPOSAL"){
+                proposalIdeas.push(ideas[i]);
+            }
+        }
+    }
+    if(proposals && users){
+        for(let i = 0; i < proposals!.length; i++){
+            for(let z = 0; z < users!.length; z++){
+                if(proposals[i].idea.authorId!.toString() === users[z].id.toString()){
+                    userEmails.push(users[z].email);
+                }
+            }
+        }
+    }
+    console.log("Propideas");
+    console.log(proposalIdeas);
         return (
             <Container>
             <Form>
@@ -38,61 +64,59 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
             <thead>
                 <tr>
                 <th scope="col">User Email</th>
-                <th scope="col">User Name</th>
+                <th scope="col">Name</th>
                 <th scope="col">Proposal Title</th>
                 <th scope="col">Proposal Description</th>
                 <th scope="col">Proposal Link</th>
                 <th scope="col">Number of Flags</th>
-                <th scope="col">Region</th>
+                <th scope="col">Segment</th>
+                <th scope="col">Active</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
             <tbody>
-            {users?.map((req: IUser, index: number) => (
+            {proposals?.map((req: IProposalWithAggregations, index: number) => (
                 <tr key={req.id}>
-                    {req.id !== hideControls ? 
+                    {req.id.toString() !== hideControls ? 
                     <>
-                    <td>{req.email}</td>
+                    <td>{userEmails[index]}</td>
                     
-                    <td>{req.fname + " " + req.lname}</td>
-                    <td>{req.lname}</td>
-                    <td>{req.userType}</td>
-                    <td>{req.banned ? "Yes" : "No" }</td> 
-                   
-                    </> :
-                    <>
-                    <td><Form.Control type="text" defaultValue={req.email} onChange={(e)=>req.email = e.target.value}/></td>
-                    <td><Form.Control type="text" defaultValue={req.fname} onChange={(e)=>req.fname = e.target.value}/></td>
-                    <td><Form.Control type="text" defaultValue={req.lname} onChange={(e)=>req.lname = e.target.value}/></td>
-                    <td><Form.Control as="select" onChange={(e)=>{(req.userType as String) = e.target.value}}>
-                        <option>{req.userType}</option>
-                        {userTypes.filter(type => type !== req.userType).map(item =>
-                            <option key={item}>{item}</option>
-                        )}
-                        </Form.Control>
-                    </td>
-                    <td><Form.Check type="switch" checked={ban} onChange={(e)=>{
+                    <td>{proposalIdeas[index].firstName}</td>
+                    <td>{req.idea.title}</td>
+                    <td>{req.idea.description}</td>
+                    <td><a href= {ProposalURL + req.id}>Link</a></td> 
+                    <td>{proposalIdeas[index].negRatings}</td>
+                    <td>{proposalIdeas[index].segmentName}</td>
+                    <td>{req.idea.active ? "Yes" : "No"}</td>
+                    </> :<>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><Form.Check type="switch" checked={req.idea.active} onChange={(e)=>{
+                        req.idea.active = e.target.checked;
                         setBan(e.target.checked)
-                        req.banned = e.target.checked;
                         }} id="ban-switch"/></td>  
                     </>
                 }
 
                     <td>
-                    {req.id !== hideControls ?
+                    {req.id.toString() !== hideControls ?
                         <NavDropdown title="Controls" id="nav-dropdown">
                             <Dropdown.Item onClick={()=>{
-                                setHideControls(req.id);
-                                setBan(req.banned);
+                                setHideControls(req.id.toString());
+                                setBan(req.idea.active);
                                 }}>Edit</Dropdown.Item>
-                            <Dropdown.Item onClick={()=>UserSegmentHandler(req.email, req.id)}>View Segments</Dropdown.Item>
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
-                            updateUser(req, token, user);
+                            updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active);
                             }}>Save</Button>
                         </>
                     }

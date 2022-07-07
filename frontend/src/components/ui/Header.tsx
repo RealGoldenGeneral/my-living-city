@@ -80,13 +80,13 @@ useEffect(() => {
   },[user])
 
   // Here Items are not coming Inline
-  if (segQueryLoading) {
-    return (
-      <div className="wrapper">
-        <LoadingSpinner />
-      </div>
-    );
-}
+//   if (segQueryLoading) {
+//     return (
+//       <div className="wrapper">
+//         <LoadingSpinner />
+//       </div>
+//     );
+// }
   return (
     <div className="outer-header">
       {stripeStatus !== "" && stripeStatus !== "active" && 
