@@ -291,7 +291,56 @@ commentRouter.post(
     }
   }
 )
+//Changes comment state
+commentRouter.put(
+  '/updateState/:commentId',
+  passport.authenticate('jwt', {session: false}),
+  async (req, res, next) => {
+    try {
 
+      const {userId, active} = req.body;
+      const {commentId} = req.params;
+      const parsedCommentId = parseInt(commentId);
+
+      if (!commentId || !parsedCommentId) {
+        return res.status(400).json({
+          message: `A valid ideaId must be specified in the route paramater.`,
+        });
+      }
+      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId } });
+      if (!foundComment) {
+        return res.status(400).json({
+          message: `The idea with that listed ID (${commentId}) does not exist.`,
+        });
+      }
+
+      const updateComment = await prisma.ideaComment.update({
+        where: {
+          id: parsedCommentId,
+        },
+        data: {
+          active: active
+        },
+      });
+      console.log("Returns here")
+      res.status(200).json({
+        message: "Idea succesfully updated",
+        idea: updateComment,
+      });
+
+    }catch (error) {
+      res.status(400).json({
+        message: "An error occured while to update an Idea",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
 // Create a comment under an idea
 commentRouter.put(
   '/update/:commentId',
