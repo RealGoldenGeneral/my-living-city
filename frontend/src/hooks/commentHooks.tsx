@@ -88,6 +88,8 @@ export const useCreateCommentMutation = (
                 ideaId: ideaId!,
                 active: true,
                 authorId: userId,
+                bannedComment: false,
+                commentFlagNumber: 0,
                 author: {
                   id: uuidv4(),
                   email,

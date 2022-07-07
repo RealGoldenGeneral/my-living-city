@@ -473,7 +473,7 @@ userRouter.get(
 
 			const theUser = await prisma.user.findUnique({where:{id:id}});
 
-			if(theUser.userType === 'ADMIN'){
+			if(theUser.userType === 'ADMIN' || theUser.userType === 'MOD'){
 				const allUsers = await prisma.user.findMany();
 
 				res.json(allUsers);
@@ -743,6 +743,121 @@ userRouter.put(
                     details: {
                       errorMessage: 'In order to use this endpoint, you must be an admin.',
                       errorStack: 'user must be an admin if they want to use this endpoint.',
+                    }
+                });
+			}
+		}catch(error){
+			console.log(error);
+			res.status(400).json({
+				message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+				details: {
+					errorMessage: error.message,
+					errorStack: error.stack,
+				}
+			});
+		}finally{
+			await prisma.$disconnect();
+		}
+	}
+)
+userRouter.put(
+	'/mod-update-profile',
+	passport.authenticate('jwt', { session: false }),
+	async(req,res) => {
+		try{
+			const {id , email} = req.user;
+
+			const theUser = await prisma.user.findUnique({where:{id:id}});
+
+			const userTypes = ['ADMIN',
+				'MOD',
+				'SEG_ADMIN',
+				'SEG_MOD',
+				'MUNICIPAL_SEG_ADMIN',
+				'BUSINESS',
+				'RESIDENTIAL',
+				'MUNICIPAL',
+				'WORKER',
+				'ASSOCIATE',
+				'DEVELOPER'
+			];
+
+			if(theUser.userType==='MOD'){
+				console.log(req.body.banned);
+
+				const {
+					id,
+					email,
+					fname,
+					lname,
+					userType,
+					// address: {
+					// 	streetAddress,
+					// 	streetAddress2,
+					// 	city,
+					// 	country,
+					// 	postalCode,
+					// },
+					banned
+				} = req.body;
+
+				if(!id){
+					return res.status(400).json("User id is missing!");
+				}
+				const targetUser = await prisma.user.findUnique({where:{id:id}});
+
+				if(!targetUser){
+					return res.status(404).json({
+						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+						details: {
+							errorMessage: "User can't be find by user id provided in the request body.",
+							errorStack: "User can't be find by user id provided in the request body."
+						}
+					});
+				}
+
+				if(userType && !userTypes.includes(userType)){
+					return res.status(400).json({
+						message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+						details: {
+							errorMessage: "User type must be predfined value",
+							errorStack: "User type must be predfined value"
+						}
+					});
+				}
+				
+				/* const updateAddressData = {
+				 	...streetAddress && { streetAddress },
+				 	...streetAddress2 && { streetAddress2 },
+				 	...city && { city },
+				 	...country && { country },
+				 	...postalCode && { postalCode },
+				} */
+
+				const updatedUser = await prisma.user.update({
+					where: { id : id },
+					data: {
+						email:email,
+						fname:fname,
+						lname:lname,
+						userType:userType,
+						banned:banned
+					}
+				});
+
+				const parsedUser = { ...updatedUser, password: null };
+
+				res.status(200).json({
+					message: "User succesfully updated",
+					user: parsedUser,
+				});
+
+			}else{
+				return res.status(403).json({
+                    message: "You don't have the right to use this endpoint!",
+                    details: {
+                      errorMessage: 'In order to use this endpoint, you must be an moderator.',
+                      errorStack: 'user must be an moderator if they want to use this endpoint.',
                     }
                 });
 			}

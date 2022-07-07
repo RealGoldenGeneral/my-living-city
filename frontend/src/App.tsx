@@ -29,6 +29,7 @@ import SubmitDirectProposalPage from "./pages/SubmitDirectProposalPage";
 import DashboardPage from "./pages/DashboardPage";
 import MyPostsPage from "./pages/MyPostsPage";
 import CommunityDashboardPage from "./pages/CommunityDashboardPage";
+import ModManagementPage from "./pages/ModManagementPage";
 
 function App() {
   return (
@@ -90,9 +91,16 @@ function App() {
             path={ROUTES.SEGMENT_MANAGEMENT}
             component={SegmentManagementPage}
           />
-          <AdminRoute
+
+          <CustomRoute
             path={ROUTES.USER_MANAGEMENT}
             component={UserManagementPage}
+            userTypes={[USER_TYPES.ADMIN, USER_TYPES.MOD]}
+          />
+          <CustomRoute
+            path={ROUTES.MOD_MANAGEMENT}
+            component={ModManagementPage}
+            userTypes={[USER_TYPES.ADMIN, USER_TYPES.MOD]}
           />
 
           <Route path={ROUTES.TEAM404} component={Team404Page} />

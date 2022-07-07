@@ -23,12 +23,13 @@ export const getAllUsers = async (token: string | null) => {
   const res = await axios.get(`${API_BASE_URL}/user/getAll`,getAxiosJwtRequestOption(token!));
   return res.data;
 }
-export const updateUser = async (userData: IUser, token: string | null) => {
+export const updateUser = async (userData: IUser, token: string | null, user: IUser | null) => {
   console.log(userData);
   console.log(token);
+  let userType = user?.userType
   const res = await axios({
     method: "put",
-    url: `${API_BASE_URL}/user/admin-update-profile`,
+    url: `${API_BASE_URL}/user/${userType?.toLowerCase( )}-update-profile`,
     data: userData,
     headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": token},
     withCredentials: true

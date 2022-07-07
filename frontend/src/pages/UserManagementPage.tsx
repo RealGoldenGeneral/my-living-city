@@ -12,6 +12,8 @@ interface UserManagementProps extends RouteComponentProps<{}> {
 
 const UserManagementPage: React.FC<UserManagementProps> = ({}) => {
   const { token } = useContext(UserProfileContext);
+  const {user} = useContext(UserProfileContext) 
+
   const { data, isLoading} = useAllUsers(token);
   if (isLoading) {
     return(
@@ -26,7 +28,7 @@ const UserManagementPage: React.FC<UserManagementProps> = ({}) => {
 
   return (
     <div className="wrapper">
-      <UserManagementContent users={data!} token={token}/>
+      <UserManagementContent users={data!} token={token} user={user}/>
     </div>
   );
 }

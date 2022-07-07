@@ -1,21 +1,32 @@
 import React from "react";
 import {ISegmentAggregateInfo, ISegment} from "./../../lib/types/data/segment.type";
-import { Col, Container, Row, Card, ListGroup, } from 'react-bootstrap';
+import { Col, Container, Row, Card, ListGroup, DropdownButton, } from 'react-bootstrap';
 import { capitalizeFirstLetterEachWord } from "./../../lib/utilityFunctions";
 import NewAndTrendingSection from "../partials/LandingContent/NewAndTrendingSection";
 import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
+import DropdownItem from "react-bootstrap/esm/DropdownItem";
+import { IUser } from "src/lib/types/data/user.type";
 
 interface CommunityDashboardContentProps {
+    userData: IUser
     data: ISegmentAggregateInfo,
     segmenData: ISegment,
     topIdeas: IIdeaWithAggregations[]
 }
 
-const CommunityDashboardContent: React.FC<CommunityDashboardContentProps> = ({data, segmenData, topIdeas} : CommunityDashboardContentProps) => {
+const CommunityDashboardContent: React.FC<CommunityDashboardContentProps> = ({userData, data, segmenData, topIdeas} : CommunityDashboardContentProps) => {
+
+    console.log("I am printing user data");
+    console.log(userData);
     return (
         <Container className="user-profile-content w-100">
             <Row className='mb-4 mt-4 justify-content-left'>
                 <h1 className="pb-2 pt-2 display-6">Community: {capitalizeFirstLetterEachWord(segmenData.name)}</h1>
+                <DropdownButton className='pt-3 ml-2 display-6' title="Available Communities">
+                    <DropdownItem href="/community-dashboard/1">Victoria</DropdownItem>
+                    <DropdownItem href="/community-dashboard/2">Saanich</DropdownItem>
+                    <DropdownItem href="/community-dashboard/3">Esquimalt</DropdownItem>
+                </DropdownButton>
             </Row>
             <Row>
                 <Col>

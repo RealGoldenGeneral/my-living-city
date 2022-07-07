@@ -697,7 +697,55 @@ ideaRouter.get(
     }
   }
 )
+ideaRouter.put(
+  '/updateState/:ideaId',
+  passport.authenticate('jwt', {session: false}),
+  async (req, res, next) => {
+    try {
 
+      const {userId, active} = req.body;
+      const {ideaId} = req.params;
+      const parsedIdeaId = parseInt(ideaId);
+
+      if (!ideaId || !parsedIdeaId) {
+        return res.status(400).json({
+          message: `A valid ideaId must be specified in the route paramater.`,
+        });
+      }
+      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
+      if (!foundIdea) {
+        return res.status(400).json({
+          message: `The idea with that listed ID (${ideaId}) does not exist.`,
+        });
+      }
+
+      const updateIdea = await prisma.idea.update({
+        where: {
+          id: parsedIdeaId,
+        },
+        data: {
+          active: active
+        },
+      });
+      console.log("Returns here")
+      res.status(200).json({
+        message: "Idea succesfully updated",
+        idea: updateIdea,
+      });
+
+    }catch (error) {
+      res.status(400).json({
+        message: "An error occured while to update an Idea",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
 // Put request to update data
 ideaRouter.put(
   '/update/:ideaId',
@@ -715,6 +763,7 @@ ideaRouter.put(
         artsImpact,
         energyImpact,
         manufacturingImpact,
+        active,
         // TODO: If these fields are not passed will break code
         geo: {
           lat,
@@ -773,6 +822,7 @@ ideaRouter.put(
         ...artsImpact && { artsImpact },
         ...energyImpact && { energyImpact },
         ...manufacturingImpact && { manufacturingImpact },
+        ...active && {active},
       };
 
       const updatedIdea = await prisma.idea.update({
@@ -792,7 +842,7 @@ ideaRouter.put(
       res.status(200).json({
         message: "Idea succesfully updated",
         idea: updatedIdea,
-      })
+      });
     } catch (error) {
       res.status(400).json({
         message: "An error occured while to update an Idea",

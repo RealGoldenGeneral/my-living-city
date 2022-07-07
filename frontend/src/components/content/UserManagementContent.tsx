@@ -9,9 +9,10 @@ import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 interface UserManagementContentProps {
     users: IUser[] | undefined;
     token: string | null;
+    user: IUser | null;
 }
 
-export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token}) => {
+export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token, user}) => {
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
@@ -68,7 +69,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                         req.banned = e.target.checked;
                         }} id="ban-switch"/></td>  
                     </>
-                }
+                    }
 
                     <td>
                     {req.id !== hideControls ?
@@ -84,7 +85,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
-                            updateUser(req, token);
+                            updateUser(req, token, user);
                             }}>Save</Button>
                         </>
                     }

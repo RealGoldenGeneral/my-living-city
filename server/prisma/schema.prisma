@@ -343,6 +343,7 @@ model Idea {
   manufacturingImpact String?   @map("manufacturing_impact")
   state               IdeaState @default(IDEA)
   active              Boolean   @default(true)
+  banned              Boolean   @default(false)
   imagePath           String?   @map("image_path")
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
@@ -597,7 +598,7 @@ model segmentRequest {
 
 model UserStripe {
   user      User    @relation(fields: [userId], references: [id])
-  userId    String    
+  userId    String    @unique
   stripeId  String
   status    Status  @default(incomplete)
 

@@ -133,6 +133,9 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
     if (filterConfig.status.length !== 0 && !filterConfig.status.includes(capitalizeFirstLetterEachWord(idea.state))) {
       return false;
     }
+    if(!idea.active){
+      return false;
+    }
     return true;
   }
 

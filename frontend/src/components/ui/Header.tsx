@@ -15,8 +15,12 @@ import { searchForLocation } from 'src/lib/api/googleMapQuery';
 import { useGoogleMapSearchLocation } from "src/hooks/googleMapHooks";
 import { useSingleSegmentByName } from "src/hooks/segmentHooks";
 import { findSegmentByName } from "src/lib/api/segmentRoutes";
-
+import {
+  useAllUserSegments,
+  useAllUserSegmentsRefined,
+} from "src/hooks/userSegmentHooks";
 import {getUserSubscriptionStatus} from 'src/lib/api/userRoutes'
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function Header() {
   const [stripeStatus, setStripeStatus] = useState("");
@@ -30,25 +34,37 @@ export default function Header() {
   const {data: googleQuery, isLoading: googleQueryLoading} = useGoogleMapSearchLocation({lat: data?.geo?.lat, lon: data?.geo?.lon}, (data != null && data.geo != null));
   console.log(googleQuery);
 
+  
+  const {data: segData, isLoading: segQueryLoading} = useAllUserSegmentsRefined(token, user?.id || null);
+  
+  
+  
   // const segData = useSingleSegmentByName({
   //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country 
   // }, googleQuery.data != null)
   // console.log(segData);
   const [userSegId, setUserSegId] = useState<any>(1);
   
-  useEffect(() => {
-    const querySegmentData = async () => {
-      if (googleQueryLoading === false && googleQuery != null) {
-        const segmentData = await findSegmentByName({
-          segName: googleQuery.city, province: googleQuery.province, country: googleQuery.country,
-        })
-        console.log(segmentData);
-        setUserSegId(segmentData.segId);
-      }
-    }
-    querySegmentData();
-  }, [googleQuery, googleQueryLoading])
+  // useEffect(() => {
+  //   const querySegmentData = async () => {
+  //     if (googleQueryLoading === false && googleQuery != null) {
+  //       const segmentData = await findSegmentByName({
+  //         segName: googleQuery.city, province: googleQuery.province, country: googleQuery.country,
+  //       })
+  //       console.log(segmentData);
+  //       //setUserSegId(segmentData.segId);
+  //     }
+  //   }
+  //   querySegmentData();
+  // }, [googleQuery, googleQueryLoading])
   
+useEffect(() => {
+  if(segQueryLoading === false && segData != null && segData !== undefined){
+    console.log("I set the segid!!!");
+    console.log(segData);
+    setUserSegId(segData[2].id)
+  }
+}, [segData, segQueryLoading])
 
   const paymentNotificationStyling: CSS.Properties = {
     backgroundColor: "#f7e4ab", 
@@ -64,6 +80,13 @@ export default function Header() {
   },[user])
 
   // Here Items are not coming Inline
+//   if (segQueryLoading) {
+//     return (
+//       <div className="wrapper">
+//         <LoadingSpinner />
+//       </div>
+//     );
+// }
   return (
     <div className="outer-header">
       {stripeStatus !== "" && stripeStatus !== "active" && 
@@ -119,10 +142,12 @@ export default function Header() {
                   </NavDropdown>
                 )}
                 {user.userType === "MOD" && (
-                  <NavDropdown
-                    title="Mod Tools"
-                    id="nav-dropdown"
-                  ></NavDropdown>
+                  <NavDropdown title="Mod Tools" id="nav-dropdown">
+                    <Nav.Link href="/user/management">Users</Nav.Link>
+                    {/*Nav.Link href="/moderator/queue" */}
+                    {/*Nav.Link href="/moderator/management" */}
+                    {/*Nav.Link href="/moderator/management" */}
+                  </NavDropdown>
                 )}
                 {(user.userType === "RESIDENTIAL" || user.userType === "COMMUNITY" || user.userType === "BUSINESS") && (
                   <NavDropdown 

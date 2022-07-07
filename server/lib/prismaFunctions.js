@@ -31,16 +31,15 @@ const checkIdeaThresholds = async (ideaId) => {
   }
 
   const ratingAggregations = await prisma.ideaRating.aggregate({
-    where: { ideaId },
-    avg: {
-      rating: true
+    where: { ideaId: parsedIdeaId },
+    _avg: {
+      rating: true,
     },
-    count: true,
+    _count: true,
   });
-
-  console.log(ratingAggregations);
-  const ratingAvg = ratingAggregations.avg.rating || 0;
-  const ratingCount = ratingAggregations.count || 0;
+  
+  const ratingAvg = (ratingAggregations && ratingAggregations._avg.rating) || 0;
+  const ratingCount = (ratingAggregations && ratingAggregations._count) || 0;
 
   // Check if idea meets Proposal thresholds
   if (

@@ -27,6 +27,15 @@ const CommentsSection = (ideaIdProp: any) => {
     error,
   } = useAllCommentsUnderIdea(ideaId, token);
 
+// ===================== REMOVING DEACTIVATED COMMENTS ========================
+if(ideaComments){
+  for(let i = 0; i < ideaComments.length; i++){
+      if(!ideaComments[i].active){
+        ideaComments.splice(i, 1);
+      }
+  }
+}
+
   // =================== SUBMITTING COMMENT MUTATION ==========================
   const {
     submitComment,

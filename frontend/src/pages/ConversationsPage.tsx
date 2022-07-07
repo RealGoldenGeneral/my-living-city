@@ -25,7 +25,25 @@ export default function ConversationsPage() {
       </div>
     );
   }
-
+  if(iData && pData){
+    for(let i = 0; i < iData.length; i++){
+      if(!iData[i].active){
+        iData.splice(i, 1);
+      }
+    }
+    for(let i = 0; i < pData.length; i++){
+      if(!pData[i].idea.active){
+        pData.splice(i, 1);
+      }
+    }
+  }
+  if(iLoading || pLoading){
+      return (
+        <div className="wrapper">
+         <LoadingSpinner />
+        </div>
+      );
+  }
   return (
     <>
       <div className="wrapper">

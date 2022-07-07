@@ -18,6 +18,7 @@ export interface ICreateIdeaInput {
   superSegmentId?: number;
   imagePath?: any;
   supportingProposalId?: number;
+  active?: boolean
   state?: string;
   needCollaborators?: boolean;
   needVolunteers?: boolean;
