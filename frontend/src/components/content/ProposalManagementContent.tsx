@@ -102,7 +102,6 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         }} id="ban-switch"/></td>  
                     </>
                 }
-
                     <td>
                     {req.id.toString() !== hideControls ?
                         <NavDropdown title="Controls" id="nav-dropdown">
