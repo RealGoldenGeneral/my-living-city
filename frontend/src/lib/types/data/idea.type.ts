@@ -68,6 +68,7 @@ export interface IIdeaWithAggregations {
   description: string;
   state: IdeaState;
   active: boolean;
+  reviewed: boolean;
   createdAt: string;
   updatedAt: string;
 

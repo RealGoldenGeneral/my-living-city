@@ -126,6 +126,7 @@ model User {
   imagePath String?
   passCode  String?  @default(cuid())
   banned    Boolean  @default(false)
+  reviewed  Boolean  @default(false)
   totalFlagged Int      @default(0) @map("total_flagged")
   hasFlagged   Int      @default(0) @map("has_flagged")
   
@@ -344,6 +345,7 @@ model Idea {
   state               IdeaState @default(IDEA)
   active              Boolean   @default(true)
   banned              Boolean   @default(false)
+  reviewed            Boolean   @default(false)
   imagePath           String?   @map("image_path")
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
@@ -444,6 +446,7 @@ model IdeaComment {
   subSegmentId   Int?                  @map("sub_segment_id")
   content        String
   active         Boolean               @default(true)
+  reviewed       Boolean               @default(false)
   createdAt      DateTime              @default(now()) @map(name: "created_at")
   updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
 

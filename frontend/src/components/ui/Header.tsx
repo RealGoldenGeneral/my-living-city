@@ -62,7 +62,7 @@ useEffect(() => {
   if(segQueryLoading === false && segData != null && segData !== undefined){
     console.log("I set the segid!!!");
     console.log(segData);
-    setUserSegId(segData[2].id)
+    setUserSegId(segData[0].id);
   }
 }, [segData, segQueryLoading])
 

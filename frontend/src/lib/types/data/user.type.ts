@@ -14,6 +14,7 @@ export interface IUser {
 	fname?: string;
 	lname?: string;
 	banned: boolean;
+	reviewed: boolean;
 	imagePath?: string;
 	createdAt: Date;
 	updatedAt: Date;
