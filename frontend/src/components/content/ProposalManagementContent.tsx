@@ -74,11 +74,10 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
             <Form>
             <h2 className="mb-4 mt-4">Proposal Management</h2>
             <Card>
-            <Card.Header>Proposal Management Tool</Card.Header>
-            <Card.Body>
+            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
-                <tr>
+                <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
                 <th scope="col">User Email</th>
                 <th scope="col">Name</th>
                 <th scope="col">Proposal Title</th>

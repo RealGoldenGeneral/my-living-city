@@ -70,11 +70,10 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
             <Form>
             <h2 className="mb-4 mt-4">Idea Management</h2>
             <Card>
-            <Card.Header>Idea Management Tool</Card.Header>
-            <Card.Body>
+            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
-                <tr>
+            <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
                 <th scope="col">User Email</th>
                 <th scope="col">Name</th>
                 <th scope="col">Idea Title</th>

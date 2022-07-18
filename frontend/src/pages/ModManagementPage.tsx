@@ -72,14 +72,16 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   // TODO: Create non blocking error handling
   if(pageState === "quarantine"){
     return (
-
       <div className="wrapper">
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+      <div style={{position: 'sticky', top: 100}}>
+      <Button style={{position: 'absolute', top:0, left:'-17%', width: 165, textAlign: 'left' }} onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
+        <br></br>
+        <Button style={{position: 'absolute', top:40, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+        <Button style={{position: 'absolute', top:80, left:'-17%', width: 165, textAlign: 'left' }} className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button style={{position: 'absolute', top:120, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button style={{position: 'absolute', top:160, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button style={{position: 'absolute', top:200, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+      </div>
       <UserManagementContent users={quarantineUser!} token={token} user={user}/>
       <br></br>
       <IdeaManagementContent users={userData!} token={token} user={user} ideas={quarantineIdea!} flags={flagData}/>
@@ -94,26 +96,31 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   if(pageState ==="user"){
     return (
       <div className="wrapper">
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+        <div style={{position: 'sticky', top: 100}}>
+        <Button style={{position: 'absolute', top:0, left:'-17%', width: 165, textAlign: 'left' }} onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
+        <br></br>
+        <Button style={{position: 'absolute', top:40, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+        <Button style={{position: 'absolute', top:80, left:'-17%', width: 165, textAlign: 'left' }} className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button style={{position: 'absolute', top:120, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button style={{position: 'absolute', top:160, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button style={{position: 'absolute', top:200, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+      </div>
         <UserManagementContent users={userData!} token={token} user={user}/>
-  
       </div>
     );
   }
   if(pageState ==="idea"){
     return (
       <div className="wrapper">
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+        <div style={{position: 'sticky', top: 100}}>
+        <Button style={{position: 'absolute', top:0, left:'-17%', width: 165, textAlign: 'left' }} onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
+        <br></br>
+        <Button style={{position: 'absolute', top:40, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+        <Button style={{position: 'absolute', top:80, left:'-17%', width: 165, textAlign: 'left' }} className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button style={{position: 'absolute', top:120, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button style={{position: 'absolute', top:160, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button style={{position: 'absolute', top:200, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+      </div>
         <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData}/>
   
       </div>
@@ -122,11 +129,15 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   if(pageState ==="proposal"){
     return (
       <div className="wrapper">
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+        <div style={{position: 'sticky', top: 100}}>
+        <Button style={{position: 'absolute', top:0, left:'-17%', width: 165, textAlign: 'left' }} onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
+        <br></br>
+        <Button style={{position: 'absolute', top:40, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+        <Button style={{position: 'absolute', top:80, left:'-17%', width: 165, textAlign: 'left' }} className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button style={{position: 'absolute', top:120, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button style={{position: 'absolute', top:160, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button style={{position: 'absolute', top:200, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+      </div>
         <ProposalManagementContent users={userData!} token={token} user={user} proposals={proposalData!} ideas={propIdeaData!} flags={flagData}/>
   
       </div>
@@ -135,12 +146,15 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   if(pageState ==="comment"){
     return (
       <div className="wrapper">
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+        <div style={{position: 'sticky', top: 100}}>
+        <Button style={{position: 'absolute', top:0, left:'-17%', width: 165, textAlign: 'left' }} onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
+        <br></br>
+        <Button style={{position: 'absolute', top:40, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+        <Button style={{position: 'absolute', top:80, left:'-17%', width: 165, textAlign: 'left' }} className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button style={{position: 'absolute', top:120, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button style={{position: 'absolute', top:160, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button style={{position: 'absolute', top:200, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+      </div>
         <CommentManagementContent users={userData!} token={token} user={user} comments={commentData} ideas={ideaData!}/>
   
       </div>
@@ -148,11 +162,15 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   }
   return (
     <div className="wrapper">
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+        <div style={{position: 'sticky', top: 100}}>
+        <Button style={{position: 'absolute', top:0, left:'-17%', width: 165, textAlign: 'left' }} onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
+        <br></br>
+        <Button style={{position: 'absolute', top:0, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+        <Button style={{position: 'absolute', top:40, left:'-17%', width: 165, textAlign: 'left' }} className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button style={{position: 'absolute', top:80, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button style={{position: 'absolute', top:120, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button style={{position: 'absolute', top:160, left:'-17%', width: 165, textAlign: 'left'}} className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+      </div>
       <UserManagementContent users={userData!} token={token} user={user}/>
       <br></br>
       <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData}/>

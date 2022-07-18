@@ -61,11 +61,10 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
             <Form>
             <h2 className="mb-4 mt-4">Comment Management</h2>
             <Card>
-            <Card.Header>Comment Management Tool</Card.Header>
-            <Card.Body>
+            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
-                <tr>
+                <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
                 <th scope="col">User Email</th>
                 <th scope="col">User Name</th>
                 <th scope="col">Post Type</th>

@@ -179,7 +179,7 @@ useEffect(() => {
       { user ? ( 
       user.banned ? (
         <>
-        <Navbar className="bg-danger text-dark justify-content-center" expand="sm" >You are Banned!</Navbar>
+        <Navbar className="bg-danger text-dark justify-content-center" expand="sm" >Your Posting and Commenting privileges have been revoked.</Navbar>
         </>
       ) : null
       ) : null

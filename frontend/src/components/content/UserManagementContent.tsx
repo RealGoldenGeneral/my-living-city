@@ -30,11 +30,10 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
             <Form>
             <h2 className="mb-4 mt-4">User Management</h2>
             <Card>
-            <Card.Header>User Management Tool</Card.Header>
-            <Card.Body>
+            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
-                <tr>
+            <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
                 <th scope="col">Email</th>
                 <th scope="col">First</th>
                 <th scope="col">Last</th>
