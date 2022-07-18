@@ -11,6 +11,7 @@ import { ProposalManagementContent } from 'src/components/content/ProposalManage
 import { CommentManagementContent } from 'src/components/content/CommentManagementContent';
 import { useIdeasWithBreakdown } from 'src/hooks/ideaHooks';
 import { useProposalsWithBreakdown } from 'src/hooks/proposalHooks';
+import { useAllFlags } from 'src/hooks/flagHooks';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { useAllComments } from 'src/hooks/commentHooks';
 import { IUser } from 'src/lib/types/data/user.type';
@@ -31,6 +32,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   const { data: ideaData, isLoading: ideaLoading} = useIdeasWithBreakdown(20);
   const { data: proposalData, isLoading: proposalLoading} = useProposalsWithBreakdown(20);
   const { data: commentData, isLoading: commentLoading} = useAllComments();
+  const { data: flagData, isLoading: flagLoading} = useAllFlags(token);
 
   const [pageState, setPageState] = useState<String>("quarantine");
   let propIdeaData: IIdeaWithAggregations[] = []
@@ -53,27 +55,36 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   if(ideaData){
     propIdeaData = ideaData;
   }
+  if(flagData){
+    console.log("flags");
+    console.log(flagData);
+    console.log("flags");
+  }
 
-  if(ideaData && userData && proposalData && commentData){
+  if(ideaData && userData && proposalData && commentData && flagData){
       quarantineIdea = ideaData.filter(idea => idea.reviewed === false && idea.active === false);
       quarantineComment = commentData.filter(comment => comment.reviewed === false && comment.active === false);
       quarantineProposal = proposalData.filter(proposal => proposal.idea.reviewed === false && proposal.idea.active === false);
       quarantineUser = userData.filter(user => user.reviewed === false && user.banned === true);
   }
+
+
   // TODO: Create non blocking error handling
   if(pageState === "quarantine"){
     return (
 
       <div className="wrapper">
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("")}>Normal View</Button>
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
       <UserManagementContent users={quarantineUser!} token={token} user={user}/>
       <br></br>
-      <IdeaManagementContent users={quarantineUser!} token={token} user={user} ideas={quarantineIdea!}/>
+      <IdeaManagementContent users={userData!} token={token} user={user} ideas={quarantineIdea!} flags={flagData}/>
       <br></br>
-      <ProposalManagementContent users={quarantineUser!} token={token} user={user} proposals={quarantineProposal!} ideas={quarantineIdea!}/>
+      <ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={quarantineIdea!} flags={flagData}/>
       <br></br>
       <CommentManagementContent users={userData!} token={token} user={user} comments={quarantineComment} ideas={ideaData!}/>
       
@@ -84,7 +95,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
     return (
       <div className="wrapper">
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("")}>Normal View</Button>
+
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
@@ -97,11 +109,12 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
     return (
       <div className="wrapper">
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("")}>Normal View</Button>
+
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
-        <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!}/>
+        <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData}/>
   
       </div>
     );
@@ -110,11 +123,11 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
     return (
       <div className="wrapper">
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("")}>Normal View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
-        <ProposalManagementContent users={userData!} token={token} user={user} proposals={proposalData!} ideas={propIdeaData!}/>
+        <ProposalManagementContent users={userData!} token={token} user={user} proposals={proposalData!} ideas={propIdeaData!} flags={flagData}/>
   
       </div>
     );
@@ -123,10 +136,11 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
     return (
       <div className="wrapper">
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("")}>Normal View</Button>
+
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
         <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
         <CommentManagementContent users={userData!} token={token} user={user} comments={commentData} ideas={ideaData!}/>
   
       </div>
@@ -134,15 +148,16 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   }
   return (
     <div className="wrapper">
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
-      <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("quarantine")}>Quarantine List</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("user")}>User View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("idea")}>Idea View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("proposal")}>Proposal View</Button>
+        <Button className='mt-4 mr-2 display-6' onClick={() => loadState("comment")}>Comment View</Button>
       <UserManagementContent users={userData!} token={token} user={user}/>
       <br></br>
-      <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!}/>
+      <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData}/>
       <br></br>
-      <ProposalManagementContent users={userData!} token={token} user={user} proposals={proposalData!} ideas={propIdeaData!}/>
+      <ProposalManagementContent users={userData!} token={token} user={user} proposals={proposalData!} ideas={propIdeaData!} flags={flagData}/>
       <br></br>
       <CommentManagementContent users={userData!} token={token} user={user} comments={commentData} ideas={ideaData!}/>
 

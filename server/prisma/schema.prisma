@@ -137,6 +137,7 @@ model User {
   userIdeaFollow  UserIdeaFollow[]
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
   ideas           Idea[]         @relation("ideaAuthor")
+  ideaFlags       IdeaFlag[] 
   championedIdeas Idea[]         @relation("ideaChampion")
   stripe          UserStripe?
   bans                Ban[]
@@ -353,6 +354,7 @@ model Idea {
   // relations
   comments        IdeaComment[]
   ratings         IdeaRating[]
+  flags           IdeaFlag[]
   proposalInfo    Proposal?     @relation("proposal")
   projectInfo     Project?
   address         IdeaAddress?
@@ -371,7 +373,17 @@ model Idea {
 
   @@map(name: "idea")
 }
+model IdeaFlag {
+  id                Int      @id @default(autoincrement())
+  ideaId            Int      @map("idea_id")
+  flaggerId         String   @map("flagger_id")
+  falseFlag         Boolean  @default(false) @map("false_flag")
+  //relations
+  idea              Idea     @relation(fields: [ideaId], references: [id])
+  flagger            User         @relation(fields: [flaggerId], references: [id])
 
+  @@map(name: "idea_flag")
+}
 model Proposal {
   id     Int @id @default(autoincrement())
   ideaId Int @unique @map("idea_id")

@@ -18,6 +18,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
     const [ban ,setBan] = useState<boolean>(false);
+    const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
         setEmail(email);
@@ -39,6 +40,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                 <th scope="col">Last</th>
                 <th scope="col">User Type</th>
                 <th scope="col">Banned</th>
+                <th scope="col">Reviewed</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -52,6 +54,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     <td>{req.lname}</td>
                     <td>{req.userType}</td>
                     <td>{req.banned ? "Yes" : "No" }</td> 
+                    <td>{req.reviewed ? "Yes" : "No"}</td>
                     </> :
                     <>
                     <td><Form.Control type="text" defaultValue={req.email} onChange={(e)=>req.email = e.target.value}/></td>
@@ -67,7 +70,12 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     <td><Form.Check type="switch" checked={ban} onChange={(e)=>{
                         setBan(e.target.checked)
                         req.banned = e.target.checked;
-                        }} id="ban-switch"/></td>  
+                        }} id="ban-switch"/></td>
+                    <td><Form.Check type="switch" checked={reviewed} onChange={(e)=>{
+                        setReviewed(e.target.checked)
+                        req.reviewed = e.target.checked;
+                        }} id="reviewed-switch"/>
+                    </td>    
                     </>
                     }
 
@@ -77,6 +85,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                             <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id);
                                 setBan(req.banned);
+                                setReviewed(req.reviewed);
                                 }}>Edit</Dropdown.Item>
                             <Dropdown.Item onClick={()=>UserSegmentHandler(req.email, req.id)}>View Segments</Dropdown.Item>
                         </NavDropdown>

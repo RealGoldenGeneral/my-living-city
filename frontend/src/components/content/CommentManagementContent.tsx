@@ -25,6 +25,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
     const [ban ,setBan] = useState<boolean>(false);
+    const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
         setEmail(email);
@@ -73,6 +74,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                 <th scope="col">Number of Flags</th>
                 <th scope="col">Region</th>
                 <th scope="col">Active</th>
+                <th scope="col">Reviewed</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -90,6 +92,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                     <td>{req.commentFlagNumber}</td>
                     <td>{"CRD"}</td>
                     <td>{req.active ? "Yes" : "No"}</td>
+                    <td>{req.reviewed ? "Yes" : "No"}</td>
                     </> :<>
                         <td></td>
                         <td></td>
@@ -101,7 +104,11 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                         <td><Form.Check type="switch" checked={req.active} onChange={(e)=>{
                         req.active = e.target.checked;
                         setBan(e.target.checked)
-                        }} id="ban-switch"/></td>  
+                        }} id="ban-switch"/></td>
+                        <td><Form.Check type="switch" checked={req.reviewed} onChange={(e)=>{
+                        req.reviewed = e.target.checked;
+                        setReviewed(e.target.checked)
+                        }} id="reviewed-switch"/></td>    
                     </>
                 }
 
@@ -111,6 +118,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                             <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id.toString());
                                 setBan(req.active);
+                                setReviewed(req.reviewed);
                                 }}>Edit</Dropdown.Item>
                         </NavDropdown>
                         : <>
@@ -119,7 +127,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                             setHideControls('');
                             console.log(req);
                             //updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active);
-                            updateCommentStatus(token, user?.id, req.id.toString(), req.active);
+                            updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed);
                             }}>Save</Button>
                         </>
                     }

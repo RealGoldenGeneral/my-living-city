@@ -47,7 +47,7 @@ import {
   postCreateVolunteer,
   postCreateDonor,
 } from "src/lib/api/communityRoutes";
-
+import { createFlagUnderIdea } from "src/lib/api/flagRoutes";
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
   proposalData: any;
@@ -260,7 +260,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   };
 
   let isPostAuthor = false;
-
   if (user) {
     isPostAuthor = author!.id === user!.id;
   }
@@ -285,6 +284,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         }
         `}
       </style>
+      <Button onClick={async () => await createFlagUnderIdea(parseInt(ideaId), token!)}>Flag</Button>
       <Card>
         {imagePath ? (
           <Image

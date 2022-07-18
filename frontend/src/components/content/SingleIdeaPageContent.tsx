@@ -27,6 +27,7 @@ import { ISegment } from "src/lib/types/data/segment.type";
 import { useContext, useEffect, useState } from "react";
 import { API_BASE_URL } from "src/lib/constants";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
+import { createFlagUnderIdea } from "src/lib/api/flagRoutes";
 import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser } from "src/lib/api/ideaRoutes";
 import CSS from "csstype"
 import { useCheckIdeaFollowedByUser } from "src/hooks/ideaHooks";
@@ -131,6 +132,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
   return (
     <div className="single-idea-content pt-5">
+      <Button onClick={async () => await createFlagUnderIdea(parseInt(ideaId), token!)}>Flag</Button>
       <Card>
         {imagePath ? (
           <Image

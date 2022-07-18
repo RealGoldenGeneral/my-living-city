@@ -469,7 +469,7 @@ userRouter.get(
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
 		try {
-			const {email,id} = req.user
+			const {email,id} = req.user;
 
 			const theUser = await prisma.user.findUnique({where:{id:id}});
 
@@ -798,7 +798,8 @@ userRouter.put(
 					// 	country,
 					// 	postalCode,
 					// },
-					banned
+					banned,
+					reviewed
 				} = req.body;
 
 				if(!id){
@@ -841,7 +842,8 @@ userRouter.put(
 						fname:fname,
 						lname:lname,
 						userType:userType,
-						banned:banned
+						banned:banned,
+						reviewed: reviewed
 					}
 				});
 
