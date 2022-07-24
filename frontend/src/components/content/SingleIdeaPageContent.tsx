@@ -27,8 +27,8 @@ import { ISegment } from "src/lib/types/data/segment.type";
 import { useContext, useEffect, useState } from "react";
 import { API_BASE_URL } from "src/lib/constants";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
-import { createFlagUnderIdea } from "src/lib/api/flagRoutes";
-import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser } from "src/lib/api/ideaRoutes";
+import { createFlagUnderIdea, updateFalseFlagIdea } from "src/lib/api/flagRoutes";
+import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser, updateIdeaStatus } from "src/lib/api/ideaRoutes";
 import CSS from "csstype"
 import { useCheckIdeaFollowedByUser } from "src/hooks/ideaHooks";
 
@@ -60,6 +60,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     author,
     state,
     active,
+    reviewed,
 
     // Proposal and Project info
 
@@ -130,9 +131,17 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
       <div>Idea Is Currently Inactive</div>
     )
   }
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+    const createFlagData = await createFlagUnderIdea(ideaId, token!);
+    const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
+    const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+  }
+
   return (
     <div className="single-idea-content pt-5">
-      <Button onClick={async () => await createFlagUnderIdea(parseInt(ideaId), token!)}>Flag</Button>
+      {!reviewed ? (
+        <Button onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
+      ) : null}
       <Card>
         {imagePath ? (
           <Image

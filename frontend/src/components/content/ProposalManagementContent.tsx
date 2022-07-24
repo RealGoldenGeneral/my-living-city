@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
+import { updateFalseFlagIdea } from 'src/lib/api/flagRoutes';
 import { updateIdeaStatus } from 'src/lib/api/ideaRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { USER_TYPES } from 'src/lib/constants';
@@ -136,6 +137,11 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
+                            if(req.idea.active === true && req.idea.reviewed === true){
+                                updateFalseFlagIdea(parseInt(req.idea.id.toString()), token!, true);
+                            } else{
+                                updateFalseFlagIdea(parseInt(req.idea.id.toString()), token!, false);
+                            }
                             updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active, req.idea.reviewed);
                             }}>Save</Button>
                         </>

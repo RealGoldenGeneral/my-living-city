@@ -1,62 +1,62 @@
 const passport = require('passport');
 
 const express = require('express');
-const ideaFlagRouter = express.Router();
+const commentFlagRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 const { checkIdeaThresholds } = require('../lib/prismaFunctions');
 
 
 
-ideaFlagRouter.post(
-    '/create/:ideaId',
+commentFlagRouter.post(
+    '/create/:commentId',
     passport.authenticate('jwt', { session: false }),
     async (req, res, next) => {
       try {
         const { email, id: loggedInUserId } = req.user;
-        const parsedIdeaId = parseInt(req.params.ideaId);
+        const parsedCommentId = parseInt(req.params.commentId);
   
         // check if id is valid
-        if (!parsedIdeaId) {
+        if (!parsedCommentId) {
           return res.status(400).json({
-            message: `A valid ideaId must be specified in the route paramater.`,
+            message: `A valid commentId must be specified in the route paramater.`,
           });
         }
-        const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
-        if (!foundIdea) {
+        const foundIdeaComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId } });
+        if (!foundIdeaComment) {
           return res.status(400).json({
-            message: `The idea with that listed ID (${ideaId}) does not exist.`,
+            message: `The comment with that listed ID (${parsedCommentId.toString()}) does not exist.`,
           });
         }
         // Check if user already submitted rating under "idea"
-        const userAlreadyCreatedFlag = await prisma.ideaFlag.findFirst({
+        const userAlreadyCreatedFlag = await prisma.commentFlag.findFirst({
           where: {
             flaggerId: loggedInUserId,
-            ideaId: parsedIdeaId,
+            commentId: parsedCommentId,
           }
         });
         if (userAlreadyCreatedFlag) {
           return res.status(400).json({
-            message: `You have already flagged this idea. You cannot flag an idea twice.`,
+            message: `You have already flagged this comment. You cannot flag a comment twice.`,
             details: {
               errorMessage: "A idea can only be flagged once."
             }
           });
         }
   
-        const createdFlag = await prisma.ideaFlag.create({
+        const createdFlag = await prisma.commentFlag.create({
           data: {
             flaggerId: loggedInUserId,
-            ideaId: parsedIdeaId,
+            commentId: parsedCommentId,
           }
         });
   
         res.status(200).json({
-          message: `Flag succesfully created under Idea ${parsedIdeaId}`,
+          message: `Flag succesfully created under Idea ${parsedCommentId}`,
           createdFlag,
         });
       } catch (error) {
         res.status(400).json({
-          message: `An error occured while trying to create a rating for idea ${req.params.ideaId}.`,
+          message: `An error occured while trying to create a rating for idea ${req.params.commentId}.`,
           details: {
             errorMessage: error.message,
             errorStack: error.stack,
@@ -66,20 +66,20 @@ ideaFlagRouter.post(
         await prisma.$disconnect();
       }
     }
-  )
-  ideaFlagRouter.get(
+  );
+  commentFlagRouter.get(
     '/getAll',
     passport.authenticate('jwt', { session: false }),
     async (req, res, next) => {
       try {
         const {email, id} = req.user;
   
-        const allIdeaFlags = await prisma.ideaFlag.findMany();
-        res.json(allIdeaFlags);
+        const allCommentFlags = await prisma.commentFlag.findMany();
+        res.json(allCommentFlags);
 
       } catch (error) {
         res.status(400).json({
-          message: "An error occured while trying to fetch all the ideaFlags.",
+          message: "An error occured while trying to fetch all the comment flags.",
           details: {
             errorMessage: error.message,
             errorStack: error.stack,
@@ -89,41 +89,41 @@ ideaFlagRouter.post(
         await prisma.$disconnect();
       }
     }
-  )
-  ideaFlagRouter.put(
-    '/falseFlagMany/:ideaId',
+  );
+  commentFlagRouter.put(
+    '/falseFlagMany/:commentId',
     passport.authenticate('jwt', {session: false}),
     async(req, res, next) =>{
       try{
         const {email, id} = req.user;
-        const parsedIdeaId = parseInt(req.params.ideaId);
+        const parsedCommentId = parseInt(req.params.commentId);
         const {isFalse} = req.body;
-        if (!parsedIdeaId) {
+        if (!parsedCommentId) {
           return res.status(400).json({
             message: `A valid ideaId must be specified in the route paramater.`,
           });
         }
-        const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
-        if (!foundIdea) {
+        const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId } });
+        if (!foundComment) {
           return res.status(400).json({
-            message: `The idea with that listed ID (${ideaId}) does not exist.`,
+            message: `The comment with that listed ID (${parsedCommentId.toString()}) does not exist.`,
           });
         }
-        const updateIdeaFlags = await prisma.ideaFlag.updateMany({
+        const updateIdeaCommentFlags = await prisma.commentFlag.updateMany({
           where: {
-            ideaId: parsedIdeaId,
+            commentId: parsedCommentId,
           },
           data:{
             falseFlag: isFalse,
           },
         });
         res.status(200).json({
-          message: `false flags succesfully updated under Idea ${parsedIdeaId}`,
-          updateIdeaFlags,
+          message: `false flags succesfully updated under comment: ${parsedCommentId}`,
+          updateIdeaFlags: updateIdeaCommentFlags,
         });
       }catch(error){
         res.status(400).json({
-          message: "An error occured while trying to update the ideaFlags.",
+          message: "An error occured while trying to update the commentFlags.",
           details: {
             errorMessage: error.message,
             errorStack: error.stack,
@@ -133,5 +133,5 @@ ideaFlagRouter.post(
         await prisma.$disconnect();
       }
     }
-  )
-  module.exports = ideaFlagRouter;
+  );
+  module.exports = commentFlagRouter;

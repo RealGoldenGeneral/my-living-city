@@ -149,7 +149,7 @@ useEffect(() => {
                 )}
                 {user.userType === "MOD" && (
                   <NavDropdown title="Mod Tools" id="nav-dropdown">
-                    <Nav.Link href="/user/management">Users</Nav.Link>
+                    <Nav.Link href="/mod/management">Mod Management</Nav.Link>
                     {/*Nav.Link href="/moderator/queue" */}
                     {/*Nav.Link href="/moderator/management" */}
                     {/*Nav.Link href="/moderator/management" */}

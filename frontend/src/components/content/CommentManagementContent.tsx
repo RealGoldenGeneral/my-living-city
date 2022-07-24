@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
 import { updateCommentStatus } from 'src/lib/api/commentRoutes';
+import { updateFalseFlagComment } from 'src/lib/api/flagRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { USER_TYPES } from 'src/lib/constants';
 import { IComment } from 'src/lib/types/data/comment.type';
+import { ICommentFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
@@ -17,9 +19,10 @@ interface CommentManagementContentProps {
     user: IUser | null;
     comments: IComment[] | undefined; 
     ideas: IIdeaWithAggregations[] | undefined;
+    commentFlags: ICommentFlag[] | undefined; 
 }
 
-export const CommentManagementContent: React.FC<CommentManagementContentProps> = ({users, token, user, comments, ideas}) => {
+export const CommentManagementContent: React.FC<CommentManagementContentProps> = ({users, token, user, comments, ideas, commentFlags}) => {
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
@@ -34,6 +37,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     let userEmail: String[] = []
     let userName: String[] = []
     let commentType: String[] = []
+    let commentNumFlags: number[] = [];
     if(comments && users){
         for(let i = 0; i < comments!.length; i++){
             for(let z = 0; z < users!.length; z++){
@@ -51,6 +55,17 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                     commentType.push(ideas[z].state);
                 }
             }
+        }
+    }
+    if(comments && commentFlags){
+        for(let i = 0; i < comments!.length; i++){
+            let counter = 0;
+            for(let z = 0; z < commentFlags!.length; z++){
+                if(comments[i].id === commentFlags[z].commentId){
+                    counter++;
+                }
+            }
+            commentNumFlags.push(counter);
         }
     }
     const userTypes = Object.keys(USER_TYPES);
@@ -88,7 +103,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                     <td>{commentType[index]}</td>
                     <td>{<a href= {ideaURL + req.ideaId}>Link</a>}</td>
                     <td>{req.content}</td> 
-                    <td>{req.commentFlagNumber}</td>
+                    <td>{commentNumFlags[index].toString()}</td>
                     <td>{"CRD"}</td>
                     <td>{req.active ? "Yes" : "No"}</td>
                     <td>{req.reviewed ? "Yes" : "No"}</td>
@@ -125,7 +140,11 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
-                            //updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active);
+                            if(req.active === true && req.reviewed === true){
+                                updateFalseFlagComment(parseInt(req.id.toString()), token!, true);
+                            }else{
+                                updateFalseFlagComment(parseInt(req.id.toString()), token!, false);
+                            }
                             updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed);
                             }}>Save</Button>
                         </>

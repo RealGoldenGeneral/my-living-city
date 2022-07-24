@@ -17,12 +17,9 @@ interface UserManagementContentProps {
     user: IUser | null;
     flags: IFlag[] | undefined;
     commentFlags: ICommentFlag[] | undefined; 
-    ideas: IIdeaWithAggregations[] | undefined;
-    proposals: IProposalWithAggregations[] | undefined;
-    comments: IComment[] | undefined; 
 }
 
-export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token, user, flags, commentFlags, ideas, proposals, comments}) => {
+export const UserManagementContentLegacy: React.FC<UserManagementContentProps> = ({users, token, user, flags, commentFlags}) => {
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
@@ -30,7 +27,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     const [ban ,setBan] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [modalUser, setModalUser] = useState<IUser>();
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
         setEmail(email);
@@ -78,10 +74,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     const userTypes = Object.keys(USER_TYPES);
         return (
             <Container>
-            {showModal ? 
-            <UserFlagsModal show={showModal} setShow={setShowModal} user={modalUser!} flags={flags} commentFlags={commentFlags} ideas={ideas} proposals={proposals} comments={comments}/>
-            : null
-             }
             <Form>
             <h2 className="mb-4 mt-4">User Management</h2>
             <Card>
@@ -126,7 +118,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                         )}
                         </Form.Control>
                     </td>
-                    <td><Button onClick={()=> setShowModal(true)}>More Details</Button></td>
+                    <td></td>
                     <td></td>
                     <td><Form.Check type="switch" checked={ban} onChange={(e)=>{
                         setBan(e.target.checked)
@@ -147,7 +139,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                                 setHideControls(req.id);
                                 setBan(req.banned);
                                 setReviewed(req.reviewed);
-                                setModalUser(req);
                                 }}>Edit</Dropdown.Item>
                             <Dropdown.Item onClick={()=>UserSegmentHandler(req.email, req.id)}>View Segments</Dropdown.Item>
                         </NavDropdown>
