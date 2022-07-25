@@ -1,6 +1,7 @@
 import { useContext } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';
+import { createCommentFlagUnderIdea } from 'src/lib/api/flagRoutes';
 import { IComment } from '../../../lib/types/data/comment.type';
 import { timeDifference } from '../../../lib/utilityFunctions';
 import IdeaCommentDislike from './IdeaCommentDislike';
@@ -11,12 +12,14 @@ interface IdeaCommentTileProps {
 }
 
 const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
-  const { isUserAuthenticated } = useContext(UserProfileContext);
+  const { token, isUserAuthenticated } = useContext(UserProfileContext);
+  
   const {
     id,
     ideaId,
     idea,
     authorId,
+    reviewed,
     content,
     createdAt,
     updatedAt,
@@ -25,7 +28,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
       dislikes
     }
   } = commentData;
-
+  
   const { email, fname, lname, address, userSegments, userType } = commentData?.author;
   const {segmentId, subSegmentId, superSegmentId} = commentData?.idea;
   const {homeSegmentId, workSegmentId, schoolSegmentId, homeSubSegmentId, workSubSegmentId, schoolSubSegmentId, homeSuperSegmentId, workSuperSegmentId, schoolSuperSegmentId} = userSegments;
@@ -95,6 +98,9 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
             <div className='d-flex'>
               <IdeaCommentLike commentData={commentData} />
               <IdeaCommentDislike commentData={commentData} />
+              {!reviewed ? (
+              <Button onClick={async () => await createCommentFlagUnderIdea(id, token!)}>Flag</Button>
+              ) : null}
             </div>
           )}
         </Col>

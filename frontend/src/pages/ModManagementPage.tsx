@@ -146,7 +146,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   if(pageState === "quarantine"){
     return (
       <div>
-        <div style={{width: 200, float:'left', height:240, marginLeft:'12%'}}>
+        <div className='mt-3' style={{width: 200, float:'left', height:240, marginLeft:'12%'}}>
           <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40}}  onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
           <br></br>
           <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black'}} onClick={() => loadState("quarantine")}>Quarantine List</Button>
@@ -160,10 +160,10 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
           <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black'}} onClick={() => loadState("comment")}>Comment View</Button>
         </div>
       <div style={{width: '80%', marginLeft:'22%'}}>
-      <div style={{ float: 'right', marginRight:'22%'}}>
-          <p style={{textAlign: 'left'}} className='ml-10 mr-2 display-6'>Current Threshhold: {threshhold.toString()}</p>
+      <div style={{ float: 'right', marginRight:'17.7%'}}>
+          <p style={{textAlign: 'right', fontSize: 18, fontWeight: 'bold'}} className='ml-10 mr-2 display-6 mb-2'>Current Threshhold: {threshhold.toString()}</p>
           <input type="number" onChange={(val) => changeThresholdData(val)} style={{textAlign: 'left', right: "0"}} className='ml-10 mr-2 display-6'/>
-          <Button onClick={() => updateThreshhold(newThreshold, token!)}>Update Threshhold</Button>
+          <Button onClick={() => updateThreshhold(newThreshold, token!)}>Update</Button>
       </div>
         <br></br>
         <UserManagementContent users={quarantineUser!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData}/>

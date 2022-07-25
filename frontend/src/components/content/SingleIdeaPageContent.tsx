@@ -139,9 +139,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   return (
     <div className="single-idea-content pt-5">
-      {!reviewed ? (
-        <Button onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
-      ) : null}
       <Card>
         {imagePath ? (
           <Image
@@ -152,14 +149,19 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <Row>
           <Col sm={12}>
             <Card.Header>
-              <div className="d-flex justify-content-between">
+              <div className="d-flex">
                 <h1 className="h1">{capitalizeString(title)}</h1>
+                <div style={{marginLeft: 'auto', marginRight: '5px'}}>
+                {!reviewed ? (
+                <Button style={{height: '3rem', marginRight: '5px'}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
+                ) : null}
                 {user && token ? <Button
-                  style={{ height: "3rem" }}
+                  style={{ height: "3rem"}}
                   onClick={async () => await handleFollowUnfollow()}
                 >
                   {followingPost ? "Unfollow" : "Follow"}
                 </Button> : null}
+                </div>
               </div>
             </Card.Header>
             <Card.Body>

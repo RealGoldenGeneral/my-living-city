@@ -101,9 +101,6 @@ if(ideaComments){
           ideaComments &&
           ideaComments.map((comment) => (
             <Row key={comment.id}>      
-            {!comment.reviewed ? (
-              <Button onClick={async () => await createCommentFlagUnderIdea(comment.id, token!)}>Flag</Button>
-              ) : null}
               <IdeaCommentTile commentData={comment} />
             </Row>
           ))

@@ -14,9 +14,6 @@ interface CommunityDashboardPageProps extends RouteComponentProps<{
 }>{}
 
 const CommunityDashboardPage: React.FC<CommunityDashboardPageProps> = (props) => {
-    // Destructure props
-    console.log("Printing Props");
-    console.log(props);
     const {
         match: {
             params: { segId },
