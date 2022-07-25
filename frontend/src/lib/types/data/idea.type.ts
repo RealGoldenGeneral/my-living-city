@@ -30,6 +30,7 @@ export interface IIdea {
   active: boolean;
   createdAt: string;
   updatedAt: string;
+  reviewed: boolean;
 }
 
 // Idea with relationships (Used in Single Idea Page) extends Root base Idea
@@ -68,6 +69,7 @@ export interface IIdeaWithAggregations {
   description: string;
   state: IdeaState;
   active: boolean;
+  reviewed: boolean;
   createdAt: string;
   updatedAt: string;
 

@@ -53,6 +53,7 @@ export interface IComment {
   content:   string;
   active:    boolean;
   bannedComment: boolean;
+  reviewed: boolean;
   commentFlagNumber: number;
   createdAt: string;
   updatedAt: string;

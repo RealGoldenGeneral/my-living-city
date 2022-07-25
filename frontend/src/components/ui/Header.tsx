@@ -62,7 +62,7 @@ useEffect(() => {
   if(segQueryLoading === false && segData != null && segData !== undefined){
     console.log("I set the segid!!!");
     console.log(segData);
-    setUserSegId(segData[2].id)
+    setUserSegId(segData[0].id);
   }
 }, [segData, segQueryLoading])
 
@@ -87,6 +87,7 @@ useEffect(() => {
 //       </div>
 //     );
 // }
+
   return (
     <div className="outer-header">
       {stripeStatus !== "" && stripeStatus !== "active" && 
@@ -113,16 +114,21 @@ useEffect(() => {
           <Nav className="ml-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/ideas">Conversations</Nav.Link>
-            {user ? (
-              <>
-                {/* <Navbar.Text> Fake Name</Navbar.Text> */}
-
-                <NavDropdown title="Submit" id="nav-dropdown">
-                  <Nav.Link href="/submit">Submit Idea</Nav.Link>
-                  {(user.userType === "BUSINESS"|| user.userType === "MUNICIPAL"|| user.userType === "COMMUNITY") && (
+            
+            {user ? ( 
+                <>
+                  {(user.banned == false) && ( 
+                    <NavDropdown  title="Submit" id="nav-dropdown">
+                    <Nav.Link href="/submit">Submit Idea</Nav.Link> 
+                    
+                  {((user.userType === "BUSINESS"|| user.userType === "MUNICIPAL"|| user.userType === "COMMUNITY") && user.banned == false) && (
+                    
                     <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
                   )}
                 </NavDropdown>
+                )}
+
+
 
                 <Nav.Link href="/profile">Profile</Nav.Link>
 
@@ -143,7 +149,7 @@ useEffect(() => {
                 )}
                 {user.userType === "MOD" && (
                   <NavDropdown title="Mod Tools" id="nav-dropdown">
-                    <Nav.Link href="/user/management">Users</Nav.Link>
+                    <Nav.Link href="/mod/management">Mod Management</Nav.Link>
                     {/*Nav.Link href="/moderator/queue" */}
                     {/*Nav.Link href="/moderator/management" */}
                     {/*Nav.Link href="/moderator/management" */}
@@ -157,6 +163,7 @@ useEffect(() => {
                         <Nav.Link href={`/community-dashboard/${userSegId}`}>Community Dashboard</Nav.Link>
                   </NavDropdown>
                 )}
+                
                 {/* <Nav.Link href="/dashboard">Dashboard</Nav.Link> */}
                 <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
                   Help
@@ -169,6 +176,15 @@ useEffect(() => {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
+      { user ? ( 
+      user.banned ? (
+        <>
+        <Navbar className="bg-danger text-dark justify-content-center" expand="sm" >Your Posting and Commenting privileges have been revoked.</Navbar>
+        </>
+      ) : null
+      ) : null
+      }
+      
     </div>
   );
 }

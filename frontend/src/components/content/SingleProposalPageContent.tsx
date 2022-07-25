@@ -41,13 +41,13 @@ import { useFormik } from "formik";
 import { useHistory } from "react-router-dom";
 import "react-image-crop/dist/ReactCrop.css";
 import { handlePotentialAxiosError } from "../../lib/utilityFunctions";
-import { postCreateIdea } from "../../lib/api/ideaRoutes";
+import { postCreateIdea, updateIdeaStatus } from "../../lib/api/ideaRoutes";
 import {
   postCreateCollabotator,
   postCreateVolunteer,
   postCreateDonor,
 } from "src/lib/api/communityRoutes";
-
+import { createFlagUnderIdea, updateFalseFlagIdea } from "src/lib/api/flagRoutes";
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
   proposalData: any;
@@ -260,13 +260,16 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   };
 
   let isPostAuthor = false;
-
   if (user) {
     isPostAuthor = author!.id === user!.id;
   }
 
   console.log("isPostAuthor", isPostAuthor);
-
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+    const createFlagData = await createFlagUnderIdea(ideaId, token!);
+    const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
+    const updateFlagData = updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+  }
   if(!active){
     return (
       <div>Proposal Is Currently Inactive</div>
@@ -285,6 +288,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         }
         `}
       </style>
+      <Button onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
       <Card>
         {imagePath ? (
           <Image

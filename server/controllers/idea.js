@@ -336,7 +336,7 @@ ideaRouter.post(
   '/getall/aggregations',
   async (req, res, next) => {
     const take = req.body.take;
-    let takeClause = ''
+    let takeClause = '';
     if (!!take) {
       takeClause = `limit ${take}`;
     }
@@ -369,6 +369,7 @@ ideaRouter.post(
         coalesce(userStreetAddress.street_address, '') as "streetAddress",
         i.state,
         i.active,
+        i.reviewed,
         i.updated_at as "updatedAt",
         i.created_at as "createdAt"
           from idea i
@@ -703,7 +704,7 @@ ideaRouter.put(
   async (req, res, next) => {
     try {
 
-      const {userId, active} = req.body;
+      const {userId, active, reviewed} = req.body;
       const {ideaId} = req.params;
       const parsedIdeaId = parseInt(ideaId);
 
@@ -724,7 +725,8 @@ ideaRouter.put(
           id: parsedIdeaId,
         },
         data: {
-          active: active
+          active: active,
+          reviewed: reviewed
         },
       });
       console.log("Returns here")

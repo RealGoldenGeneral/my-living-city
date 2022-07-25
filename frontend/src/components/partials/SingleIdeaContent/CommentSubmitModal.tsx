@@ -35,6 +35,7 @@ const CommentSubmitModal = ({
       if(banned === true){
         setShowCommentSubmitError(true);
         setError('You are banned');
+        alert("You are banned!");
         throw error;
       }
       submitComment(values);

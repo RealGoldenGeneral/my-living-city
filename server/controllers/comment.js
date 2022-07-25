@@ -298,7 +298,7 @@ commentRouter.put(
   async (req, res, next) => {
     try {
 
-      const {userId, active} = req.body;
+      const {userId, active, reviewed} = req.body;
       const {commentId} = req.params;
       const parsedCommentId = parseInt(commentId);
 
@@ -319,6 +319,7 @@ commentRouter.put(
           id: parsedCommentId,
         },
         data: {
+          reviewed: reviewed,
           active: active
         },
       });

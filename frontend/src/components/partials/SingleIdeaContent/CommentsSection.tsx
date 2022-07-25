@@ -11,7 +11,7 @@ import {
 import IdeaCommentTile from "../../tiles/IdeaComment/IdeaCommentTile";
 import LoadingSpinner from "../../ui/LoadingSpinner";
 import CommentSubmitModal from "./CommentSubmitModal";
-
+import { createCommentFlagUnderIdea, updateFalseFlagComment, getAllCommentFlags} from "src/lib/api/flagRoutes";
 const CommentsSection = (ideaIdProp: any) => {
   const { ideaId } = ideaIdProp;
   console.log(ideaId);
@@ -66,7 +66,11 @@ if(ideaComments){
     if (isLoading) buttonText = "Saving Comment";
     return buttonText;
   };
-
+  const flagFunc = async(commentId: number, token: string, userId: string, ideaActive: boolean) => {
+    const createFlagData = await createCommentFlagUnderIdea(commentId, token!);
+    //const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
+    //const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+  }
   if (error && isError) {
     return <p>An error occured while fetching comments</p>;
   }
@@ -96,7 +100,7 @@ if(ideaComments){
         ) : (
           ideaComments &&
           ideaComments.map((comment) => (
-            <Row key={comment.id}>
+            <Row key={comment.id}>      
               <IdeaCommentTile commentData={comment} />
             </Row>
           ))

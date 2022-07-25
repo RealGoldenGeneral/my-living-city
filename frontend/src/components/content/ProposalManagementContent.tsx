@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
+import { updateFalseFlagIdea } from 'src/lib/api/flagRoutes';
 import { updateIdeaStatus } from 'src/lib/api/ideaRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { USER_TYPES } from 'src/lib/constants';
+import { IFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
 import { IUser } from 'src/lib/types/data/user.type';
@@ -17,14 +19,16 @@ interface ProposalManagementContentProps {
     user: IUser | null;
     proposals: IProposalWithAggregations[] | undefined;
     ideas: IIdeaWithAggregations[] | undefined;
+    flags: IFlag[] | undefined;
 }
 
-export const ProposalManagementContent: React.FC<ProposalManagementContentProps> = ({users, token, user, proposals, ideas}) => {
+export const ProposalManagementContent: React.FC<ProposalManagementContentProps> = ({users, token, user, proposals, ideas, flags}) => {
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
     const [ban ,setBan] = useState<boolean>(false);
+    const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
         setEmail(email);
@@ -34,7 +38,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
     const userTypes = Object.keys(USER_TYPES);
     let userEmails: String[] = [];
     let proposalIdeas: IIdeaWithAggregations[] = [];
-
+    let proposalFlags: number[] = [];
     if(ideas){
         for(let i = 0; i < ideas.length; i++){
             if(ideas[i].state === "PROPOSAL"){
@@ -51,18 +55,26 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
             }
         }
     }
-    console.log("Propideas");
-    console.log(proposalIdeas);
+    if(proposals && flags){
+        for(let i = 0; i < proposals!.length; i++){
+            let counter = 0;
+            for(let z = 0; z < flags!.length; z++){
+                if(proposals[i].idea.id! === flags[z].ideaId){
+                    counter++;
+                }
+            }
+            proposalFlags.push(counter);
+        }
+    }
         return (
-            <Container>
+            <Container style={{maxWidth: '80%', marginLeft: 50}}>
             <Form>
             <h2 className="mb-4 mt-4">Proposal Management</h2>
             <Card>
-            <Card.Header>Proposal Management Tool</Card.Header>
-            <Card.Body>
+            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
-                <tr>
+                <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
                 <th scope="col">User Email</th>
                 <th scope="col">Name</th>
                 <th scope="col">Proposal Title</th>
@@ -71,6 +83,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                 <th scope="col">Number of Flags</th>
                 <th scope="col">Segment</th>
                 <th scope="col">Active</th>
+                <th scope="col">Reviewed</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -85,9 +98,10 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                     <td>{req.idea.title}</td>
                     <td>{req.idea.description}</td>
                     <td><a href= {ProposalURL + req.id}>Link</a></td> 
-                    <td>{proposalIdeas[index].negRatings}</td>
+                    <td>{proposalFlags[index].toString()}</td>
                     <td>{proposalIdeas[index].segmentName}</td>
                     <td>{req.idea.active ? "Yes" : "No"}</td>
+                    <td>{req.idea.reviewed ? "Yes":"No"}</td>
                     </> :<>
                         <td></td>
                         <td></td>
@@ -100,9 +114,12 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         req.idea.active = e.target.checked;
                         setBan(e.target.checked)
                         }} id="ban-switch"/></td>  
+                        <td><Form.Check type="switch" checked={req.idea.reviewed} onChange={(e)=>{
+                        req.idea.reviewed = e.target.checked;
+                        setReviewed(e.target.checked)
+                        }} id="reviewed-switch"/></td>  
                     </>
                 }
-
                     <td>
                     {req.id.toString() !== hideControls ?
                         <NavDropdown title="Controls" id="nav-dropdown">
@@ -116,7 +133,12 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
-                            updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active);
+                            if(req.idea.active === true && req.idea.reviewed === true){
+                                updateFalseFlagIdea(parseInt(req.idea.id.toString()), token!, true);
+                            } else{
+                                updateFalseFlagIdea(parseInt(req.idea.id.toString()), token!, false);
+                            }
+                            updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active, req.idea.reviewed);
                             }}>Save</Button>
                         </>
                     }

@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
 import { updateCommentStatus } from 'src/lib/api/commentRoutes';
+import { updateFalseFlagComment } from 'src/lib/api/flagRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { USER_TYPES } from 'src/lib/constants';
 import { IComment } from 'src/lib/types/data/comment.type';
+import { ICommentFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
@@ -17,14 +19,16 @@ interface CommentManagementContentProps {
     user: IUser | null;
     comments: IComment[] | undefined; 
     ideas: IIdeaWithAggregations[] | undefined;
+    commentFlags: ICommentFlag[] | undefined; 
 }
 
-export const CommentManagementContent: React.FC<CommentManagementContentProps> = ({users, token, user, comments, ideas}) => {
+export const CommentManagementContent: React.FC<CommentManagementContentProps> = ({users, token, user, comments, ideas, commentFlags}) => {
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
     const [ban ,setBan] = useState<boolean>(false);
+    const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
         setEmail(email);
@@ -33,6 +37,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     let userEmail: String[] = []
     let userName: String[] = []
     let commentType: String[] = []
+    let commentNumFlags: number[] = [];
     if(comments && users){
         for(let i = 0; i < comments!.length; i++){
             for(let z = 0; z < users!.length; z++){
@@ -52,19 +57,28 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
             }
         }
     }
+    if(comments && commentFlags){
+        for(let i = 0; i < comments!.length; i++){
+            let counter = 0;
+            for(let z = 0; z < commentFlags!.length; z++){
+                if(comments[i].id === commentFlags[z].commentId){
+                    counter++;
+                }
+            }
+            commentNumFlags.push(counter);
+        }
+    }
     const userTypes = Object.keys(USER_TYPES);
     const ideaURL = '/ideas/';
-    console.log(comments);
         return (
-            <Container>
+            <Container style={{maxWidth: '80%', marginLeft: 50}}>
             <Form>
             <h2 className="mb-4 mt-4">Comment Management</h2>
             <Card>
-            <Card.Header>Comment Management Tool</Card.Header>
-            <Card.Body>
+            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
-                <tr>
+                <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
                 <th scope="col">User Email</th>
                 <th scope="col">User Name</th>
                 <th scope="col">Post Type</th>
@@ -73,6 +87,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                 <th scope="col">Number of Flags</th>
                 <th scope="col">Region</th>
                 <th scope="col">Active</th>
+                <th scope="col">Reviewed</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -87,9 +102,10 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                     <td>{commentType[index]}</td>
                     <td>{<a href= {ideaURL + req.ideaId}>Link</a>}</td>
                     <td>{req.content}</td> 
-                    <td>{req.commentFlagNumber}</td>
+                    <td>{commentNumFlags[index].toString()}</td>
                     <td>{"CRD"}</td>
                     <td>{req.active ? "Yes" : "No"}</td>
+                    <td>{req.reviewed ? "Yes" : "No"}</td>
                     </> :<>
                         <td></td>
                         <td></td>
@@ -101,7 +117,11 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                         <td><Form.Check type="switch" checked={req.active} onChange={(e)=>{
                         req.active = e.target.checked;
                         setBan(e.target.checked)
-                        }} id="ban-switch"/></td>  
+                        }} id="ban-switch"/></td>
+                        <td><Form.Check type="switch" checked={req.reviewed} onChange={(e)=>{
+                        req.reviewed = e.target.checked;
+                        setReviewed(e.target.checked)
+                        }} id="reviewed-switch"/></td>    
                     </>
                 }
 
@@ -111,6 +131,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                             <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id.toString());
                                 setBan(req.active);
+                                setReviewed(req.reviewed);
                                 }}>Edit</Dropdown.Item>
                         </NavDropdown>
                         : <>
@@ -118,8 +139,12 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
-                            //updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active);
-                            updateCommentStatus(token, user?.id, req.id.toString(), req.active);
+                            if(req.active === true && req.reviewed === true){
+                                updateFalseFlagComment(parseInt(req.id.toString()), token!, true);
+                            }else{
+                                updateFalseFlagComment(parseInt(req.id.toString()), token!, false);
+                            }
+                            updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed);
                             }}>Save</Button>
                         </>
                     }

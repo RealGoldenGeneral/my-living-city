@@ -126,6 +126,7 @@ model User {
   imagePath String?
   passCode  String?  @default(cuid())
   banned    Boolean  @default(false)
+  reviewed  Boolean  @default(false)
   totalFlagged Int      @default(0) @map("total_flagged")
   hasFlagged   Int      @default(0) @map("has_flagged")
   
@@ -136,6 +137,8 @@ model User {
   userIdeaFollow  UserIdeaFollow[]
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
   ideas           Idea[]         @relation("ideaAuthor")
+  ideaFlags       IdeaFlag[] 
+  commentFlags    CommentFlag[]
   championedIdeas Idea[]         @relation("ideaChampion")
   stripe          UserStripe?
   bans                Ban[]
@@ -344,6 +347,7 @@ model Idea {
   state               IdeaState @default(IDEA)
   active              Boolean   @default(true)
   banned              Boolean   @default(false)
+  reviewed            Boolean   @default(false)
   imagePath           String?   @map("image_path")
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
@@ -351,6 +355,7 @@ model Idea {
   // relations
   comments        IdeaComment[]
   ratings         IdeaRating[]
+  flags           IdeaFlag[]
   proposalInfo    Proposal?     @relation("proposal")
   projectInfo     Project?
   address         IdeaAddress?
@@ -369,7 +374,28 @@ model Idea {
 
   @@map(name: "idea")
 }
+model IdeaFlag {
+  id                Int      @id @default(autoincrement())
+  ideaId            Int      @map("idea_id")
+  flaggerId         String   @map("flagger_id")
+  falseFlag         Boolean  @default(false) @map("false_flag")
+  //relations
+  idea              Idea     @relation(fields: [ideaId], references: [id])
+  flagger            User         @relation(fields: [flaggerId], references: [id])
 
+  @@map(name: "idea_flag")
+}
+model CommentFlag {
+  id                 Int @id @default(autoincrement())
+  commentId          Int @map("comment_id")
+  flaggerId          String @map("flagger_id")
+  falseFlag          Boolean @default(false) @map("false_flag")
+  //relations
+  ideaComment        IdeaComment  @relation(fields: [commentId], references: [id])
+  flagger            User         @relation(fields: [flaggerId], references: [id])
+
+  @@map(name: "comment_flag")
+}
 model Proposal {
   id     Int @id @default(autoincrement())
   ideaId Int @unique @map("idea_id")
@@ -444,6 +470,7 @@ model IdeaComment {
   subSegmentId   Int?                  @map("sub_segment_id")
   content        String
   active         Boolean               @default(true)
+  reviewed       Boolean               @default(false)
   createdAt      DateTime              @default(now()) @map(name: "created_at")
   updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
 
@@ -455,6 +482,7 @@ model IdeaComment {
   idea           Idea                  @relation(fields: [ideaId], references: [id])
   userSeg        UserSegments          @relation(fields: [userSegId], references: [id])
   likes          UserCommentLikes[]
+  commentFlags   CommentFlag[]
   dislikes       UserCommentDislikes[]
 
   @@map(name: "idea_comment")
@@ -605,7 +633,10 @@ model UserStripe {
   @@id([userId, stripeId])
   @@map(name: "user_stripe")
 }
-
+model Threshhold {
+  id Int @id @default(autoincrement())
+  number  Int @default(3)
+}
 enum Status {
   active
   incomplete
