@@ -65,9 +65,8 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
             }
         }
     }
-    console.log(ideas);
         return (
-            <Container>
+            <Container style={{maxWidth: '80%', marginLeft: 50}}>
             <Form>
             <h2 className="mb-4 mt-4">Idea Management</h2>
             <Card>

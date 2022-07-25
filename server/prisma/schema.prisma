@@ -393,6 +393,8 @@ model CommentFlag {
   //relations
   ideaComment        IdeaComment  @relation(fields: [commentId], references: [id])
   flagger            User         @relation(fields: [flaggerId], references: [id])
+
+  @@map(name: "comment_flag")
 }
 model Proposal {
   id     Int @id @default(autoincrement())
@@ -631,7 +633,10 @@ model UserStripe {
   @@id([userId, stripeId])
   @@map(name: "user_stripe")
 }
-
+model Threshhold {
+  id Int @id @default(autoincrement())
+  number  Int @default(3)
+}
 enum Status {
   active
   incomplete

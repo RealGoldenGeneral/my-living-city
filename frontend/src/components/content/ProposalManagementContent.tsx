@@ -62,16 +62,12 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                 if(proposals[i].idea.id! === flags[z].ideaId){
                     counter++;
                 }
-                if(z === flags!.length-1){
-                    proposalFlags.push(counter);
-                }
             }
+            proposalFlags.push(counter);
         }
     }
-    console.log("Propideas");
-    console.log(proposalIdeas);
         return (
-            <Container>
+            <Container style={{maxWidth: '80%', marginLeft: 50}}>
             <Form>
             <h2 className="mb-4 mt-4">Proposal Management</h2>
             <Card>

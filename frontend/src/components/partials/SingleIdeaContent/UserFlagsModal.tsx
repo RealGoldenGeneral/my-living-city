@@ -54,10 +54,6 @@ if(flags && user && ideas){
             }
         }
     }
-    console.log("Look here!!!");
-    console.log(userFlaggedIdeas);
-    console.log(user);
-    console.log("Look here!!!");
 }
 if(flags && user && proposals){
     for(let i = 0; i < flags.length; i++){

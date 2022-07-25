@@ -70,9 +70,8 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     }
     const userTypes = Object.keys(USER_TYPES);
     const ideaURL = '/ideas/';
-    console.log(comments);
         return (
-            <Container>
+            <Container style={{maxWidth: '80%', marginLeft: 50}}>
             <Form>
             <h2 className="mb-4 mt-4">Comment Management</h2>
             <Card>

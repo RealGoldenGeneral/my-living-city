@@ -13,6 +13,7 @@ const {
 	PORT,
 	CORS_ORIGIN
 } = require('./lib/constants');
+const threshholdRouter = require('./controllers/threshhold');
 
 
 const main = async () => {
@@ -65,6 +66,7 @@ const main = async () => {
 	const userReachRouter = require('./controllers/userReach');
 	const ideaFlagRouter = require('./controllers/flag');
 	const commentFlagRouter = require('./controllers/commentFlag');
+	const threshholdRouter = require('./controllers/threshhold');
 	const accountRouter = require('./webhooks/account');
 
 
@@ -100,6 +102,7 @@ const main = async () => {
 	apiRouter.use('/account', accountRouter);
 	apiRouter.use('/flag', ideaFlagRouter);
 	apiRouter.use('/commentFlag', commentFlagRouter);
+	apiRouter.use('/threshhold', threshholdRouter);
 
 
 	// Listen to server
