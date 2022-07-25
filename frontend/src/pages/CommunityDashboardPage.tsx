@@ -4,6 +4,9 @@ import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { useSegmentInfoAggregate, useSingleSegmentBySegmentId } from "./../hooks/segmentHooks";
 import { useIdeasHomepage } from "src/hooks/ideaHooks";
 import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
+import { useUserWithJwtVerbose } from "src/hooks/userHooks";
+import { useContext } from "react";
+import { UserProfileContext } from "src/contexts/UserProfile.Context";
 
 
 interface CommunityDashboardPageProps extends RouteComponentProps<{
@@ -11,12 +14,17 @@ interface CommunityDashboardPageProps extends RouteComponentProps<{
 }>{}
 
 const CommunityDashboardPage: React.FC<CommunityDashboardPageProps> = (props) => {
-    // Destructure props
     const {
         match: {
             params: { segId },
         },
     } = props;
+
+    const { logout, user, token } = useContext(UserProfileContext);
+    const { data: userData } = useUserWithJwtVerbose({
+      jwtAuthToken: token!,
+      shouldTrigger: token != null,
+    });
 
     const {data: segmentAggregatData,
             error, 
@@ -46,7 +54,7 @@ const CommunityDashboardPage: React.FC<CommunityDashboardPageProps> = (props) =>
         );
     }
 
-    if (isAggregateLoading || isSegmentInfoLoading || iLoading) {
+    if (isAggregateLoading || isSegmentInfoLoading || iLoading || userData === null || userData === undefined) {
         return (
           <div className="wrapper">
             <LoadingSpinner />
@@ -68,7 +76,7 @@ const CommunityDashboardPage: React.FC<CommunityDashboardPageProps> = (props) =>
     return (
         <>
             <div className="wrapper">
-                <CommunityDashboardContent topIdeas={filteredTopIdeas()} data={segmentAggregatData!} segmenData={segmentInfoData!} />
+                <CommunityDashboardContent userData ={userData!} topIdeas={filteredTopIdeas()} data={segmentAggregatData!} segmenData={segmentInfoData!} />
             </div>
         </>
     );

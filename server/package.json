@@ -41,7 +41,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
-    "stripe": "^9.4.0",
+    "stripe": "^9.6.0",
     "swagger-jsdoc": "5.0.1",
     "swagger-ui-express": "^4.1.6"
   },
@@ -51,5 +51,8 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "directories": {
+    "lib": "lib"
   }
 }

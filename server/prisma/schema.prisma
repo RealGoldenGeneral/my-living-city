@@ -26,6 +26,7 @@ model Report {
 
 // User Entity
 enum UserType {
+  SUPER_ADMIN
   ADMIN
   MOD
   SEG_ADMIN
@@ -101,7 +102,14 @@ model UserAddress {
 
   @@map(name: "user_address")
 }
-
+model Ban {
+  id         String   @id @default(cuid())
+  userId     String //@map("user_id")
+  user       User?    @relation(fields: [userId], references: [id])
+  banDate    DateTime @default(now()) @map(name: "ban_date")
+  banUntil   DateTime @map(name: "banned_until")
+  banMessage String?  @map(name: "ban_message")
+}
 model User {
   // Keys
   id       String   @id @default(cuid())
@@ -118,18 +126,23 @@ model User {
   imagePath String?
   passCode  String?  @default(cuid())
   banned    Boolean  @default(false)
+  reviewed  Boolean  @default(false)
+  totalFlagged Int      @default(0) @map("total_flagged")
+  hasFlagged   Int      @default(0) @map("has_flagged")
+  
   // Relationships
-
   address         UserAddress?
   geo             UserGeo?
   userReach       UserReach[]
   userIdeaFollow  UserIdeaFollow[]
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
   ideas           Idea[]         @relation("ideaAuthor")
+  ideaFlags       IdeaFlag[] 
+  commentFlags    CommentFlag[]
   championedIdeas Idea[]         @relation("ideaChampion")
   stripe          UserStripe?
-
-  // championedIdeas     Idea[]                @relation("championedIdeas")
+  bans                Ban[]
+  //championedIdeas     Idea[]                @relation("championedIdeas")
   ideaRatings         IdeaRating[]
   ideaComments        IdeaComment[]
   ideaCommentLikes    UserCommentLikes[]
@@ -333,6 +346,8 @@ model Idea {
   manufacturingImpact String?   @map("manufacturing_impact")
   state               IdeaState @default(IDEA)
   active              Boolean   @default(true)
+  banned              Boolean   @default(false)
+  reviewed            Boolean   @default(false)
   imagePath           String?   @map("image_path")
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
@@ -340,6 +355,7 @@ model Idea {
   // relations
   comments        IdeaComment[]
   ratings         IdeaRating[]
+  flags           IdeaFlag[]
   proposalInfo    Proposal?     @relation("proposal")
   projectInfo     Project?
   address         IdeaAddress?
@@ -358,7 +374,28 @@ model Idea {
 
   @@map(name: "idea")
 }
+model IdeaFlag {
+  id                Int      @id @default(autoincrement())
+  ideaId            Int      @map("idea_id")
+  flaggerId         String   @map("flagger_id")
+  falseFlag         Boolean  @default(false) @map("false_flag")
+  //relations
+  idea              Idea     @relation(fields: [ideaId], references: [id])
+  flagger            User         @relation(fields: [flaggerId], references: [id])
 
+  @@map(name: "idea_flag")
+}
+model CommentFlag {
+  id                 Int @id @default(autoincrement())
+  commentId          Int @map("comment_id")
+  flaggerId          String @map("flagger_id")
+  falseFlag          Boolean @default(false) @map("false_flag")
+  //relations
+  ideaComment        IdeaComment  @relation(fields: [commentId], references: [id])
+  flagger            User         @relation(fields: [flaggerId], references: [id])
+
+  @@map(name: "comment_flag")
+}
 model Proposal {
   id     Int @id @default(autoincrement())
   ideaId Int @unique @map("idea_id")
@@ -433,13 +470,19 @@ model IdeaComment {
   subSegmentId   Int?                  @map("sub_segment_id")
   content        String
   active         Boolean               @default(true)
+  reviewed       Boolean               @default(false)
   createdAt      DateTime              @default(now()) @map(name: "created_at")
   updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+
+  // Moderator Fields
+  commentFlagNumber Int                   @default(0) @map("comment_flag_num")
+  bannedComment     Boolean               @default(false) @map("banned_comment")
   // relations
   author         User                  @relation(fields: [authorId], references: [id])
   idea           Idea                  @relation(fields: [ideaId], references: [id])
   userSeg        UserSegments          @relation(fields: [userSegId], references: [id])
   likes          UserCommentLikes[]
+  commentFlags   CommentFlag[]
   dislikes       UserCommentDislikes[]
 
   @@map(name: "idea_comment")
@@ -583,14 +626,17 @@ model segmentRequest {
 
 model UserStripe {
   user      User    @relation(fields: [userId], references: [id])
-  userId    String    
+  userId    String    @unique
   stripeId  String
   status    Status  @default(incomplete)
 
   @@id([userId, stripeId])
   @@map(name: "user_stripe")
 }
-
+model Threshhold {
+  id Int @id @default(autoincrement())
+  number  Int @default(3)
+}
 enum Status {
   active
   incomplete

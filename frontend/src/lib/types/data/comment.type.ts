@@ -52,6 +52,9 @@ export interface IComment {
   authorId:  string;
   content:   string;
   active:    boolean;
+  bannedComment: boolean;
+  reviewed: boolean;
+  commentFlagNumber: number;
   createdAt: string;
   updatedAt: string;
   idea: IParsedIdea;

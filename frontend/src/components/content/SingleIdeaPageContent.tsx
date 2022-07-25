@@ -27,7 +27,8 @@ import { ISegment } from "src/lib/types/data/segment.type";
 import { useContext, useEffect, useState } from "react";
 import { API_BASE_URL } from "src/lib/constants";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
-import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser } from "src/lib/api/ideaRoutes";
+import { createFlagUnderIdea, updateFalseFlagIdea } from "src/lib/api/flagRoutes";
+import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser, updateIdeaStatus } from "src/lib/api/ideaRoutes";
 import CSS from "csstype"
 import { useCheckIdeaFollowedByUser } from "src/hooks/ideaHooks";
 
@@ -58,6 +59,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     superSegment,
     author,
     state,
+    active,
+    reviewed,
 
     // Proposal and Project info
 
@@ -123,6 +126,16 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
       setFollowingPost(!followingPost);
     }
   };
+  if(!active){
+    return(
+      <div>Idea Is Currently Inactive</div>
+    )
+  }
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+    const createFlagData = await createFlagUnderIdea(ideaId, token!);
+    const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
+    const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+  }
 
   return (
     <div className="single-idea-content pt-5">
@@ -136,14 +149,19 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
         <Row>
           <Col sm={12}>
             <Card.Header>
-              <div className="d-flex justify-content-between">
+              <div className="d-flex">
                 <h1 className="h1">{capitalizeString(title)}</h1>
+                <div style={{marginLeft: 'auto', marginRight: '5px'}}>
+                {!reviewed ? (
+                <Button style={{height: '3rem', marginRight: '5px'}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
+                ) : null}
                 {user && token ? <Button
-                  style={{ height: "3rem" }}
+                  style={{ height: "3rem"}}
                   onClick={async () => await handleFollowUnfollow()}
                 >
                   {followingPost ? "Unfollow" : "Follow"}
                 </Button> : null}
+                </div>
               </div>
             </Card.Header>
             <Card.Body>

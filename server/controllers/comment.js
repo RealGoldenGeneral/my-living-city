@@ -144,7 +144,7 @@ commentRouter.get(
         orderBy: [
           {
             likes: {
-              count: 'desc'
+              _count: 'desc'
             }
           },
           {
@@ -291,7 +291,57 @@ commentRouter.post(
     }
   }
 )
+//Changes comment state
+commentRouter.put(
+  '/updateState/:commentId',
+  passport.authenticate('jwt', {session: false}),
+  async (req, res, next) => {
+    try {
 
+      const {userId, active, reviewed} = req.body;
+      const {commentId} = req.params;
+      const parsedCommentId = parseInt(commentId);
+
+      if (!commentId || !parsedCommentId) {
+        return res.status(400).json({
+          message: `A valid ideaId must be specified in the route paramater.`,
+        });
+      }
+      const foundComment = await prisma.ideaComment.findUnique({ where: { id: parsedCommentId } });
+      if (!foundComment) {
+        return res.status(400).json({
+          message: `The idea with that listed ID (${commentId}) does not exist.`,
+        });
+      }
+
+      const updateComment = await prisma.ideaComment.update({
+        where: {
+          id: parsedCommentId,
+        },
+        data: {
+          reviewed: reviewed,
+          active: active
+        },
+      });
+      console.log("Returns here")
+      res.status(200).json({
+        message: "Idea succesfully updated",
+        idea: updateComment,
+      });
+
+    }catch (error) {
+      res.status(400).json({
+        message: "An error occured while to update an Idea",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
 // Create a comment under an idea
 commentRouter.put(
   '/update/:commentId',
@@ -413,12 +463,12 @@ commentRouter.get(
       const parsedIdeaId = parseInt(req.params.ideaId);
       const aggregations = await prisma.ideaComment.aggregate({
         where: { ideaId: parsedIdeaId },
-        count: {
+        _count: {
           _all: true,
         }
       })
       const result = {
-        count: aggregations.count._all,
+        count: aggregations._count._all,
       }
       res.status(200).json(result);
     } catch (error) {

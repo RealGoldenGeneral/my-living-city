@@ -22,7 +22,7 @@ segmentRouter.post(
                 select: { userType: true }
             });
             //User must be admin to create segment
-            if (theUser.userType == 'ADMIN') {
+            if (theUser.userType == 'ADMIN' || theUser.userType == 'MOD') {
                 const { country, province, name, superSegName } = req.body;
 
                 console.log(req.body);

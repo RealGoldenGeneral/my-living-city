@@ -11,7 +11,7 @@ import {
 import IdeaCommentTile from "../../tiles/IdeaComment/IdeaCommentTile";
 import LoadingSpinner from "../../ui/LoadingSpinner";
 import CommentSubmitModal from "./CommentSubmitModal";
-
+import { createCommentFlagUnderIdea, updateFalseFlagComment, getAllCommentFlags} from "src/lib/api/flagRoutes";
 const CommentsSection = (ideaIdProp: any) => {
   const { ideaId } = ideaIdProp;
   console.log(ideaId);
@@ -26,6 +26,15 @@ const CommentsSection = (ideaIdProp: any) => {
     isError,
     error,
   } = useAllCommentsUnderIdea(ideaId, token);
+
+// ===================== REMOVING DEACTIVATED COMMENTS ========================
+if(ideaComments){
+  for(let i = 0; i < ideaComments.length; i++){
+      if(!ideaComments[i].active){
+        ideaComments.splice(i, 1);
+      }
+  }
+}
 
   // =================== SUBMITTING COMMENT MUTATION ==========================
   const {
@@ -57,7 +66,11 @@ const CommentsSection = (ideaIdProp: any) => {
     if (isLoading) buttonText = "Saving Comment";
     return buttonText;
   };
-
+  const flagFunc = async(commentId: number, token: string, userId: string, ideaActive: boolean) => {
+    const createFlagData = await createCommentFlagUnderIdea(commentId, token!);
+    //const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
+    //const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+  }
   if (error && isError) {
     return <p>An error occured while fetching comments</p>;
   }
@@ -87,7 +100,7 @@ const CommentsSection = (ideaIdProp: any) => {
         ) : (
           ideaComments &&
           ideaComments.map((comment) => (
-            <Row key={comment.id}>
+            <Row key={comment.id}>      
               <IdeaCommentTile commentData={comment} />
             </Row>
           ))
