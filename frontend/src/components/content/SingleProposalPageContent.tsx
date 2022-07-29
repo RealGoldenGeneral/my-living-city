@@ -75,6 +75,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     subSegment,
     superSegment,
     author,
+    reviewed,
     state,
     active,
     // Proposal and Project info
@@ -288,7 +289,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         }
         `}
       </style>
-      <Button onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
       <Card>
         {imagePath ? (
           <Image
@@ -301,13 +301,18 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
-                <Button
-                  style={{ height: "3rem" }}
-                  onClick={() => addIdeaToUserFollowList()}
-                >
+                <div style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
+                  {!reviewed ? (
+                  <Button style={{height: '3rem', marginRight: 5}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
+                  ) : null}
+                  <Button
+                      style={{ height: "3rem", marginLeft: 'auto' ,marginRight: 0}}
+                      onClick={() => addIdeaToUserFollowList()}
+                  >
                   {followingPost ? "Unfollow" : "Follow"}
-                </Button>
+                  </Button>
               </div>
+            </div>
             </Card.Header>
             <Card.Body>
               <Row>
