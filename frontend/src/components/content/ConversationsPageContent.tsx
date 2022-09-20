@@ -47,9 +47,9 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       <hr style={{ paddingBottom: "0rem", marginBottom: "0rem" }} />
       <Row>
         {ideas
-          ? ideas.map((idea) => (
-              <Col key={idea.id} className="col-card" xs={12} md={6} lg={4}>
-                <IdeaTile ideaData={idea} showFooter={true} postType={"Idea"} />
+          ? ideas.filter(idea => idea.state !== 'PROPOSAL').map((filteredIdea) => (
+              <Col key={filteredIdea.id} className="col-card" xs={12} md={6} lg={4}>
+                <IdeaTile ideaData={filteredIdea} showFooter={true} postType={"Idea"} />
               </Col>
             ))
           : [...Array(3)].map((x, i) => (
