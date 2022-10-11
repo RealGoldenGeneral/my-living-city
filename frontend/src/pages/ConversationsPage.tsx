@@ -2,6 +2,7 @@ import ConversationsPageContent from "../components/content/ConversationsPageCon
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { useProposalsWithBreakdown } from "src/hooks/proposalHooks";
 import { useIdeasWithBreakdown } from "src/hooks/ideaHooks";
+import { IIdeaWithAggregations } from "../lib/types/data/idea.type";
 
 export default function ConversationsPage() {
   const {
@@ -10,12 +11,15 @@ export default function ConversationsPage() {
     isLoading: iLoading,
     isError: iIsError,
   } = useIdeasWithBreakdown();
+  
+  
   const {
     data: pData,
     error: pError,
     isLoading: pLoading,
     isError: pIsError,
   } = useProposalsWithBreakdown();
+
 
   if (iError || pError) {
     console.log(iError);
@@ -44,10 +48,16 @@ export default function ConversationsPage() {
         </div>
       );
   }
+  let filteredIdeas: Array<IIdeaWithAggregations>
+  if (iData) {
+    filteredIdeas = iData.filter((idea) => idea.state !== 'PROPOSAL')
+  }
+
   return (
+ 
     <>
       <div className="wrapper">
-        <ConversationsPageContent ideas={iData} proposals={pData} />
+        { <ConversationsPageContent ideas={iData?.filter((idea) => idea.state !== 'PROPOSAL')} proposals={pData} />}
       </div>
     </>
   );

@@ -40,11 +40,15 @@ export const postAllIdeasWithBreakdown = async (take?: number) => {
     `${API_BASE_URL}/idea/getall/aggregations`,
     reqBody
   );
-  return res.data;
+
+  console.log("All ideas", res.data)
+
+  return res.data
 };
 
 export const getUserIdeas = async (userId: string) => {
   const res = await axios.get<any>(`${API_BASE_URL}/idea/getall/${userId}`);
+  console.log(res.data)
   return res.data;
 };
 
