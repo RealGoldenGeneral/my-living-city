@@ -21,7 +21,7 @@ async function main() {
 		'business', //For business accounts
 		'municipal' //For city/municipal accounts
 	]; */
-	
+
 
 	const defaultSuperSegment = [{
 		superSegId:1,
@@ -43,7 +43,7 @@ async function main() {
 		{id:2,segId:2,name:'rutledge park', lat: 0, lon: 0},
 		//esquimalt
 		{id:3,segId:3,name:'saxe point', lat: 0, lon: 0},
-		
+
 	];
 
 	const resolvedCategories = await Promise.all(
@@ -96,7 +96,7 @@ async function main() {
 				province:defaultSuperSegment[0].province
 			}
 	});
-	
+
 	const victoriaSegment = await prisma.segments.upsert({
 		where:{segId:defaultSegments[0].segId},
 		update:{
@@ -198,8 +198,8 @@ async function main() {
 			lon:defaultSubSegments[2].lon
 		}
 	});
-	
-	
+
+
 
 	console.log('Resolved populated Categories', resolvedCategories);
 	//console.log('Resolved populated UserRoles', resolvedUserRoles);

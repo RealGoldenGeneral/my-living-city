@@ -17,6 +17,7 @@ locationRouter.post(
 
             //const result = await axios.get(GoogleLocationSearchURLPrefix+'-33.8670522,151.1957362'+'&key='+GOOGLE_MAP_API_KEY);
             const result = await axios.get(`${GoogleLocationSearchURLPrefix}${lat},${lon}&key=${process.env.GOOGLE_MAP_API_KEY}`);
+            console.log(result.data.results);
             console.log(result.data.results[0].place_id);
 
             if(result.data){
