@@ -14,10 +14,12 @@ const MyPosts: React.FC<MyPostsProps> = ({
   numPosts,
   isDashboard,
 }) => {
+  console.log(userIdeas)
   let parsedPosts = userIdeas;
   if (numPosts > 0 && userIdeas) {
     parsedPosts = parsedPosts.slice(0, numPosts);
   }
+  console.log("parsed", parsedPosts)
   return (
     <Container
       className="container"
