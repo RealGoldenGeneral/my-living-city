@@ -134,4 +134,31 @@ ideaFlagRouter.post(
       }
     }
   )
+
+  // Get # of flags of idea by ideaID
+  ideaFlagRouter.get(
+    '/getFlags/:ideaID',
+    passport.authenticate('jwt', {session: false}),
+    async (req, res, next) => {
+      try {
+        const ideaFlagsCount = await prisma.ideaFlag.count({
+          where: {
+            ideaId: parseInt(req.params.ideaID)
+          }
+        })
+        res.json(ideaFlagsCount);
+      } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+          message: "An error occured while trying to fetch the count of ideaFlags.",
+          details: {
+            errorMessage: error.message,
+            errorStack: error.stack,
+          }
+        });
+      } finally {
+        await prisma.$disconnect();
+      }
+    }
+  )
   module.exports = ideaFlagRouter;

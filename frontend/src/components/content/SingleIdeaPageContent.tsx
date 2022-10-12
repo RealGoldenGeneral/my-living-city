@@ -27,7 +27,7 @@ import { ISegment } from "src/lib/types/data/segment.type";
 import { useContext, useEffect, useState } from "react";
 import { API_BASE_URL } from "src/lib/constants";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
-import { createFlagUnderIdea, updateFalseFlagIdea } from "src/lib/api/flagRoutes";
+import { createFlagUnderIdea, updateFalseFlagIdea, compareIdeaFlagsWithThreshold } from "src/lib/api/flagRoutes";
 import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser, updateIdeaStatus } from "src/lib/api/ideaRoutes";
 import CSS from "csstype"
 import { useCheckIdeaFollowedByUser } from "src/hooks/ideaHooks";
@@ -133,7 +133,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
     const createFlagData = await createFlagUnderIdea(ideaId, token!);
-    const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
+    const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
+    const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
     const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
   }
 
