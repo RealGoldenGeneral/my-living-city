@@ -14,7 +14,7 @@ ideaFlagRouter.post(
       try {
         const { email, id: loggedInUserId } = req.user;
         const parsedIdeaId = parseInt(req.params.ideaId);
-  
+
         // check if id is valid
         if (!parsedIdeaId) {
           return res.status(400).json({
@@ -32,6 +32,7 @@ ideaFlagRouter.post(
           where: {
             flaggerId: loggedInUserId,
             ideaId: parsedIdeaId,
+            flagReason: req.body.flagReason
           }
         });
         if (userAlreadyCreatedFlag) {
@@ -42,14 +43,15 @@ ideaFlagRouter.post(
             }
           });
         }
-  
+
         const createdFlag = await prisma.ideaFlag.create({
           data: {
             flaggerId: loggedInUserId,
             ideaId: parsedIdeaId,
+            flagReason: req.body.flagReason
           }
         });
-  
+
         res.status(200).json({
           message: `Flag succesfully created under Idea ${parsedIdeaId}`,
           createdFlag,
@@ -73,7 +75,7 @@ ideaFlagRouter.post(
     async (req, res, next) => {
       try {
         const {email, id} = req.user;
-  
+
         const allIdeaFlags = await prisma.ideaFlag.findMany();
         res.json(allIdeaFlags);
 

@@ -267,7 +267,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   console.log("isPostAuthor", isPostAuthor);
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
-    const createFlagData = await createFlagUnderIdea(ideaId, token!);
+    const testReason = "Inappropriate Language";
+    const createFlagData = await createFlagUnderIdea(ideaId, testReason, token!);
     const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
     const updateFlagData = updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
   }

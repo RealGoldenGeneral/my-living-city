@@ -129,7 +129,7 @@ model User {
   reviewed  Boolean  @default(false)
   totalFlagged Int      @default(0) @map("total_flagged")
   hasFlagged   Int      @default(0) @map("has_flagged")
-  
+
   // Relationships
   address         UserAddress?
   geo             UserGeo?
@@ -137,7 +137,7 @@ model User {
   userIdeaFollow  UserIdeaFollow[]
   //userRole        UserRole?    @relation(fields: [userRoleId], references: [id])
   ideas           Idea[]         @relation("ideaAuthor")
-  ideaFlags       IdeaFlag[] 
+  ideaFlags       IdeaFlag[]
   commentFlags    CommentFlag[]
   championedIdeas Idea[]         @relation("ideaChampion")
   stripe          UserStripe?
@@ -379,6 +379,7 @@ model IdeaFlag {
   ideaId            Int      @map("idea_id")
   flaggerId         String   @map("flagger_id")
   falseFlag         Boolean  @default(false) @map("false_flag")
+  flagReason        String?  @map("flag_reason")
   //relations
   idea              Idea     @relation(fields: [ideaId], references: [id])
   flagger            User         @relation(fields: [flaggerId], references: [id])
@@ -568,11 +569,11 @@ model UserReach {
   // Columns
   id          String    @id @default(cuid())
   userId      String    @map("user_id")
-  segId       Int       
+  segId       Int
 
   // Relations
   user User             @relation(references: [id], fields: [userId])
-  segment Segments      @relation(references: [segId], fields: [segId])    
+  segment Segments      @relation(references: [segId], fields: [segId])
 
   @@unique([userId, segId], name: "user_reach_unique")
   @@map(name: "user_reach")

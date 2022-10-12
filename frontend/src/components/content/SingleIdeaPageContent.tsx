@@ -102,7 +102,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
     return !ideaData.champion && !!ideaData.isChampionable;
   };
-  
+
   const [followingPost, setFollowingPost] = useState(false);
   const {user, token} = useContext(UserProfileContext);
   const {data: isFollowingPost, isLoading: isFollowingPostLoading} = useCheckIdeaFollowedByUser(token, (user ? user.id : user), ideaId);
@@ -132,7 +132,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     )
   }
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
-    const createFlagData = await createFlagUnderIdea(ideaId, token!);
+    const testReason = "Inappropriate Language";
+    const createFlagData = await createFlagUnderIdea(ideaId, testReason, token!);
     const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
     const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
   }

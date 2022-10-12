@@ -7,6 +7,7 @@ import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 //For IdeaFlags
 export const createFlagUnderIdea = async (
     ideaId: number,
+    flagReason: string,
     token: string,
   ) => {
     if (!ideaId || !token) {
@@ -18,9 +19,11 @@ export const createFlagUnderIdea = async (
         method: "post",
         url: `${API_BASE_URL}/flag/create/${ideaId}`,
         headers: {
+          "Content-Type": "application/json",
           "x-auth-token": token,
           "Access-Control-Allow-Origin": "*",
         },
+        data: {flagReason: flagReason},
         withCredentials: true,
       })
     return res.data;
