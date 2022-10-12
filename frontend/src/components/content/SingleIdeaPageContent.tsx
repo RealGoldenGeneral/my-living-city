@@ -32,6 +32,8 @@ import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser, updateIdeaS
 import CSS from "csstype"
 import { useCheckIdeaFollowedByUser } from "src/hooks/ideaHooks";
 
+import Modal from "src/components/modal/Modal";
+
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
   ideaId: string;
@@ -107,6 +109,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const {user, token} = useContext(UserProfileContext);
   const {data: isFollowingPost, isLoading: isFollowingPostLoading} = useCheckIdeaFollowedByUser(token, (user ? user.id : user), ideaId);
 
+  const [modalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
     if (!isFollowingPostLoading) {
       setFollowingPost(isFollowingPost.isFollowed);
@@ -132,6 +136,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     )
   }
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+
+    setModalOpen(true);
+    
     const testReason = "Inappropriate Language";
     const createFlagData = await createFlagUnderIdea(ideaId, testReason, token!);
     const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
@@ -162,6 +169,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   >
                     {followingPost ? "Unfollow" : "Follow"}
                   </Button> : null}
+                  {modalOpen && <Modal setOpenModal={setModalOpen} />}
                 </div>
               </div>
             </Card.Header>
