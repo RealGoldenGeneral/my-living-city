@@ -32,7 +32,11 @@ import { followIdeaByUser, isIdeaFollowedByUser, unfollowIdeaByUser, updateIdeaS
 import CSS from "csstype"
 import { useCheckIdeaFollowedByUser } from "src/hooks/ideaHooks";
 
-import Modal from "src/components/modal/Modal";
+import Modal from 'react-bootstrap/Modal';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+
+import ModalExample from "src/components/modal/Modal";
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
@@ -109,7 +113,10 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const {user, token} = useContext(UserProfileContext);
   const {data: isFollowingPost, isLoading: isFollowingPostLoading} = useCheckIdeaFollowedByUser(token, (user ? user.id : user), ideaId);
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     if (!isFollowingPostLoading) {
@@ -135,11 +142,10 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
       <div>Idea Is Currently Inactive</div>
     )
   }
-  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, testReason: string) => {
 
-    setModalOpen(true);
-    
-    const testReason = "Inappropriate Language";
+    handleShow();
+
     const createFlagData = await createFlagUnderIdea(ideaId, testReason, token!);
     const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
     const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
@@ -158,10 +164,15 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
           <Col sm={12}>
             <Card.Header>
               <div className="d-flex">
-                <h1 className="h1">{capitalizeString(title)}</h1>
-                <div style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
+                <h1 className="h1 p-2 flex-grow-1">{capitalizeString(title)}</h1>
+                <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 250}}>
                   {!reviewed ? (
-                  <Button style={{height: '3rem', marginRight: 5}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
+                    <DropdownButton id="dropdown-basic-button d-flex" title="Flag" style={{height: '3rem', marginRight: 5, backgroundColor: 'red'}}>
+                    <Dropdown.Item href="#/action-1" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Incorrect Community")}>Incorrect Community</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
+                    </DropdownButton>
+                  // <Button style={{height: '3rem', marginRight: 5, background: 'red'}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language)}>Flag</Button>
                   ) : null}
                   {user && token ? <Button
                     style={{ height: "3rem"}}
@@ -169,8 +180,24 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   >
                     {followingPost ? "Unfollow" : "Follow"}
                   </Button> : null}
-                  {modalOpen && <Modal setOpenModal={setModalOpen} />}
+ 
+                    <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Flag Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure about flagging this post?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button style={{background: 'red'}} variant="primary"  onClick={handleClose}>
+            Flag
+          </Button>
+        </Modal.Footer>
+      </Modal>
                 </div>
+
+                
               </div>
             </Card.Header>
             <Card.Body>

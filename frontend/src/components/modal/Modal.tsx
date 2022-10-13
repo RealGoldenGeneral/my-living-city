@@ -1,39 +1,23 @@
-import React from "react";
-import "./ModalStyle.css";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
-function Modal({ setOpenModal }) {
+function ModalExample() {
   return (
-    <div className="modalBackground">
-      <div className="modalContainer">
-        <div className="titleCloseBtn">
-          <button
-            onClick={() => {
-              setOpenModal(false);
-            }}
-          >
-            X
-          </button>
-        </div>
-        <div className="title">
-          <h1>Are You Sure You Want to flag this post?</h1>
-        </div>
-        <div className="body">
-          <p>The post has been flagged.</p>
-        </div>
-        <div className="footer">
-          <button
-            onClick={() => {
-              setOpenModal(false);
-            }}
-            id="cancelBtn"
-          >
-            Cancel
-          </button>
-          <button>Continue</button>
-        </div>
-      </div>
-    </div>
+    <Modal.Dialog>
+      <Modal.Header closeButton>
+        <Modal.Title>Modal title</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <p>Modal body text goes here.</p>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary">Close</Button>
+        <Button variant="primary">Save changes</Button>
+      </Modal.Footer>
+    </Modal.Dialog>
   );
 }
 
-export default Modal;
+export default ModalExample;
