@@ -11,7 +11,7 @@ import {
   Modal,
   Alert,
   Accordion,
-  Table,
+  Table, ButtonGroup,
 } from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
 import {
@@ -149,6 +149,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const [modalShowDonor, setModalShowDonor] = useState(false);
 
   const [show, setShow] = useState(false);
+  const [flagReason, setFlagReason] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -274,11 +275,20 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
 
   console.log("isPostAuthor", isPostAuthor);
-  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, testReason: string) => {
-    // const testReason = "Inappropriate Language";
-    const createFlagData = await createFlagUnderIdea(ideaId, testReason, token!);
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string) => {
+    const createFlagData = await createFlagUnderIdea(ideaId, reason, token!);
     const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
-    const updateFlagData = updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+    const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+  }
+
+  const selectReasonHandler = (eventKey: string) => {
+    handleShow();
+    setFlagReason(eventKey!)
+  }
+
+  const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+    handleClose();
+    await flagFunc(ideaId, token, userId, ideaActive, flagReason);
   }
   if(!active){
     return (
@@ -311,37 +321,44 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
                 <div style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
-                  {!reviewed ? (
-                  <DropdownButton id="dropdown-basic-button d-flex" title="Flag" style={{height: '3rem', marginRight: 5, backgroundColor: 'red'}}>
-                  <Dropdown.Item href="#/action-1" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
-                  <Dropdown.Item href="#/action-2" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Incorrect Community")}>Incorrect Community</Dropdown.Item>
-                  <Dropdown.Item href="#/action-3" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
-                  </DropdownButton>
-                  ) : null}
-                  <Button
-                      style={{ height: "3rem", marginLeft: 'auto' ,marginRight: 0}}
-                      onClick={() => addIdeaToUserFollowList()}
-                  >
-                  {followingPost ? "Unfollow" : "Follow"}
-                  </Button>
+                  <ButtonGroup className="mr-2">
+                    {!reviewed ? (
+                        <DropdownButton id="dropdown-basic-button d-flex" size="lg" title="Flag">
+                          <Dropdown.Item eventKey= "Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Inappropriate Language</Dropdown.Item>
+                          <Dropdown.Item eventKey= "Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Wrong Community</Dropdown.Item>
+                          <Dropdown.Item eventKey= "Discriminatory Content" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Discriminatory Content</Dropdown.Item>
+                        </DropdownButton>
+                        // <Button style={{height: '3rem', marginRight: 5, background: 'red'}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language)}>Flag</Button>
+                    ) : null}
+                  </ButtonGroup>
+                  <ButtonGroup className="mr-2">
+                    {user && token ? <Button
+                        style={{ height: "3rem"}}
+                        onClick={async () => await addIdeaToUserFollowList()}
+                    >
+                      {followingPost ? "Unfollow" : "Follow"}
+                    </Button> : null}
+                  </ButtonGroup>
+                </div>
               </div>
-            </div>
             </Card.Header>
 
             <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Flag Confirmation</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure about flagging this post?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button style={{background: 'red'}} variant="primary"  onClick={handleClose}>
-            Flag
-          </Button>
-        </Modal.Footer>
-      </Modal>
+              <Modal.Header closeButton>
+                <Modal.Title>Flag Confirmation</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Are you sure about flagging this post?</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button style={{background: 'red'}} variant="primary"  onClick={
+                  () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
+                }>
+                  Flag
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
             <Card.Body>
               <Row>
