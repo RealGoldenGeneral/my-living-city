@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Image } from "react-bootstrap";
+import {Button, Card, Col, Row, Image, ButtonGroup} from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
 import {
   capitalizeFirstLetterEachWord,
@@ -166,24 +166,27 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
               <div className="d-flex">
                 <h1 className="h1 p-2 flex-grow-1">{capitalizeString(title)}</h1>
                 <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 250}}>
+                  <ButtonGroup className="mr-2">
                   {!reviewed ? (
-                    <DropdownButton id="dropdown-basic-button d-flex" title="Flag" style={{height: '3rem', marginRight: 5, backgroundColor: 'red'}}>
+                    <DropdownButton id="dropdown-basic-button d-flex" size="lg" title="Flag">
                     <Dropdown.Item href="#/action-1" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
                     <Dropdown.Item href="#/action-2" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Incorrect Community")}>Incorrect Community</Dropdown.Item>
                     <Dropdown.Item href="#/action-3" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
                     </DropdownButton>
                   // <Button style={{height: '3rem', marginRight: 5, background: 'red'}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language)}>Flag</Button>
                   ) : null}
-                  {user && token ? <Button
-                    style={{ height: "3rem"}}
-                    onClick={async () => await handleFollowUnfollow()}
-                  >
-                    {followingPost ? "Unfollow" : "Follow"}
-                  </Button> : null}
- 
+                  </ButtonGroup>
+                    <ButtonGroup className="mr-2">
+                    {user && token ? <Button
+                      style={{ height: "3rem"}}
+                      onClick={async () => await handleFollowUnfollow()}
+                    >
+                      {followingPost ? "Unfollow" : "Follow"}
+                    </Button> : null}
+                  </ButtonGroup>
                 </div>
 
-                
+
               </div>
             </Card.Header>
 
