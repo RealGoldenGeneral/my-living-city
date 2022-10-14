@@ -181,7 +181,13 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     {followingPost ? "Unfollow" : "Follow"}
                   </Button> : null}
  
-                    <Modal show={show} onHide={handleClose}>
+                </div>
+
+                
+              </div>
+            </Card.Header>
+
+            <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Flag Confirmation</Modal.Title>
         </Modal.Header>
@@ -195,11 +201,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
           </Button>
         </Modal.Footer>
       </Modal>
-                </div>
 
-                
-              </div>
-            </Card.Header>
             <Card.Body>
               <Row>
                 <Col>

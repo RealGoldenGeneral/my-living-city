@@ -1,3 +1,6 @@
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+
 import {
   Button,
   Card,
@@ -145,6 +148,11 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const [modalShowVolunteer, setModalShowVolunteer] = useState(false);
   const [modalShowDonor, setModalShowDonor] = useState(false);
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const collaboratorSubmitHandler = async (values: any) => {
     try {
       // Set loading and error state
@@ -266,8 +274,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
 
   console.log("isPostAuthor", isPostAuthor);
-  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
-    const testReason = "Inappropriate Language";
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, testReason: string) => {
+    // const testReason = "Inappropriate Language";
     const createFlagData = await createFlagUnderIdea(ideaId, testReason, token!);
     const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
     const updateFlagData = updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
@@ -304,7 +312,11 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <h1 className="h1">{capitalizeString(title)}</h1>
                 <div style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
                   {!reviewed ? (
-                  <Button style={{height: '3rem', marginRight: 5}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active)}>Flag</Button>
+                  <DropdownButton id="dropdown-basic-button d-flex" title="Flag" style={{height: '3rem', marginRight: 5, backgroundColor: 'red'}}>
+                  <Dropdown.Item href="#/action-1" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
+                  <Dropdown.Item href="#/action-2" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Incorrect Community")}>Incorrect Community</Dropdown.Item>
+                  <Dropdown.Item href="#/action-3" onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language")}>Inappropriate Language</Dropdown.Item>
+                  </DropdownButton>
                   ) : null}
                   <Button
                       style={{ height: "3rem", marginLeft: 'auto' ,marginRight: 0}}
@@ -315,6 +327,22 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
               </div>
             </div>
             </Card.Header>
+
+            <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Flag Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure about flagging this post?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button style={{background: 'red'}} variant="primary"  onClick={handleClose}>
+            Flag
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
             <Card.Body>
               <Row>
                 <Col>
