@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
+	console.log("hello from seed")
 	const defaultIdeaCategories = [
 		{ title: 'policy', description: '' },
 		{ title: 'event', description: '' },
@@ -213,6 +214,7 @@ async function main() {
 }
 
 main()
+	.then(() => console.log('Hello from seed.js'))
 	.catch((e) => {
 		console.error(e);
 		process.exit(1);

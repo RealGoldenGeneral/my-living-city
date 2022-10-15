@@ -29,7 +29,7 @@ export default function Header() {
     jwtAuthToken: token!,
     shouldTrigger: token != null,
   });
-  // console.log(data);
+  console.log(data);
 
   const {data: googleQuery, isLoading: googleQueryLoading} = useGoogleMapSearchLocation({lat: data?.geo?.lat, lon: data?.geo?.lon}, (data != null && data.geo != null));
   console.log(googleQuery);
