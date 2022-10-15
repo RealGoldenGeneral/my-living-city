@@ -57,7 +57,7 @@ export interface IIdeaWithRelationship extends IIdea {
 }
 
 // Idea Breakdown (Used in Landing Page and Ideas Page) extends Root base Idea
-export interface IIdeaWithAggregations {
+export interface IIdeaWithAggregations extends IIdea {
   id: number;
   authorId: string;
   categoryId: number;
@@ -91,5 +91,6 @@ export interface IIdeaWithAggregations {
   artsImpact?: string;
   energyImpact?: string;
   manufacturingImpact?: string;
+  notification_dismissed?: boolean;
   
 }
