@@ -173,7 +173,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex">
                 <h1 className="h1 p-2 flex-grow-1">{capitalizeString(title)}</h1>
-                <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 250}}>
+                <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
                   <ButtonGroup className="mr-2">
                   {!reviewed ? (
                     <DropdownButton id="dropdown-basic-button d-flex" size="lg" title="Flag">
