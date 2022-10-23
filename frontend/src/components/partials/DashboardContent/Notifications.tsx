@@ -14,16 +14,18 @@ interface NotificationPageContentProps {
 
 const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas }) => {
 
-  // const [isDismissed, setIsDismissed] = useState(false);
-  // const { user, token } = useContext(UserProfileContext);
-  // const [selectElement, setSelectElement] = useState(0);
-  // const dismissNotificationFunc = async (ideaId: number, token: string, userId: string, notification_dismissed: boolean) => {
+  const [isDismissed, setIsDismissed] = useState(true);
+  const { user, token } = useContext(UserProfileContext);
 
-  //   const updateData = await updateIdeaNotificationStatus(token, userId, ideaId.toString(), notification_dismissed);
-  //   setIsDismissed(true)
-
-  // }
-  console.log("UserIdeas", userIdeas)
+  const dismissAll = async () => {
+    const result = userIdeas?.map((userIdea) => {
+      if (!userIdea.active) {
+        updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
+      }
+    })
+    setIsDismissed(false)
+  }
+  
   return (
     <Container
       className="system"
@@ -51,7 +53,7 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas }) =>
           <h2 className="display-6">Notifications</h2>
         </div>
         <div className="col-example text-left">
-          {/* <Button onClick={() => setIsDismissed(true)}>Dismiss All</Button> */}
+          <Button onClick={async () => await dismissAll()}>Dismiss All</Button>
         </div>
       </div>
 
@@ -59,21 +61,8 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas }) =>
         {
           <Table>
             <tbody>
-              {userIdeas && userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => 
+              {isDismissed && userIdeas && userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => 
               (< Notification key={idea.id} userIdea={idea}  />
-
-                // <tr key={userIdea.id}>
-                //   {!isDismissed ? (
-                //     <><td>{"Your post named "} <h5>{userIdea.title}</h5> {" has been removed from the conversations page due to violation of content"}</td><div className="col-example text-left">
-                //       <Button onClick={async () => await dismissNotificationFunc(userIdea.id, token!, user!.id, true)}>Dismiss</Button>
-                //     </div></>
-                //   ) : (
-                //     <div></div>
-                //   )
-
-                //   }
-                // </tr>
-
               ))}
             </tbody>
           </Table>
