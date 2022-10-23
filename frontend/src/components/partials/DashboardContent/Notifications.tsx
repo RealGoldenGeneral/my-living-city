@@ -1,18 +1,31 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Container, Row, Col, Card, Table } from "react-bootstrap";
+import { UserProfileContext } from "../../../contexts/UserProfile.Context"
+import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
+import { IIdea, IIdeaWithAggregations } from "src/lib/types/data/idea.type";
+import Notification from "./Notification";
 
-interface NotificationsProps {}
+import { IProposalWithAggregations } from "src/lib/types/data/proposal.type";
+interface NotificationPageContentProps {
+  userIdeas: IIdeaWithAggregations[] | undefined;
+  // proposals: IProposalWithAggregations[] | undefined;
+}
 
-const Notifications: React.FC<NotificationsProps> = ({}) => {
-  const messages = [
-    "Post: New Park/flag was dismissed / Reason: Post met acceptable standards",
-    "Comment: Dog Fountain at Mac.../flag was dismissed / Reason: Postmet acceptable standards",
-    "Your Post: Get rid of the dogs / was flagged and Quarantine / Reason: Has abusive language, is hostile to a community segment",
-    "New Community: West Bay / Is now active and you are located within it",
-  ];
 
-  const [isDismissed, setIsDismissed] = useState(false);
+const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas }) => {
 
+  const [isDismissed, setIsDismissed] = useState(true);
+  const { user, token } = useContext(UserProfileContext);
+
+  const dismissAll = async () => {
+    const result = userIdeas?.map((userIdea) => {
+      if (!userIdea.active) {
+        updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
+      }
+    })
+    setIsDismissed(false)
+  }
+  
   return (
     <Container
       className="system"
@@ -30,6 +43,9 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
            background-color: #e8ffe9;
            cursor: pointer;
         }
+        h5 {
+          display: inline;
+        }
         `}
       </style>
       <div className="d-flex justify-content-between border-bottom display-6">
@@ -37,29 +53,20 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
           <h2 className="display-6">Notifications</h2>
         </div>
         <div className="col-example text-left">
-          <Button onClick={() => setIsDismissed(true)}>Dismiss All</Button>
+          <Button onClick={async () => await dismissAll()}>Dismiss All</Button>
         </div>
       </div>
 
       <div style={{ marginTop: "2rem" }}>
-        {!isDismissed ? (
+        {
           <Table>
             <tbody>
-              {messages.map((message, index) => (
-                <tr
-                  key={index}
-                  onClick={() => (window.location.href = "/ideas")}
-                >
-                  <td>{message}</td>
-                </tr>
+              {isDismissed && userIdeas && userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => 
+              (< Notification key={idea.id} userIdea={idea}  />
               ))}
             </tbody>
           </Table>
-        ) : (
-          <div>
-            <p>No new notifications.</p>
-          </div>
-        )}
+        }
       </div>
     </Container>
   );

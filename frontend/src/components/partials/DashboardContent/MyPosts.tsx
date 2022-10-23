@@ -14,10 +14,13 @@ const MyPosts: React.FC<MyPostsProps> = ({
   numPosts,
   isDashboard,
 }) => {
+  console.log(userIdeas)
   let parsedPosts = userIdeas;
   if (numPosts > 0 && userIdeas) {
     parsedPosts = parsedPosts.slice(0, numPosts);
   }
+  console.log("parsed", parsedPosts)
+ 
   return (
     <Container
       className="container"
@@ -56,8 +59,8 @@ const MyPosts: React.FC<MyPostsProps> = ({
 
       <h2 className="pb-1 border-bottom display-6">My Posts</h2>
       <Row className="g-5 py-3 justify-content-left">
-        {parsedPosts
-          ? parsedPosts.map((idea: any) => (
+        {userIdeas
+          ? userIdeas.filter((parsedPost) => parsedPost.active !== false).map((idea: any) => (
               <Col
                 key={idea.id}
                 md={6}

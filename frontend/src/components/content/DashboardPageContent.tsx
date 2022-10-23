@@ -32,7 +32,7 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({
     <Container className="landing-page-content">
       <Row as="article" className="featured"></Row>
       <Row as="article" className="system-messages">
-        <Notifications />
+        <Notifications userIdeas={userIdeas}/>
       </Row>
       <Row as="article" className="new-and-trending">
         <MyPosts userIdeas={userIdeas!} numPosts={6} isDashboard={true} />

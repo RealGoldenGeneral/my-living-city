@@ -208,6 +208,22 @@ export const updateIdeaStatus = async(token: String | null, userId: string|undef
   })
   return res.data;
 }
+export const updateIdeaNotificationStatus = async(token: String | null, userId: string|undefined, ideaId: string|null, notification_dismissed: boolean|null) => {
+  notification_dismissed = true
+  const res = await axios({
+    method: "put",
+    url: `${API_BASE_URL}/idea/updateNotificationState/${ideaId}`,
+    headers: {
+      "x-auth-token": token,
+      "Access-Control-Allow-Origin": "*",
+    },
+    
+    data: {userId: userId, ideaId: ideaId, notification_dismissed},
+    withCredentials: true,
+  })
+  return res.data;
+}
+
 export const followIdeaByUser = async (token: string, userId: string, ideaId: string) => {
   const res = await axios({
     method: "post",
