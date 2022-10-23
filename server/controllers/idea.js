@@ -94,6 +94,7 @@ ideaRouter.post(
           state,
           //TODO
         } = req.body;
+        console.log(req.body)
 
         if (supportingProposalId) {
           supportingProposalId = parseInt(supportingProposalId);
@@ -213,7 +214,7 @@ ideaRouter.post(
             }
           });
         }
-
+        let notification_dismissed = false
         const ideaData = {
           categoryId,
           superSegmentId,
@@ -230,6 +231,7 @@ ideaRouter.post(
           manufacturingImpact,
           supportingProposalId,
           state,
+          notification_dismissed
         };
 
         // Create an idea and make the author JWT bearer
@@ -293,7 +295,7 @@ ideaRouter.get(
           updatedAt: 'desc'
         }
       });
-
+      console.log(allIdeas)
       res.status(200).json(allIdeas);
     } catch (error) {
       res.status(400).json({
@@ -349,6 +351,7 @@ ideaRouter.post(
         i.category_id as "categoryId",
         i.title,
         i.description,
+        i.notification_dismissed,
         i.segment_id as "segId",
         i.sub_segment_id as "subSegId",
         i.super_segment_id as "superSegId",
@@ -465,6 +468,7 @@ ideaRouter.get(
           i.category_id as "categoryId",
           i.title,
           i.description,
+          i.notification_dismissed,
           i.segment_id,
           i.sub_segment_id,
           coalesce(ic.total_comments + ir.total_ratings, 0) as engagements,
@@ -727,6 +731,56 @@ ideaRouter.put(
         data: {
           active: active,
           reviewed: reviewed
+        },
+      });
+      console.log("Returns here")
+      res.status(200).json({
+        message: "Idea succesfully updated",
+        idea: updateIdea,
+      });
+
+    }catch (error) {
+      res.status(400).json({
+        message: "An error occured while to update an Idea",
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+)
+
+ideaRouter.put(
+  '/updateNotificationState/:ideaId',
+  passport.authenticate('jwt', {session: false}),
+  async (req, res, next) => {
+    try {
+
+      const {userId, notification_dismissed} = req.body;
+      const {ideaId} = req.params;
+      const parsedIdeaId = parseInt(ideaId);
+
+      if (!ideaId || !parsedIdeaId) {
+        return res.status(400).json({
+          message: `A valid ideaId must be specified in the route paramater.`,
+        });
+      }
+      const foundIdea = await prisma.idea.findUnique({ where: { id: parsedIdeaId } });
+      if (!foundIdea) {
+        return res.status(400).json({
+          message: `The idea with that listed ID (${ideaId}) does not exist.`,
+        });
+      }
+
+      const updateIdea = await prisma.idea.update({
+        where: {
+          id: parsedIdeaId,
+        },
+        data: {
+          notification_dismissed: notification_dismissed,
         },
       });
       console.log("Returns here")

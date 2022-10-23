@@ -351,6 +351,7 @@ model Idea {
   imagePath           String?   @map("image_path")
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
+  notification_dismissed Boolean @map("notification_dismissed")
 
   // relations
   comments        IdeaComment[]
