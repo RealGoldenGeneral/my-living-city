@@ -52,8 +52,6 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
   const btnPrevIdea = document.getElementById('btnPrevIdea') as HTMLButtonElement | null;
   useEffect(() => {
 
-    // setToalIdeasCount(3)
-    // setToalProposalsCount(3)
     updatedProposals = []
     updatedIdeas = []
     i = 0
@@ -94,7 +92,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
     console.log("end", nextEnd)
     console.log("start", nextStart)
     console.log("offset", nextOffset)
-    // console.log("filtered proposal", filteredProposals)
+
     setNextEnd(nextOffset + nextEnd)
     console.log(nextEnd)
     console.log("Total proposals", proposals)
@@ -132,13 +130,8 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
   }
 
   const paginationNextIdea = () => {
-    console.log("clicked")
-    console.log("netendIdea", nextEndIdea)
-    console.log("nextStartIdea", nextStartIdea)
-    console.log("offset", nextOffset)
+  
     setNextEndIdea(nextOffset + nextEndIdea)
-    console.log(nextEndIdea)
-    console.log("Total real ideas", ideas)
     updatedIdeas = []
 
     setPrevEndIdea(nextEndIdea - 3)
@@ -159,10 +152,9 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       }
 
     }
-    console.log("Updated ideas", updatedIdeas)
+   
     setfilteredIdeas(updatedIdeas)
     setNextStartIdea(nextEndIdea)
-    console.log("Next Start ideas", nextStartIdea)
 
     setToalIdeasCount(nextEndIdea + nextOffset)
     console.log("Total ideas Count", totalIdeasCount)
@@ -172,65 +164,8 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
 
   }
 
-
-  // const paginationNextIdea = () => {
-   
-  //   console.log("ideas count", totalIdeasCount)
-  //   if (ideas && (btnPrevIdea !== null)) {
-  //     btnPrevIdea.disabled = false
-  //     console.log("Button enabled again")
-  //   }
-  //   console.log("clicked")
-  //   console.log("end", nextEndIdea)
-  //   console.log("start", nextStartIdea)
-  //   console.log("offset", nextOffset)
-  //   console.log("filtered ideas", filteredIdeas)
-  //   setNextEndIdea(nextOffset + nextEndIdea)
-  //   console.log("NextEndIdea", nextEndIdea)
-  //   updatedIdeas = []
-  //   setPrevEndIdea(nextEndIdea - 3)
-  //   setPrevStartIdea(nextStartIdea - 3)
-  //   console.log("button status", btnPrevIdea != null)
-    
-  //   if (ideas) {
-  //     console.log("diff", (totalIdeasCount - ideas?.length))
-  //     console.log(btnNextIdea !== null )
-  //   }
-    
-    
-
-  //   for (let i = (nextStartIdea); i < (nextEndIdea); i++) {
-  //     console.log("i", i)
-
-  //     if (nextEndIdea == ideas?.length && btnNextIdea !== null) {
-
-  //       btnNextIdea.disabled = true
-  //     }
-
-  //     if (ideas && i < ideas.length) {
-  //       console.log("i", i)
-  //       updatedIdeas.push(ideas[i])
-  //     }
-
-  //   }
-  //   console.log("NextEndIdea:", nextEndIdea)
-  //   console.log("Ideas", updatedIdeas)
-  //   setfilteredIdeas(updatedIdeas)
-  //   setNextStart(nextEndIdea)
-  //   console.log("NextStarIdea", nextStartIdea)
-
-  //   console.log("NextOffset", nextOffset)
-  //   setToalIdeasCount(nextEndIdea + nextOffset)
-  //   console.log("Count", totalIdeasCount)
-
-  //   if (ideas && totalIdeasCount >= ideas?.length && btnNextIdea !== null) {
-  //     btnNextIdea.disabled = true
-  //   }
-  //   console.log("preStartIdea", preStartIdea)
-  //   console.log("prevEndIdea", prevEndIdea)
-  // }
   const paginationPrevious = () => {
-    console.log("clicked")
+
     setToalProposalsCount(totalProposalsCount - nextOffset)
     updatedProposals = []
     for (let i = preStart; i < prevEnd; i++) {
@@ -258,8 +193,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
     console.log("clicked")
     setToalProposalsCount(totalProposalsCount - nextOffset)
     updatedIdeas = []
-    console.log("preStartIdea", preStartIdea)
-    console.log("prevEndIdea", prevEndIdea)
+
     for (let i = preStartIdea; i < prevEndIdea; i++) {
       console.log("i", i)
       const btn = document.getElementById('btnNextIdea') as HTMLButtonElement | null;
@@ -274,7 +208,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       }
 
     }
-    console.log("update", updatedIdeas)
+
     setfilteredIdeas(updatedIdeas)
     setNextStartIdea(preStartIdea + 3)
     setNextEndIdea(prevEndIdea + 3)
