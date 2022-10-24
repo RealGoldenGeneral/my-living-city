@@ -132,10 +132,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     )
   }
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean) => {
-    const createFlagData = await createFlagUnderIdea(ideaId, token!);
+    await createFlagUnderIdea(ideaId, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
-    const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
-    const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+    await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
   }
 
   return (
