@@ -6,3 +6,6 @@
 */
 -- AlterTable
 ALTER TABLE "idea" ADD COLUMN     "notification_dismissed" BOOLEAN NOT NULL;
+
+-- AlterTable
+ALTER TABLE "idea_flag" ADD COLUMN     "flag_reason" TEXT;
