@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';
-import { createCommentFlagUnderIdea } from 'src/lib/api/flagRoutes';
+import { createCommentFlagUnderIdea, compareCommentFlagsWithThreshold } from 'src/lib/api/flagRoutes';
+import { updateCommentStatus } from 'src/lib/api/commentRoutes';
 import { IComment } from '../../../lib/types/data/comment.type';
 import { timeDifference } from '../../../lib/utilityFunctions';
 import IdeaCommentDislike from './IdeaCommentDislike';
@@ -12,7 +13,7 @@ interface IdeaCommentTileProps {
 }
 
 const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
-  const { token, isUserAuthenticated } = useContext(UserProfileContext);
+  const { token, user, isUserAuthenticated } = useContext(UserProfileContext);
   
   const {
     id,
@@ -70,6 +71,12 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
     }
     return(<span className={`name d-block font-weight-bold ${colour}`}>{userName}</span>)
   }
+  const createCommentFlagAndCheckThreshold = async(commentId: number, token: string, userId: string) => {
+    await createCommentFlagUnderIdea(commentId, token!);
+    const thresholdExceeded = await compareCommentFlagsWithThreshold(commentId, token!);
+    await updateCommentStatus(token, userId, commentId.toString(), !thresholdExceeded, false);
+  }
+
   return (
     <Container fluid className='my-1'>
       <Row className='justify-content-center'>
@@ -99,7 +106,9 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
               <IdeaCommentLike commentData={commentData} />
               <IdeaCommentDislike commentData={commentData} />
               {!reviewed ? (
-              <Button onClick={async () => await createCommentFlagUnderIdea(id, token!)}>Flag</Button>
+              <Button onClick={
+                async () => await createCommentFlagAndCheckThreshold(id, token!, user!.id)
+              }>Flag</Button>
               ) : null}
             </div>
           )}
