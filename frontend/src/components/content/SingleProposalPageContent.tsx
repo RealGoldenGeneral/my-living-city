@@ -50,7 +50,7 @@ import {
   postCreateVolunteer,
   postCreateDonor,
 } from "src/lib/api/communityRoutes";
-import { createFlagUnderIdea, updateFalseFlagIdea } from "src/lib/api/flagRoutes";
+import { createFlagUnderIdea, updateFalseFlagIdea, compareIdeaFlagsWithThreshold } from "src/lib/api/flagRoutes";
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
   proposalData: any;
@@ -276,9 +276,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   console.log("isPostAuthor", isPostAuthor);
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string) => {
-    const createFlagData = await createFlagUnderIdea(ideaId, reason, token!);
-    const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
-    const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+    await createFlagUnderIdea(ideaId, reason, token!);
+    const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
+    await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
   }
 
   const selectReasonHandler = (eventKey: string) => {

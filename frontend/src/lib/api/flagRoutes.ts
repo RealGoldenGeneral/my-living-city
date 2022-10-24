@@ -3,6 +3,7 @@ import { API_BASE_URL } from "../constants";
 import { IComment, ICommentAggregateCount } from "../types/data/comment.type";
 import { ICreateCommentInput } from "../types/input/createComment.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
+import { getThreshhold } from "./threshholdRoutes";
 
 //For IdeaFlags
 export const createFlagUnderIdea = async (
@@ -58,6 +59,33 @@ export const createFlagUnderIdea = async (
     return res.data;
   }
 
+/**
+ * Compares current idea's number of flags with the threshold.
+ * @param ideaId idea's ID
+ * @param token authentication token
+ * @returns true if idea flags are greater than or equal threshold
+ */
+  export const compareIdeaFlagsWithThreshold = async (
+    ideaId: number,
+    token: string,
+  ) => {
+    if (!ideaId || !token) {
+      throw new Error(
+        "An ideaId and valid JWT must be specified to compare flag count with threshold."
+      );
+    }
+    const flagCount = await axios({
+      method: "get",
+      url: `${API_BASE_URL}/flag/getFlags/${ideaId}`,
+      headers: {
+        "x-auth-token": token,
+        "Access-Control-Allow-Origin": "*",
+      },
+      withCredentials: true,
+    })
+    const thresholdCount = await getThreshhold(token);
+    return flagCount.data >= thresholdCount.number;
+  }
 
 //For commentFlags
 export const createCommentFlagUnderIdea = async (
@@ -109,4 +137,32 @@ export const updateFalseFlagComment = async (
   export const getAllCommentFlags= async (token: string | null) => {
     const res = await axios.get(`${API_BASE_URL}/commentFlag/getAll`,getAxiosJwtRequestOption(token!));
     return res.data;
+  }
+
+  /**
+   * Compares current commentId's number of flags with the threshold.
+   * @param commentId commentId's ID
+   * @param token authentication token
+   * @returns true if comment flags are greater than or equal threshold
+   */
+    export const compareCommentFlagsWithThreshold = async (
+      commentId: number,
+      token: string,
+    ) => {
+      if (!commentId || !token) {
+        throw new Error(
+          "An commentId and valid JWT must be specified to compare commentFlag count with threshold."
+        );
+      }
+      const flagCount = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/commentFlag/getFlags/${commentId}`,
+        headers: {
+          "x-auth-token": token,
+          "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true,
+      })
+      const thresholdCount = await getThreshhold(token);
+      return flagCount.data >= thresholdCount.number;
   }
