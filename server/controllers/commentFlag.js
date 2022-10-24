@@ -134,4 +134,31 @@ commentFlagRouter.post(
       }
     }
   );
+
+  // Get # of flags of comment by commentId
+  commentFlagRouter.get(
+    '/getFlags/:commentId',
+    passport.authenticate('jwt', {session: false}),
+    async (req, res, next) => {
+      try {
+        const commentFlagsCount = await prisma.commentFlag.count({
+          where: {
+            commentId: parseInt(req.params.commentId)
+          }
+        })
+        res.json(commentFlagsCount);
+      } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+          message: "An error occured while trying to fetch the count of commentFlags.",
+          details: {
+            errorMessage: error.message,
+            errorStack: error.stack,
+          }
+        });
+      } finally {
+        await prisma.$disconnect();
+      }
+    }
+  )
   module.exports = commentFlagRouter;
