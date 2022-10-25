@@ -338,6 +338,8 @@ model Idea {
   // Values
   title               String
   description         String
+  benefits            String
+  steps               String
   userType            String    @default("Resident")
   communityImpact     String?   @map("community_impact")
   natureImpact        String?   @map("nature_impact")

@@ -108,6 +108,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       title: "",
       userType: segData ? segData[0].userType : "Resident",
       description: "",
+      benefits: "",
+      steps: "",
       artsImpact: "",
       communityImpact: "",
       energyImpact: "",

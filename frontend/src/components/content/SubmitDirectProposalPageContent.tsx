@@ -113,6 +113,8 @@ const SubmitDirectProposalPageContent: React.FC<
         title: values.title,
         userType: values.userType,
         description: values.description,
+        benefits: values.benefits,
+        steps: values.steps,
         artsImpact: values.artsImpact,
         communityImpact: values.communityImpact,
         energyImpact: values.energyImpact,
@@ -179,11 +181,12 @@ const SubmitDirectProposalPageContent: React.FC<
 
   const formik = useFormik<ICreateIdeaInput>({
     initialValues: {
-      // TODO: CatId when chosen is a string
       categoryId: categories ? categories[0].id : DEFAULT_CAT_ID,
       title: "",
       userType: segData ? segData[0].userType : "Resident",
       description: "",
+      benefits: "",
+      steps: "",
       artsImpact: "",
       communityImpact: "",
       energyImpact: "",
@@ -304,13 +307,33 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*Describe your proposal</Form.Label>
+              <Form.Label>*How did Idea Post inspired you create a proposal</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 name="description"
                 onChange={formik.handleChange}
                 value={formik.values.description}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*How will the community benefit from implementing this proposal</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="benefits"
+                onChange={formik.handleChange}
+                value={formik.values.benefits}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*What steps do you envision this proposal will need</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="steps"
+                onChange={formik.handleChange}
+                value={formik.values.steps}
               />
             </Form.Group>
             <Form.Group>

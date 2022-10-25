@@ -1,3 +1,14 @@
+/*
+  Warnings:
+
+  - Added the required column `benefits` to the `idea` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `steps` to the `idea` table without a default value. This is not possible if the table is not empty.
+
+*/
+-- AlterTable
+ALTER TABLE "idea" ADD COLUMN     "benefits" TEXT NOT NULL,
+ADD COLUMN     "steps" TEXT NOT NULL;
+
 -- RenameIndex
 ALTER INDEX "UserSegments_user_id_key" RENAME TO "UserSegments.user_id_unique";
 

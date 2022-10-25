@@ -71,6 +71,8 @@ export const postCreateIdea = async (
     categoryId,
     title,
     description,
+    benefits,
+    steps,
     superSegmentId,
     segmentId,
     subSegmentId,
@@ -107,6 +109,10 @@ export const postCreateIdea = async (
   formBody.append("title", title);
 
   formBody.append("description", description);
+
+  formBody.append("benefits", benefits);
+  
+  formBody.append("steps", steps)
 
   if (segmentId) {
     formBody.append("segmentId", segmentId.toString());

@@ -85,6 +85,8 @@ ideaRouter.post(
 
         let { categoryId, superSegmentId, segmentId, subSegmentId, banned, title,
           description,
+          benefits,
+          steps,
           communityImpact,
           natureImpact,
           artsImpact,
@@ -94,7 +96,7 @@ ideaRouter.post(
           state,
           //TODO
         } = req.body;
-        console.log(req.body)
+        console.log("body:", req.body)
 
         if (supportingProposalId) {
           supportingProposalId = parseInt(supportingProposalId);
@@ -231,7 +233,9 @@ ideaRouter.post(
           manufacturingImpact,
           supportingProposalId,
           state,
-          notification_dismissed
+          notification_dismissed,
+          benefits,
+          steps,
         };
 
         // Create an idea and make the author JWT bearer
@@ -351,6 +355,8 @@ ideaRouter.post(
         i.category_id as "categoryId",
         i.title,
         i.description,
+        i.benefits,
+        i.steps,
         i.notification_dismissed,
         i.segment_id as "segId",
         i.sub_segment_id as "subSegId",
@@ -468,6 +474,8 @@ ideaRouter.get(
           i.category_id as "categoryId",
           i.title,
           i.description,
+          i.benefits,
+          i.steps,
           i.notification_dismissed,
           i.segment_id,
           i.sub_segment_id,
