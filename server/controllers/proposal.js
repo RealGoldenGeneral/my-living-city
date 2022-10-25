@@ -87,19 +87,11 @@ proposalRouter.get(
 
 // Get all Proposals
 proposalRouter.get(
-    '/getAll',
+    '/getall',
     async (req, res, next) => {
         try {
-            const proposals = await prisma.proposal.findMany({
-                include: {
-                    idea:
-                    {
-                        include: {
-                            ratings: true,
-                        }
-                    }
-                }
-            });
+            const proposals = await prisma.proposal.findMany();
+            console.log("these are the proposals");
             res.json(proposals);
         } catch (error) {
             res.status(400).json({
@@ -163,6 +155,103 @@ proposalRouter.post(
 )
 
 // Get all idea as well as relations with ideaId
+proposalRouter.get(
+    '/getByIdeaId/:ideaId',
+    async (req, res, next) => {
+        try {
+            const parsedIdeaId = parseInt(req.params.ideaId);
+
+            // check if id is valid
+            if (!parsedProposalId) {
+                return res.status(400).json({
+                    message: `A valid ideaId must be specified in the route parameter.`,
+                });
+            }
+
+            const foundProposal = await prisma.proposal.findUnique({
+                where: { ideaId: parsedIdeaId },
+                include: {
+                    suggestedIdeas: {
+                        select: {
+                            id: true,
+                            title: true,
+                            author: {
+                                select: {
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    collaborations: {
+                        select: {
+                            experience: true,
+                            role: true,
+                            time: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    volunteers: {
+                        select: {
+                            experience: true,
+                            task: true,
+                            time: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                    donors: {
+                        select: {
+                            donations: true,
+                            contactInfo: true,
+                            author: {
+                                select: {
+                                    id: true,
+                                    fname: true,
+                                    lname: true,
+                                }
+                            }
+                        },
+                    },
+                }
+            });
+            if (!foundProposal) {
+                return res.status(400).json({
+                    message: `The idea with that listed ID (${parsedIdeaId}) does not exist.`,
+                });
+            }
+
+            const result = { ...foundProposal };
+
+            res.status(200).json(result);
+        } catch (error) {
+            console.error(error);
+            res.status(400).json({
+                message: `An Error occured while trying to fetch idea with id ${req.params.ideaId}.`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        } finally {
+            await prisma.$disconnect();
+        }
+    }
+)
+
 proposalRouter.get(
     '/get/:proposalId',
     async (req, res, next) => {

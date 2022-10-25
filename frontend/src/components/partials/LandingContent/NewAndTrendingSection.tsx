@@ -9,8 +9,11 @@ import { Button } from "react-bootstrap";
 import { useState } from "react";
 import { ICategory } from "src/lib/types/data/category.type";
 import { useCategories} from "src/hooks/categoryHooks";
+import {useAllProposals} from "src/hooks/proposalHooks";
 import { capitalizeFirstLetterEachWord } from "./../../../lib/utilityFunctions";
 import { useAllSuperSegments, useAllSegments } from "./../../../hooks/segmentHooks";
+import ProposalTile from "../../tiles/ProposalTile";
+import {IProposalWithAggregations} from "../../../lib/types/data/proposal.type";
 
 
 interface NewAndTrendingProps {
@@ -44,6 +47,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
   const { data: categories, isLoading, error, isError } = useCategories();
   const { data: allSegments } = useAllSegments();
   const { data: allSuperSegments } = useAllSuperSegments();
+  const { data: allProposals } = useAllProposals();
   const postStatuses = ["IDEA", "PROPOSAL", "PROJECT"];
 
   const handleCategory = (e: any, value: any) => {
@@ -203,7 +207,8 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
           <Carousel.Item key={i}>
             {topIdeas
               ? topIdeas.slice(i * 3, i * 3 + 3).map((idea) => {
-                return doesIdeaPassFilter(idea) ? 
+                // @ts-ignore
+                  return doesIdeaPassFilter(idea) ?
                 (
                   <Col
                     key={idea.id}
@@ -211,11 +216,20 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                     lg={4}
                     className="pt-3 align-items-stretch"
                   >
-                    <IdeaTile
-                      ideaData={idea}
-                      showFooter={true}
-                      postType={idea.state === "IDEA" ? "Idea" : "Proposal"}
-                    />
+                    {idea.state === "IDEA" ?
+                        <IdeaTile
+                            ideaData={idea}
+                            showFooter={true}
+                            postType={"Idea"}
+                        />
+                    :
+                        <ProposalTile
+                            proposalData={ {id: allProposals!.filter(obj => { if (obj.ideaId == idea.id) return obj})[0].id, ideaId: idea.id, idea} }
+                            showFooter={true}
+                            postType={"Proposal"}
+                        />
+                    }
+
                   </Col>
                 ) : null})
               : [...Array(12)].map((x, i) => (

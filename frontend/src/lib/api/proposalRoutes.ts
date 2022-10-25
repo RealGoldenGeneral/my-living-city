@@ -41,6 +41,11 @@ export const getSingleProposal = async (proposalId: string) => {
   return res.data;
 };
 
+export const getSingleProposalByIdeaId = async (ideaId: string) => {
+  const res = await axios.get(`${API_BASE_URL}/proposal/getByIdeaId/${ideaId}`);
+  return res.data;
+};
+
 export const postCreateProposal = async (
   proposal: any,
   banned: boolean,

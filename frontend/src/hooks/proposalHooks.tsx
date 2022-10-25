@@ -5,7 +5,8 @@ import {
 } from "../lib/types/data/proposal.type";
 import { IFetchError } from "../lib/types/types";
 import {
-  getSingleProposal,
+  getAllProposals,
+  getSingleProposal, getSingleProposalByIdeaId,
   postAllProposalsWithBreakdown,
 } from "../lib/api/proposalRoutes";
 
@@ -50,3 +51,18 @@ export const useSingleProposal = (ProposalId: string) => {
     }
   );
 };
+
+export const useSingleProposalByIdeaId = (IdeaId: string) => {
+  return useQuery<IProposalWithAggregations, IFetchError>(
+      ["proposal", IdeaId],
+      () => getSingleProposalByIdeaId(IdeaId),
+      // https://react-query.tanstack.com/guides/initial-query-data#staletime-and-initialdataupdatedat
+      {
+        staleTime: 45 * 60 * 1000, // 30 minutes
+      }
+  );
+};
+
+export const useAllProposals = () => {
+  return useQuery<IProposalWithAggregations[], IFetchError>('proposals', getAllProposals, );
+}
