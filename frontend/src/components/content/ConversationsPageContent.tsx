@@ -59,14 +59,22 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
     start = 3
     offset = 3
     end = start + offset
-    for (i; i < 3; i++) {
-      if (proposals) {
-        updatedProposals.push(proposals[i])
+    if (ideas && ideas?.length <= 3) {
+      updatedIdeas = ideas
+    } else {
+      for (j; j < 3; j++) {
+        if (ideas) {
+          updatedIdeas.push(ideas[j])
+        }
       }
     }
-    for (j; j < 3; j++) {
-      if (ideas) {
-        updatedIdeas.push(ideas[j])
+    if (proposals && proposals?.length <= 3) {
+      updatedProposals = proposals
+    } else {
+      for (i; i < 3; i++) {
+        if (proposals) {
+          updatedProposals.push(proposals[i])
+        }
       }
     }
 
@@ -79,12 +87,19 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
 
   if (btnPrev != null && nextStart == 3) {
     btnPrev.disabled = true
+  }
 
+  if (btnNext != null && proposals && proposals?.length <= 3) {
+    btnNext.disabled = true
   }
 
   if (btnPrevIdea != null && nextStartIdea == 3) {
 
     btnPrevIdea.disabled = true
+  }
+
+  if (btnNextIdea != null && ideas && ideas?.length <= 3) {
+    btnNextIdea.disabled = true
   }
 
   const paginationNext = () => {
@@ -130,7 +145,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
   }
 
   const paginationNextIdea = () => {
-  
+
     setNextEndIdea(nextOffset + nextEndIdea)
     updatedIdeas = []
 
@@ -152,7 +167,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       }
 
     }
-   
+
     setfilteredIdeas(updatedIdeas)
     setNextStartIdea(nextEndIdea)
 
@@ -208,20 +223,21 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       }
 
     }
-
     setfilteredIdeas(updatedIdeas)
+
     setNextStartIdea(preStartIdea + 3)
     setNextEndIdea(prevEndIdea + 3)
     setPrevStartIdea(preStartIdea - 3)
     setPrevEndIdea(prevEndIdea - 3)
+    console.log("Filtered Proposals:", filteredProposals)
   }
   return (
     <Container className="conversations-page-content">
       <h3 style={{ paddingTop: "1rem" }}>Proposals</h3>
       <hr />
       <Row>
-        {filteredProposals
-          ? filteredProposals.map((proposal) => (
+        {filteredProposals.length > 0
+          ? filteredProposals && filteredProposals.map((proposal) => (
             <Col
               key={proposal.id}
               md={6}
@@ -235,13 +251,14 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
               />
             </Col>
           ))
-          : [...Array(3)].map((x, i) => (
-            <Col key={i} md={6} lg={4} className="pt-3 align-items-stretch">
-              <PlaceholderIdeaTile />
-            </Col>
-          ))}
+          : <div className="d-flex justify-content-center ml-3">Sorry, no proposals posted yet!</div>}
       </Row>
       <div className="d-flex justify-content-center">
+        {/* { filteredProposals.length > 3 ? (<><div className="my-3">
+          <Button onClick={paginationPrevious} id="btnPrev">Previous page</Button>
+        </div><div className="my-3">
+            <Button onClick={paginationNext} id="btnNext">Next page</Button>
+          </div></>) : <div></div>} */}
         <div className="my-3">
           <Button onClick={paginationPrevious} id="btnPrev">Previous page</Button>
         </div>
@@ -250,22 +267,25 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
         </div>
 
       </div>
+
       <h3 style={{ marginTop: "1rem" }}>Ideas</h3>
       <hr style={{ paddingBottom: "0rem", marginBottom: "0rem" }} />
       <Row>
         {ideas
-          ? filteredIdeas.map((idea) => (
+          ? filteredIdeas.map((idea) => (idea &&
             <Col key={idea.id} className="col-card" xs={12} md={6} lg={4}>
               <IdeaTile ideaData={idea} showFooter={true} postType={"Idea"} />
             </Col>
           ))
-          : [...Array(3)].map((x, i) => (
-            <Col key={i} md={6} lg={4} className="pt-3 align-items-stretch">
-              <PlaceholderIdeaTile />
-            </Col>
-          ))}
+          : <div className="d-flex justify-content-center ml-3">Sorry, no ideas posted yet!</div>}
       </Row>
       <div className="d-flex justify-content-center">
+        {/* { filteredIdeas.length > 0 && ideas && ideas.length > 3 ? (<><div className="my-3">
+          <Button onClick={paginationPrevIdea} id="btnPrevIdea">Previous page</Button>
+        </div><div className="my-3">
+            <Button onClick={paginationNextIdea} id="btnNextIdea">Next page</Button>
+          </div></>) : <div></div>} */}
+
         <div className="my-3">
           <Button onClick={paginationPrevIdea} id="btnPrevIdea">Previous page</Button>
         </div>
