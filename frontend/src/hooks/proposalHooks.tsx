@@ -64,5 +64,5 @@ export const useSingleProposalByIdeaId = (IdeaId: string) => {
 };
 
 export const useAllProposals = () => {
-  return useQuery<IProposalWithAggregations[], IFetchError>('proposals', getAllProposals, );
+  return useQuery<IProposalWithAggregations[], IFetchError>('proposals', ()=>getAllProposals());
 }

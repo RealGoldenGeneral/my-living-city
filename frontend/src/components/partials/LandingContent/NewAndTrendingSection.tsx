@@ -6,7 +6,7 @@ import {BsFilter} from "react-icons/bs";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import CSS from "csstype";
 import { Button } from "react-bootstrap";
-import { useState } from "react";
+import React, { useState } from "react";
 import { ICategory } from "src/lib/types/data/category.type";
 import { useCategories} from "src/hooks/categoryHooks";
 import {useAllProposals} from "src/hooks/proposalHooks";
@@ -118,7 +118,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
   const doesIdeaPassFilter = (idea: IIdeaWithAggregations): boolean => {
     if (filterConfig.category.length !== 0 && !filterConfig.category.includes(idea.categoryId)) {
       return false;
-    } 
+    }
     if (filterConfig.impactArea.length !== 0) {
       let doesIdeaPassImpact = true;
       filterConfig.impactArea.forEach((impactArea: string) => {
@@ -146,7 +146,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
   const titleStyle: CSS.Properties = {
     display: "inline",
   }
-  
+
   const filterButtonStyle: CSS.Properties = {
     float: "right"
   }
@@ -222,7 +222,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                             showFooter={true}
                             postType={"Idea"}
                         />
-                    :
+                    : allProposals &&
                         <ProposalTile
                             proposalData={ {id: allProposals!.filter(obj => { if (obj.ideaId == idea.id) return obj})[0].id, ideaId: idea.id, idea} }
                             showFooter={true}
@@ -264,11 +264,11 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
               categories.map((category, i) => {
                 return (
                   <div key={i}>
-                    <input defaultChecked={filterConfig.category.includes(category.id)} 
+                    <input defaultChecked={filterConfig.category.includes(category.id)}
                       type="checkbox"
-                      id={category.title} 
-                      name={category.title} 
-                      value={category.id} 
+                      id={category.title}
+                      name={category.title}
+                      value={category.id}
                       onClick={(e) => handleCategory(e, category.id)}/>
                     <label style={{paddingLeft:"10px"}} htmlFor={category.title}>{capitalizeFirstLetterEachWord(category.title)}</label>
                   </div>
@@ -328,9 +328,9 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                   <div key={i}>
                     <input defaultChecked={filterConfig.superSeg.includes(superSeg.superSegId)}
                       type="checkbox"
-                      id={superSeg.name} 
+                      id={superSeg.name}
                       name={superSeg.name}
-                      value={superSeg.superSegId} 
+                      value={superSeg.superSegId}
                       onClick={(e) => {handleSuperSeg(e, superSeg.superSegId)}}
                       />
                     <label style={{paddingLeft:"10px"}} htmlFor={superSeg.name}>{capitalizeFirstLetterEachWord(superSeg.name)}</label>
@@ -355,11 +355,11 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
               allSegments.map((seg, i) => {
                 return (
                   <div key={i}>
-                    <input type="checkbox" 
+                    <input type="checkbox"
                       defaultChecked={filterConfig.seg.includes(seg.segId)}
                       id={seg.name}
                       name={seg.name}
-                      value={seg.segId} 
+                      value={seg.segId}
                       onClick={e => handleSeg(e, seg.segId)}/>
                     <label style={{paddingLeft:"10px"}} htmlFor={seg.name}>{capitalizeFirstLetterEachWord(seg.name)}</label>
                   </div>
@@ -384,11 +384,11 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
               postStatuses.map((status, i) => {
                 return (
                   <div key={i}>
-                    <input type="checkbox" 
+                    <input type="checkbox"
                       defaultChecked={filterConfig.status.includes(status)}
                       id={status}
                       name={status}
-                      value={status} 
+                      value={status}
                       onClick={e => handlePostStatus(e, status)}/>
                     <label style={{paddingLeft:"10px"}} htmlFor={status}>{capitalizeFirstLetterEachWord(status)}</label>
                   </div>
@@ -399,11 +399,11 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
           </Collapse>
           <br />
 
-          
+
 
         </Modal.Body>
       </Modal>
-      
+
     </Container>
   );
 };

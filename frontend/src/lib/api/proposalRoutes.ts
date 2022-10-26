@@ -11,6 +11,7 @@ import {
 } from "../types/data/idea.type";
 import { ICreateIdeaInput } from "../types/input/createIdea.input";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
+import {IProposalWithAggregations} from "../types/data/proposal.type";
 
 export const getDirectProposal = async () => {
   const res = await axios.get(`${API_BASE_URL}/proposal/`);
@@ -18,7 +19,7 @@ export const getDirectProposal = async () => {
 };
 
 export const getAllProposals = async () => {
-  const res = await axios.get(`${API_BASE_URL}/proposal/getall`);
+  const res = await axios.get<IProposalWithAggregations[]>(`${API_BASE_URL}/proposal/getall`);
   return res.data;
 };
 

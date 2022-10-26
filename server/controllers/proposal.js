@@ -92,7 +92,8 @@ proposalRouter.get(
         try {
             const proposals = await prisma.proposal.findMany();
             console.log("these are the proposals");
-            res.json(proposals);
+            console.log(proposals);
+            res.status(200).json(proposals);
         } catch (error) {
             res.status(400).json({
                 message: error.message,
@@ -403,7 +404,7 @@ proposalRouter.put(
                 });
             }
 
-            // Conditional add params to update only fields passed in 
+            // Conditional add params to update only fields passed in
             const updateGeoData = {
                 ...lat && { lat },
                 ...lon && { lon }
