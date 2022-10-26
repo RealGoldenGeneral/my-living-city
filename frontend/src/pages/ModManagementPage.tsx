@@ -18,7 +18,7 @@ import { useAllComments } from 'src/hooks/commentHooks';
 import { IUser } from 'src/lib/types/data/user.type';
 import { IComment } from 'src/lib/types/data/comment.type';
 import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonGroup, Dropdown, DropdownButton } from 'react-bootstrap';
 import { checkIfUserHasRated } from 'src/lib/utilityFunctions';
 import UserFlagsModal from 'src/components/partials/SingleIdeaContent/UserFlagsModal';
 import { updateLanguageServiceSourceFile } from 'typescript';
@@ -168,6 +168,15 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
         <br></br>
         <UserManagementContent users={quarantineUser!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData}/>
         <br></br>
+        
+        <ButtonGroup className="mr-2">
+                <DropdownButton id="dropdown-basic-button d-flex" size="lg" title="Flag">
+                  <Dropdown.Item>7 days</Dropdown.Item>
+                  <Dropdown.Item>14 days</Dropdown.Item>
+                </DropdownButton>
+        </ButtonGroup>    
+            
+          
         <IdeaManagementContent users={userData!} token={token} user={user} ideas={quarantineIdea!} flags={flagData}/>
         <br></br>
         <ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={quarantineIdea!} flags={flagData}/>
@@ -180,6 +189,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   if(pageState ==="user"){
     return (
       <div>
+        
       <div style={{width: 200, float:'left', height:240, marginLeft:'12%'}}>
         <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40}}  onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
         <br></br>
