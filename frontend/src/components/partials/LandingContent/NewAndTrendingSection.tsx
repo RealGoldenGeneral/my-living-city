@@ -205,7 +205,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
       <Carousel controls={true} interval={null} slide={true} fade={false}>
         {[...Array(4)].map((x, i) => (
           <Carousel.Item key={i}>
-            {topIdeas
+            {topIdeas && allProposals
               ? topIdeas.slice(i * 3, i * 3 + 3).map((idea) => {
                 // @ts-ignore
                   return doesIdeaPassFilter(idea) ?
@@ -222,7 +222,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                             showFooter={true}
                             postType={"Idea"}
                         />
-                    : allProposals &&
+                    :
                         <ProposalTile
                             proposalData={ {id: allProposals!.filter(obj => { if (obj.ideaId == idea.id) return obj})[0].id, ideaId: idea.id, idea} }
                             showFooter={true}
