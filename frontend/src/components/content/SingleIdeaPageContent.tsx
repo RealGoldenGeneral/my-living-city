@@ -269,7 +269,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
           </Form>
                 Are you sure about flagging this post?</Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button variant="secondary" onClick={handleCloseOther}>
                   Cancel
                 </Button>
                 <Button style={{background: 'red'}} variant="primary"  onClick={
