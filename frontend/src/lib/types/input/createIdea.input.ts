@@ -6,8 +6,8 @@ export interface ICreateIdeaInput {
   userType: string;
   title: string;
   description: string;
-  benefits: string;
-  steps: string;
+  author_details: string;
+  reasons: string;
   communityImpact?: string;
   natureImpact?: string;
   artsImpact?: string;
@@ -29,3 +29,5 @@ export interface ICreateIdeaInput {
   needFeedback?: boolean;
   location?: string;
 }
+
+

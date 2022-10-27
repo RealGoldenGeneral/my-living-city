@@ -113,8 +113,8 @@ const SubmitDirectProposalPageContent: React.FC<
         title: values.title,
         userType: values.userType,
         description: values.description,
-        benefits: values.benefits,
-        steps: values.steps,
+        author_details: values.author_details,
+        reasons: values.reasons,
         artsImpact: values.artsImpact,
         communityImpact: values.communityImpact,
         energyImpact: values.energyImpact,
@@ -185,8 +185,8 @@ const SubmitDirectProposalPageContent: React.FC<
       title: "",
       userType: segData ? segData[0].userType : "Resident",
       description: "",
-      benefits: "",
-      steps: "",
+      author_details: "",
+      reasons: "",
       artsImpact: "",
       communityImpact: "",
       energyImpact: "",
@@ -307,7 +307,17 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*How did Idea Post inspired you create a proposal</Form.Label>
+              <Form.Label>*Tell us a bit about yourself</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="author_details"
+                onChange={formik.handleChange}
+                value={formik.values.author_details}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*What are you proposing?</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -317,23 +327,13 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*How will the community benefit from implementing this proposal</Form.Label>
+              <Form.Label>*What are the benefits of your proposal to the community?</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
-                name="benefits"
+                name="reasons"
                 onChange={formik.handleChange}
-                value={formik.values.benefits}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>*What steps do you envision this proposal will need</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="steps"
-                onChange={formik.handleChange}
-                value={formik.values.steps}
+                value={formik.values.reasons}
               />
             </Form.Group>
             <Form.Group>
