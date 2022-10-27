@@ -319,7 +319,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                       </td>
                       <td>
                         <a href={"/proposals/" + proposal!.id}>
-                          {"Link to Proposal"}
+                          {proposalIdea!.title}
                         </a>
                       </td>
                     </tr>
