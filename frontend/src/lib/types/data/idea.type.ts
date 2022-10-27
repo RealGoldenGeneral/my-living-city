@@ -1,7 +1,7 @@
 import { ICategory } from "./category.type";
 import { IAddress } from "./address.type";
 import { IGeo } from "./geo.type";
-import { IProposal } from "./proposal.type";
+import {IProposal, IProposalWithAggregations} from "./proposal.type";
 import { IProject } from "./project.type";
 import { IRating } from "./rating.type";
 import { IComment } from "./comment.type";
@@ -40,6 +40,7 @@ export interface IIdeaWithRelationship extends IIdea {
   address?: IAddress;
   category?: ICategory;
   userType: string;
+  supportedProposal?: IProposalWithAggregations;
   segment?: ISegment; //
   subSegment?: ISubSegment; //
   superSegment?: ISuperSegment;

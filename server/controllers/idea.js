@@ -614,7 +614,8 @@ ideaRouter.get(
           },
           segment: true,
           subSegment: true,
-          superSegment: true
+          superSegment: true,
+          supportedProposal: true
         }
       });
       if (!foundIdea) {
