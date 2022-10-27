@@ -315,7 +315,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <tbody>
                     <tr>
                       <td>
-                        {proposalIdea!.author.fname} {proposalIdea!.author.lname}
+                        {proposalIdea!.author!.fname} {proposalIdea!.author!.lname}
                       </td>
                       <td>
                         <a href={"/proposals/" + proposal!.id}>
