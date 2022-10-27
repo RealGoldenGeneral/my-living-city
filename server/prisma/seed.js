@@ -200,7 +200,17 @@ async function main() {
 		}
 	});
 
-
+	const defaultThreshold = await prisma.threshhold.upsert({
+		where: {id: 1},
+		update: {
+			id: 1,
+			number: 3
+		},
+		create: {
+			id: 1,
+			number: 3
+		}
+	});
 
 	console.log('Resolved populated Categories', resolvedCategories);
 	//console.log('Resolved populated UserRoles', resolvedUserRoles);
@@ -211,6 +221,7 @@ async function main() {
 	console.log('Resolved populated sub segments', fairfieldSubSegment);
 	console.log('Resolved populated sub segments', rutledge_parkSubSegment);
 	console.log('Resolved populated sub segments', saxe_pointSubSegment);
+	console.log('Resolved populating threshold', defaultThreshold);
 }
 
 main()
