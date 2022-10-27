@@ -85,8 +85,8 @@ ideaRouter.post(
 
         let { categoryId, superSegmentId, segmentId, subSegmentId, banned, title,
           description,
-          benefits,
-          steps,
+          reasons,
+          author_details,
           communityImpact,
           natureImpact,
           artsImpact,
@@ -234,8 +234,8 @@ ideaRouter.post(
           supportingProposalId,
           state,
           notification_dismissed,
-          benefits,
-          steps,
+          reasons,
+          author_details,
         };
 
         // Create an idea and make the author JWT bearer
@@ -355,8 +355,8 @@ ideaRouter.post(
         i.category_id as "categoryId",
         i.title,
         i.description,
-        i.benefits,
-        i.steps,
+        i.reasons,
+        i.author_details,
         i.notification_dismissed,
         i.segment_id as "segId",
         i.sub_segment_id as "subSegId",
@@ -474,8 +474,8 @@ ideaRouter.get(
           i.category_id as "categoryId",
           i.title,
           i.description,
-          i.benefits,
-          i.steps,
+          i.reasons,
+          i.author_details,
           i.notification_dismissed,
           i.segment_id,
           i.sub_segment_id,
