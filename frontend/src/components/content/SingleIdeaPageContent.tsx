@@ -37,6 +37,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 
 import ModalExample from "src/components/modal/Modal";
+import Form from 'react-bootstrap/Form';
 
 interface SingleIdeaPageContentProps {
   ideaData: IIdeaWithRelationship;
@@ -114,10 +115,27 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const {data: isFollowingPost, isLoading: isFollowingPostLoading} = useCheckIdeaFollowedByUser(token, (user ? user.id : user), ideaId);
 
   const [show, setShow] = useState(false);
+  const [showOther, setShowOther] = useState(false);
   const [flagReason, setFlagReason] = useState("");
+  const [otherFlagReason, setOtherFlagReason] = useState("");
+  function getOtherFlagReason(val: any) {
+    setOtherFlagReason("OTHER: " + val.target.value)
+    // console.log(val.target.value)
+    // console.log(otherFlagReason)
+  }
+  // onInput = ({target:{otherFlagReason}}) => setOtherFlagReason(otherFlagReason),
+  // onFormSubmit = e => {
+  //   e.preventDefault()
+  //   console.log(otherFlagReason)
+  //   setOtherFlagReason()
+  // }
+
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleCloseOther = () => setShowOther(false);
+  const handleShowOther = () => setShowOther(true);
 
   useEffect(() => {
     if (!isFollowingPostLoading) {
@@ -144,6 +162,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     )
   }
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string) => {
+    console.log(reason)
     await createFlagUnderIdea(ideaId, reason, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
     await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
@@ -154,9 +173,20 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     setFlagReason(eventKey!)
   }
 
+  const selectOtherReasonHandler = (eventKey: string) => {
+    handleShowOther();
+    // setOtherFlagReason(eventKey!)
+  }
+
   const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean) => {
     handleClose();
     await flagFunc(ideaId, token, userId, ideaActive, flagReason);
+  }
+
+  const submitOtherFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+    handleCloseOther();
+    await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason);
+    console.log(otherFlagReason);
   }
 
   return (
@@ -177,9 +207,12 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   <ButtonGroup className="mr-2">
                   {!reviewed ? (
                     <DropdownButton id="dropdown-basic-button d-flex" size="lg" title="Flag">
-                      <Dropdown.Item eventKey= "Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Inappropriate Language</Dropdown.Item>
-                      <Dropdown.Item eventKey= "Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Wrong Community</Dropdown.Item>
-                      <Dropdown.Item eventKey= "Discriminatory Content" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Discriminatory Content</Dropdown.Item>
+                      <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
+                      <Dropdown.Item eventKey= "Submission in Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Submission in Wrong Community</Dropdown.Item>
+                      <Dropdown.Item eventKey= "Spam/Unsolicited Advertisement" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Spam/Unsolicited Advertisement</Dropdown.Item>
+                      <Dropdown.Item eventKey= "Unrelated to Discussion (Off Topic)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Unrelated to Discussion (Off Topic)</Dropdown.Item>
+                      <Dropdown.Item eventKey= "Incomplete Submission (Requires Additional Details)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Incomplete Submission (Requires Additional Details)</Dropdown.Item>
+                      <Dropdown.Item eventKey= "Other" onSelect={(eventKey) => selectOtherReasonHandler(eventKey!)}>Other</Dropdown.Item>
                     </DropdownButton>
                   // <Button style={{height: '3rem', marginRight: 5, background: 'red'}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language)}>Flag</Button>
                   ) : null}
@@ -187,6 +220,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <ButtonGroup className="mr-2">
                     {user && token ? <Button
                       style={{ height: "3rem"}}
+                      size="lg"
                       onClick={async () => await handleFollowUnfollow()}
                     >
                       {followingPost ? "Unfollow" : "Follow"}
@@ -207,6 +241,39 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 </Button>
                 <Button style={{background: 'red'}} variant="primary"  onClick={
                   () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
+                }>
+                  Flag
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal show={showOther} onHide={handleCloseOther}>
+              <Modal.Header closeButton>
+                <Modal.Title>Flag Confirmation</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              <Form>
+              <Form.Group
+              className="mb-3"
+              controlId="exampleForm.ControlTextarea1"
+            >
+              <Form.Label>Please provide a short note of your reason for flagging this post:</Form.Label>
+              <Form.Control 
+              className="otherFlagReason"
+              placeholder="Why do you want to flag this post?"
+              onChange={getOtherFlagReason} 
+              as="textarea" 
+              rows={3} />
+
+            </Form.Group>
+          </Form>
+                Are you sure about flagging this post?</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button style={{background: 'red'}} variant="primary"  onClick={
+                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
                 }>
                   Flag
                 </Button>
