@@ -9,6 +9,7 @@ import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import UserFlagsModal from '../partials/SingleIdeaContent/UserFlagsModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
+import { UserManagementBanModal } from '../partials/UserManagementBanModal';
 
 
 interface UserManagementContentProps {
@@ -29,7 +30,8 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     const [id, setId] = useState('');
     const [ban ,setBan] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
-    const [showModal, setShowModal] = useState<boolean>(false);
+    const [showUserFlagsModal, setShowUserFlagsModal] = useState<boolean>(false);
+    const [showUserBanModal, setShowUserBanModal] = useState<boolean>(false);
     const [modalUser, setModalUser] = useState<IUser>();
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
@@ -37,9 +39,9 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
         setId(id);
     }
 
-    function userModalInfo(users: IUser[], user: IUser, flags: IFlag[], commentFlags: ICommentFlag[] ){
-        setShowModal(true);
-    }
+    // function userModalInfo(users: IUser[], user: IUser, flags: IFlag[], commentFlags: ICommentFlag[] ){
+    //     setShowUserFlagsModal(true);
+    // }
 
     let userFalseFlags: number[] = []
     let userFlags: number[] = []
@@ -78,10 +80,15 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     const userTypes = Object.keys(USER_TYPES);
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
-            {showModal ? 
-            <UserFlagsModal show={showModal} setShow={setShowModal} user={modalUser!} flags={flags} commentFlags={commentFlags} ideas={ideas} proposals={proposals} comments={comments}/>
+            {showUserFlagsModal ?
+            <UserFlagsModal show={showUserFlagsModal} setShow={setShowUserFlagsModal} user={modalUser!} flags={flags} commentFlags={commentFlags} ideas={ideas} proposals={proposals} comments={comments}/>
             : null
              }
+            {showUserBanModal ?
+            <UserManagementBanModal show={showUserBanModal} setShow={setShowUserBanModal} user={modalUser!} />
+            : null
+            }
+
             <Form>
             <h2 className="mb-4 mt-4">User Management</h2>
             <Card>
@@ -126,7 +133,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                         )}
                         </Form.Control>
                     </td>
-                    <td><Button onClick={()=> setShowModal(true)}>More Details</Button></td>
+                    <td><Button onClick={()=> setShowUserFlagsModal(true)}>More Details</Button></td>
                     <td></td>
                     <td><Form.Check type="switch" checked={ban} onChange={(e)=>{
                         setBan(e.target.checked)
@@ -149,7 +156,12 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                                 setReviewed(req.reviewed);
                                 setModalUser(req);
                                 }}>Edit</Dropdown.Item>
-                            <Dropdown.Item onClick={()=>UserSegmentHandler(req.email, req.id)}>View Segments</Dropdown.Item>
+                            <Dropdown.Item onClick={()=> {
+                                setShowUserBanModal(true);
+                            }}>Ban User</Dropdown.Item>
+                            <Dropdown.Item onClick={()=>
+                                UserSegmentHandler(req.email, req.id)
+                                }>View Segments</Dropdown.Item>
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
