@@ -155,6 +155,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                                 setModalUser(req);
                                 }}>Edit</Dropdown.Item>
                             <Dropdown.Item onClick={()=> {
+                                setModalUser(req);
                                 setShowUserBanModal(true);
                             }}>Ban User</Dropdown.Item>
                             <Dropdown.Item onClick={()=>

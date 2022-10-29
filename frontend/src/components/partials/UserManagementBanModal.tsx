@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
-import { Button, Card, Container, Form, Modal, Row, Table } from 'react-bootstrap';
+import React from 'react'
+import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
+import { useFormik } from "formik";
+import { IBanUserInput } from 'src/lib/types/input/banUser.input';
 
 interface BanModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     show: boolean;
-    user: IUser | null;
-}
+    user: IUser;
+};
+
+const WARNING_MESSAGE_DURATION = 30;
 
 export const UserManagementBanModal = ({
     setShow,
@@ -14,13 +18,40 @@ export const UserManagementBanModal = ({
     user
 }: BanModalProps) => {
     const handleClose = () => setShow(false);
+
+    const submitHandler = async (values: IBanUserInput) => {
+        try {
+            if (values.banUntil === 0) {
+                values.banUntil = WARNING_MESSAGE_DURATION;
+                values.isWarning = true;
+            } 
+            console.log(values);
+            // POST to database
+            handleClose();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const formik = useFormik<IBanUserInput>({
+        initialValues: {
+            userId: user.id,
+            banUntil: 0,
+            banReason: "",
+            banMessage: "",
+            isWarning: false
+        },
+        onSubmit: submitHandler
+    });
+
     return (
         <Modal
             show={show}
             onHide={handleClose}
+            backdrop="static" // Disallow clicking outside of modal to close modal
             centered
             size='lg'
-            animation={false}
+            keyboard={false} // Disallow esc key to close modal
         >
             <Modal.Header closeButton>
                 <Container>
@@ -31,19 +62,24 @@ export const UserManagementBanModal = ({
                     </Row>
                 </Container>
             </Modal.Header>
-            <Modal.Body>
-                <Form>
+            <Form onSubmit={formik.handleSubmit}>
+                <Modal.Body>
                     <Form.Label>
                         Ban Duration
                     </Form.Label>
-                    <Form.Control as="select">
-                        <option>Warning Message Only</option>
-                        <option>30 Days</option>
-                        <option>60 Days</option>
-                        <option>3 Months</option>
-                        <option>6 Months</option>
-                        <option>1 Year</option>
-                        <option>Indefinitely</option>
+                    <Form.Control
+                        as="select"
+                        name="banUntil"
+                        onChange={formik.handleChange}
+                        value={formik.values.banUntil}
+                    >   
+                        <option value={0}>Warning Message (30 Days)</option>
+                        <option value={30}>30 Days</option>
+                        <option value={60}>60 Days</option>
+                        <option value={90}>3 Months</option>
+                        <option value={180}>6 Months</option>
+                        <option value={365}>1 Year</option>
+                        <option value={99999}>Indefinitely</option>
                     </Form.Control>
                     <br />
                     <Form.Label>
@@ -51,8 +87,12 @@ export const UserManagementBanModal = ({
                     </Form.Label>
                     <Form.Control
                         as="select"
+                        name="banReason"
+                        onChange={formik.handleChange}
+                        value={formik.values.banReason}
                         required
                     >
+                        <option selected disabled value=''>Select Ban Reason...</option>
                         <option>Abuse of flagging privileges</option>
                         <option>Posting abuse or non-conforming content</option>
                         <option>Breach of user agreement</option>
@@ -63,27 +103,29 @@ export const UserManagementBanModal = ({
                     <Form.Control
                         as="textarea"
                         rows={5}
+                        name="banMessage"
                         placeholder="Additional Details for Ban"
+                        onChange={formik.handleChange}
+                        value={formik.values.banMessage}
                         required
                     />
-                </Form>
-            </Modal.Body>
-            <Modal.Footer className='d-flex flex-column'>
-                <div className='w-100 d-flex justify-content-end'>
-                    <Button
-                        className='mr-3'
-                        // Write to Database
-                        onClick={handleClose}
-                    >Submit
-                    </Button>
-                    <Button
-                        className='mr-3'
-                        variant="secondary"
-                        onClick={handleClose}
-                    >Close
-                    </Button>
-                </div>
-            </Modal.Footer>
+                </Modal.Body>
+                <Modal.Footer className='d-flex flex-column'>
+                    <div className='w-100 d-flex justify-content-end'>
+                        <Button
+                            className='mr-3'
+                            type='submit'
+                        >Submit
+                        </Button>
+                        <Button
+                            className='mr-3'
+                            variant="secondary"
+                            onClick={handleClose}
+                        >Cancel
+                        </Button>
+                    </div>
+                </Modal.Footer>
+            </Form>
         </Modal>
     )
 }
