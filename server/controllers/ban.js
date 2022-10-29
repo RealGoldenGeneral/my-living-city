@@ -11,7 +11,7 @@ banRouter.post(
             const foundUser = await prisma.user.findUnique({ where: { id: req.body.userId } });
             if (!foundUser) {
                 return res.status(400).json({
-                    message: `The comment with that listed ID (${req.params.userId}) does not exist.`,
+                    message: `The user with that listed ID (${req.params.userId}) does not exist.`,
                 });
             }
             // Check if user is already banned
@@ -44,6 +44,53 @@ banRouter.post(
         } catch (error) {
             res.status(400).json({
                 message: `Error occurred when trying to ban user ${req.body.userId}`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
+banRouter.get(
+    '/getAll',
+    async (req, res) => {
+        try {
+            const allBans = await prisma.ban.findMany();
+            res.status(200).json(allBans)
+        } catch (error) {
+            res.status(400).json({
+                message: `Error occurred when trying to get all banned users`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
+banRouter.get(
+    '/get/:userId',
+    async (req, res) => {
+        try {
+            const userBan = await prisma.ban.findUnique({
+                where: {
+                    userId: req.params.userId
+                }
+            });
+            if (userBan) {
+                res.status(200).json(userBan)
+            } else {
+                res.status(400).json({
+                    message: `The user with that listed ID (${req.params.userId}) is not banned.`
+                })
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({
+                message: `Error occurred when trying to get banned user ${req.params.userId}`,
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,
