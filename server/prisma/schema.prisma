@@ -103,12 +103,14 @@ model UserAddress {
   @@map(name: "user_address")
 }
 model Ban {
-  id         String   @id @default(cuid())
-  userId     String //@map("user_id")
+  id         Int   @id @default(autoincrement())
+  userId     String?  @map(name: "user_id")
   user       User?    @relation(fields: [userId], references: [id])
   banDate    DateTime @default(now()) @map(name: "ban_date")
   banUntil   DateTime @map(name: "banned_until")
   banMessage String?  @map(name: "ban_message")
+  banReason  String?  @map(name: "ban_reason")
+  isWarning  Boolean? @map(name: "is_warning")
 }
 model User {
   // Keys
