@@ -91,11 +91,9 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
 
             <Form>
             <h2 className="mb-4 mt-4">User Management</h2>
-            <Card>
-            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
-            <thead>
-            <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
+            <thead className="table-active">
+            <tr>
                 <th scope="col">Email</th>
                 <th scope="col">First</th>
                 <th scope="col">Last</th>
@@ -178,8 +176,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                 ))}
             </tbody>
             </Table>
-            </Card.Body>
-        </Card>
         </Form>
         <br></br>
         {/* <UserSegmentHandler/> */}
