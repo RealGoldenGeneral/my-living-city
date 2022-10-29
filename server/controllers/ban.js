@@ -2,10 +2,10 @@ const passport = require('passport');
 const express = require('express');
 const banRouter = express.Router();
 const prisma = require('../lib/prismaClient');
-//WIP; need to add passport.authenticate(token) after testing
 
 banRouter.post(
     '/create',
+    passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
             const foundUser = await prisma.user.findUnique({ where: { id: req.body.userId } });
@@ -55,6 +55,7 @@ banRouter.post(
 
 banRouter.get(
     '/getAll',
+    passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
             const allBans = await prisma.ban.findMany();
@@ -73,6 +74,7 @@ banRouter.get(
 
 banRouter.get(
     '/get/:userId',
+    passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
             const userBan = await prisma.ban.findUnique({
