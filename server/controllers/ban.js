@@ -31,7 +31,7 @@ banRouter.post(
             const createdBan = await prisma.ban.create({
                 data: {
                     userId: req.body.userId,
-                    banUntil: new Date(Date.now() + (req.body.banDuration * 24 * 60 * 60 * 1000)),
+                    banUntil: new Date(Date.now() + (parseInt(req.body.banUntil) * 24 * 60 * 60 * 1000)),
                     banMessage: req.body.banMessage,
                     banReason: req.body.banReason,
                     isWarning: req.body.isWarning,
