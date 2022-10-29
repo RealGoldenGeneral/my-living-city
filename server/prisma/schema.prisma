@@ -104,7 +104,7 @@ model UserAddress {
 }
 model Ban {
   id         Int   @id @default(autoincrement())
-  userId     String?  @map(name: "user_id")
+  userId     String?  @unique @map(name: "user_id")
   user       User?    @relation(fields: [userId], references: [id])
   banDate    DateTime @default(now()) @map(name: "ban_date")
   banUntil   DateTime @map(name: "banned_until")
