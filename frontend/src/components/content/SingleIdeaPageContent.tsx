@@ -203,7 +203,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </Card.Header>
 
             <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton>
+              <Modal.Header closeButton>s
                 <Modal.Title>Flag Confirmation</Modal.Title>
               </Modal.Header>
               <Modal.Body>Are you sure about flagging this post?</Modal.Body>
@@ -299,7 +299,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
               <Col sm={12}>
                 <Card.Header>
                   <div className="d-flex">
-                    <h1 className="h1 p-2 flex-grow-1">Supported Proposal</h1>
+                    <h1 className="h1 p-2 flex-grow-1">Originating Proposal</h1>
                     <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
                     </div>
                   </div>
@@ -309,7 +309,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <thead>
                     <tr>
                       <th>Author</th>
-                      <th>Idea</th>
+                      <th>Proposal</th>
                     </tr>
                     </thead>
                     <tbody>
