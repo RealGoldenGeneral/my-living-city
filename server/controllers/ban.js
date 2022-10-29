@@ -2,7 +2,6 @@ const passport = require('passport');
 const express = require('express');
 const banRouter = express.Router();
 const prisma = require('../lib/prismaClient');
-const bodyParser = require('body-parser');
 //WIP; need to add passport.authenticate(token) after testing
 
 banRouter.post(
