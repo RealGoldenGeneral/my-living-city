@@ -295,40 +295,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </Card.Body>
           </Col>
 
-          {proposal && proposalIdea &&
-              <Col sm={12}>
-                <Card.Header>
-                  <div className="d-flex">
-                    <h1 className="h1 p-2 flex-grow-1">Originating Proposal</h1>
-                    <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
-                    </div>
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <Table style={{margin: "0rem"}} hover>
-                    <thead>
-                    <tr>
-                      <th>Author</th>
-                      <th>Proposal</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                      <td>
-                        {proposalIdea!.author!.fname} {proposalIdea!.author!.lname}
-                      </td>
-                      <td>
-                        <a href={"/proposals/" + proposal!.id}>
-                          {proposalIdea!.title}
-                        </a>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Col>
-          }
-
               {/* Proposal State and Conditional Rendering */}
               {(confirmProposalState() || confirmProjectState()) && (
                 <Col sm={12} className="my-3">
@@ -412,6 +378,43 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
           </Col>
         </Row>
       </Card>
+
+      {proposal && proposalIdea &&
+      <div style={{ marginTop: "2rem" }}>
+        <Card>
+            <Card.Header>
+              <div className="d-flex">
+                <h4 className="h4 p-2 flex-grow-1">Originating Proposal</h4>
+                <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
+                </div>
+              </div>
+            </Card.Header>
+            <Card.Body>
+              <Table style={{margin: "0rem"}} hover>
+                <thead>
+                <tr>
+                  <th>Author</th>
+                  <th>Proposal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>
+                    {proposalIdea!.author!.fname} {proposalIdea!.author!.lname}
+                  </td>
+                  <td>
+                    <a href={"/proposals/" + proposal!.id}>
+                      {proposalIdea!.title}
+                    </a>
+                  </td>
+                </tr>
+                </tbody>
+              </Table>
+            </Card.Body>
+        </Card>
+      </div>
+      }
+
       <Row>
         <RatingsSection ideaId={ideaId} />
       </Row>
