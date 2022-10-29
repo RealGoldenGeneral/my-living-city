@@ -13,7 +13,6 @@ const {
 	PORT,
 	CORS_ORIGIN
 } = require('./lib/constants');
-const threshholdRouter = require('./controllers/threshhold');
 
 
 const main = async () => {
@@ -68,7 +67,7 @@ const main = async () => {
 	const commentFlagRouter = require('./controllers/commentFlag');
 	const threshholdRouter = require('./controllers/threshhold');
 	const accountRouter = require('./webhooks/account');
-
+	const banRouter = require('./controllers/ban.js');
 
 
 	const apiRouter = express.Router();
@@ -103,7 +102,7 @@ const main = async () => {
 	apiRouter.use('/flag', ideaFlagRouter);
 	apiRouter.use('/commentFlag', commentFlagRouter);
 	apiRouter.use('/threshhold', threshholdRouter);
-
+	apiRouter.use('/ban', banRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));
