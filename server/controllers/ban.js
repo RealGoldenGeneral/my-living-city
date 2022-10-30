@@ -102,4 +102,30 @@ banRouter.get(
     }
 )
 
+banRouter.delete(
+    '/delete/:userId',
+    async (req, res) => {
+        try {
+            const deletedBan = await prisma.ban.delete({
+                where: {
+                    userId: req.params.userId
+                }
+            })
+            res.status(200).json({
+                message: `User ${req.params.userId} successfully removed from ban table`,
+                deletedBan
+            })
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({
+                message: `Error occurred when trying to get unban user ${req.params.userId}`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
 module.exports = banRouter;
