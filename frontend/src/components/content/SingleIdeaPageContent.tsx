@@ -206,7 +206,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
                   <ButtonGroup className="mr-2">
                   {!reviewed ? (
-                    <DropdownButton id="dropdown-basic-button d-flex" size="lg" title="Flag">
+                    <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
                       <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
                       <Dropdown.Item eventKey= "Submission in Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Submission in Wrong Community</Dropdown.Item>
                       <Dropdown.Item eventKey= "Spam/Unsolicited Advertisement" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Spam/Unsolicited Advertisement</Dropdown.Item>
@@ -219,8 +219,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   </ButtonGroup>
                     <ButtonGroup className="mr-2">
                     {user && token ? <Button
-                      style={{ height: "3rem"}}
-                      size="lg"
                       onClick={async () => await handleFollowUnfollow()}
                     >
                       {followingPost ? "Unfollow" : "Follow"}
