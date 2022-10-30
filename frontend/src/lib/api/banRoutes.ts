@@ -25,3 +25,29 @@ export const postCreateBan = async (
     //return response data
     return res.data;
 };
+
+export const getBan = async (
+    userId: string
+) => {
+    const res = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/ban/get/${userId}`
+    })
+    return res.data;
+}
+
+export const deleteBan = async (
+    userId: string,
+    token: string | null
+) => {
+    const res = await axios({
+        method: "delete",
+        url: `${API_BASE_URL}/ban/delete/${userId}`,
+        headers: {
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    })
+    return res.data;
+}
