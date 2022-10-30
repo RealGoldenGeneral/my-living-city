@@ -11,13 +11,13 @@ banRouter.post(
             const foundUser = await prisma.user.findUnique({ where: { id: req.body.userId } });
             if (!foundUser) {
                 return res.status(400).json({
-                    message: `The user with that listed ID (${req.params.userId}) does not exist.`,
+                    message: `The user with that listed ID (${req.body.userId}) does not exist.`,
                 });
             }
             // Check if user is already banned
             const userAlreadyBanned = await prisma.ban.findFirst({
                 where: {
-                    userId: req.params.userId
+                    userId: req.body.userId
                 }
             });
             if (userAlreadyBanned) {

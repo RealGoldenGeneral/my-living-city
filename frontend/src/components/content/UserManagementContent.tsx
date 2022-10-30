@@ -85,7 +85,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
             : null
              }
             {showUserBanModal ?
-            <UserManagementBanModal show={showUserBanModal} setShow={setShowUserBanModal} user={modalUser!} />
+            <UserManagementBanModal show={showUserBanModal} setShow={setShowUserBanModal} modalUser={modalUser!} currentUser={user!} token={token} />
             : null
             }
 
