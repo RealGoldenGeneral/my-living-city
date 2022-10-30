@@ -7,6 +7,9 @@ import {
   Form,
   FormControl,
   Button,
+  Modal,
+  Row,
+  Col,
 } from "react-bootstrap";
 import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { useUserWithJwtVerbose } from "src/hooks/userHooks";
@@ -19,8 +22,10 @@ import {
   useAllUserSegments,
   useAllUserSegmentsRefined,
 } from "src/hooks/userSegmentHooks";
-import {getUserSubscriptionStatus} from 'src/lib/api/userRoutes'
+import { getUserSubscriptionStatus } from 'src/lib/api/userRoutes'
 import LoadingSpinner from "./LoadingSpinner";
+import { BanMessageModal } from "../partials/BanMessageModal";
+import { getBan } from "src/lib/api/banRoutes";
 
 export default function Header() {
   const [stripeStatus, setStripeStatus] = useState("");
@@ -31,20 +36,20 @@ export default function Header() {
   });
   console.log(data);
 
-  const {data: googleQuery, isLoading: googleQueryLoading} = useGoogleMapSearchLocation({lat: data?.geo?.lat, lon: data?.geo?.lon}, (data != null && data.geo != null));
+  const { data: googleQuery, isLoading: googleQueryLoading } = useGoogleMapSearchLocation({ lat: data?.geo?.lat, lon: data?.geo?.lon }, (data != null && data.geo != null));
   console.log(googleQuery);
 
-  
-  const {data: segData, isLoading: segQueryLoading} = useAllUserSegmentsRefined(token, user?.id || null);
-  
-  
-  
+
+  const { data: segData, isLoading: segQueryLoading } = useAllUserSegmentsRefined(token, user?.id || null);
+
+
+
   // const segData = useSingleSegmentByName({
   //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country 
   // }, googleQuery.data != null)
   // console.log(segData);
   const [userSegId, setUserSegId] = useState<any>(1);
-  
+
   // useEffect(() => {
   //   const querySegmentData = async () => {
   //     if (googleQueryLoading === false && googleQuery != null) {
@@ -57,45 +62,45 @@ export default function Header() {
   //   }
   //   querySegmentData();
   // }, [googleQuery, googleQueryLoading])
-  
-useEffect(() => {
-  if(segQueryLoading === false && segData != null && segData !== undefined){
-    console.log("I set the segid!!!");
-    console.log(segData);
-    setUserSegId(segData[0].id);
-  }
-}, [segData, segQueryLoading])
+
+  useEffect(() => {
+    if (segQueryLoading === false && segData != null && segData !== undefined) {
+      console.log("I set the segid!!!");
+      console.log(segData);
+      setUserSegId(segData[0].id);
+    }
+  }, [segData, segQueryLoading])
 
   const paymentNotificationStyling: CSS.Properties = {
-    backgroundColor: "#f7e4ab", 
+    backgroundColor: "#f7e4ab",
     justifyContent: "center",
     padding: "0.2rem",
     whiteSpace: "pre",
   }
 
-  useEffect(()=>{
-    if(user){
+  useEffect(() => {
+    if (user) {
       getUserSubscriptionStatus(user.id).then(e => setStripeStatus(e.status)).catch(e => console.log(e))
     }
-  },[user])
+  }, [user])
 
   // Here Items are not coming Inline
-//   if (segQueryLoading) {
-//     return (
-//       <div className="wrapper">
-//         <LoadingSpinner />
-//       </div>
-//     );
-// }
+  //   if (segQueryLoading) {
+  //     return (
+  //       <div className="wrapper">
+  //         <LoadingSpinner />
+  //       </div>
+  //     );
+  // }
 
   return (
     <div className="outer-header">
-      {stripeStatus !== "" && stripeStatus !== "active" && 
+      {stripeStatus !== "" && stripeStatus !== "active" &&
         (<Nav style={paymentNotificationStyling}>
           You have not paid your account payment. To upgrade your account, please go to the <a href="/profile">profile</a> section.
         </Nav>)
       }
-    
+
       <Navbar className="inner-header" bg="light" expand="sm">
         <Navbar.Brand href="/">
           <img
@@ -114,18 +119,18 @@ useEffect(() => {
           <Nav className="ml-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/ideas">Conversations</Nav.Link>
-            
-            {user ? ( 
-                <>
-                  {(user.banned == false) && ( 
-                    <NavDropdown  title="Submit" id="nav-dropdown">
-                    <Nav.Link href="/submit">Submit Idea</Nav.Link> 
-                    
-                  {((user.userType === "BUSINESS"|| user.userType === "MUNICIPAL"|| user.userType === "COMMUNITY") && user.banned == false) && (
-                    
-                    <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
-                  )}
-                </NavDropdown>
+
+            {user ? (
+              <>
+                {(user.banned == false) && (
+                  <NavDropdown title="Submit" id="nav-dropdown">
+                    <Nav.Link href="/submit">Submit Idea</Nav.Link>
+
+                    {((user.userType === "BUSINESS" || user.userType === "MUNICIPAL" || user.userType === "COMMUNITY") && user.banned == false) && (
+
+                      <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
+                    )}
+                  </NavDropdown>
                 )}
 
 
@@ -156,14 +161,14 @@ useEffect(() => {
                   </NavDropdown>
                 )}
                 {(user.userType === "RESIDENTIAL" || user.userType === "COMMUNITY" || user.userType === "BUSINESS") && (
-                  <NavDropdown 
-                    title="Dashboard" 
+                  <NavDropdown
+                    title="Dashboard"
                     id="dashboard-dropdown">
-                        <Nav.Link href="/dashboard">My Dashboard</Nav.Link>
-                        <Nav.Link href={`/community-dashboard/${userSegId}`}>Community Dashboard</Nav.Link>
+                    <Nav.Link href="/dashboard">My Dashboard</Nav.Link>
+                    <Nav.Link href={`/community-dashboard/${userSegId}`}>Community Dashboard</Nav.Link>
                   </NavDropdown>
                 )}
-                
+
                 {/* <Nav.Link href="/dashboard">Dashboard</Nav.Link> */}
                 <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
                   Help
@@ -176,15 +181,16 @@ useEffect(() => {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      { user ? ( 
-      user.banned ? (
-        <>
-        <Navbar className="bg-danger text-dark justify-content-center" expand="sm" >Your Posting and Commenting privileges have been revoked.</Navbar>
-        </>
-      ) : null
+      {user ? (
+        user.banned ? (
+          <>
+            <Navbar className="bg-danger text-dark justify-content-center" expand="sm" >Your Posting and Commenting privileges have been revoked.</Navbar>
+            <BanMessageModal/>
+          </>
+        ) : null
       ) : null
       }
-      
+
     </div>
   );
 }
