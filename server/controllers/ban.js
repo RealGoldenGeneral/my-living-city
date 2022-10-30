@@ -55,7 +55,6 @@ banRouter.post(
 
 banRouter.get(
     '/getAll',
-    passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
             const allBans = await prisma.ban.findMany();
@@ -74,7 +73,6 @@ banRouter.get(
 
 banRouter.get(
     '/get/:userId',
-    passport.authenticate('jwt', { session: false }),
     async (req, res) => {
         try {
             const userBan = await prisma.ban.findUnique({
