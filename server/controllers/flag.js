@@ -12,6 +12,7 @@ ideaFlagRouter.post(
     passport.authenticate('jwt', { session: false }),
     async (req, res, next) => {
       try {
+        console.log("req user: ", req.user);
         const { email, id: loggedInUserId } = req.user;
         const parsedIdeaId = parseInt(req.params.ideaId);
 
@@ -36,7 +37,7 @@ ideaFlagRouter.post(
           }
         });
         if (userAlreadyCreatedFlag) {
-          return res.status(400).json({
+          return res.status(200).json({
             message: `You have already flagged this idea. You cannot flag an idea twice.`,
             details: {
               errorMessage: "A idea can only be flagged once."

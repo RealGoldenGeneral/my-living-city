@@ -56,6 +56,7 @@ export const getSingleIdea = async (ideaId: string) => {
   const res = await axios.get<IIdeaWithRelationship>(
     `${API_BASE_URL}/idea/get/${ideaId}`
   );
+  console.log(res.data);
   return res.data;
 };
 

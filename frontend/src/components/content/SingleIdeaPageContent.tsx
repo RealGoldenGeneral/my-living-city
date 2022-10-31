@@ -1,5 +1,8 @@
-import {Button, Card, Col, Row, Image, ButtonGroup} from "react-bootstrap";
+import {Button, Card, Col, Row, Image, ButtonGroup, Table} from "react-bootstrap";
 import { IIdeaWithRelationship } from "../../lib/types/data/idea.type";
+import ProposalTile from "../tiles/ProposalTile";
+import { useSingleProposal } from "src/hooks/proposalHooks";
+import { useSingleIdea } from "src/hooks/ideaHooks";
 import {
   capitalizeFirstLetterEachWord,
   capitalizeString,
@@ -24,7 +27,7 @@ import ChampionSubmit from "../partials/SingleIdeaContent/ChampionSubmit";
 import { useSingleSegmentBySegmentId } from "src/hooks/segmentHooks";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import { ISegment } from "src/lib/types/data/segment.type";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { API_BASE_URL } from "src/lib/constants";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
 import { createFlagUnderIdea, updateFalseFlagIdea, compareIdeaFlagsWithThreshold } from "src/lib/api/flagRoutes";
@@ -68,7 +71,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     state,
     active,
     reviewed,
-
+    supportedProposal,
     // Proposal and Project info
 
     projectInfo,
@@ -111,8 +114,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   };
 
   const [followingPost, setFollowingPost] = useState(false);
+
   const {user, token} = useContext(UserProfileContext);
   const {data: isFollowingPost, isLoading: isFollowingPostLoading} = useCheckIdeaFollowedByUser(token, (user ? user.id : user), ideaId);
+  const {data: proposal} = useSingleProposal("" + (supportedProposal ? supportedProposal.id : ""));
+  const {data: proposalIdea } = useSingleIdea("" + (supportedProposal ? supportedProposal.ideaId : ""));
 
   const [show, setShow] = useState(false);
   const [showOther, setShowOther] = useState(false);
@@ -354,25 +360,59 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </Card.Body>
           </Col>
 
-          {/* Proposal State and Conditional Rendering */}
-          {(confirmProposalState() || confirmProjectState()) && (
-            <Col sm={12} className="my-3">
-              <h2>Proposal Information</h2>
-              <p>
-                {"Proposal has been initialized. Please describe the proposal!"}
-              </p>
-            </Col>
-          )}
+          {proposal && proposalIdea &&
+              <Col sm={12}>
+                <Card.Header>
+                  <div className="d-flex">
+                    <h1 className="h1 p-2 flex-grow-1">Supported Proposal</h1>
+                    <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
+                    </div>
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <Table style={{margin: "0rem"}} hover>
+                    <thead>
+                    <tr>
+                      <th>Author</th>
+                      <th>Idea</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td>
+                        {proposalIdea!.author!.fname} {proposalIdea!.author!.lname}
+                      </td>
+                      <td>
+                        <a href={"/proposals/" + proposal!.id}>
+                          {proposalIdea!.title}
+                        </a>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </Table>
+                </Card.Body>
+              </Col>
+          }
 
-          {/* Project State and Conditional Rendering */}
-          {confirmProjectState() && (
-            <Col sm={12} className="my-3">
-              <h2>Project Information:</h2>
-              <p>
-                {projectInfo?.description ||
-                  "Project has been initialized. Please describe the project!"}
-              </p>
-            </Col>
+              {/* Proposal State and Conditional Rendering */}
+              {(confirmProposalState() || confirmProjectState()) && (
+                <Col sm={12} className="my-3">
+                  <h2>Proposal Information</h2>
+                  <p>
+                    {"Proposal has been initialized. Please describe the proposal!"}
+                  </p>
+                </Col>
+              )}
+
+              {/* Project State and Conditional Rendering */}
+              {confirmProjectState() && (
+                <Col sm={12} className="my-3">
+                  <h2>Project Information:</h2>
+                  <p>
+                    {projectInfo?.description ||
+                      "Project has been initialized. Please describe the project!"}
+                  </p>
+                </Col>
           )}
 
           {shouldDisplayChampionButton() && (
