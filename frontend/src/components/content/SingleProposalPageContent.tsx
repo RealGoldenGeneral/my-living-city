@@ -275,10 +275,10 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
 
   console.log("isPostAuthor", isPostAuthor);
-  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string) => {
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string, quarantined_at: Date) => {
     await createFlagUnderIdea(ideaId, reason, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
-    await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
+    await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false, quarantined_at);
   }
 
   const selectReasonHandler = (eventKey: string) => {
@@ -286,9 +286,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     setFlagReason(eventKey!)
   }
 
-  const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+  const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleClose();
-    await flagFunc(ideaId, token, userId, ideaActive, flagReason);
+    await flagFunc(ideaId, token, userId, ideaActive, flagReason, quarantined_at);
   }
   if(!active){
     return (
@@ -353,7 +353,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   Cancel
                 </Button>
                 <Button style={{background: 'red'}} variant="primary"  onClick={
-                  () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
+                  () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
                 }>
                   Flag
                 </Button>

@@ -71,10 +71,10 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
     }
     return(<span className={`name d-block font-weight-bold ${colour}`}>{userName}</span>)
   }
-  const createCommentFlagAndCheckThreshold = async(commentId: number, token: string, userId: string) => {
+  const createCommentFlagAndCheckThreshold = async(commentId: number, token: string, userId: string, quarantined_at: Date) => {
     await createCommentFlagUnderIdea(commentId, token!);
     const thresholdExceeded = await compareCommentFlagsWithThreshold(commentId, token!);
-    await updateCommentStatus(token, userId, commentId.toString(), !thresholdExceeded, false);
+    await updateCommentStatus(token, userId, commentId.toString(), !thresholdExceeded, false, quarantined_at);
   }
 
   return (
@@ -107,7 +107,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
               <IdeaCommentDislike commentData={commentData} />
               {!reviewed ? (
               <Button onClick={
-                async () => await createCommentFlagAndCheckThreshold(id, token!, user!.id)
+                async () => await createCommentFlagAndCheckThreshold(id, token!, user!.id, new Date())
               }>Flag</Button>
               ) : null}
             </div>

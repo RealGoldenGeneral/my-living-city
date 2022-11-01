@@ -71,7 +71,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     const userTypes = Object.keys(USER_TYPES);
     const ideaURL = '/ideas/';
         return (
-            <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            <Container style={{maxWidth: '91%'}}>
             <Form>
             <h2 className="mb-4 mt-4">Comment Management</h2>
             <Card>
@@ -88,6 +88,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                 <th scope="col">Region</th>
                 <th scope="col">Active</th>
                 <th scope="col">Reviewed</th>
+                <th scope="col">Quarantined Date</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -106,6 +107,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                     <td>{"CRD"}</td>
                     <td>{req.active ? "Yes" : "No"}</td>
                     <td>{req.reviewed ? "Yes" : "No"}</td>
+                    <td>{(new Date(req.quarantined_at)).toLocaleDateString()}</td>
                     </> :<>
                         <td></td>
                         <td></td>
@@ -144,7 +146,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                             }else{
                                 updateFalseFlagComment(parseInt(req.id.toString()), token!, false);
                             }
-                            updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed);
+                            updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed, new Date());
                             }}>Save</Button>
                         </>
                     }

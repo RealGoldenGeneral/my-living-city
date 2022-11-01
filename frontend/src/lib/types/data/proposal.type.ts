@@ -31,6 +31,7 @@ export interface IProposal {
   active: boolean;
   createdAt: string;
   updatedAt: string;
+  quarantined_at: Date;
 }
 
 // Idea with relationships (Used in Single Idea Page) extends Root base Idea

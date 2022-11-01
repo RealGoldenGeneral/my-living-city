@@ -352,6 +352,7 @@ model Idea {
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @default(now()) @updatedAt @map(name: "updated_at")
   notification_dismissed Boolean @map("notification_dismissed")
+  quarantined_at      DateTime  @default(now()) @map(name: "quarantined_at")
 
   // relations
   comments        IdeaComment[]
@@ -475,6 +476,7 @@ model IdeaComment {
   reviewed       Boolean               @default(false)
   createdAt      DateTime              @default(now()) @map(name: "created_at")
   updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+  quarantined_at DateTime              @default(now()) @map(name: "quarantined_at")
 
   // Moderator Fields
   commentFlagNumber Int                   @default(0) @map("comment_flag_num")
