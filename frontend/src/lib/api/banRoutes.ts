@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
+import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 import { IBanUserInput } from "../types/input/banUser.input";
 
 export const postCreateBan = async (
@@ -33,6 +34,13 @@ export const getBan = async (
         method: "get",
         url: `${API_BASE_URL}/ban/get/${userId}`
     })
+    return res.data;
+}
+
+export const getBanWithToken = async (
+    token: string | null 
+) => {
+    const res = await axios.get(`${API_BASE_URL}/ban/getWithToken`, getAxiosJwtRequestOption(token!))
     return res.data;
 }
 

@@ -100,6 +100,35 @@ banRouter.get(
     }
 )
 
+banRouter.get(
+    '/getWithToken',
+    passport.authenticate('jwt',{session:false}),
+    async (req, res) => {
+        try {
+            const { id } = req.user;
+            console.log(`From banToken: ${id}`)
+            const userBanInfo = await prisma.ban.findUnique({
+                where: {
+                    userId: id
+                }
+            });
+            if (!userBanInfo) {
+                res.status(404).json({ message: `Current user is not banned` })
+            }
+
+            res.status(200).json(userBanInfo);
+        } catch (err) {
+            res.status(400).json({
+                message: `Error occurred when trying to check if current session user is banned.`,
+                details: {
+                    errorMessage: err.message,
+                    errorStack: err.stack
+                }
+            });
+        };
+    }
+);
+
 banRouter.delete(
     '/delete/:userId',
     async (req, res) => {

@@ -1,9 +1,8 @@
 import { useQuery } from "react-query";
 import { IFetchError } from "../lib/types/types";
 
-import { postCreateBan } from "../lib/api/banRoutes";
 import { IBanUserInput } from "src/lib/types/input/banUser.input";
-import { getBan } from "src/lib/api/banRoutes"
+import { getBan, getBanWithToken} from "src/lib/api/banRoutes"
 
 export const FindBanDetails = (userId: string) => {
     return useQuery<IBanUserInput, IFetchError>(
@@ -11,3 +10,10 @@ export const FindBanDetails = (userId: string) => {
         () => getBan(userId)
     );
 };
+
+export const FindBanDetailsWithToken = (token: string | null ) => {
+    return useQuery<IBanUserInput, IFetchError>(
+        ["banDetails", token],
+        () => getBanWithToken(token)
+    );
+}
