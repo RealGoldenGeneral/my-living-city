@@ -25,7 +25,8 @@ import {
 import { getUserSubscriptionStatus } from 'src/lib/api/userRoutes'
 import LoadingSpinner from "./LoadingSpinner";
 import { BanMessageModal } from "../partials/BanMessageModal";
-import { getBan } from "src/lib/api/banRoutes";
+import { FindBanDetailsWithToken } from "src/hooks/banHooks";
+import { WarningMessageModal } from "../partials/WarningMessageModal";
 
 export default function Header() {
   const [stripeStatus, setStripeStatus] = useState("");
@@ -34,21 +35,21 @@ export default function Header() {
     jwtAuthToken: token!,
     shouldTrigger: token != null,
   });
-  console.log(data);
-
   const { data: googleQuery, isLoading: googleQueryLoading } = useGoogleMapSearchLocation({ lat: data?.geo?.lat, lon: data?.geo?.lon }, (data != null && data.geo != null));
-  console.log(googleQuery);
-
-
   const { data: segData, isLoading: segQueryLoading } = useAllUserSegmentsRefined(token, user?.id || null);
-
-
+  const { data: banData, isLoading: banQueryLoading} = FindBanDetailsWithToken(token)
 
   // const segData = useSingleSegmentByName({
   //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country 
   // }, googleQuery.data != null)
   // console.log(segData);
   const [userSegId, setUserSegId] = useState<any>(1);
+  const [showWarningModal, setShowWarningModal] = useState<boolean>(!localStorage.getItem('warningModalState'));
+  
+  // Hook to set localStorage: warningModalState to !null
+  useEffect(() => {
+    localStorage.setItem('warningModalState', String(showWarningModal));
+  }, [showWarningModal]);
 
   // useEffect(() => {
   //   const querySegmentData = async () => {
@@ -181,16 +182,11 @@ export default function Header() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      {user ? (
-        user.banned ? (
-          <>
-            <Navbar className="bg-danger text-dark justify-content-center" expand="sm" >Your Posting and Commenting privileges have been revoked.</Navbar>
-            <BanMessageModal/>
-          </>
-        ) : null
+      {banData ? (
+        banData.isWarning ?
+            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/> : <BanMessageModal/>
       ) : null
       }
-
     </div>
   );
 }
