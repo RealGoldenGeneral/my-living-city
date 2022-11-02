@@ -68,11 +68,9 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
     console.log("Type",  new Date().toLocaleDateString())
    
         return (
-            <Container style={{maxWidth: '91%'}}>
+            <Container style={{maxWidth: '90%', tableLayout: 'fixed', marginLeft: '100'}}>
             <Form>
             <h2 className="mb-4 mt-4">Idea Management</h2>
-            <Card>
-            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
             <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
@@ -145,14 +143,11 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                             }}>Save</Button>
                         </>
                     }
-
                     </td>
                     </tr>
                 ))}
             </tbody>
             </Table>
-            </Card.Body>
-        </Card>
         </Form>
         <br></br>
         {/* <UserSegmentHandler/> */}

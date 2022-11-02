@@ -53,7 +53,9 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
   const [filteredComments, setfilteredComments] = useState<IComment[]>([])
   let agedQuarantinedIdeas: IIdeaWithAggregations[] = [];
   let agedQuarantinedProposals: IIdeaWithAggregations[] = [];
+  let ideasAndProposals: IIdeaWithAggregations[] = [];
   let agedQuarantinedComments: IComment[] = [];
+  let allComments: IComment[] = [];
 
   let threshhold: number = 3;
   const [newThreshold, setNewThreshhold] = useState(threshhold);
@@ -179,9 +181,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
     quarantineComment = commentData.filter((comment, index) => (comment.reviewed === false && comment.active === false) || (metThresholdComment(comment) && comment.reviewed === false));
     quarantineComment = quarantineComment.sort(sortQuarantinedComments)
     quarantineUser = userData.filter((user, index) => (user.reviewed === false && user.banned === true) || (metThreshholdUser(user) && user.reviewed === false));
-
-    console.log("This is quarantineIdea", quarantineIdea);
-    console.log("This is ideaData", ideaData);
+    ideasAndProposals = ideaData.sort(sortQuarantinedIdeas)
+    allComments = commentData.sort(sortQuarantinedComments)
 
     // original, works
     agedQuarantinedIdeas = quarantineIdea.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000 * 60 * 60 * 24)) > parseInt(filteredDay)))
@@ -189,22 +190,13 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
     agedQuarantinedComments = quarantineComment.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000 * 60 * 60 * 24)) > parseInt(filteredDayComment)))
     // testing purposes; quarantined ideas sitting for 30 seconds
     //agedQuarantinedIdeas = quarantineIdea.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000)) > parseInt(filteredDay)))
-    console.log("This is filteredDay and type: ", filteredDay, typeof filteredDay);
-    console.log("This is parseInt(filteredDay) and type: ", parseInt(filteredDay), typeof parseInt(filteredDay));
-    console.log("This is new Date(((filteredDay))).getTime(): ", new Date(((filteredDay))).getTime())
-    console.log("This is agedQuarantinedIdeas: ");
-    console.log(agedQuarantinedIdeas);
-    console.log("This is agedQuarantinedProposals: ");
-    console.log(agedQuarantinedProposals);
+ 
     let currentTime = (new Date()).getTime()
     let quarantineDate = new Date((quarantineIdea[0].quarantined_at!)).getTime()
     let diff = Math.abs(quarantineDate - currentTime)
-    // let diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
-    // console.log("Diff in days: ", diffDays)
+
     let diffSeconds = Math.ceil(diff / (1000))
-    console.log("Diff in secondss: ", diffSeconds)
-
-
+   
 
     if (agedQuarantinedIdeas.length > 0) {
       console.log("This is new Date((agedQuarantinedIdeas[0].quarantined_at!)).getTime()", new Date((agedQuarantinedIdeas[0].quarantined_at!)).getTime())
@@ -267,8 +259,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <div className="d-flex" >
             {(filteredDay === '' || filteredDay === 'all') ? (<IdeaManagementContent users={userData!} token={token} user={user} ideas={quarantineIdea!} flags={flagData} />) : <IdeaManagementContent users={userData!} token={token} user={user} ideas={agedQuarantinedIdeas!} flags={flagData} />}
             <div className="d-flex">
-              <ButtonGroup className="mr-2" >
-                <DropdownButton id="dropdown-basic-button" title="Filter" >
+              <ButtonGroup className="mr-2" style={{marginLeft: "-145%", alignContent: "left"}} >
+                <DropdownButton id="dropdown-basic-button" title="Sort" style={{marginTop: "20%"}}>
                   <Dropdown.Item eventKey="all" onSelect={(eventKey) => handleSelect(eventKey!)}>See all</Dropdown.Item>
                   <Dropdown.Item eventKey="7" onSelect={(eventKey) => handleSelect(eventKey!)}>Quarantined over 7 days</Dropdown.Item>
                   <Dropdown.Item eventKey="14" onSelect={(eventKey) => handleSelect(eventKey!)}>Quarantined over 14 days</Dropdown.Item>
@@ -281,8 +273,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <div className="d-flex">
             {(filteredDayProposal === '' || filteredDayProposal === 'all') ? (<ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={quarantineProposal!} flags={flagData} />) : <ProposalManagementContent users={userData!} token={token} user={user} proposals={agedQuarantinedProposals!} ideas={agedQuarantinedProposals!} flags={flagData} />}
             <div className="d-flex">
-              <ButtonGroup className="mr-2" >
-                <DropdownButton id="dropdown-basic-button" title="Filter" >
+              <ButtonGroup className="mr-2" style={{marginLeft: "-190%", alignContent: "left"}} >
+                <DropdownButton id="dropdown-basic-button" title="Sort" style={{marginTop: "20%"}} >
                   <Dropdown.Item eventKey="all" onSelect={(eventKey) => handleSelectProposal(eventKey!)}>See all</Dropdown.Item>
                   <Dropdown.Item eventKey="7" onSelect={(eventKey) => handleSelectProposal(eventKey!)}>Quarantined over 7 days</Dropdown.Item>
                   <Dropdown.Item eventKey="14" onSelect={(eventKey) => handleSelectProposal(eventKey!)}>Quarantined over 14 days</Dropdown.Item>
@@ -295,8 +287,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <div className="d-flex">
             {(filteredDayComment === '' || filteredDayComment === 'all') ? (<CommentManagementContent users={userData!} token={token} user={user} comments={quarantineComment} ideas={ideaData!} commentFlags={commentFlagData} />) : <CommentManagementContent users={userData!} token={token} user={user} comments={agedQuarantinedComments} ideas={ideaData!} commentFlags={commentFlagData} />}
             <div className="d-flex">
-              <ButtonGroup className="mr-2" >
-                <DropdownButton id="dropdown-basic-button" title="Filter" >
+              <ButtonGroup className="mr-2" style={{marginLeft: "-185%", alignContent: "left"}}>
+                <DropdownButton id="dropdown-basic-button" title="Sort" style={{marginTop: "20%"}}  >
                   <Dropdown.Item eventKey="all" onSelect={(eventKey) => handleSelectComment(eventKey!)}>See all</Dropdown.Item>
                   <Dropdown.Item eventKey="7" onSelect={(eventKey) => handleSelectComment(eventKey!)}>Quarantined over 7 days</Dropdown.Item>
                   <Dropdown.Item eventKey="14" onSelect={(eventKey) => handleSelectComment(eventKey!)}>Quarantined over 14 days</Dropdown.Item>
@@ -348,7 +340,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black' }} onClick={() => loadState("comment")}>Comment View</Button>
         </div>
         <div style={{ width: '80%', marginLeft: '22%' }}>
-          <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData} />
+          <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideasAndProposals!} flags={flagData} />
         </div>
       </div>
     );
@@ -419,7 +411,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
         <br></br>
         <ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={propIdeaData!} flags={flagData} />
         <br></br>
-        <CommentManagementContent users={userData!} token={token} user={user} comments={commentData} ideas={ideaData!} commentFlags={commentFlagData} />
+        <CommentManagementContent users={userData!} token={token} user={user} comments={allComments} ideas={ideaData!} commentFlags={commentFlagData} />
       </div>
 
     </div>

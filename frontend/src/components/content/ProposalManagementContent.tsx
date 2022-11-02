@@ -67,11 +67,9 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
         }
     }
         return (
-            <Container>
+            <Container style={{maxWidth: '85%', tableLayout: 'fixed'}}>
             <Form>
             <h2 className="mb-4 mt-4">Proposal Management</h2>
-            <Card>
-            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
                 <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
@@ -150,8 +148,6 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                 ))}
             </tbody>
             </Table>
-            </Card.Body>
-        </Card>
         </Form>
         <br></br>
         {/* <UserSegmentHandler/> */}

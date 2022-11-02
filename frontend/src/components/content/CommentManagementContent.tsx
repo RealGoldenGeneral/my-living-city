@@ -71,11 +71,9 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     const userTypes = Object.keys(USER_TYPES);
     const ideaURL = '/ideas/';
         return (
-            <Container style={{maxWidth: '91%'}}>
+            <Container style={{maxWidth: '85%'}}>
             <Form>
             <h2 className="mb-4 mt-4">Comment Management</h2>
-            <Card>
-            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
                 <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
@@ -156,8 +154,6 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                 ))}
             </tbody>
             </Table>
-            </Card.Body>
-        </Card>
         </Form>
         <br></br>
         {/* <UserSegmentHandler/> */}
