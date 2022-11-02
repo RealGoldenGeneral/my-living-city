@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { Modal, Row, Col, Button, Spinner, ModalFooter } from 'react-bootstrap'
+import { useContext } from 'react'
+import { Modal, Row, Col, Button, Spinner } from 'react-bootstrap'
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';
 import { FindBanDetails } from 'src/hooks/banHooks';
 
@@ -79,7 +79,7 @@ export const BanMessageModal = () => {
                 <Row>
                     <Col></Col>
                     <Col md={"auto"}>
-                        <b>Mod Details: </b>{data!.banMessage}
+                        <b>Details: </b>{data!.banMessage}
                         <p />
                     </Col>
                     <Col></Col>
