@@ -113,7 +113,7 @@ banRouter.get(
                 }
             });
             if (!userBanInfo) {
-                res.status(404).json({ message: `Current user is not banned` })
+                res.status(200).send(false)
             }
 
             res.status(200).json(userBanInfo);
