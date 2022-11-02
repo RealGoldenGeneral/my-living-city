@@ -184,7 +184,13 @@ export default function Header() {
       </Navbar>
       {banData ? (
         banData.isWarning ?
-            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/> : <BanMessageModal/>
+        <>  
+            <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
+                Account has been issued a warning
+            </Navbar>
+            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/> 
+        </>
+            : <BanMessageModal/>
       ) : null
       }
     </div>
