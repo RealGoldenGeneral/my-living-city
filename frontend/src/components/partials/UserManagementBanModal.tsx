@@ -17,6 +17,7 @@ interface BanModalProps {
 interface FeedbackModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     show: boolean;
+    message: string;
 }
 
 const WARNING_MESSAGE_DURATION = 30;

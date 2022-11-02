@@ -10,6 +10,7 @@ import { IUser } from 'src/lib/types/data/user.type';
 import UserFlagsModal from '../partials/SingleIdeaContent/UserFlagsModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 import { UserManagementBanModal } from '../partials/UserManagementBanModal';
+import { UserManagementUnbanModal } from '../partials/UserManagementUnbanModal';
 
 
 interface UserManagementContentProps {
@@ -32,6 +33,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     const [reviewed, setReviewed] = useState<boolean>(false);
     const [showUserFlagsModal, setShowUserFlagsModal] = useState<boolean>(false);
     const [showUserBanModal, setShowUserBanModal] = useState<boolean>(false);
+    const [showUserUnbanModal, setShowUserUnbanModal] = useState<boolean>(false);
     const [modalUser, setModalUser] = useState<IUser>();
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
@@ -86,6 +88,10 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
              }
             {showUserBanModal ?
             <UserManagementBanModal show={showUserBanModal} setShow={setShowUserBanModal} modalUser={modalUser!} currentUser={user!} token={token} />
+            : null
+            }
+            {showUserUnbanModal ?
+            <UserManagementUnbanModal show={showUserUnbanModal} setShow={setShowUserUnbanModal} modalUser={modalUser!} currentUser={user!} token={token} />
             : null
             }
 
@@ -146,7 +152,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     }
 
                     <td>
-                    {req.id !== hideControls ?
+                    {req.id !== hideControls ? 
                         <NavDropdown title="Controls" id="nav-dropdown">
                             <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id);
@@ -154,10 +160,16 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                                 setReviewed(req.reviewed);
                                 setModalUser(req);
                                 }}>Edit</Dropdown.Item>
-                            <Dropdown.Item onClick={()=> {
-                                setModalUser(req);
-                                setShowUserBanModal(true);
-                            }}>Ban User</Dropdown.Item>
+                                {req.banned ? 
+                                    <Dropdown.Item onClick={()=> {
+                                        setModalUser(req);
+                                        setShowUserUnbanModal(true);
+                                    }}>Unban User</Dropdown.Item>:
+                                    <Dropdown.Item onClick={()=> {
+                                        setModalUser(req);
+                                        setShowUserBanModal(true);
+                                    }}>Ban User</Dropdown.Item>
+                                }
                             <Dropdown.Item onClick={()=>
                                 UserSegmentHandler(req.email, req.id)
                                 }>View Segments</Dropdown.Item>
