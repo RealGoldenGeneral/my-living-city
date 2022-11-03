@@ -129,6 +129,35 @@ banRouter.get(
     }
 );
 
+banRouter.put(
+    '/update/:userId',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
+            const updateBan = await prisma.ban.update({
+                where: {
+                    userId: req.params.userId
+                },
+                data: req.body
+            })
+            if (!updateBan) {
+                res.status(404).json({message: "Update on ban is unsuccessful"});
+            }
+            res.status(200).json(updateBan);
+        } catch (err) {
+            res.status(400).json({
+                message: `Error occurred when trying to update ban.`,
+                details: {
+                    errorMessage: err.message,
+                    errorStack: err.stack
+                }
+            });
+        } finally {
+            await prisma.$disconnect();
+        }
+    } 
+)
+
 banRouter.delete(
     '/delete/:userId',
     async (req, res) => {

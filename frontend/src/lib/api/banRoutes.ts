@@ -1,10 +1,10 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
-import { IBanUserInput } from "../types/input/banUser.input";
+import { IBanDetails } from "../types/input/banUser.input";
 
 export const postCreateBan = async (
-    banData: IBanUserInput,
+    banData: IBanDetails,
     token: string | null
 ) => {
     const jsonBody = JSON.stringify(banData);
@@ -41,6 +41,29 @@ export const getBanWithToken = async (
     token: string | null 
 ) => {
     const res = await axios.get(`${API_BASE_URL}/ban/getWithToken`, getAxiosJwtRequestOption(token!))
+    return res.data;
+}
+
+export const getAllBan = async (): Promise<IBanDetails[]> => {
+    const res = await axios.get<IBanDetails[]>(`${API_BASE_URL}/ban/getAll`)
+    return res.data;
+}
+
+export const updateBan = async (
+    banData: IBanDetails,
+    token: string | null
+) => {
+    const res = await axios({
+        method: "put",
+        url: `${API_BASE_URL}/ban/update/${banData.userId}`,
+        data: banData,
+        headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
     return res.data;
 }
 

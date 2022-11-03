@@ -1,4 +1,4 @@
-export interface IBanUserInput {
+export interface IBanDetails {
     userId: string;
     banUntil: number;
     banReason: string;

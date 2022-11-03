@@ -12,6 +12,7 @@ import { UserManagementContentLegacy } from 'src/components/content/UserManageme
 import { useIdeasWithBreakdown } from 'src/hooks/ideaHooks';
 import { useProposalsWithBreakdown } from 'src/hooks/proposalHooks';
 import { useAllComments } from 'src/hooks/commentHooks';
+import { useAllBanDetails } from 'src/hooks/banHooks';
 
 // Extends Route component props with idea title route param
 interface UserManagementPropsLegacy extends RouteComponentProps<{}> {
@@ -32,10 +33,11 @@ const UserManagementPage: React.FC<UserManagementPropsLegacy> = ({}) => {
   const { data: proposalData, isLoading: proposalLoading} = useProposalsWithBreakdown(20);
   const { data: commentData, isLoading: commentLoading} = useAllComments();
   const { data: flagData, isLoading: flagLoading} = useAllFlags(token);
-  
   const {data: commentFlagData, isLoading: commentFlagLoading} = useAllCommentFlags(token);
+  const { data: banData, isLoading: banLoading} = useAllBanDetails();
+  
   let flaggedUser: number[] = [];
-  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading) {
+  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || banLoading) {
     return(
       <div className="wrapper">
       <LoadingSpinner />
@@ -47,7 +49,7 @@ const UserManagementPage: React.FC<UserManagementPropsLegacy> = ({}) => {
 
   return (
     <div className="wrapper">
-      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData}/>
+      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
     </div>
   );
 }

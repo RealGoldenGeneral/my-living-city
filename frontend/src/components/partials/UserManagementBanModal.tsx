@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
 import { useFormik } from "formik";
-import { IBanUserInput } from 'src/lib/types/input/banUser.input';
+import { IBanDetails } from 'src/lib/types/input/banUser.input';
 import { postCreateBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 
@@ -11,6 +11,7 @@ interface BanModalProps {
     show: boolean;
     modalUser: IUser;
     currentUser: IUser;
+    warnedUserIds: String[];
     token: string | null
 };
 
@@ -27,20 +28,24 @@ export const UserManagementBanModal = ({
     show,
     modalUser,
     currentUser,
+    warnedUserIds,
     token
 }: BanModalProps) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
-    const submitHandler = async (values: IBanUserInput) => {
+    const submitHandler = async (values: IBanDetails) => {
         try {
+            setIsSubmitting(true);
             modalUser.banned = true;
             // Check if ban is a Warning
             if (values.banUntil === 0) {
                 values.banUntil = WARNING_MESSAGE_DURATION;
                 values.isWarning = true;
                 modalUser.banned = false;
+                warnedUserIds.push(modalUser.id);
             }
             // POST to database
-            const banInputValues: IBanUserInput = {
+            const banInputValues: IBanDetails = {
                 userId: values.userId,
                 banUntil: values.banUntil,
                 banReason: values.banReason,
@@ -52,10 +57,12 @@ export const UserManagementBanModal = ({
             handleClose();
         } catch (error) {
             console.log(error)
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
-    const formik = useFormik<IBanUserInput>({
+    const formik = useFormik<IBanDetails>({
         initialValues: {
             userId: modalUser.id,
             banUntil: 0,
@@ -138,6 +145,7 @@ export const UserManagementBanModal = ({
                             <Button
                                 className='mr-3'
                                 type='submit'
+                                disabled={isSubmitting ? true : false}
                             >Ban
                             </Button>
                             <Button

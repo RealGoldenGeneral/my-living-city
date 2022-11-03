@@ -23,6 +23,7 @@ import { checkIfUserHasRated } from 'src/lib/utilityFunctions';
 import UserFlagsModal from 'src/components/partials/SingleIdeaContent/UserFlagsModal';
 import { updateLanguageServiceSourceFile } from 'typescript';
 import { updateThreshhold } from 'src/lib/api/threshholdRoutes';
+import { useAllBanDetails } from 'src/hooks/banHooks';
 
 // Extends Route component props with idea title route param
 interface ModManagementProps extends RouteComponentProps<{}> {
@@ -40,6 +41,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   const { data: flagData, isLoading: flagLoading} = useAllFlags(token);
   const {data: commentFlagData, isLoading: commentFlagLoading} = useAllCommentFlags(token);
   const {data: threshholdData, isLoading: threshholdLoading} = useThreshold(token);
+  const {data: banData, isLoading: banLoading} = useAllBanDetails();
   const [pageState, setPageState] = useState<String>("quarantine");
 
   let threshhold: number = 3;
@@ -54,7 +56,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   function loadState(state: String){
     setPageState(state);
   }
-  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || threshholdLoading) {
+  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || threshholdLoading || banLoading) {
     return(
       <div className="wrapper">
       <LoadingSpinner />
@@ -166,7 +168,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
           <Button onClick={() => updateThreshhold(newThreshold, token!)}>Update</Button>
       </div>
         <br></br>
-        <UserManagementContent users={quarantineUser!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData}/>
+        <UserManagementContent users={quarantineUser!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
         <br></br>
         <IdeaManagementContent users={userData!} token={token} user={user} ideas={quarantineIdea!} flags={flagData}/>
         <br></br>
@@ -194,7 +196,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
         <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black'}} onClick={() => loadState("comment")}>Comment View</Button>
       </div>
     <div style={{width: '80%', marginLeft:'22%'}}>
-      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData}/>
+      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
       </div>
     </div>
     );
@@ -281,7 +283,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
       <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black'}} onClick={() => loadState("comment")}>Comment View</Button>
     </div>
     <div style={{width: '80%', marginLeft:'22%'}}>
-      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData}/>
+      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
       <br></br>
       <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData}/>
       <br></br>

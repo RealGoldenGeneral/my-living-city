@@ -2,14 +2,15 @@ import React, { useState } from 'react'
 import { Button, Container, Card, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
 import { FindBanDetails } from 'src/hooks/banHooks';
-import { deleteBan } from 'src/lib/api/banRoutes';
+import { deleteBan, updateBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 
-interface UnbanModalProps {
+interface ModifyWarningModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     show: boolean;
     modalUser: IUser;
     currentUser: IUser;
+    warnedUserIds: String[];
     token: string | null
 };
 
@@ -19,22 +20,40 @@ interface FeedbackModalProps {
     message: string;
 }
 
-export const UserManagementUnbanModal = ({
+export const UserManagementModifyWarningModal = ({
     setShow,
     show,
     modalUser,
     currentUser,
+    warnedUserIds,
     token
-}: UnbanModalProps) => {
-    const { data: modalUserData, error, isLoading, isError } = FindBanDetails(modalUser.id);
+}: ModifyWarningModalProps) => {
+    const { data: modalUserBanData, error, isLoading, isError } = FindBanDetails(modalUser.id);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
-    const unbanUser = async () => {
+    const removeWarningUser = async () => {
         try {
+            let warnedUserIdIndex = warnedUserIds.indexOf(modalUser.id);
+            warnedUserIds.splice(warnedUserIdIndex, 1);
             setIsSubmitting(true);
-            modalUser.banned = false;
             await deleteBan(modalUser.id, token)
+            handleClose();
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    const banUser = async () => {
+        try {
+            let warnedUserIdIndex = warnedUserIds.indexOf(modalUser.id);
+            warnedUserIds.splice(warnedUserIdIndex, 1);
+            setIsSubmitting(true);
+            modalUser.banned = true;
+            modalUserBanData!.isWarning = false;
             await updateUser(modalUser, token, currentUser);
+            await updateBan(modalUserBanData!, token)
             handleClose();
         } catch (error) {
             console.log(error);
@@ -48,7 +67,7 @@ export const UserManagementUnbanModal = ({
         return (
             <div className="wrapper">
                 <p>
-                    Error occured while trying to retrieve ban details. Please try again later.
+                    Error occured while trying to retrieve warning details. Please try again later.
                 </p>
             </div>
         );
@@ -77,7 +96,7 @@ export const UserManagementUnbanModal = ({
                 <Modal.Header closeButton>
                     <Container>
                         <Row className='justify-content-center'>
-                            <Modal.Title>Unban User: {modalUser.email}</Modal.Title>
+                            <Modal.Title>Modify Warning for User: {modalUser.email}</Modal.Title>
                         </Row>
                         <Row className='text-center'>
                         </Row>
@@ -87,24 +106,24 @@ export const UserManagementUnbanModal = ({
                     <Card>
                         <Card.Body>
                             <h5>Reason</h5>
-                            <hr/>
-                            {modalUserData?.banReason}
+                            <hr />
+                            {modalUserBanData?.banReason}
                         </Card.Body>
                     </Card>
-                    <p/>
+                    <p />
                     <Card>
                         <Card.Body>
                             <h5>Details</h5>
-                            <hr/>
-                            {modalUserData?.banMessage}
+                            <hr />
+                            {modalUserBanData?.banMessage}
                         </Card.Body>
                     </Card>
-                    <p/>
+                    <p />
                     <Card>
                         <Card.Body>
-                            <h5>Banned Until</h5>
-                            <hr/>
-                            {new Date(modalUserData!.banUntil).toLocaleString()}
+                            <h5>Warned Until</h5>
+                            <hr />
+                            {new Date(modalUserBanData!.banUntil).toLocaleString()}
                         </Card.Body>
                     </Card>
                 </Modal.Body>
@@ -112,9 +131,17 @@ export const UserManagementUnbanModal = ({
                     <div className='w-100 d-flex justify-content-end'>
                         <Button
                             className='mr-3'
-                            onClick={unbanUser}
+                            variant="danger"
+                            onClick={banUser}
                             disabled={isSubmitting ? true : false}
-                        >Unban
+                        >Ban
+                        </Button>
+                        <Button
+                            className='mr-3'
+                            variant="warning"
+                            onClick={removeWarningUser}
+                            disabled={isSubmitting ? true : false}
+                        >Remove Warning
                         </Button>
                         <Button
                             className='mr-3'
