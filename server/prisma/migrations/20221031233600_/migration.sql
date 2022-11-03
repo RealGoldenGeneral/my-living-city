@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "idea" ADD COLUMN     "quarantined_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

@@ -1,4 +1,4 @@
-import { Container, Row, Col, Breadcrumb } from "react-bootstrap";
+import { Container, Row, Col, Breadcrumb, Carousel } from "react-bootstrap";
 import IdeaTile from "src/components/tiles/IdeaTile";
 import PlaceholderIdeaTile from "src/components/tiles/PlaceholderIdeaTile";
 import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
@@ -40,6 +40,26 @@ const MyPosts: React.FC<MyPostsProps> = ({
           }
           .container {
             padding: 1rem;
+            .carousel-control-next,
+            .carousel-control-prev {
+                filter: invert(100%);
+            }
+            .carousel-control-next {
+                right: -8rem;
+            }
+            .carousel-control-prev {
+                left: -8rem;
+            }
+            .carousel-item.active, .carousel-item-next, .carousel-item-prev {
+              display: flex;
+              flex-wrap: wrap;
+            }
+            .container {
+              padding-left: 0;
+              padding-right: 0;
+            }
+            .carousel-indicators {
+              display: none;
         `}
           </style>
           <Breadcrumb
@@ -58,27 +78,44 @@ const MyPosts: React.FC<MyPostsProps> = ({
       )}
 
       <h2 className="pb-1 border-bottom display-6">My Posts</h2>
-      <Row className="g-5 py-3 justify-content-left">
-        {userIdeas
-          ? userIdeas.filter((parsedPost) => parsedPost.active !== false).map((idea: any) => (
-              <Col
-                key={idea.id}
-                md={6}
-                lg={4}
-                className="pt-3 align-items-stretch"
-              >
-                <IdeaTile ideaData={idea} showFooter={true} postType={idea.state === "IDEA" ?  "Idea" : "Proposal"} />
-              </Col>
-            ))
-          : [...Array(6)].map((x, i) => (
-              <Col key={i} md={6} lg={4} className="pt-3 align-items-stretch">
-                <PlaceholderIdeaTile />
-              </Col>
-            ))}
+      
+      {userIdeas && userIdeas.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
+        {[...Array(4)].map((x, i) => (
+          <Carousel.Item key={i} id='slick'>
+            {userIdeas
+              ? userIdeas.slice(i * 3, i * 3 + 3).map((idea) => {
+                return idea ? 
+                (
+                  <Col
+                    key={idea.id}
+                    md={6}
+                    lg={4}
+                    className="pt-3 align-items-stretch"
+                  >
+                    <IdeaTile
+                      ideaData={idea}
+                      showFooter={true}
+                      postType={idea.state === "IDEA" ? "Idea" : "Proposal"}
+                    />
+                  </Col>
+                ) : null})
+              : [...Array(12)].map((x, i) => (
+                  <Col
+                    key={i}
+                    md={6}
+                    lg={4}
+                    className="pt-3 align-items-stretch"
+                  >
+                    <PlaceholderIdeaTile />
+                  </Col>
+                ))}
+          </Carousel.Item>
+        ))}
+      </Carousel>) : <div>Sorry, you have not submitted any ideas yet!</div>}
         {/* <a className='pt-5 text-align-center' href="/ideas">
           <h3>View all ideas and conversations</h3>
         </a> */}
-      </Row>
+      
     </Container>
   );
 };

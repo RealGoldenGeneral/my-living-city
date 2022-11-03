@@ -125,6 +125,7 @@ export const useCreateCommentMutation = (
                 },
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
+                quarantined_at: new Date()
               }
             ]
           )

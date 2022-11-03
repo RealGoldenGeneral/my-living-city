@@ -65,12 +65,12 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
             }
         }
     }
+    console.log("Type",  new Date().toLocaleDateString())
+   
         return (
-            <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            <Container style={{maxWidth: '90%', tableLayout: 'fixed', marginLeft: '100'}}>
             <Form>
             <h2 className="mb-4 mt-4">Idea Management</h2>
-            <Card>
-            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
             <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
@@ -83,6 +83,7 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                 <th scope="col">Segment</th>
                 <th scope="col">Active</th>
                 <th scope="col">Reviewed</th>
+                <th scope="col">Quarantined Date</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -100,6 +101,7 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                     <td>{req.segmentName}</td>
                     <td>{req.active ? "Yes" : "No"}</td>
                     <td>{req.reviewed ? "Yes":"No"}</td>
+                    <td>{(new Date(req.quarantined_at)).toLocaleDateString()}</td>
                     </> : <>
                         <td></td>
                         <td></td>
@@ -137,18 +139,15 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                             }else{
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
                             }
-                            updateIdeaStatus(token, user?.id, req.id.toString(), req.active, req.reviewed);
+                            updateIdeaStatus(token, user?.id, req.id.toString(), req.active, req.reviewed, new Date());
                             }}>Save</Button>
                         </>
                     }
-
                     </td>
                     </tr>
                 ))}
             </tbody>
             </Table>
-            </Card.Body>
-        </Card>
         </Form>
         <br></br>
         {/* <UserSegmentHandler/> */}

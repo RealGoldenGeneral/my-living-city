@@ -71,11 +71,9 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     const userTypes = Object.keys(USER_TYPES);
     const ideaURL = '/ideas/';
         return (
-            <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            <Container style={{maxWidth: '85%'}}>
             <Form>
             <h2 className="mb-4 mt-4">Comment Management</h2>
-            <Card>
-            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
                 <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
@@ -88,6 +86,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                 <th scope="col">Region</th>
                 <th scope="col">Active</th>
                 <th scope="col">Reviewed</th>
+                <th scope="col">Quarantined Date</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
@@ -106,6 +105,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                     <td>{"CRD"}</td>
                     <td>{req.active ? "Yes" : "No"}</td>
                     <td>{req.reviewed ? "Yes" : "No"}</td>
+                    <td>{(new Date(req.quarantined_at)).toLocaleDateString()}</td>
                     </> :<>
                         <td></td>
                         <td></td>
@@ -144,7 +144,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                             }else{
                                 updateFalseFlagComment(parseInt(req.id.toString()), token!, false);
                             }
-                            updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed);
+                            updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed, new Date());
                             }}>Save</Button>
                         </>
                     }
@@ -154,8 +154,6 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                 ))}
             </tbody>
             </Table>
-            </Card.Body>
-        </Card>
         </Form>
         <br></br>
         {/* <UserSegmentHandler/> */}
