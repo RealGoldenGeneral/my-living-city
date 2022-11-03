@@ -211,7 +211,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <h1 className="h1 p-2 flex-grow-1">{capitalizeString(title)}</h1>
                 <div className="p-2" style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
                   <ButtonGroup className="mr-2">
-                  {!reviewed ? (
                     <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
                       <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
                       <Dropdown.Item eventKey= "Submission in Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Submission in Wrong Community</Dropdown.Item>
@@ -220,8 +219,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                       <Dropdown.Item eventKey= "Incomplete Submission (Requires Additional Details)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Incomplete Submission (Requires Additional Details)</Dropdown.Item>
                       <Dropdown.Item eventKey= "Other" onSelect={(eventKey) => selectOtherReasonHandler(eventKey!)}>Other</Dropdown.Item>
                     </DropdownButton>
-                  // <Button style={{height: '3rem', marginRight: 5, background: 'red'}} onClick={async () => await flagFunc(parseInt(ideaId), token!, user!.id, ideaData.active, "Inappropriate Language)}>Flag</Button>
-                  ) : null}
                   </ButtonGroup>
                     <ButtonGroup className="mr-2">
                     {user && token ? <Button
