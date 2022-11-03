@@ -125,7 +125,7 @@ banRouter.get(
                     errorStack: err.stack
                 }
             });
-        };
+        }
     }
 );
 
@@ -183,5 +183,59 @@ banRouter.delete(
         }
     }
 )
+
+banRouter.get(
+    '/getAllPassedDate',
+    async (req, res) => {
+        try {
+            const bans = await prisma.ban.findMany({
+                where: {
+                    banUntil: {
+                        lte: new Date(Date.now())
+                    }
+                }
+            })
+            res.status(200).json(bans);
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({
+                message: `Error occurred when trying to get unban users`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+);
+
+banRouter.delete(
+    '/deletePassedBanDate',
+    async (req, res) => {
+        try {
+            const deletedBans = await prisma.ban.deleteMany({
+                where: {
+                    banUntil: {
+                       lte: new Date(Date.now())
+                    }
+                }
+            });
+            res.status(200).json({
+                message: `Successfully removed from users ban table`,
+                deletedBans
+            })
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({
+                message: `Error occurred when trying to get unban users`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
 
 module.exports = banRouter;
