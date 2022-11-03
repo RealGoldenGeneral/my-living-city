@@ -114,9 +114,9 @@ banRouter.get(
             });
             if (!userBanInfo) {
                 res.status(200).send(false)
+            } else {
+                res.status(200).json(userBanInfo);
             }
-
-            res.status(200).json(userBanInfo);
         } catch (err) {
             res.status(400).json({
                 message: `Error occurred when trying to check if current session user is banned.`,
