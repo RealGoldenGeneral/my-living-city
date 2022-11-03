@@ -762,7 +762,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 type="checkbox"
                 onClick={() => toggleElement("location", "map")}
               />
-              <Form.Label>&nbsp;&nbsp;Use Map</Form.Label>
+              <Form.Label>&nbsp;&nbsp;Click the checkbox to use map</Form.Label>
               <div id="location">
                 <Form.Control
                   type="text"

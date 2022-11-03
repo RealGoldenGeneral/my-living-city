@@ -341,8 +341,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
-                <div style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
+                <div className="p-2 justify-content-end">
                   <ButtonGroup className="mr-2">
+                  {!reviewed ? (
                         <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
                         <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
                         <Dropdown.Item eventKey= "Submission in Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Submission in Wrong Community</Dropdown.Item>
@@ -351,6 +352,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                         <Dropdown.Item eventKey= "Incomplete Submission (Requires Additional Details)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Incomplete Submission (Requires Additional Details)</Dropdown.Item>
                         <Dropdown.Item eventKey= "Other" onSelect={(eventKey) => selectOtherReasonHandler(eventKey!)}>Other</Dropdown.Item>
                       </DropdownButton>
+                      ) : null}
                   </ButtonGroup>
                   <ButtonGroup className="mr-2">
                     {user && token ? <Button
