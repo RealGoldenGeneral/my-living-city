@@ -82,3 +82,26 @@ export const deleteBan = async (
     })
     return res.data;
 }
+
+export const deleteExpiredBans = async (
+    token: string | null
+) => {
+    const res = await axios({
+        method: "delete",
+        url: `${API_BASE_URL}/ban/deletePassedBanDate`,
+        headers: {
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+    return res.data;
+}
+
+export const getExpiredBans = async () => {
+    const res = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/ban/getAllPassedDate`
+    });
+    return res.data;
+}
