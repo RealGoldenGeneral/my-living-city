@@ -23,16 +23,16 @@ import { checkIfUserHasRated } from 'src/lib/utilityFunctions';
 import UserFlagsModal from 'src/components/partials/SingleIdeaContent/UserFlagsModal';
 import { updateLanguageServiceSourceFile } from 'typescript';
 import { updateThreshhold } from 'src/lib/api/threshholdRoutes';
-import { useAllBanDetails } from 'src/hooks/banHooks';
+import { useAllBanDetails, useRemoveAllExpiredBans } from 'src/hooks/banHooks';
 
 // Extends Route component props with idea title route param
 interface ModManagementProps extends RouteComponentProps<{}> {
-  // Add custom added props here 
+  // Add custom added props here
 }
 
 const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   const { token } = useContext(UserProfileContext);
-  const {user} = useContext(UserProfileContext) 
+  const {user} = useContext(UserProfileContext)
 
   const { data: userData, isLoading: userLoading} = useAllUsers(token);
   const { data: ideaData, isLoading: ideaLoading} = useIdeasWithBreakdown(20);
@@ -42,6 +42,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   const {data: commentFlagData, isLoading: commentFlagLoading} = useAllCommentFlags(token);
   const {data: threshholdData, isLoading: threshholdLoading} = useThreshold(token);
   const {data: banData, isLoading: banLoading} = useAllBanDetails();
+  const { isLoading: banRemovalLoading } = useRemoveAllExpiredBans();
   const [pageState, setPageState] = useState<String>("quarantine");
 
   let threshhold: number = 3;
@@ -56,14 +57,14 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   function loadState(state: String){
     setPageState(state);
   }
-  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || threshholdLoading || banLoading) {
+  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || threshholdLoading || banLoading || banRemovalLoading) {
     return(
       <div className="wrapper">
       <LoadingSpinner />
       </div>
     )
   }
-  
+
   if(ideaData){
     propIdeaData = ideaData;
   }
@@ -291,7 +292,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
       <br></br>
       <CommentManagementContent users={userData!} token={token} user={user} comments={commentData} ideas={ideaData!} commentFlags={commentFlagData}/>
     </div>
-      
+
     </div>
   );
 }
