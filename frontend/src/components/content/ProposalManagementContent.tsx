@@ -17,7 +17,7 @@ interface ProposalManagementContentProps {
     users: IUser[] | undefined;
     token: string | null;
     user: IUser | null;
-    proposals: IProposalWithAggregations[] | undefined;
+    proposals: IIdeaWithAggregations[] | undefined;
     ideas: IIdeaWithAggregations[] | undefined;
     flags: IFlag[] | undefined;
 }
@@ -49,7 +49,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
     if(proposals && users){
         for(let i = 0; i < proposals!.length; i++){
             for(let z = 0; z < users!.length; z++){
-                if(proposals[i].idea.authorId!.toString() === users[z].id.toString()){
+                if(proposals[i].authorId!.toString() === users[z].id.toString()){
                     userEmails.push(users[z].email);
                 }
             }
@@ -59,7 +59,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
         for(let i = 0; i < proposals!.length; i++){
             let counter = 0;
             for(let z = 0; z < flags!.length; z++){
-                if(proposals[i].idea.id! === flags[z].ideaId){
+                if(proposals[i].id! === flags[z].ideaId){
                     counter++;
                 }
             }
@@ -67,11 +67,9 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
         }
     }
         return (
-            <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            <Container style={{maxWidth: '85%', tableLayout: 'fixed'}}>
             <Form>
             <h2 className="mb-4 mt-4">Proposal Management</h2>
-            <Card>
-            <Card.Body style={{padding: '0'}}>
             <Table bordered hover size="sm">
             <thead>
                 <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
@@ -84,24 +82,26 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                 <th scope="col">Segment</th>
                 <th scope="col">Active</th>
                 <th scope="col">Reviewed</th>
+                <th scope="col">Quarantined Date</th>
                 <th scope="col">Controls</th>
                 </tr>
             </thead>
             <tbody>
-            {proposals?.map((req: IProposalWithAggregations, index: number) => (
+            {proposals?.map((req: IIdeaWithAggregations, index: number) => (
                 <tr key={req.id}>
                     {req.id.toString() !== hideControls ? 
                     <>
                     <td>{userEmails[index]}</td>
                     
                     <td>{proposalIdeas[index].firstName}</td>
-                    <td>{req.idea.title}</td>
-                    <td>{req.idea.description}</td>
+                    <td>{req.title}</td>
+                    <td>{req.description}</td>
                     <td><a href= {ProposalURL + req.id}>Link</a></td> 
                     <td>{proposalFlags[index].toString()}</td>
                     <td>{proposalIdeas[index].segmentName}</td>
-                    <td>{req.idea.active ? "Yes" : "No"}</td>
-                    <td>{req.idea.reviewed ? "Yes":"No"}</td>
+                    <td>{req.active ? "Yes" : "No"}</td>
+                    <td>{req.reviewed ? "Yes":"No"}</td>
+                    <td>{(new Date(req.quarantined_at)).toLocaleDateString()}</td>
                     </> :<>
                         <td></td>
                         <td></td>
@@ -110,12 +110,12 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><Form.Check type="switch" checked={req.idea.active} onChange={(e)=>{
-                        req.idea.active = e.target.checked;
+                        <td><Form.Check type="switch" checked={req.active} onChange={(e)=>{
+                        req.active = e.target.checked;
                         setBan(e.target.checked)
                         }} id="ban-switch"/></td>  
-                        <td><Form.Check type="switch" checked={req.idea.reviewed} onChange={(e)=>{
-                        req.idea.reviewed = e.target.checked;
+                        <td><Form.Check type="switch" checked={req.reviewed} onChange={(e)=>{
+                        req.reviewed = e.target.checked;
                         setReviewed(e.target.checked)
                         }} id="reviewed-switch"/></td>  
                     </>
@@ -125,7 +125,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         <NavDropdown title="Controls" id="nav-dropdown">
                             <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id.toString());
-                                setBan(req.idea.active);
+                                setBan(req.active);
                                 }}>Edit</Dropdown.Item>
                         </NavDropdown>
                         : <>
@@ -133,12 +133,12 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
-                            if(req.idea.active === true && req.idea.reviewed === true){
-                                updateFalseFlagIdea(parseInt(req.idea.id.toString()), token!, true);
+                            if(req.active === true && req.reviewed === true){
+                                updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
                             } else{
-                                updateFalseFlagIdea(parseInt(req.idea.id.toString()), token!, false);
+                                updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
                             }
-                            updateIdeaStatus(token, user?.id, req.idea.id.toString(), req.idea.active, req.idea.reviewed);
+                            updateIdeaStatus(token, user?.id, req.id.toString(), req.active, req.reviewed, new Date);
                             }}>Save</Button>
                         </>
                     }
@@ -148,8 +148,6 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                 ))}
             </tbody>
             </Table>
-            </Card.Body>
-        </Card>
         </Form>
         <br></br>
         {/* <UserSegmentHandler/> */}

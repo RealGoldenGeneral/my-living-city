@@ -57,6 +57,7 @@ export interface IComment {
   commentFlagNumber: number;
   createdAt: string;
   updatedAt: string;
+  quarantined_at: Date;
   idea: IParsedIdea;
   // userSeg: IParsedSegData;
   author: IParsedCommentAuthor;

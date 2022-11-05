@@ -77,7 +77,8 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     }
     const userTypes = Object.keys(USER_TYPES);
         return (
-            <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            //style={{maxWidth: '80%', marginLeft: 50}}
+            <Container style={{maxWidth: '80%', marginLeft: 58}}>
             {showModal ? 
             <UserFlagsModal show={showModal} setShow={setShowModal} user={modalUser!} flags={flags} commentFlags={commentFlags} ideas={ideas} proposals={proposals} comments={comments}/>
             : null

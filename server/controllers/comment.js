@@ -298,7 +298,7 @@ commentRouter.put(
   async (req, res, next) => {
     try {
 
-      const {userId, active, reviewed} = req.body;
+      const {userId, active, reviewed, quarantined_at} = req.body;
       const {commentId} = req.params;
       const parsedCommentId = parseInt(commentId);
 
@@ -320,7 +320,8 @@ commentRouter.put(
         },
         data: {
           reviewed: reviewed,
-          active: active
+          active: active,
+          quarantined_at
         },
       });
       console.log("Returns here")

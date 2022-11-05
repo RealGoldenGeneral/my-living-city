@@ -215,6 +215,7 @@ ideaRouter.post(
           });
         }
         let notification_dismissed = false
+        let quarantined_at = new Date()
         const ideaData = {
           categoryId,
           superSegmentId,
@@ -231,7 +232,8 @@ ideaRouter.post(
           manufacturingImpact,
           supportingProposalId,
           state,
-          notification_dismissed
+          notification_dismissed,
+          quarantined_at,
         };
 
         // Create an idea and make the author JWT bearer
@@ -352,6 +354,7 @@ ideaRouter.post(
         i.title,
         i.description,
         i.notification_dismissed,
+        i.quarantined_at,
         i.segment_id as "segId",
         i.sub_segment_id as "subSegId",
         i.super_segment_id as "superSegId",
@@ -709,7 +712,7 @@ ideaRouter.put(
   async (req, res, next) => {
     try {
 
-      const {userId, active, reviewed} = req.body;
+      const {userId, active, reviewed, quarantined_at} = req.body;
       const {ideaId} = req.params;
       const parsedIdeaId = parseInt(ideaId);
 
@@ -731,7 +734,8 @@ ideaRouter.put(
         },
         data: {
           active: active,
-          reviewed: reviewed
+          reviewed: reviewed,
+          quarantined_at: quarantined_at,
         },
       });
       console.log("Returns here")

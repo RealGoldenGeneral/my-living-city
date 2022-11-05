@@ -93,5 +93,5 @@ export interface IIdeaWithAggregations extends IIdea {
   energyImpact?: string;
   manufacturingImpact?: string;
   notification_dismissed?: boolean;
-  
+  quarantined_at: Date;
 }

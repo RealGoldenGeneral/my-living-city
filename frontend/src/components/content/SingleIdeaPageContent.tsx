@@ -168,11 +168,11 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
       <div>Idea Is Currently Inactive</div>
     )
   }
-  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string) => {
+  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string, quarantined_at: Date) => {
     console.log(reason)
     await createFlagUnderIdea(ideaId, reason, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
-    await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
+    await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false, quarantined_at);
   }
 
   const selectReasonHandler = (eventKey: string) => {
@@ -185,14 +185,14 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     // setOtherFlagReason(eventKey!)
   }
 
-  const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+  const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleClose();
-    await flagFunc(ideaId, token, userId, ideaActive, flagReason);
+    await flagFunc(ideaId, token, userId, ideaActive, flagReason, quarantined_at);
   }
 
-  const submitOtherFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean) => {
+  const submitOtherFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleCloseOther();
-    await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason);
+    await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
     console.log(otherFlagReason);
   }
 
@@ -244,7 +244,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   Cancel
                 </Button>
                 <Button style={{background: 'red'}} variant="primary"  onClick={
-                  () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
+                  () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
                 }>
                   Flag
                 </Button>
@@ -277,7 +277,40 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   Cancel
                 </Button>
                 <Button style={{background: 'red'}} variant="primary"  onClick={
-                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
+                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
+                }>
+                  Flag
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal show={showOther} onHide={handleCloseOther}>
+              <Modal.Header closeButton>
+                <Modal.Title>Flag Confirmation</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              <Form>
+              <Form.Group
+              className="mb-3"
+              controlId="exampleForm.ControlTextarea1"
+            >
+              <Form.Label>Please provide a short note of your reason for flagging this post:</Form.Label>
+              <Form.Control 
+              className="otherFlagReason"
+              placeholder="Why do you want to flag this post?"
+              onChange={getOtherFlagReason} 
+              as="textarea" 
+              rows={3} />
+
+            </Form.Group>
+          </Form>
+                Are you sure about flagging this post?</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleCloseOther}>
+                  Cancel
+                </Button>
+                <Button style={{background: 'red'}} variant="primary"  onClick={
+                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
                 }>
                   Flag
                 </Button>
