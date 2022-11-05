@@ -28,7 +28,7 @@ export const useAllBanDetails = () => {
     )
 }
 
-export const RemoveAllExpiredBans = () => {
+export const useRemoveAllExpiredBans = () => {
     return useQuery(
         "expiredBanRemoval",
         unbanUsersWithExpiredBans
