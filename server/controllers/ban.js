@@ -155,7 +155,7 @@ banRouter.put(
         } finally {
             await prisma.$disconnect();
         }
-    } 
+    }
 )
 
 banRouter.delete(
@@ -195,7 +195,9 @@ banRouter.get(
                     }
                 }
             })
-            res.status(200).json(bans);
+            console.log(bans);
+            let userIds = bans.map(ban => ban.userId);
+            res.status(200).json(userIds);
         } catch (error) {
             console.log(error);
             res.status(400).json({
