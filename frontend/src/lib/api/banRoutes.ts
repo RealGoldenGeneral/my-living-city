@@ -132,3 +132,16 @@ export const unbanUsersWithExpiredBans = async (token: string | null) => {
     });
     //delete all the expired bans
 }
+
+
+export const attemptUnbanUser = async (token: string | null) => {
+    await axios({
+        method: "patch",
+        url: `${API_BASE_URL}/user/unbanMe`,
+        headers: {
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+}
