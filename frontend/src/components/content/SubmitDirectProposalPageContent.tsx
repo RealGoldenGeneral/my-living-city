@@ -113,6 +113,9 @@ const SubmitDirectProposalPageContent: React.FC<
         title: values.title,
         userType: values.userType,
         description: values.description,
+        proposal_role: values.proposal_role,
+        proposal_goal: values.proposal_goal,
+        proposal_benefits: values.proposal_benefits,
         artsImpact: values.artsImpact,
         communityImpact: values.communityImpact,
         energyImpact: values.energyImpact,
@@ -133,6 +136,7 @@ const SubmitDirectProposalPageContent: React.FC<
         subSegmentId: values.subSegmentId,
         superSegmentId: values.superSegmentId,
         state: "PROPOSAL",
+       
       };
       const idea = await postCreateIdea(ideaValues, user!.banned, token);
       const proposalValues = {
@@ -184,6 +188,9 @@ const SubmitDirectProposalPageContent: React.FC<
       title: "",
       userType: segData ? segData[0].userType : "Resident",
       description: "",
+      proposal_role: "",
+      proposal_goal: "",
+      proposal_benefits: "",
       artsImpact: "",
       communityImpact: "",
       energyImpact: "",
@@ -303,7 +310,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 placeholder="Enter the title of your proposal"
               />
             </Form.Group>
-            <Form.Group>
+            {/* <Form.Group>
               <Form.Label>*Describe your proposal</Form.Label>
               <Form.Control
                 as="textarea"
@@ -311,6 +318,46 @@ const SubmitDirectProposalPageContent: React.FC<
                 name="description"
                 onChange={formik.handleChange}
                 value={formik.values.description}
+              />
+            </Form.Group> */}
+            <Form.Group>
+              <Form.Label>*Describe your role in this proposal, your organization and what you bring to the table to help make this proposal happen.</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="proposal_role"
+                onChange={formik.handleChange}
+                value={formik.values.proposal_role}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*Describe what your proposal is and what the goal(s) is/are.</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="proposal_goal"
+                onChange={formik.handleChange}
+                value={formik.values.proposal_goal}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*Describe the requirements that will be needed. For example, resources, number of people, land use agreement.</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="description"
+                onChange={formik.handleChange}
+                value={formik.values.description}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*Describe the benefits and improvements the proposal will bring to the community.</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="proposal_benefits"
+                onChange={formik.handleChange}
+                value={formik.values.proposal_benefits}
               />
             </Form.Group>
             <Form.Group>

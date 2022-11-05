@@ -1,6 +1,5 @@
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-
 import {
   Button,
   Card,
@@ -65,6 +64,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const {
     title,
     description,
+    proposal_goal,
+    proposal_role,
+    proposal_benefits,
     imagePath,
     userType,
     communityImpact,
@@ -87,6 +89,70 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   } = ideaData;
 
   const parsedIdeaId = ideaId;
+  // let descriptionText = description;
+  let reducedText = description.substring(0, 250) + "..."
+
+  let reducedTextProposalGoal = proposal_goal.substring(0, 250) + "..."
+
+  let reducedTextBenefits = proposal_goal.substring(0, 250) + "..."
+
+  let reducedTextProposorInfo = proposal_role.substring(0, 250) + "..."
+
+  const [descriptionText, setDescriptionText] = useState(reducedText);
+  const [proposalText, setProposalText] = useState(reducedTextProposalGoal);
+  const [benefitText, setBenefitsText] = useState(reducedTextBenefits);
+  const [proposorText, setProposorText] = useState(reducedTextBenefits);
+  const [readMore, setReadmore] = useState('Read More');
+  const [readLess, setReadLess] = useState('Read Less');
+  const [expanded, setExpanded] = useState(false)
+  const [expandedGoal, setExpandedGoal] = useState(false)
+  const [expandedBenefits, setExpandedBenefits] = useState(false)
+  const [expandedProposorInfo, setExpandedProposorInfo] = useState(false)
+
+  const expandText = () => {
+    setDescriptionText(description);
+    setExpanded(true);
+  }
+
+  const reduceText = () => {
+    setDescriptionText(reducedText);
+    setExpanded(false);
+
+  }
+
+  const expandTextGoal = () => {
+    setProposalText(proposal_goal);
+    setExpandedGoal(true);
+  }
+
+  const reduceTextGoal = () => {
+    setProposalText(reducedTextProposalGoal);
+    setExpandedGoal(false);
+
+  }
+
+  const expandTextBenefits = () => {
+    setBenefitsText(proposal_benefits);
+    setExpandedBenefits(true);
+  }
+
+  const reduceTextBenefits = () => {
+    setBenefitsText(reducedTextBenefits);
+    setExpandedBenefits(false);
+
+  }
+
+  const expandTextProposor = () => {
+    setProposorText(proposal_role);
+    setExpandedProposorInfo(true);
+  }
+
+  const reduceTextProposor = () => {
+    setProposorText(reducedTextProposorInfo);
+    setExpandedProposorInfo(false);
+
+  }
+
 
   const {
     id: proposalId,
@@ -101,8 +167,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     needSuggestions,
     location,
   } = proposalData;
-  // console.log(proposalData);
-  // console.log(suggestedIdeas);
+
 
   const { title: catTitle } = category!;
 
@@ -268,7 +333,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
       donations: "",
       contactInfo: "",
     },
-    onSubmit: donorSubmitHandler,
+    onSubmit: donorSubmitHandler
   });
 
   const [followingPost, setFollowingPost] = useState(false);
@@ -285,7 +350,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
 
   console.log("isPostAuthor", isPostAuthor);
-  const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string) => {
+  const flagFunc = async (ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string) => {
     await createFlagUnderIdea(ideaId, reason, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
     await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false);
@@ -305,7 +370,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     handleClose();
     await flagFunc(ideaId, token, userId, ideaActive, flagReason);
   }
-  if(!active){
+  if (!active) {
     return (
       <div>Proposal Is Currently Inactive</div>
     )
@@ -327,6 +392,14 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         .mouse-pointer:hover {
           cursor: pointer;
         }
+        b {
+          color: grey;
+        }
+        b:hover {
+          cursor: pointer;
+          text-decoration:underline;
+          color: grey;
+        }
         `}
       </style>
       <Card>
@@ -341,21 +414,21 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
             <Card.Header>
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
-                <div style={{marginLeft: 'auto', height: '3rem', minWidth: 150}}>
+                <div style={{ marginLeft: 'auto', height: '3rem', minWidth: 150 }}>
                   <ButtonGroup className="mr-2">
-                        <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
-                        <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
-                        <Dropdown.Item eventKey= "Submission in Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Submission in Wrong Community</Dropdown.Item>
-                        <Dropdown.Item eventKey= "Spam/Unsolicited Advertisement" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Spam/Unsolicited Advertisement</Dropdown.Item>
-                        <Dropdown.Item eventKey= "Unrelated to Discussion (Off Topic)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Unrelated to Discussion (Off Topic)</Dropdown.Item>
-                        <Dropdown.Item eventKey= "Incomplete Submission (Requires Additional Details)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Incomplete Submission (Requires Additional Details)</Dropdown.Item>
-                        <Dropdown.Item eventKey= "Other" onSelect={(eventKey) => selectOtherReasonHandler(eventKey!)}>Other</Dropdown.Item>
-                      </DropdownButton>
+                    <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
+                      <Dropdown.Item eventKey="Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
+                      <Dropdown.Item eventKey="Submission in Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Submission in Wrong Community</Dropdown.Item>
+                      <Dropdown.Item eventKey="Spam/Unsolicited Advertisement" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Spam/Unsolicited Advertisement</Dropdown.Item>
+                      <Dropdown.Item eventKey="Unrelated to Discussion (Off Topic)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Unrelated to Discussion (Off Topic)</Dropdown.Item>
+                      <Dropdown.Item eventKey="Incomplete Submission (Requires Additional Details)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Incomplete Submission (Requires Additional Details)</Dropdown.Item>
+                      <Dropdown.Item eventKey="Other" onSelect={(eventKey) => selectOtherReasonHandler(eventKey!)}>Other</Dropdown.Item>
+                    </DropdownButton>
                   </ButtonGroup>
                   <ButtonGroup className="mr-2">
                     {user && token ? <Button
-                        // style={{ height: "3rem"}}
-                        onClick={async () => await addIdeaToUserFollowList()}
+                      // style={{ height: "3rem"}}
+                      onClick={async () => await addIdeaToUserFollowList()}
                     >
                       {followingPost ? "Unfollow" : "Follow"}
                     </Button> : null}
@@ -373,7 +446,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <Button variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button style={{background: 'red'}} variant="primary"  onClick={
+                <Button style={{ background: 'red' }} variant="primary" onClick={
                   () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
                 }>
                   Flag
@@ -386,27 +459,27 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <Modal.Title>Flag Confirmation</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-              <Form>
-              <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
-              <Form.Label>Please provide a short note of your reason for flagging this post:</Form.Label>
-              <Form.Control 
-              className="otherFlagReason"
-              placeholder="Why do you want to flag this post?"
-              onChange={getOtherFlagReason} 
-              as="textarea" 
-              rows={3} />
+                <Form>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="exampleForm.ControlTextarea1"
+                  >
+                    <Form.Label>Please provide a short note of your reason for flagging this post:</Form.Label>
+                    <Form.Control
+                      className="otherFlagReason"
+                      placeholder="Why do you want to flag this post?"
+                      onChange={getOtherFlagReason}
+                      as="textarea"
+                      rows={3} />
 
-            </Form.Group>
-          </Form>
+                  </Form.Group>
+                </Form>
                 Are you sure about flagging this post?</Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={handleCloseOther}>
                   Cancel
                 </Button>
-                <Button style={{background: 'red'}} variant="primary"  onClick={
+                <Button style={{ background: 'red' }} variant="primary" onClick={
                   () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
                 }>
                   Flag
@@ -462,7 +535,51 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   ) : null}
 
                   <br />
-                  <p>{description}</p>
+                  {title ? (
+                    <p>
+                      <strong>Title:</strong> {title}
+                    </p>
+                  ) : null}
+                  {proposal_role.length > 100 && !expandedProposorInfo ? (
+                    <p>
+                      <strong>Proposer Info:</strong> {proposorText}<br />
+                      {<b onClick={expandTextProposor}>{readMore}</b>}
+                    </p>
+                  ) : <p>
+                    <strong>Proposer Info:</strong> {proposal_role}<br />
+                    {expandedProposorInfo && <b onClick={reduceTextProposor}>{readLess}</b>}
+                  </p>}
+                  {proposal_goal.length > 100 && !expandedGoal ? (
+                    <p>
+                      <strong>Proposal Goal:</strong> {proposalText}<br />
+                      {<b onClick={expandTextGoal}>{readMore}</b>}
+                    </p>
+
+                  ) : <p>
+                    <strong>Proposal Goal:</strong> {proposal_goal} <br />
+                    {expandedGoal && <b onClick={reduceTextGoal}>{readLess}</b>}
+                  </p>}
+
+                  {proposal_benefits.length > 100 && !expandedBenefits ? (
+                    <p>
+                      <strong>Community Impact:</strong> {benefitText}<br />
+                      <b onClick={expandTextBenefits}>{readMore}</b>
+                    </p>
+                  ) : <p>
+                    <strong>Community Impact:</strong> {proposal_benefits}<br />
+                    {expandedBenefits && <b onClick={reduceTextBenefits}>{readLess}</b>}
+                  </p>}
+                  {description.length > 100 && !expanded ? (
+                    <p>
+                      <strong>Requirements:</strong> {descriptionText}<br />
+                      <b id="more-text" onClick={expandText}>{readMore}</b>
+                    </p>
+
+                  ) : <p>
+                    <strong>Requirements:</strong> {description} <br />
+                    {expanded && <b id="more-text" onClick={reduceText}>{readLess}</b>}
+                  </p>}
+
                   {communityImpact ? (
                     <p>
                       <strong>Community and Place:</strong> {communityImpact}

@@ -1,7 +1,7 @@
 import { ICategory } from "./category.type";
 import { IAddress } from "./address.type";
 import { IGeo } from "./geo.type";
-import {IProposal, IProposalWithAggregations} from "./proposal.type";
+import { IProposal, IProposalWithAggregations } from "./proposal.type";
 import { IProject } from "./project.type";
 import { IRating } from "./rating.type";
 import { IComment } from "./comment.type";
@@ -20,6 +20,9 @@ export interface IIdea {
   subSegmentId?: number; //
   title: string;
   description: string;
+  proposal_role: string;
+  proposal_goal: string;
+  proposal_benefits: string;
   imagePath: string;
   communityImpact?: string;
   natureImpact?: string;
@@ -93,5 +96,5 @@ export interface IIdeaWithAggregations extends IIdea {
   energyImpact?: string;
   manufacturingImpact?: string;
   notification_dismissed?: boolean;
-  
+
 }
