@@ -106,7 +106,7 @@ export const getExpiredBans = async () => {
     return res.data;
 }
 
-export const unbanUsersWithExpiredBans = async () => {
+export const unbanUsersWithExpiredBans = async (token: string | null) => {
     //get all ids of users with expired bans
     const userIdsResponse = await axios({
         method: "get",
@@ -119,7 +119,12 @@ export const unbanUsersWithExpiredBans = async () => {
         url: `${API_BASE_URL}/user/unbanUsers`,
         data: {
             userIds: userIdsResponse.data
-        }
+        },
+        headers: {
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
     });
     await axios({
         method: "delete",
