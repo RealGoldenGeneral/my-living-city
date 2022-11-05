@@ -84,7 +84,7 @@ const MyPosts: React.FC<MyPostsProps> = ({
           <Carousel.Item key={i} id='slick'>
             {userIdeas
               ? userIdeas.slice(i * 3, i * 3 + 3).map((idea) => {
-                return idea ? 
+                return idea && idea.active ? 
                 (
                   <Col
                     key={idea.id}
