@@ -38,7 +38,7 @@ export const getBan = async (
 }
 
 export const getBanWithToken = async (
-    token: string | null 
+    token: string | null
 ) => {
     const res = await axios.get(`${API_BASE_URL}/ban/getWithToken`, getAxiosJwtRequestOption(token!))
     return res.data;
@@ -107,10 +107,23 @@ export const getExpiredBans = async () => {
 }
 
 export const unbanUsersWithExpiredBans = async () => {
-    const expiredBans = await axios({
+    //get all ids of users with expired bans
+    const userIdsResponse = await axios({
         method: "get",
         url: `${API_BASE_URL}/ban/getAllPassedDate`
     });
+    console.log("These are the user ids: ", userIdsResponse.data);
     //unban all users that have ids returned by expireBans
+    await axios({
+        method: "patch",
+        url: `${API_BASE_URL}/user/unbanUsers`,
+        data: {
+            userIds: userIdsResponse.data
+        }
+    });
+    await axios({
+        method: "delete",
+        url: `${API_BASE_URL}/ban/deletePassedBanDate`
+    });
     //delete all the expired bans
 }
