@@ -42,7 +42,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({}) => {
   const {data: commentFlagData, isLoading: commentFlagLoading} = useAllCommentFlags(token);
   const {data: threshholdData, isLoading: threshholdLoading} = useThreshold(token);
   const {data: banData, isLoading: banLoading} = useAllBanDetails();
-  const { isLoading: banRemovalLoading } = useRemoveAllExpiredBans();
+  const { isLoading: banRemovalLoading } = useRemoveAllExpiredBans(token);
   const [pageState, setPageState] = useState<String>("quarantine");
 
   let threshhold: number = 3;
