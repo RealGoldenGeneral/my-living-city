@@ -9,10 +9,10 @@ const { authenticate } = require('passport');
 
 /**
  * @swagger
- * tags: 
+ * tags:
  *    name: User
  *    description: The User managing route
- * 
+ *
  */
 
 /**
@@ -50,7 +50,7 @@ const { authenticate } = require('passport');
  *          description: The Postal Code of the user
  *        city:
  *          type: string
- *          description: The City the user lives in 
+ *          description: The City the user lives in
  *        latitude:
  *          type: number
  *          format: double
@@ -104,7 +104,7 @@ userRouter.get(
  *    responses:
  *      200:
  *        description: The user logged in with JWT
- *        content: 
+ *        content:
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/User'
@@ -231,7 +231,7 @@ userRouter.get(
 /**
  * Signs up a user with fields referenced in the User DB model.
  * At a minimum must have email and password to succeed.
- * 
+ *
  * @route			POST /user/signup
  * @access		Public (No credentials required)
  * @returns		{{ User, JWT }}
@@ -248,12 +248,12 @@ userRouter.get(
  *      required: true
  *      content:
  *        application/json:
- *          schema: 
+ *          schema:
  *            $ref: '#/components/schemas/User'
  *    responses:
  *      201:
  *        description: The user was succesfully created
- *        content: 
+ *        content:
  *          application/json:
  *            schema:
  *              type: object
@@ -290,7 +290,7 @@ userRouter.post(
 			// Give valid token upon signup
 			const tokenBody = { id: user.id, email: user.email };
 			const token = jwt.sign({ user: tokenBody }, JWT_SECRET, {
-				expiresIn: JWT_EXPIRY 
+				expiresIn: JWT_EXPIRY
 			});
 
 			res.status(201).json({
@@ -323,8 +323,8 @@ userRouter.post(
  *                type: string
  *    responses:
  *      200:
- *        description: The user is succesfully logged in 
- *        content: 
+ *        description: The user is succesfully logged in
+ *        content:
  *          application/json:
  *            schema:
  *              type: object
@@ -366,7 +366,7 @@ userRouter.post(
 
 							const tokenBody = { id: user.id, email: user.email };
 							const token = jwt.sign({ user: tokenBody }, JWT_SECRET, {
-								expiresIn: JWT_EXPIRY 
+								expiresIn: JWT_EXPIRY
 							});
 
 							const parsedUser = {
@@ -405,10 +405,10 @@ userRouter.post(
 			const foundUser = await prisma.user.findUnique({
 				where: { email }
 			});
-			
+
 			console.log(foundUser.passCode);
 			console.log(paramPassCode);
-			
+
 			//const validPassword = await argon2ConfirmHash(originalPassword, foundUser.password);
 			if (foundUser.passCode != paramPassCode) {
 				throw new Error(`The confirmation code is incorrect `);
@@ -455,7 +455,7 @@ userRouter.post(
  *    responses:
  *      200:
  *        description: All the users were succesfully retrieved
- *        content: 
+ *        content:
  *          application/json:
  *            schema:
  *              type: array
@@ -520,7 +520,7 @@ userRouter.get(
  *    responses:
  *      204:
  *        description: The user's password was succesfully updated
- *        content: 
+ *        content:
  *          application/json:
  *            schema:
  *              type: object
@@ -586,62 +586,62 @@ userRouter.put(
 	'/update-profile',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
-	try {
-		const { id, email } = req.user;
-		const {
-			fname,
-			lname,
-			address: {
-				streetAddress,
-				streetAddress2,
-				city,
-				country,
-				postalCode,
-			}
-		} = req.body;
-
-		// Conditional add params to update only fields passed in 
-		// https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
-		const updateData = {
-			...fname && { fname },
-			...lname && { lname },
-		}
-
-		const updateAddressData = {
-			...streetAddress && { streetAddress },
-			...streetAddress2 && { streetAddress2 },
-			...city && { city },
-			...country && { country },
-			...postalCode && { postalCode },
-		}
-
-		const updatedUser = await prisma.user.update({
-			where: { id:id },
-			data: {
-				...updateData,
+		try {
+			const { id, email } = req.user;
+			const {
+				fname,
+				lname,
 				address: {
-					update: updateAddressData
+					streetAddress,
+					streetAddress2,
+					city,
+					country,
+					postalCode,
 				}
-			}
-		});
+			} = req.body;
 
-		const parsedUser = { ...updatedUser, password: null };
-
-		res.status(200).json({
-			message: "User succesfully updated",
-			user: parsedUser,
-		});
-	} catch (error) {
-		res.status(400).json({
-			message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
-			details: {
-				errorMessage: error.message,
-				errorStack: error.stack,
+			// Conditional add params to update only fields passed in
+			// https://dev.to/jfet97/the-shortest-way-to-conditional-insert-properties-into-an-object-literal-4ag7
+			const updateData = {
+				...fname && { fname },
+				...lname && { lname },
 			}
-		});
-	} finally {
-		await prisma.$disconnect();
-	}
+
+			const updateAddressData = {
+				...streetAddress && { streetAddress },
+				...streetAddress2 && { streetAddress2 },
+				...city && { city },
+				...country && { country },
+				...postalCode && { postalCode },
+			}
+
+			const updatedUser = await prisma.user.update({
+				where: { id:id },
+				data: {
+					...updateData,
+					address: {
+						update: updateAddressData
+					}
+				}
+			});
+
+			const parsedUser = { ...updatedUser, password: null };
+
+			res.status(200).json({
+				message: "User succesfully updated",
+				user: parsedUser,
+			});
+		} catch (error) {
+			res.status(400).json({
+				message: `An Error occured while trying to update the profile for the email ${req.user.email}.`,
+				details: {
+					errorMessage: error.message,
+					errorStack: error.stack,
+				}
+			});
+		} finally {
+			await prisma.$disconnect();
+		}
 	}
 );
 
@@ -710,7 +710,7 @@ userRouter.put(
 						}
 					});
 				}
-				
+
 				/* const updateAddressData = {
 				 	...streetAddress && { streetAddress },
 				 	...streetAddress2 && { streetAddress2 },
@@ -826,7 +826,7 @@ userRouter.put(
 						}
 					});
 				}
-				
+
 				/* const updateAddressData = {
 				 	...streetAddress && { streetAddress },
 				 	...streetAddress2 && { streetAddress2 },
@@ -873,6 +873,42 @@ userRouter.put(
 				}
 			});
 		}finally{
+			await prisma.$disconnect();
+		}
+	}
+)
+
+userRouter.patch(
+	'/unbanUsers',
+	//passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+		try {
+			//const { id, email } = req.user;
+
+			const userIds= req.body.userIds;
+			console.log(userIds);
+
+			for (let i = 0; i < userIds.length; i++) {
+
+				await prisma.user.update({
+					where: { id: userIds[i] },
+					data: {
+						banned: false
+					}
+				});
+			}
+			res.status(200).json({
+				message: "Users succesfully unbanned"
+			});
+		} catch (error) {
+			res.status(400).json({
+				message: `An Error occured while trying to unban users.`,
+				details: {
+					errorMessage: error.message,
+					errorStack: error.stack,
+				}
+			});
+		} finally {
 			await prisma.$disconnect();
 		}
 	}
