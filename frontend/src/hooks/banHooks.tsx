@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { IFetchError } from "../lib/types/types";
 
 import { IBanDetails } from "src/lib/types/input/banUser.input";
-import { getBan, getBanWithToken, getAllBan, getExpiredBans } from "src/lib/api/banRoutes"
+import {getBan, getBanWithToken, getAllBan, unbanUsersWithExpiredBans} from "src/lib/api/banRoutes"
 import {RouteComponentProps} from "react-router-dom";
 import {IUser} from "../lib/types/data/user.type";
 import {ICommentFlag, IFlag} from "../lib/types/data/flag.type";
@@ -28,9 +28,9 @@ export const useAllBanDetails = () => {
     )
 }
 
-export const useAllExpiredBans = () => {
-    return useQuery<IBanDetails[], IFetchError>(
-        "deletedBans",
-        getExpiredBans
-    )
+export const RemoveAllExpiredBans = () => {
+    return useQuery(
+        "expiredBanRemoval",
+        unbanUsersWithExpiredBans
+    );
 }
