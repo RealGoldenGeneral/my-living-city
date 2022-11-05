@@ -920,4 +920,56 @@ userRouter.patch(
 	}
 )
 
+userRouter.patch(
+	'/unbanMe',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res, next) => {
+		try {
+			const { id } = req.user;
+
+			console.log("user id is ", id);
+
+			const theUser = await prisma.user.findUnique({where:{id:id}});
+
+			if(!(theUser.banned)) {
+				return res.status(200).json("You're not banned");
+			}
+
+			const ban = await prisma.ban.findUnique({
+				where: {userId: id}
+			});
+			const isExpired = ban.banUntil <= new Date(Date.now());
+			if (isExpired) {
+				await prisma.user.update({
+					where: { id: id },
+					data: {
+						banned: false
+					}
+				});
+				await prisma.ban.delete({
+					where: { userId: id }
+				});
+				return res.status(200).json({
+					message: "You are succesfully unbanned"
+				});
+			} else {
+				return res.status(200).json({
+					message: "Your ban is still ongoing"
+				});
+			}
+		} catch (error) {
+			console.log(error);
+			res.status(400).json({
+				message: `An Error occured while trying to unban.`,
+				details: {
+					errorMessage: error.message,
+					errorStack: error.stack,
+				}
+			});
+		} finally {
+			await prisma.$disconnect();
+		}
+	}
+);
+
 module.exports = userRouter;
