@@ -105,3 +105,12 @@ export const getExpiredBans = async () => {
     });
     return res.data;
 }
+
+export const unbanUsersWithExpiredBans = async () => {
+    const expiredBans = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/ban/getAllPassedDate`
+    });
+    //unban all users that have ids returned by expireBans
+    //delete all the expired bans
+}
