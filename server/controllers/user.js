@@ -880,10 +880,16 @@ userRouter.put(
 
 userRouter.patch(
 	'/unbanUsers',
-	//passport.authenticate('jwt', { session: false }),
+	passport.authenticate('jwt', { session: false }),
 	async (req, res, next) => {
 		try {
-			//const { id, email } = req.user;
+			const { id } = req.user;
+
+			const theUser = await prisma.user.findUnique({where:{id:id}});
+
+			if( !(theUser.userType === 'ADMIN' || theUser.userType === 'MOD')) {
+				return res.status(401).json("You are not allowed to unban users!");
+			}
 
 			const userIds= req.body.userIds;
 			console.log(userIds);
