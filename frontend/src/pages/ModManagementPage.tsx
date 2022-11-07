@@ -194,11 +194,11 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
     // testing purposes; quarantined ideas sitting for 30 seconds
     //agedQuarantinedIdeas = quarantineIdea.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000)) > parseInt(filteredDay)))
  
-    let currentTime = (new Date()).getTime()
-    let quarantineDate = new Date((quarantineIdea[0].quarantined_at!)).getTime()
-    let diff = Math.abs(quarantineDate - currentTime)
+    // let currentTime = (new Date()).getTime()
+    // let quarantineDate = new Date((quarantineIdea[0].quarantined_at!)).getTime()
+    // let diff = Math.abs(quarantineDate - currentTime)
 
-    let diffSeconds = Math.ceil(diff / (1000))
+    // let diffSeconds = Math.ceil(diff / (1000))
    
 
     if (agedQuarantinedIdeas.length > 0) {
@@ -261,8 +261,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <br></br>
           <div className="d-flex" >
             {(filteredDay === '' || filteredDay === 'all') ? (<IdeaManagementContent users={userData!} token={token} user={user} ideas={quarantineIdea!} flags={flagData} />) : <IdeaManagementContent users={userData!} token={token} user={user} ideas={agedQuarantinedIdeas!} flags={flagData} />}
-            <div className="d-flex">
-              <ButtonGroup className="mr-2" style={{marginLeft: "-145%", alignContent: "left"}} >
+            <div style={{ float: 'left', marginRight: '13.7%' }}>
+              <ButtonGroup className="mr-2" style={{marginLeft: "-107%", alignContent: "left"}} >
                 <DropdownButton id="dropdown-basic-button" title="Sort" style={{marginTop: "20%"}}>
                   <Dropdown.Item eventKey="all" onSelect={(eventKey) => handleSelect(eventKey!)}>See all</Dropdown.Item>
                   <Dropdown.Item eventKey="7" onSelect={(eventKey) => handleSelect(eventKey!)}>Quarantined over 7 days</Dropdown.Item>
@@ -275,8 +275,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <br></br>
           <div className="d-flex">
             {(filteredDayProposal === '' || filteredDayProposal === 'all') ? (<ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={quarantineProposal!} flags={flagData} />) : <ProposalManagementContent users={userData!} token={token} user={user} proposals={agedQuarantinedProposals!} ideas={agedQuarantinedProposals!} flags={flagData} />}
-            <div className="d-flex">
-              <ButtonGroup className="mr-2" style={{marginLeft: "-190%", alignContent: "left"}} >
+            <div style={{ float: 'right', marginRight: '13.7%' }}>
+              <ButtonGroup className="mr-2" style={{marginLeft: "-107%", alignContent: "left"}} >
                 <DropdownButton id="dropdown-basic-button" title="Sort" style={{marginTop: "20%"}} >
                   <Dropdown.Item eventKey="all" onSelect={(eventKey) => handleSelectProposal(eventKey!)}>See all</Dropdown.Item>
                   <Dropdown.Item eventKey="7" onSelect={(eventKey) => handleSelectProposal(eventKey!)}>Quarantined over 7 days</Dropdown.Item>
@@ -289,8 +289,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <br></br>
           <div className="d-flex">
             {(filteredDayComment === '' || filteredDayComment === 'all') ? (<CommentManagementContent users={userData!} token={token} user={user} comments={quarantineComment} ideas={ideaData!} commentFlags={commentFlagData} />) : <CommentManagementContent users={userData!} token={token} user={user} comments={agedQuarantinedComments} ideas={ideaData!} commentFlags={commentFlagData} />}
-            <div className="d-flex">
-              <ButtonGroup className="mr-2" style={{marginLeft: "-185%", alignContent: "left"}}>
+            <div style={{ float: 'right', marginRight: '13.7%' }}>
+              <ButtonGroup className="mr-2" style={{marginLeft: "-107%", alignContent: "left"}}>
                 <DropdownButton id="dropdown-basic-button" title="Sort" style={{marginTop: "20%"}}  >
                   <Dropdown.Item eventKey="all" onSelect={(eventKey) => handleSelectComment(eventKey!)}>See all</Dropdown.Item>
                   <Dropdown.Item eventKey="7" onSelect={(eventKey) => handleSelectComment(eventKey!)}>Quarantined over 7 days</Dropdown.Item>

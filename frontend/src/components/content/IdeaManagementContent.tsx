@@ -68,12 +68,12 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
     console.log("Type",  new Date().toLocaleDateString())
    
         return (
-            <Container style={{maxWidth: '90%', tableLayout: 'fixed', marginLeft: '100'}}>
+            <Container style={{maxWidth: '80%', marginLeft: 50}}>
             <Form>
             <h2 className="mb-4 mt-4">Idea Management</h2>
             <Table bordered hover size="sm">
-            <thead>
-            <tr style={{backgroundColor: 'rgba(52, 52, 52, 0.1)',height: '15'}}>
+            <thead className="table-active">
+            <tr>
                 <th scope="col">User Email</th>
                 <th scope="col">Name</th>
                 <th scope="col">Idea Title</th>
