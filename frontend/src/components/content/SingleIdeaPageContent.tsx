@@ -118,8 +118,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   const {user, token} = useContext(UserProfileContext);
   const {data: isFollowingPost, isLoading: isFollowingPostLoading} = useCheckIdeaFollowedByUser(token, (user ? user.id : user), ideaId);
-  const {data: proposal} = useSingleProposal("" + (supportedProposal ? supportedProposal.id : ""));
-  const {data: proposalIdea } = useSingleIdea("" + (supportedProposal ? supportedProposal.ideaId : ""));
+  const {data: proposal} = useSingleProposal("" + (supportedProposal ? supportedProposal!.id : ""));
+  const {data: proposalIdea } = useSingleIdea("" + (supportedProposal ? supportedProposal!.ideaId : ""));
 
   const [show, setShow] = useState(false);
   const [showOther, setShowOther] = useState(false);

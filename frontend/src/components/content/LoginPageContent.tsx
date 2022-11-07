@@ -6,6 +6,7 @@ import { UserProfileContext } from '../../contexts/UserProfile.Context';
 import { IFetchError } from '../../lib/types/types';
 import { handlePotentialAxiosError, storeTokenExpiryInLocalStorage, storeUserAndTokenInLocalStorage, wipeLocalStorage } from '../../lib/utilityFunctions';
 import { getUserWithEmailAndPass } from '../../lib/api/userRoutes';
+import { attemptUnbanUser } from '../../lib/api/banRoutes';
 import { sendEmail } from '../../lib/api/sendEmailRoutes';
 import { ROUTES } from '../../lib/constants';
 
@@ -15,7 +16,7 @@ function ResetPasswordModal(props:any, email:string){
   const handleShow = () => {setShow(true);}
   const [inputVal, setInputVal] = useState(props.email);
   return (
-    <> 
+    <>
     <div className = "text-center">
       <Button type={"submit"} variant="link"onClick={()=>{
         handleShow();
@@ -32,9 +33,9 @@ function ResetPasswordModal(props:any, email:string){
           <Form.Group controlId="emailInput">
             <Form.Label>Email address</Form.Label>
             <Form.Control
-            required 
+            required
             type="email"
-            name="email" 
+            name="email"
             placeholder={"Enter email"}
             onChange={e=>setInputVal(e.target.value)}
             />
@@ -67,16 +68,16 @@ export default function LoginPageContent() {
 
   const submitHandler = async (values: ILoginWithEmailAndPass) => {
     try {
-      // Set loading 
+      // Set loading
       setIsLoading(true);
 
       // Destructure payload and set global and local state
       const { token, user } = await getUserWithEmailAndPass(values);
+      await attemptUnbanUser(token);
       storeUserAndTokenInLocalStorage(token, user);
       storeTokenExpiryInLocalStorage();
       setToken(token);
-      setUser(user)
-
+      setUser(user);
       // remove previous errors
       setError(null);
       formik.resetForm();
@@ -96,7 +97,7 @@ export default function LoginPageContent() {
       password: '',
     },
     onSubmit: submitHandler
-  }) 
+  })
   return (
     <main className='login-page-content'>
       <Card>
@@ -107,13 +108,13 @@ export default function LoginPageContent() {
             fluid
           />
           {error && (
-            <Alert 
-              show={showError} 
-              onClose={() => setShowError(false)} 
+            <Alert
+              show={showError}
+              onClose={() => setShowError(false)}
               dismissible
-              // variant='danger' 
-              variant='danger' 
-              className="error-alert" 
+              // variant='danger'
+              variant='danger'
+              className="error-alert"
             >
               { error.message}
             </Alert>

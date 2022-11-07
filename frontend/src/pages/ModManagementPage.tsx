@@ -27,23 +27,26 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { ButtonGroup } from "react-bootstrap";
 import { now } from 'moment';
+import { useAllBanDetails, useRemoveAllExpiredBans } from 'src/hooks/banHooks';
 
 // Extends Route component props with idea title route param
 interface ModManagementProps extends RouteComponentProps<{}> {
-  // Add custom added props here 
+  // Add custom added props here
 }
 
 const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
   const { token } = useContext(UserProfileContext);
-  const { user } = useContext(UserProfileContext)
+  const {user} = useContext(UserProfileContext)
 
-  const { data: userData, isLoading: userLoading } = useAllUsers(token);
-  const { data: ideaData, isLoading: ideaLoading } = useIdeasWithBreakdown(20);
-  const { data: proposalData, isLoading: proposalLoading } = useProposalsWithBreakdown(20);
-  const { data: commentData, isLoading: commentLoading } = useAllComments();
-  const { data: flagData, isLoading: flagLoading } = useAllFlags(token);
-  const { data: commentFlagData, isLoading: commentFlagLoading } = useAllCommentFlags(token);
-  const { data: threshholdData, isLoading: threshholdLoading } = useThreshold(token);
+  const { data: userData, isLoading: userLoading} = useAllUsers(token);
+  const { data: ideaData, isLoading: ideaLoading} = useIdeasWithBreakdown(20);
+  const { data: proposalData, isLoading: proposalLoading} = useProposalsWithBreakdown(20);
+  const { data: commentData, isLoading: commentLoading} = useAllComments();
+  const { data: flagData, isLoading: flagLoading} = useAllFlags(token);
+  const {data: commentFlagData, isLoading: commentFlagLoading} = useAllCommentFlags(token);
+  const {data: threshholdData, isLoading: threshholdLoading} = useThreshold(token);
+  const {data: banData, isLoading: banLoading} = useAllBanDetails();
+  const { isLoading: banRemovalLoading } = useRemoveAllExpiredBans(token);
   const [pageState, setPageState] = useState<String>("quarantine");
   const [filteredDay, setfilteredDay] = useState('');
   const [filteredDayProposal, setfilteredDayProposal] = useState('');
@@ -72,8 +75,8 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
   function loadState(state: String) {
     setPageState(state);
   }
-  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || threshholdLoading) {
-    return (
+  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || threshholdLoading || banLoading || banRemovalLoading) {
+    return(
       <div className="wrapper">
         <LoadingSpinner />
       </div>
@@ -254,7 +257,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
             <Button onClick={() => updateThreshhold(newThreshold, token!)}>Update</Button>
           </div>
           <br></br>
-          <UserManagementContent users={quarantineUser!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} />
+          <UserManagementContent users={quarantineUser!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
           <br></br>
           <div className="d-flex" >
             {(filteredDay === '' || filteredDay === 'all') ? (<IdeaManagementContent users={userData!} token={token} user={user} ideas={quarantineIdea!} flags={flagData} />) : <IdeaManagementContent users={userData!} token={token} user={user} ideas={agedQuarantinedIdeas!} flags={flagData} />}
@@ -318,7 +321,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black' }} onClick={() => loadState("comment")}>Comment View</Button>
         </div>
         <div style={{ width: '80%', marginLeft: '22%' }}>
-          <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} />
+          <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData} />
         </div>
       </div>
     );
@@ -391,28 +394,28 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
   }
   return (
     <div>
-      <div style={{ width: 200, float: 'left', height: 240, marginLeft: '12%' }}>
-        <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40 }} onClick={() => { window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }); }}>Dashboard</Button>
-        <br></br>
-        <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black' }} onClick={() => loadState("quarantine")}>Quarantine List</Button>
-        <br></br>
-        <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black' }} onClick={() => loadState("user")}>User View</Button>
-        <br></br>
-        <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black' }} onClick={() => loadState("idea")}>Idea View</Button>
-        <br></br>
-        <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black' }} onClick={() => loadState("proposal")}>Proposal View</Button>
-        <br></br>
-        <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black' }} onClick={() => loadState("comment")}>Comment View</Button>
-      </div>
-      <div style={{ width: '80%', marginLeft: '22%' }}>
-        <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} />
-        <br></br>
-        <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData} />
-        <br></br>
-        <ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={propIdeaData!} flags={flagData} />
-        <br></br>
-        <CommentManagementContent users={userData!} token={token} user={user} comments={allComments} ideas={ideaData!} commentFlags={commentFlagData} />
-      </div>
+    <div style={{width: 200, float:'left', height:240, marginLeft:'12%'}}>
+      <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40}}  onClick={() => {window.scrollTo({top: 0, left: 0, behavior: 'smooth'});}}>Dashboard</Button>
+      <br></br>
+      <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black'}} onClick={() => loadState("quarantine")}>Quarantine List</Button>
+      <br></br>
+      <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black'}} onClick={() => loadState("user")}>User View</Button>
+      <br></br>
+      <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black'}} onClick={() => loadState("idea")}>Idea View</Button>
+      <br></br>
+      <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black', borderBottom: '1px solid black'}} onClick={() => loadState("proposal")}>Proposal View</Button>
+      <br></br>
+      <Button style={{border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black'}} onClick={() => loadState("comment")}>Comment View</Button>
+    </div>
+    <div style={{width: '80%', marginLeft:'22%'}}>
+      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
+      <br></br>
+      <IdeaManagementContent users={userData!} token={token} user={user} ideas={ideaData!} flags={flagData}/>
+      <br></br>
+      <ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={propIdeaData!} flags={flagData}/>
+      <br></br>
+      <CommentManagementContent users={userData!} token={token} user={user} comments={commentData} ideas={ideaData!} commentFlags={commentFlagData}/>
+    </div>
 
     </div>
   );

@@ -9,6 +9,10 @@ import { useAllCommentFlags, useAllFlags } from 'src/hooks/flagHooks';
 import { IUser } from 'src/lib/types/data/user.type';
 import { ICommentFlag, IFlag } from 'src/lib/types/data/flag.type';
 import { UserManagementContentLegacy } from 'src/components/content/UserManagementContentLegacy';
+import { useIdeasWithBreakdown } from 'src/hooks/ideaHooks';
+import { useProposalsWithBreakdown } from 'src/hooks/proposalHooks';
+import { useAllComments } from 'src/hooks/commentHooks';
+import { useAllBanDetails } from 'src/hooks/banHooks';
 
 // Extends Route component props with idea title route param
 interface UserManagementPropsLegacy extends RouteComponentProps<{}> {
@@ -22,25 +26,30 @@ interface UserManagementPropsLegacy extends RouteComponentProps<{}> {
 
 const UserManagementPage: React.FC<UserManagementPropsLegacy> = ({}) => {
   const { token } = useContext(UserProfileContext);
-  const {user} = useContext(UserProfileContext) 
+  const { user } = useContext(UserProfileContext);
+
+  const { data: userData, isLoading: userLoading} = useAllUsers(token);
+  const { data: ideaData, isLoading: ideaLoading} = useIdeasWithBreakdown(20);
+  const { data: proposalData, isLoading: proposalLoading} = useProposalsWithBreakdown(20);
+  const { data: commentData, isLoading: commentLoading} = useAllComments();
   const { data: flagData, isLoading: flagLoading} = useAllFlags(token);
-  const { data, isLoading} = useAllUsers(token);
   const {data: commentFlagData, isLoading: commentFlagLoading} = useAllCommentFlags(token);
+  const { data: banData, isLoading: banLoading} = useAllBanDetails();
+  
   let flaggedUser: number[] = [];
-  if (isLoading || flagLoading || commentFlagLoading) {
+  if (userLoading || ideaLoading || proposalLoading || commentLoading || flagLoading || commentFlagLoading || banLoading) {
     return(
       <div className="wrapper">
       <LoadingSpinner />
       </div>
     )
-
   }
 
   // TODO: Create non blocking error handling
 
   return (
     <div className="wrapper">
-      <UserManagementContentLegacy users={data!} token={token} user={user} flags={flagData} commentFlags={commentFlagData}/>
+      <UserManagementContent users={userData!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
     </div>
   );
 }
