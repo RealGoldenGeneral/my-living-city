@@ -235,18 +235,17 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
             </Card.Header>
 
             <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton>s
+              <Modal.Header closeButton>
                 <Modal.Title>Flag Confirmation</Modal.Title>
               </Modal.Header>
               <Modal.Body>Are you sure about flagging this post?</Modal.Body>
               <Modal.Footer>
+                <Button style={{background: 'red'}} variant="primary"  onClick={
+                    () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
+                }>Flag
+                </Button>
                 <Button variant="secondary" onClick={handleClose}>
                   Cancel
-                </Button>
-                <Button style={{background: 'red'}} variant="primary"  onClick={
-                  () => submitFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
-                }>
-                  Flag
                 </Button>
               </Modal.Footer>
             </Modal>
