@@ -32,8 +32,8 @@ ideaFlagRouter.post(
         const userAlreadyCreatedFlag = await prisma.ideaFlag.findFirst({
           where: {
             flaggerId: loggedInUserId,
-            ideaId: parsedIdeaId,
-            flagReason: req.body.flagReason
+            ideaId: parsedIdeaId
+            // flagReason: req.body.flagReason
           }
         });
         if (userAlreadyCreatedFlag) {

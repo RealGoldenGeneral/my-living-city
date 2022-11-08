@@ -121,6 +121,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const {data: proposal} = useSingleProposal("" + (supportedProposal ? supportedProposal!.id : ""));
   const {data: proposalIdea } = useSingleIdea("" + (supportedProposal ? supportedProposal!.ideaId : ""));
 
+
+  const [showFlagButton, setShowFlagButton] = useState(true);
   const [show, setShow] = useState(false);
   const [showOther, setShowOther] = useState(false);
   const [flagReason, setFlagReason] = useState("");
@@ -137,6 +139,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   //   setOtherFlagReason()
   // }
 
+  // const handleShowFlagButton = () => setShowFlagButton("display: 'block'");
+  const handleHideFlagButton = () => setShowFlagButton(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -187,11 +191,13 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleClose();
+    // handleHideFlagButton();
     await flagFunc(ideaId, token, userId, ideaActive, flagReason, quarantined_at);
   }
 
   const submitOtherFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleCloseOther();
+    handleHideFlagButton();
     await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
     console.log(otherFlagReason);
   }
@@ -211,7 +217,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
               <div className="d-flex">
                 <h1 className="h1 p-2 flex-grow-1">{capitalizeString(title)}</h1>
                 <div className="p-2 justify-content-end" >
-                  <ButtonGroup className="mr-2" style={{marginRight: 'auto'}}>
+                  {/* <div id="flagButtonDiv" style={{display: showFlagButton ? 'block' : 'none'}}> */}
+                  <ButtonGroup className="mr-2" style={{display: showFlagButton ? '' : 'none'}}>
                   {!reviewed ? (
                     <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
                       <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
@@ -223,6 +230,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     </DropdownButton>
                     ) : null}
                   </ButtonGroup>
+                  {/* </div> */}
+                  
                     <ButtonGroup className="mr-2">
                     {user && token ? <Button
                       onClick={async () => await handleFollowUnfollow()}
