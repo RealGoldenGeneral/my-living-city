@@ -9,9 +9,9 @@ import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 
-// THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO 
-// THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO 
-// THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO 
+// THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO
+// THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO
+// THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO
 interface IdeaManagementContentProps {
     users: IUser[] | undefined;
     token: string | null;
@@ -53,20 +53,18 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
         }
     }
     if(ideas && flags){
-        for(let i = 0; i < ideas!.length; i++){
+        for(let ideaIndex = 0; ideaIndex < ideas!.length; ideaIndex++){
             let counter = 0;
-            for(let z = 0; z < flags!.length; z++){
-                if(ideas[i].id === flags[z].ideaId){
+            for(let flagIndex = 0; flagIndex < flags!.length; flagIndex++){
+                if(ideas[ideaIndex].id === flags[flagIndex].ideaId){
                     counter++;
                 }
-                if(z === flags!.length-1){
-                    ideaFlags.push(counter);
-                }
             }
+            ideaFlags.push(counter);
         }
     }
     console.log("Type",  new Date().toLocaleDateString())
-   
+
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
             <Form>
@@ -90,13 +88,13 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
             <tbody>
             {ideas?.map((req: IIdeaWithAggregations, index: number) => (
                 <tr key={req.id}>
-                    {req.id.toString() !== hideControls ? 
+                    {req.id.toString() !== hideControls ?
                     <>
                     <td>{userEmails[index]}</td>
                     <td>{req.firstName}</td>
                     <td>{req.title}</td>
                     <td>{req.description}</td>
-                    <td><a href= {ideaURL + req.id}>Link</a></td> 
+                    <td><a href= {ideaURL + req.id}>Link</a></td>
                     <td>{ideaFlags[index].toString()}</td>
                     <td>{req.segmentName}</td>
                     <td>{req.active ? "Yes" : "No"}</td>
@@ -117,7 +115,7 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                         <td><Form.Check type="switch" checked={req.reviewed} onChange={(e)=>{
                         req.reviewed = e.target.checked;
                         setReviewed(e.target.checked)
-                        }} id="reviewed-switch"/></td>    
+                        }} id="reviewed-switch"/></td>
                     </>
                     }
                     <td>
