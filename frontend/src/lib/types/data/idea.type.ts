@@ -21,7 +21,7 @@ export interface IIdea {
   title: string;
   description: string;
   proposal_role: string;
-  proposal_goal: string;
+  requirements: string;
   proposal_benefits: string;
   imagePath: string;
   communityImpact?: string;

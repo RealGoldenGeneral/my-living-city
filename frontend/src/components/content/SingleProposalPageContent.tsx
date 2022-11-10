@@ -64,7 +64,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const {
     title,
     description,
-    proposal_goal,
+    requirements,
     proposal_role,
     proposal_benefits,
     imagePath,
@@ -92,9 +92,9 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   // let descriptionText = description;
   let reducedText = description.substring(0, 250) + "..."
 
-  let reducedTextProposalGoal = proposal_goal.substring(0, 250) + "..."
+  let reducedTextProposalGoal = requirements.substring(0, 250) + "..."
 
-  let reducedTextBenefits = proposal_goal.substring(0, 250) + "..."
+  let reducedTextBenefits = requirements.substring(0, 250) + "..."
 
   let reducedTextProposorInfo = proposal_role.substring(0, 250) + "..."
 
@@ -121,7 +121,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }
 
   const expandTextGoal = () => {
-    setProposalText(proposal_goal);
+    setProposalText(requirements);
     setExpandedGoal(true);
   }
 
@@ -535,11 +535,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   ) : null}
 
                   <br />
-                  {title ? (
-                    <p>
-                      <strong>Title:</strong> {title}
-                    </p>
-                  ) : null}
                   {proposal_role.length > 100 && !expandedProposorInfo ? (
                     <p>
                       <strong>Proposer Info:</strong> {proposorText}<br />
@@ -549,26 +544,26 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <strong>Proposer Info:</strong> {proposal_role}<br />
                     {expandedProposorInfo && <b onClick={reduceTextProposor}>{readLess}</b>}
                   </p>}
-                  {proposal_goal.length > 100 && !expandedGoal ? (
+                  {requirements.length > 100 && !expandedGoal ? (
                     <p>
-                      <strong>Proposal Goal:</strong> {proposalText}<br />
+                      <strong>Requirements:</strong> {proposalText}<br />
                       {<b onClick={expandTextGoal}>{readMore}</b>}
                     </p>
 
                   ) : <p>
-                    <strong>Proposal Goal:</strong> {proposal_goal} <br />
+                    <strong>Requirements:</strong> {requirements} <br />
                     {expandedGoal && <b onClick={reduceTextGoal}>{readLess}</b>}
                   </p>}
-
                   {proposal_benefits.length > 100 && !expandedBenefits ? (
                     <p>
-                      <strong>Community Impact:</strong> {benefitText}<br />
+                      <strong>Community Benefits:</strong> {benefitText}<br />
                       <b onClick={expandTextBenefits}>{readMore}</b>
                     </p>
                   ) : <p>
-                    <strong>Community Impact:</strong> {proposal_benefits}<br />
+                    <strong>Community Benefits:</strong> {proposal_benefits}<br />
                     {expandedBenefits && <b onClick={reduceTextBenefits}>{readLess}</b>}
                   </p>}
+
                   {description.length > 100 && !expanded ? (
                     <p>
                       <strong>Requirements:</strong> {descriptionText}<br />

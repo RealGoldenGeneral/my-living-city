@@ -73,7 +73,7 @@ export const postCreateIdea = async (
     title,
     description,
     proposal_role,
-    proposal_goal,
+    requirements,
     proposal_benefits,
     superSegmentId,
     segmentId,
@@ -111,7 +111,7 @@ export const postCreateIdea = async (
   formBody.append("title", title);
 
   formBody.append("proposal_role", proposal_role);
-  formBody.append("proposal_goal", proposal_goal);
+  formBody.append("requirements", requirements);
   formBody.append("proposal_benefits", proposal_benefits);
   formBody.append("description", description);
 

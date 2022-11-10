@@ -114,7 +114,7 @@ const SubmitDirectProposalPageContent: React.FC<
         userType: values.userType,
         description: values.description,
         proposal_role: values.proposal_role,
-        proposal_goal: values.proposal_goal,
+        requirements: values.requirements,
         proposal_benefits: values.proposal_benefits,
         artsImpact: values.artsImpact,
         communityImpact: values.communityImpact,
@@ -189,7 +189,7 @@ const SubmitDirectProposalPageContent: React.FC<
       userType: segData ? segData[0].userType : "Resident",
       description: "",
       proposal_role: "",
-      proposal_goal: "",
+      requirements: "",
       proposal_benefits: "",
       artsImpact: "",
       communityImpact: "",
@@ -321,7 +321,7 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group> */}
             <Form.Group>
-              <Form.Label>*Describe your role in this proposal, your organization and what you bring to the table to help make this proposal happen.</Form.Label>
+              <Form.Label>*Proposer info (Describe you, your organization and what you bring to the table to help make this proposal happen).</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -331,17 +331,7 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*Describe what your proposal is and what the goal(s) is/are.</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="proposal_goal"
-                onChange={formik.handleChange}
-                value={formik.values.proposal_goal}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>*Describe the requirements that will be needed. For example, resources, number of people, land use agreement.</Form.Label>
+              <Form.Label>*Describe your Proposal (What is the goal, what does it look like, how it will work).</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -351,13 +341,23 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*Describe the benefits and improvements the proposal will bring to the community.</Form.Label>
+              <Form.Label>*Community Benefits  (Describe how it will improve and benefit the community).</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 name="proposal_benefits"
                 onChange={formik.handleChange}
                 value={formik.values.proposal_benefits}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*Requirements (Describe what will be needed to make this a reality: number of people, ressources, land use agreement, municipal agreement ect…).</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="requirements"
+                onChange={formik.handleChange}
+                value={formik.values.requirements}
               />
             </Form.Group>
             <Form.Group>
