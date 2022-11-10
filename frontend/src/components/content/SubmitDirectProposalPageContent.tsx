@@ -756,7 +756,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 className="border-bottom mb-3"
                 style={{ paddingBottom: "1rem", paddingTop: "1rem" }}
               >
-                Location
+                Location (Optional)
               </h3>
               <input
                 type="checkbox"
@@ -768,7 +768,7 @@ const SubmitDirectProposalPageContent: React.FC<
                   type="text"
                   name="location"
                   onChange={formik.handleChange}
-                  placeholder="Enter Location (Optional)"
+                  placeholder="Please Enter The Address and The Postal Code of The Location (Optional)"
                   style={{ marginBottom: "1rem" }}
                 />
               </div>
