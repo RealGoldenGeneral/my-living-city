@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Button, Container, Card, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
 import { FindBanDetails } from 'src/hooks/banHooks';
-import { deleteBan } from 'src/lib/api/banRoutes';
+import { getMostRecentBan, updateBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
+import { date } from 'yup';
+import { IBanUser } from 'src/lib/types/data/banUser.type';
 
 interface UnbanModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,15 +28,25 @@ export const UserManagementUnbanModal = ({
     currentUser,
     token
 }: UnbanModalProps) => {
-    const { data: modalUserData, error, isLoading, isError } = FindBanDetails(modalUser.id);
+    let { data: modalUserData, isLoading: modalUserIsLoading, isError: modalUserIsError } = FindBanDetails(modalUser.id);
+    const [bannedUserData, setBannedUserData] = useState<IBanUser>(modalUserData!);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
     const unbanUser = async () => {
         try {
             setIsSubmitting(true);
             modalUser.banned = false;
-            await deleteBan(modalUser.id, token)
+            modalUserData!.banUntil = new Date(Date.now())
+            console.log(modalUserData);
+            setBannedUserData(modalUserData!);
+            await updateBan(bannedUserData, token)
+            // await deleteBan(modalUser.id, token)
             await updateUser(modalUser, token, currentUser);
+            // Reassign modalUserData
+            modalUserData = await getMostRecentBan(modalUser.id);
+            setBannedUserData(modalUserData!);
+            console.log(bannedUserData);
+            // console.log(modalUserData);
             handleClose();
         } catch (error) {
             console.log(error);
@@ -43,8 +55,7 @@ export const UserManagementUnbanModal = ({
         }
     }
 
-    if (isError) {
-        console.log(error);
+    if (modalUserIsError) {
         return (
             <div className="wrapper">
                 <p>
@@ -54,7 +65,7 @@ export const UserManagementUnbanModal = ({
         );
     }
 
-    if (isLoading) {
+    if (modalUserIsLoading) {
         return (
             <Modal
                 show={show}
@@ -86,25 +97,33 @@ export const UserManagementUnbanModal = ({
                 <Modal.Body>
                     <Card>
                         <Card.Body>
-                            <h5>Reason</h5>
-                            <hr/>
-                            {modalUserData?.banReason}
+                            <h5>Ban Type</h5>
+                            <hr />
+                            {bannedUserData?.banType}
                         </Card.Body>
                     </Card>
-                    <p/>
+                    <p />
+                    <Card>
+                        <Card.Body>
+                            <h5>Reason</h5>
+                            <hr />
+                            {bannedUserData?.banReason}
+                        </Card.Body>
+                    </Card>
+                    <p />
                     <Card>
                         <Card.Body>
                             <h5>Details</h5>
-                            <hr/>
-                            {modalUserData?.banMessage}
+                            <hr />
+                            {bannedUserData?.banMessage},
                         </Card.Body>
                     </Card>
-                    <p/>
+                    <p />
                     <Card>
                         <Card.Body>
                             <h5>Banned Until</h5>
-                            <hr/>
-                            {new Date(modalUserData!.banUntil).toLocaleString()}
+                            <hr />
+                            {new Date(bannedUserData?.banUntil).toLocaleString()}
                         </Card.Body>
                     </Card>
                 </Modal.Body>

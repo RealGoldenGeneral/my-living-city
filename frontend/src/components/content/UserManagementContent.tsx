@@ -6,13 +6,13 @@ import { IComment } from 'src/lib/types/data/comment.type';
 import { ICommentFlag, IFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
-import { IBanDetails } from 'src/lib/types/input/banUser.input';
 import { IUser } from 'src/lib/types/data/user.type';
 import UserFlagsModal from '../partials/SingleIdeaContent/UserFlagsModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 import { UserManagementBanModal } from '../partials/UserManagementBanModal';
 import { UserManagementUnbanModal } from '../partials/UserManagementUnbanModal';
 import { UserManagementModifyWarningModal } from '../partials/UserManagementModifyWarningModal';
+import { IBanUser } from 'src/lib/types/data/banUser.type';
 
 
 interface UserManagementContentProps {
@@ -24,15 +24,15 @@ interface UserManagementContentProps {
     ideas: IIdeaWithAggregations[] | undefined;
     proposals: IProposalWithAggregations[] | undefined;
     comments: IComment[] | undefined;
-    bans: IBanDetails[] | undefined;
+    bans: IBanUser[] | undefined;
 }
 
 export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token, user, flags, commentFlags, ideas, proposals, comments, bans}) => {
     const warnedUsersArray: string[] = []
-    bans?.map(o => {
-        if (o.isWarning)
-            warnedUsersArray.push(o.userId)
-    })
+    // bans?.map(o => {
+    //     if (o.isWarning)
+    //         warnedUsersArray.push(o.userId)
+    // })
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
@@ -101,10 +101,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
             }
             {showUserUnbanModal ?
             <UserManagementUnbanModal show={showUserUnbanModal} setShow={setShowUserUnbanModal} modalUser={modalUser!} currentUser={user!} token={token} />
-            : null
-            }
-            {showUserModifyWarningModal ?
-            <UserManagementModifyWarningModal show={showUserModifyWarningModal} setShow={setShowUserModifyWarningModal} modalUser={modalUser!} currentUser={user!} token={token} warnedUserIds={warned} />
             : null
             }
             
@@ -180,17 +176,12 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                                 <Dropdown.Item onClick={()=> {
                                     setModalUser(req);
                                     setShowUserUnbanModal(true);
-                                }}>Unban User</Dropdown.Item>: (
-                                    warned.includes(req.id) ? 
-                                    <Dropdown.Item onClick={()=> {
-                                        setModalUser(req);
-                                        setShowUserModifyWarningModal(true);
-                                    }}>Modify Warning</Dropdown.Item> :
-                                    <Dropdown.Item onClick={()=> {
-                                        setModalUser(req);
-                                        setShowUserBanModal(true);
-                                    }}>Ban User</Dropdown.Item>
-                                )
+                                }}>Modify Ban</Dropdown.Item>
+                                :
+                                <Dropdown.Item onClick={()=> {
+                                    setModalUser(req);
+                                    setShowUserBanModal(true);
+                                }}>Ban User</Dropdown.Item>
                             }
                         </NavDropdown>
                         : <>

@@ -151,6 +151,43 @@ userRouter.get(
 	}
 )
 userRouter.get(
+	'/get/:userId',
+	async (req, res, next) => {
+		try {
+			const foundUser = await prisma.user.findUnique({
+				where: { id: req.params.userId},
+				select: {
+					email: true,
+					fname: true,
+					lname: true
+				}
+			});
+
+			if (!foundUser) {
+				return res.status(400).json({
+					message: "User could not be found or does not exist in the database."
+				})
+			}
+
+
+			res.status(200).json(foundUser);
+		} catch (error) {
+			console.log(error.message);
+			res.status(400);
+			res.json({
+				message: error.message,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+			})
+		} finally {
+			await prisma.$disconnect();
+		}
+	}
+)
+
+userRouter.get(
 	'/email/:email',
 	async (req, res, next) => {
 		try {

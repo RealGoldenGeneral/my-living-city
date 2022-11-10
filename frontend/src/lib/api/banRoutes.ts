@@ -1,10 +1,11 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
-import { IBanDetails } from "../types/input/banUser.input";
+import { IBanUserInput } from "../types/input/banUser.input";
+import { IBanUser } from "../types/data/banUser.type";
 
 export const postCreateBan = async (
-    banData: IBanDetails,
+    banData: IBanUserInput,
     token: string | null
 ) => {
     const jsonBody = JSON.stringify(banData);
@@ -27,12 +28,12 @@ export const postCreateBan = async (
     return res.data;
 };
 
-export const getBan = async (
+export const getMostRecentBan = async (
     userId: string
 ) => {
     const res = await axios({
         method: "get",
-        url: `${API_BASE_URL}/ban/get/${userId}`
+        url: `${API_BASE_URL}/ban/getMostRecent/${userId}`
     })
     return res.data;
 }
@@ -40,17 +41,17 @@ export const getBan = async (
 export const getBanWithToken = async (
     token: string | null
 ) => {
-    const res = await axios.get(`${API_BASE_URL}/ban/getWithToken`, getAxiosJwtRequestOption(token!))
+    const res = await axios.get(`${API_BASE_URL}/ban/getMostRecentWithToken`, getAxiosJwtRequestOption(token!))
     return res.data;
 }
 
-export const getAllBan = async (): Promise<IBanDetails[]> => {
-    const res = await axios.get<IBanDetails[]>(`${API_BASE_URL}/ban/getAll`)
+export const getAllBan = async (): Promise<IBanUser[]> => {
+    const res = await axios.get<IBanUser[]>(`${API_BASE_URL}/ban/getAll`)
     return res.data;
 }
 
 export const updateBan = async (
-    banData: IBanDetails,
+    banData: IBanUser,
     token: string | null
 ) => {
     const res = await axios({
@@ -67,21 +68,21 @@ export const updateBan = async (
     return res.data;
 }
 
-export const deleteBan = async (
-    userId: string,
-    token: string | null
-) => {
-    const res = await axios({
-        method: "delete",
-        url: `${API_BASE_URL}/ban/delete/${userId}`,
-        headers: {
-            "x-auth-token": token,
-            "Access-Control-Allow-Origin": "*",
-        },
-        withCredentials: true
-    })
-    return res.data;
-}
+// export const deleteBan = async (
+//     userId: string,
+//     token: string | null
+// ) => {
+//     const res = await axios({
+//         method: "delete",
+//         url: `${API_BASE_URL}/ban/delete/${userId}`,
+//         headers: {
+//             "x-auth-token": token,
+//             "Access-Control-Allow-Origin": "*",
+//         },
+//         withCredentials: true
+//     })
+//     return res.data;
+// }
 
 export const deleteExpiredBans = async (
     token: string | null
@@ -125,10 +126,6 @@ export const unbanUsersWithExpiredBans = async (token: string | null) => {
             "Access-Control-Allow-Origin": "*",
         },
         withCredentials: true
-    });
-    await axios({
-        method: "delete",
-        url: `${API_BASE_URL}/ban/deletePassedBanDate`
     });
     //delete all the expired bans
 }

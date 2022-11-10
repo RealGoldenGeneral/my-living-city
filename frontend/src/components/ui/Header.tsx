@@ -183,7 +183,7 @@ export default function Header() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      {banData ? (
+      {/* {banData ? (
         banData.isWarning ?
         <>  
             <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
@@ -193,7 +193,7 @@ export default function Header() {
         </>
             : <BanMessageModal/>
       ) : null
-      }
+      } */}
     </div>
   );
 }
