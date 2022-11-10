@@ -972,8 +972,10 @@ userRouter.patch(
 				return res.status(200).json("You're not banned");
 			}
 
-			const ban = await prisma.ban.findUnique({
-				where: {userId: id}
+			const ban = await prisma.userBan.findMany({
+				where: {userId: id},
+				orderBy: { id: "desc" },
+				distinct: ['userId'],
 			});
 			const isExpired = ban.banUntil <= new Date(Date.now());
 			if (isExpired) {
