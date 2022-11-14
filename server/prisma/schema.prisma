@@ -340,9 +340,9 @@ model Idea {
   // Values
   title               String
   description         String
-  proposal_role       String
-  requirements        String   
-  proposal_benefits   String  
+  proposal_role       String    @default("")
+  requirements        String    @default("")
+  proposal_benefits   String    @default("")
   userType            String    @default("Resident")
   communityImpact     String?   @map("community_impact")
   natureImpact        String?   @map("nature_impact")
