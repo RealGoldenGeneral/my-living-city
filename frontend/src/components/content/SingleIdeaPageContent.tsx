@@ -184,6 +184,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     setFlagReason(eventKey!)
   }
 
+
   const selectOtherReasonHandler = (eventKey: string) => {
     handleShowOther();
     // setOtherFlagReason(eventKey!)
@@ -318,7 +319,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   Cancel
                 </Button>
                 <Button style={{background: 'red'}} variant="primary"  onClick={
-                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
+                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
                 }>
                   Flag
                 </Button>
