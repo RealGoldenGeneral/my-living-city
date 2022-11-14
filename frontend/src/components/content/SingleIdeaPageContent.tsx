@@ -319,7 +319,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   Cancel
                 </Button>
                 <Button style={{background: 'red'}} variant="primary"  onClick={
-                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active)
+                  () => submitOtherFlagReasonHandler(parseInt(ideaId), token!, user!.id, ideaData.active, new Date())
                 }>
                   Flag
                 </Button>
