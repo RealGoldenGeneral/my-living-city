@@ -85,6 +85,9 @@ ideaRouter.post(
 
         let { categoryId, superSegmentId, segmentId, subSegmentId, banned, title,
           description,
+          proposal_role,
+          requirements,
+          proposal_benefits,
           communityImpact,
           natureImpact,
           artsImpact,
@@ -225,6 +228,9 @@ ideaRouter.post(
           imagePath: imagePath,
           title,
           description,
+          proposal_role,
+          requirements,
+          proposal_benefits,
           communityImpact,
           natureImpact,
           artsImpact,
@@ -353,6 +359,9 @@ ideaRouter.post(
         i.category_id as "categoryId",
         i.title,
         i.description,
+        i.proposal_role,
+        i.requirements,
+        i.proposal_benefits,
         i.notification_dismissed,
         i.quarantined_at,
         i.segment_id as "segId",
@@ -470,6 +479,7 @@ ideaRouter.get(
           i.author_id as "authorId",
           i.category_id as "categoryId",
           i.title,
+          i.requirements
           i.description,
           i.notification_dismissed,
           i.segment_id,
@@ -708,7 +718,7 @@ ideaRouter.get(
 )
 ideaRouter.put(
   '/updateState/:ideaId',
-  passport.authenticate('jwt', {session: false}),
+  passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
 
@@ -744,7 +754,7 @@ ideaRouter.put(
         idea: updateIdea,
       });
 
-    }catch (error) {
+    } catch (error) {
       res.status(400).json({
         message: "An error occured while to update an Idea",
         details: {
@@ -760,12 +770,12 @@ ideaRouter.put(
 
 ideaRouter.put(
   '/updateNotificationState/:ideaId',
-  passport.authenticate('jwt', {session: false}),
+  passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
 
-      const {userId, notification_dismissed} = req.body;
-      const {ideaId} = req.params;
+      const { userId, notification_dismissed } = req.body;
+      const { ideaId } = req.params;
       const parsedIdeaId = parseInt(ideaId);
 
       if (!ideaId || !parsedIdeaId) {
@@ -794,7 +804,7 @@ ideaRouter.put(
         idea: updateIdea,
       });
 
-    }catch (error) {
+    } catch (error) {
       res.status(400).json({
         message: "An error occured while to update an Idea",
         details: {
@@ -883,7 +893,7 @@ ideaRouter.put(
         ...artsImpact && { artsImpact },
         ...energyImpact && { energyImpact },
         ...manufacturingImpact && { manufacturingImpact },
-        ...active && {active},
+        ...active && { active },
       };
 
       const updatedIdea = await prisma.idea.update({
@@ -994,17 +1004,17 @@ ideaRouter.post(
         })
       }
 
-      let {userId, ideaId} = req.body;
+      let { userId, ideaId } = req.body;
       ideaId = parseInt(ideaId);
-      
+
       if (!userId || !ideaId) {
         res.status(400).json({
           message: `"userId" and/or "ideaId" is missing from the request body!`
         })
       }
 
-      const theUser = await prisma.user.findUnique({where: {id: userId}});
-      const theIdea = await prisma.idea.findUnique({where: {id: ideaId}});
+      const theUser = await prisma.user.findUnique({ where: { id: userId } });
+      const theIdea = await prisma.idea.findUnique({ where: { id: ideaId } });
 
       if (!theUser) {
         res.status(400).json({
@@ -1039,7 +1049,8 @@ ideaRouter.post(
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
-        }});
+        }
+      });
     } finally {
       await prisma.$disconnect();
     }
@@ -1057,7 +1068,7 @@ ideaRouter.post(
         })
       }
 
-      let {userId, ideaId} = req.body;
+      let { userId, ideaId } = req.body;
       ideaId = parseInt(ideaId);
 
       if (!userId || !ideaId) {
@@ -1066,8 +1077,8 @@ ideaRouter.post(
         })
       }
 
-      const theUser = await prisma.user.findUnique({where: {id: userId}});
-      const theIdea = await prisma.idea.findUnique({where: {id: ideaId}});
+      const theUser = await prisma.user.findUnique({ where: { id: userId } });
+      const theIdea = await prisma.idea.findUnique({ where: { id: ideaId } });
 
       if (!theUser) {
         res.status(400).json({
@@ -1096,7 +1107,7 @@ ideaRouter.post(
         })
       }
 
-      const userIdeaFollow = await prisma.userIdeaFollow.delete({where: {id: theUserIdeaFollow.id}});
+      const userIdeaFollow = await prisma.userIdeaFollow.delete({ where: { id: theUserIdeaFollow.id } });
       res.status(200).json(userIdeaFollow);
     } catch (error) {
       console.log(error);
@@ -1105,7 +1116,8 @@ ideaRouter.post(
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
-        }});
+        }
+      });
     } finally {
       await prisma.$disconnect();
     }
@@ -1123,7 +1135,7 @@ ideaRouter.post(
         })
       }
 
-      const {userId, ideaId} = req.body;
+      const { userId, ideaId } = req.body;
 
       if (!userId || !ideaId) {
         res.status(200).json({
@@ -1131,8 +1143,8 @@ ideaRouter.post(
         })
       }
 
-      const theUser = await prisma.user.findUnique({where: {id: userId}});
-      const theIdea = await prisma.idea.findUnique({where: {id: parseInt(ideaId)}});
+      const theUser = await prisma.user.findUnique({ where: { id: userId } });
+      const theIdea = await prisma.idea.findUnique({ where: { id: parseInt(ideaId) } });
 
       if (!theUser) {
         res.status(400).json({
@@ -1165,7 +1177,8 @@ ideaRouter.post(
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
-        }});
+        }
+      });
     } finally {
       await prisma.$disconnect();
     }
@@ -1177,7 +1190,7 @@ ideaRouter.get(
   // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
-      const {userId} = req.params;
+      const { userId } = req.params;
 
       if (!userId) {
         res.status(400).json({
@@ -1185,7 +1198,7 @@ ideaRouter.get(
         })
       }
 
-      const theUser = await prisma.user.findUnique({where: {id: userId}});
+      const theUser = await prisma.user.findUnique({ where: { id: userId } });
 
       if (!theUser) {
         res.status(400).json({
@@ -1195,13 +1208,13 @@ ideaRouter.get(
 
       const userIdeaFollows = await prisma.userIdeaFollow.findMany({
         where: {
-            userId: userId,
+          userId: userId,
         }
       })
 
       let ideas = [];
       for await (const follow of userIdeaFollows) {
-        const idea = await prisma.idea.findUnique({where: {id: follow.ideaId}});
+        const idea = await prisma.idea.findUnique({ where: { id: follow.ideaId } });
         ideas.push(idea);
       }
       res.status(200).json(ideas);
@@ -1211,7 +1224,8 @@ ideaRouter.get(
         details: {
           errorMessage: error.message,
           errorStack: error.stack,
-        }});
+        }
+      });
     } finally {
       await prisma.$disconnect();
     }
