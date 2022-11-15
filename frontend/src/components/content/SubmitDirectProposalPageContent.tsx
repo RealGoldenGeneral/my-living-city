@@ -44,6 +44,12 @@ interface SubmitDirectProposalPageContentProps {
   segData: ISegmentData[];
 }
 
+// interface FeedbackProps {
+//   feedbackName: String;
+//   input: HTMLInputElement;
+//   button: HTMLButtonElement;
+// }
+
 /**
  * Idea needs categoryId to submit
  * default will be used if categories can't be fetched from server
@@ -71,16 +77,43 @@ const SubmitDirectProposalPageContent: React.FC<
   };
 
   const [numberOfFeedback, setNumberOfFeedback] = useState(1);
+  const emptyFeedbackList:string[] = [];  // added
+  const [feedbackList, setFeedbackList] = useState<string[]>(emptyFeedbackList);
 
-  const toggleNumberOfFeedback = (num: number) => {
+  // const toggleNumberOfFeedback = (num: number) => {
+  //   //let numberOfFeedback = 0;
+  //   if (
+  //     (numberOfFeedback == 1 && num < 0) ||
+  //     (numberOfFeedback == 5 && num > 0)
+  //   ) {
+  //     return;
+  //   }
+  //   setNumberOfFeedback(numberOfFeedback + num);
+  // };
+
+  // rename to "addNewFeedback"
+  const addNewFeedback = () => { 
+    //let numberOfFeedback = 0;
     if (
-      (numberOfFeedback == 1 && num < 0) ||
-      (numberOfFeedback == 5 && num > 0)
+      (numberOfFeedback == 5)
     ) {
       return;
     }
-    setNumberOfFeedback(numberOfFeedback + num);
+
+    //<Form.Control type="text" name="specificFeedback1" onChange={formik.handleChange} placeholder="Extra Feedback"/>
+    const feedback = "";
+    setNumberOfFeedback(numberOfFeedback + 1);
+    const newFeedbackList = [...feedbackList, feedback];
+    setFeedbackList(newFeedbackList);
   };
+
+  const removeFeedback = (index: number) => {
+    //check if index less than size-1
+    setNumberOfFeedback(numberOfFeedback - 1)
+    const newFeedbackList = [...feedbackList]
+    newFeedbackList.splice(index, 1)
+    setFeedbackList(newFeedbackList);
+  }
 
   const handleCommunityChange = (index: number) => {
     if (segData[index].segType === "Segment") {
@@ -593,161 +626,12 @@ const SubmitDirectProposalPageContent: React.FC<
                   <Form.Label>
                     &nbsp;&nbsp;Specific Feedback&nbsp;&nbsp;
                   </Form.Label>
-                  {extraFeedback && (
-                    <>
-
-                      {/* Remove Button 
-                      <Button
-                        color="danger"
-                        size="sm"
-                        onClick={() => toggleNumberOfFeedback(-1)}
-                      >
-                        -
-                      </Button>
-                      &nbsp;&nbsp;*/}
-
-                      <Button
-                        color="success"
-                        size="sm"
-                        onClick={() => toggleNumberOfFeedback(1)}
-                      >
-                        +
-                      </Button>
-                      {numberOfFeedback > 0 && (
-                        <div className="feedback-1">
-                          <br />
-                          <Form.Label
-                            style={{ display: "flex" }}
-                          >
-                            &nbsp;&nbsp;Specific Feedback #1
-                            <Button
-                              style={{ marginLeft: "auto" }}
-                              color="danger"
-                              size="sm"
-                              
-                              onClick={() => toggleNumberOfFeedback(-1)}
-                            >
-                              -
-                            </Button>
-                          </Form.Label>
-                          <br />
-                          <Form.Control
+                  {extraFeedback && feedbackList.map(feedback => {<Form.Control
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
                             placeholder="Extra Feedback"
-                          />
-
-                        </div>
-                      )}
-                      {numberOfFeedback > 1 && (
-                        <div className="feedback-2">
-                          <br />
-                          <Form.Label
-                            style={{ display: "flex" }}
-                          >
-                            &nbsp;&nbsp;Specific Feedback #2
-                            <Button
-                              style={{ marginLeft: "auto" }}
-
-                              color="danger"
-                              size="sm"
-                              onClick={() => toggleNumberOfFeedback(-1)}
-                            >
-                              -
-                            </Button>
-                          </Form.Label>
-                          <br />
-                          <Form.Control
-                          
-                            type="text"
-                            name="specificFeedback1"
-                            onChange={formik.handleChange}
-                            placeholder="Extra Feedback"
-                          />
-                        </div>
-                      )}
-                      {numberOfFeedback > 2 && (
-                        <div className="feedback-3">
-                          <br />
-                          <Form.Label
-                                                    style={{ display: "flex" }}
-                                                    >
-                            &nbsp;&nbsp;Specific Feedback #3
-                            <Button
-                              style={{ marginLeft: "auto" }}
-
-                              color="danger"
-                              size="sm"
-                              onClick={() => toggleNumberOfFeedback(-1)}
-                            >
-                              -
-                            </Button>
-                          </Form.Label>
-                          <br />
-                          <Form.Control
-                            type="text"
-                            name="specificFeedback1"
-                            onChange={formik.handleChange}
-                            placeholder="Extra Feedback"
-                          />
-                        </div>
-                      )}
-                      {numberOfFeedback > 3 && (
-                        <div className="feedback-4">
-                          <br />
-                          <Form.Label
-                                                    style={{ display: "flex" }}
-                                                    >
-                            &nbsp;&nbsp;Specific Feedback #4
-                            <Button
-                              style={{ marginLeft: "auto" }}
-
-                              color="danger"
-                              size="sm"
-                              onClick={() => toggleNumberOfFeedback(-1)}
-                            >
-                              -
-                            </Button>
-                          </Form.Label>
-                          <br />
-                          <Form.Control
-                            type="text"
-                            name="specificFeedback1"
-                            onChange={formik.handleChange}
-                            placeholder="Extra Feedback"
-                          />
-                        </div>
-                      )}
-                      {numberOfFeedback > 4 && (
-                        <div className="feedback-5">
-                          <br />
-                          <Form.Label
-                          
-                          style={{ display: "flex" }}
-                          >
-                            &nbsp;&nbsp;Specific Feedback #5
-                            <Button
-                              style={{ marginLeft: "auto" }}
-
-                              color="danger"
-                              size="sm"
-                              onClick={() => toggleNumberOfFeedback(-1)}
-                            >
-                              -
-                            </Button>
-                          </Form.Label>
-                          <br />
-                          <Form.Control
-                            type="text"
-                            name="specificFeedback1"
-                            onChange={formik.handleChange}
-                            placeholder="Extra Feedback"
-                          />
-                        </div>
-                      )}
-                    </>
-                  )}
+                          />})}
                 </div>
               </div>
             </Form.Group>
