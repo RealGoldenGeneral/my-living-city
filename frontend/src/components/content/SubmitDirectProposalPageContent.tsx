@@ -74,14 +74,12 @@ const SubmitDirectProposalPageContent: React.FC<
   const [extraFeedback, setExtraFeedback] = useState(false);
 
   const toggleExtraFeedback = () => {
-    console.log("This is feedbackList:");
-    console.log(feedbackList);
     setExtraFeedback(!extraFeedback);
   };
 
-  const [numberOfFeedback, setNumberOfFeedback] = useState(1);
-  const emptyFeedbackList:object[] = [];  // added
-  const [feedbackList, setFeedbackList] = useState<object[]>(emptyFeedbackList);
+  const [numberOfFeedback, setNumberOfFeedback] = useState(0);
+  const emptyFeedbackList:string[] = [];  // added
+  const [feedbackList, setFeedbackList] = useState<string[]>(emptyFeedbackList);
 
   // const toggleNumberOfFeedback = (num: number) => {
   //   //let numberOfFeedback = 0;
@@ -98,16 +96,19 @@ const SubmitDirectProposalPageContent: React.FC<
     const newFeedbackList = [...feedbackList]
     newFeedbackList[index] = feedback
     setFeedbackList(newFeedbackList)
+    //console.log(newFeedbackList);
+    formik.values.feedback![index] = feedback;
+    console.log(formik.values.feedback);
   }
 
   // rename to "addNewFeedback"
-  const addNewFeedback = (item:number) => { 
+  const addNewFeedback = (item:number) => {
     if (
       (numberOfFeedback == 5)
     ) {
       return;
     }
-    
+
     //<Form.Control type="text" name="specificFeedback1" onChange={formik.handleChange} placeholder="Extra Feedback"/>
     const feedback = item.toString();
     setNumberOfFeedback(numberOfFeedback + 1);
@@ -118,19 +119,21 @@ const SubmitDirectProposalPageContent: React.FC<
     console.log(feedbackList);
   };
 
-  const removeFeedback = (value: string) => {
+  const removeFeedback = (index: number) => {
     //check if index less than size-1
-    // console.log("this is index: "); 
+    // console.log("this is index: ");
     // console.log(index);
 
     setNumberOfFeedback(numberOfFeedback - 1)
     const newFeedbackList = [...feedbackList]
-    const index = newFeedbackList.indexOf(value)
-    newFeedbackList.splice(index, 1)
+    newFeedbackList.splice(index, 1);
+    //formik.values.feedback![index] = "";
+    for (let i = index; i < formik.values.feedback!.length - 1; i++) {
+      formik.values.feedback![i] = formik.values.feedback![i + 1];
+    }
+    formik.values.feedback![formik.values.feedback!.length - 1] = "";
     setFeedbackList(newFeedbackList);
 
-    console.log("this is feedbackList in removefeedback");
-    console.log(feedbackList);
   }
 
   const handleCommunityChange = (index: number) => {
@@ -194,6 +197,7 @@ const SubmitDirectProposalPageContent: React.FC<
         needFeedback: values.needFeedback,
         needSuggestions: values.needSuggestions,
         location: values.location,
+        feedback: values.feedback
       };
       console.log("proposalValues", proposalValues);
       const proposal = await postCreateProposal(
@@ -260,11 +264,8 @@ const SubmitDirectProposalPageContent: React.FC<
       needFeedback: false,
       needSuggestions: false,
       location: "",
-      // feedback1: undefined,
-      // feedback2: undefined,
-      // feedback3: undefined,
-      // feedback4: undefined,
-      // feedback5: undefined,
+      feedback: ["", "", "", "", ""],
+      feedbackRatingType: ["YESNO", "YESNO", "YESNO", "YESNO", "YESNO"]
     },
     onSubmit: submitHandler,
   });
@@ -649,25 +650,27 @@ const SubmitDirectProposalPageContent: React.FC<
                   <Form.Label>
                     &nbsp;&nbsp;Specific Feedback&nbsp;&nbsp;
                   </Form.Label>
-                  {extraFeedback && (<Button
+                  {extraFeedback && (
+                      <Button
                         color="success"
                         size="sm"
                         onClick={() => addNewFeedback(numberOfFeedback)}
                       >
                         +
                       </Button>)}
-                  {extraFeedback && feedbackList.map((feedback, index) => {return <div className="feedback-1">
+                  {extraFeedback && feedbackList.map((feedback, index) => {
+                    return <div className="feedback-1">
                           <br />
                           <Form.Label
                             style={{ display: "flex" }}
                           >
-                            &nbsp;&nbsp;Specific Feedback {parseInt(feedback)}
+                            &nbsp;&nbsp;Specific Feedback {index + 1}
                             <Button
                               style={{ marginLeft: "auto" }}
                               color="danger"
                               size="sm"
-                              
-                              onClick={() => removeFeedback(feedback)}
+
+                              onClick={() => removeFeedback(index)}
                             >
                               -
                             </Button>
@@ -678,13 +681,38 @@ const SubmitDirectProposalPageContent: React.FC<
                             name="specificFeedback1"
                             onChange={(event) => {
                               updateFeedback(event.target.value, index);
-                              //formik.handleChange
+                              formik.handleChange(formik.values.feedback![index])(event);
                             } }
-                            // value={formik.values.feedback[index]}
-                            value={feedback[index]}
+                            value={formik.values.feedback![index]}
                             placeholder="Extra Feedback"
                           />
-
+                          <Form.Check
+                              inline
+                              label="Yes/No"
+                              name= {`group-${index}`}
+                              type="radio"
+                              id={`inline-radio-1`}
+                              defaultChecked
+                              onClick={(event) =>
+                                {
+                                  formik.values.feedbackRatingType![index] = "YESNO";
+                                  console.log(formik.values.feedbackRatingType!);
+                                }
+                              }
+                          />
+                          <Form.Check
+                              inline
+                              label="Rating Scale"
+                              name={`group-${index}`}
+                              type={"radio"}
+                              id={`inline-radio-2`}
+                              onClick={(event) =>
+                                {
+                                  formik.values.feedbackRatingType![index] = "RATING";
+                                  console.log(formik.values.feedbackRatingType!);
+                                }
+                              }
+                          />
                         </div>})}
                 </div>
               </div>
