@@ -77,8 +77,10 @@ const SubmitDirectProposalPageContent: React.FC<
   };
 
   const [numberOfFeedback, setNumberOfFeedback] = useState(0);
-  const emptyFeedbackList:string[] = [];  // added
+  const emptyFeedbackList:string[] = [];
   const [feedbackList, setFeedbackList] = useState<string[]>(emptyFeedbackList);
+  const emptyFeedbackTypeList:string[] = ["YESNO", "YESNO", "YESNO", "YESNO", "YESNO"];
+  const [feedbackTypeList, setFeedbackTypeList] = useState<string[]>(emptyFeedbackTypeList);
 
   // const toggleNumberOfFeedback = (num: number) => {
   //   //let numberOfFeedback = 0;
@@ -92,9 +94,10 @@ const SubmitDirectProposalPageContent: React.FC<
   // };
 
   const updateFeedback = (feedback:string, index:number) => {
-    const newFeedbackList = [...feedbackList]
-    newFeedbackList[index] = feedback
-    setFeedbackList(newFeedbackList)
+    const newFeedbackList = [...feedbackList];
+    newFeedbackList[index] = feedback;
+    setFeedbackList(newFeedbackList);
+
     //console.log(newFeedbackList);
     formik.values.feedback![index] = feedback;
     console.log(formik.values.feedback);
@@ -132,6 +135,22 @@ const SubmitDirectProposalPageContent: React.FC<
     }
     formik.values.feedback![formik.values.feedback!.length - 1] = "";
     setFeedbackList(newFeedbackList);
+
+    const newFeedbackTypeList = [...feedbackTypeList];
+    newFeedbackTypeList.splice(index, 1);
+    for (let i = index; i < formik.values.feedbackRatingType!.length - 1; i++) {
+      formik.values.feedbackRatingType![i] = formik.values.feedbackRatingType![i + 1];
+    }
+    formik.values.feedbackRatingType![formik.values.feedbackRatingType!.length - 1] = "YESNO";
+    setFeedbackTypeList(newFeedbackTypeList);
+
+  }
+
+  const updateFeedbackType = (feedbackType:string, index:number) => {
+    const newFeedbackTypeList = [...feedbackTypeList];
+    newFeedbackTypeList[index] = feedbackType;
+    formik.values.feedbackRatingType![index] = feedbackType;
+    setFeedbackTypeList(newFeedbackTypeList);
 
   }
 
@@ -691,10 +710,11 @@ const SubmitDirectProposalPageContent: React.FC<
                               name= {`group-${index}`}
                               type="radio"
                               id={`inline-radio-1`}
-                              defaultChecked
+                              checked={formik.values.feedbackRatingType![index] === "YESNO"}
                               onClick={(event) =>
                                 {
                                   formik.values.feedbackRatingType![index] = "YESNO";
+                                  updateFeedbackType("YESNO", index);
                                   console.log(formik.values.feedbackRatingType!);
                                 }
                               }
@@ -705,9 +725,11 @@ const SubmitDirectProposalPageContent: React.FC<
                               name={`group-${index}`}
                               type={"radio"}
                               id={`inline-radio-2`}
+                              checked={formik.values.feedbackRatingType![index] === "RATING"}
                               onClick={(event) =>
                                 {
                                   formik.values.feedbackRatingType![index] = "RATING";
+                                  updateFeedbackType("RATING", index);
                                   console.log(formik.values.feedbackRatingType!);
                                 }
                               }
