@@ -182,8 +182,8 @@ export default function Header() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      { user!.banned && banData && banData.banType === "SYS_BAN" ? <BanMessageModal/> : null }
-      { user!.banned && banData && banData.banType == "POST_BAN" ?
+      { user && user.banned && banData && banData.banType === "SYS_BAN" ? <BanMessageModal/> : null }
+      { user && user.banned && banData && banData.banType == "POST_BAN" ?
           <>
             <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
               Account has been banned from posting
@@ -192,7 +192,7 @@ export default function Header() {
           </>
           : null
       }
-      { user!.banned && banData && banData.banType == "WARNING" ?
+      { user && user.banned && banData && banData.banType == "WARNING" ?
         <>
           <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
             Account has been issued a warning
