@@ -183,6 +183,24 @@ export default function Header() {
         </Navbar.Collapse>
       </Navbar>
       { banData && banData.banType === "SYS_BAN" ? <BanMessageModal/> : null }
+      { banData && banData.banType == "POST_BAN" ?
+          <>
+            <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
+              Account has been banned from posting
+            </Navbar>
+            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/>
+          </>
+          : null
+      }
+      { banData && banData.banType == "WARNING" ?
+        <>
+          <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
+            Account has been issued a warning
+          </Navbar>
+          <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/>
+        </>
+        : null
+      }
     </div>
   );
 }
