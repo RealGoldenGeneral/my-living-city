@@ -137,10 +137,10 @@ const SubmitDirectProposalPageContent: React.FC<
       };
       const banDetails = await getBanWithToken(token);
       let banned = true;
-      if (!banDetails || banDetails.banType === "WARNING") {
+      if (!user!.banned || banDetails || banDetails.banType === "WARNING") {
         banned = false;
       }
-      const idea = await postCreateIdea(ideaValues, user!.banned, token);
+      const idea = await postCreateIdea(ideaValues, banned, token);
       const proposalValues = {
         ideaId: idea.id,
         needCollaborators: values.needCollaborators,

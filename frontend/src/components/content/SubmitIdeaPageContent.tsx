@@ -79,7 +79,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       setTimeout(() => console.log("timeout"), 5000);
       const banDetails = await getBanWithToken(token);
       let banned = true;
-      if (!banDetails || banDetails.banType === "WARNING") {
+      if (!user!.banned || !banDetails || banDetails.banType === "WARNING") {
         banned = false;
       }
       const res = await postCreateIdea(values, banned, token);
