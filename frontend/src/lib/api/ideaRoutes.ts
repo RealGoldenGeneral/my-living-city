@@ -101,6 +101,10 @@ export const postCreateIdea = async (
     throw new Error("Your session has expired. Please relogin and try again.");
   }
 
+  if (banned) {
+    throw new Error("You cannot post while banned.");
+  }
+
   let formBody = new FormData();
 
   formBody.append("categoryId", categoryId.toString());
@@ -218,7 +222,7 @@ export const updateIdeaNotificationStatus = async(token: String | null, userId: 
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    
+
     data: {userId: userId, ideaId: ideaId, notification_dismissed},
     withCredentials: true,
   })
