@@ -1,52 +1,32 @@
 import { useContext, useState } from "react";
-import {
-  NavDropdown,
-  Nav,
-  Navbar,
-  Form,
-  FormControl,
-  Button,
-} from "react-bootstrap";
-import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { useUserWithJwtVerbose } from "src/hooks/userHooks";
 import { UserProfileContext } from "src/contexts/UserProfile.Context";
 import DashboardPageContent from "../components/content/DashboardPageContent";
-import { useIdeasHomepage, useUserFollowedIdeas, useUserIdeas } from "../hooks/ideaHooks";
 import LoadingSpinner from "src/components/ui/LoadingSpinner";
 
 export default function Dashboard() {
-  const {
-    data: iData,
-    error: iError,
-    isLoading: iLoading,
-    isError: iIsError,
-  } = useIdeasHomepage();
+  const { token } = useContext(UserProfileContext);
+  // useQuery will retrigger every 10 minutes to update the user's data
 
-  const stringifiedUser = localStorage.getItem("logged-user");
-  const loggedInUser = JSON.parse(stringifiedUser!);
+  const { 
+    data: userData,
+    isLoading: userIsLoading,
+    error: userError,
+  } = useUserWithJwtVerbose({ jwtAuthToken: token!, shouldTrigger: true });
 
-  //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
-  const {
-    data: uData,
-    error: uError,
-    isLoading: uLoading,
-  } = useUserIdeas(loggedInUser.id);
+  if (userIsLoading) {
+    return <LoadingSpinner />;
+  }
 
-  const {
-    data: userFollowedData,
-    error: userFollowedError,
-    isLoading: userFollowedLoading,
-  } = useUserFollowedIdeas(loggedInUser.id)
+  if (userError) {
+    return <div>Error when fetching necessary data</div>;
+  }
 
   return (
     <div className="wrapper">
       <DashboardPageContent
-        topIdeas={iData}
-        ideasLoading={iLoading}
-        ideasIsError={iIsError}
-        ideasError={iError}
-        userIdeas={uData}
-        userFollowedideas={userFollowedData}
+        user={userData!}
+        token={token!}
       />
     </div>
   );

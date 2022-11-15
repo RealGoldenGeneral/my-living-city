@@ -1,30 +1,47 @@
-import { useContext, useEffect, useState } from "react";
-import { Button, Container, Row, Col, Card, Table } from "react-bootstrap";
+import React, { useContext, useEffect, useState, Fragment } from "react";
+import { Button, Container, Row, Col, Card, Table, Tooltip } from "react-bootstrap";
 import { UserProfileContext } from "../../../contexts/UserProfile.Context"
 import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea, IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 import Notification from "./Notification";
-
 import { IProposalWithAggregations } from "src/lib/types/data/proposal.type";
+import { IBanUser } from "src/lib/types/data/banUser.type";
+import { updateBan } from "src/lib/api/banRoutes";
+
 interface NotificationPageContentProps {
   userIdeas: IIdeaWithAggregations[] | undefined;
+  userBanInfo: IBanUser | undefined;
   // proposals: IProposalWithAggregations[] | undefined;
 }
 
 
-const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas }) => {
+const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, userBanInfo }) => {
 
-  const [isDismissed, setIsDismissed] = useState(true);
+  const [isDismissed, setIsDismissed] = useState(false);
   const { user, token } = useContext(UserProfileContext);
 
   const dismissAll = async () => {
-    const result = userIdeas?.map((userIdea) => {
+    userIdeas?.map(async (userIdea) => {
       if (!userIdea.active) {
-        updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
+        await updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
       }
-    })
-    setIsDismissed(false)
+    }
+    )
+    if (userBanInfo) {
+      userBanInfo.notificationDismissed = true;
+      await updateBan(userBanInfo!, token);
+    }
   }
+
+  // Check if there are any notifications
+  const notifications: JSX.Element[] = [];
+  // Check if there is ban info
+  if (userBanInfo && !userBanInfo.notificationDismissed)
+    notifications.push(<Notification userBanInfo={userBanInfo} />)
+  userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => notifications.push(<Notification userIdea={idea} />));
+
+  console.log("Notification Length: " + notifications.length);
+  console.log(notifications)
   
   return (
     <Container
@@ -57,14 +74,18 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas }) =>
         </div>
       </div>
 
-      <div style={{ marginTop: "2rem" }}>
+      <div style={{ marginTop: "1rem" }}>
         {
-          <Table>
+          <Table >
             <tbody>
-              {isDismissed && userIdeas && userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => 
-              (< Notification key={idea.id} userIdea={idea}  />
-              ))}
-            </tbody>
+              {notifications.map((notification, index) => {
+                return (
+                  <>
+                    { notification }
+                  </>
+                )
+              })}
+            </tbody> 
           </Table>
         }
       </div>

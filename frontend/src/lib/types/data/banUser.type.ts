@@ -7,8 +7,11 @@ export interface IBanUser {
     banMessage?: string,
     bannedBy: string,
     createdAt: Date,
-    banUntil: Date
+    banUntil: Date,
 
     // Relationships
-    userId: string
+    userId: string,
+
+    // Optional
+    notificationDismissed?: boolean
 }

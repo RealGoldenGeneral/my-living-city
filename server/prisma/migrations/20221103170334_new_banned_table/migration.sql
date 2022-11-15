@@ -13,6 +13,7 @@ CREATE TABLE "ban_user" (
     "banned_by" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "banned_until" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "notification_dismissed" BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY ("id")
 );
 

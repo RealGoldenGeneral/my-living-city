@@ -43,7 +43,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
     const [showUserFlagsModal, setShowUserFlagsModal] = useState<boolean>(false);
     const [showUserBanModal, setShowUserBanModal] = useState<boolean>(false);
     const [showUserUnbanModal, setShowUserUnbanModal] = useState<boolean>(false);
-    const [showUserModifyWarningModal, setShowUserModifyWarningModal] = useState<boolean>(false);
     const [modalUser, setModalUser] = useState<IUser>();
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
@@ -116,7 +115,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                 <th scope="col">User Type</th>
                 <th scope="col">Total Flags</th>
                 <th scope="col">False Flags</th>
-                <th scope="col">Warned</th>
                 <th scope="col">Banned</th>
                 <th scope="col">Reviewed</th>
                 <th scope="col">Controls</th>
@@ -134,7 +132,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     <td>{req.userType}</td>
                     <td>{userFlags![index].toString()}</td>
                     <td>{userFalseFlags![index].toString()}</td>
-                    <td>{warned.includes(req.id) ? "Yes" : "No"}</td>
                     <td>{req.banned ? "Yes" : "No" }</td> 
                     <td>{req.reviewed ? "Yes" : "No"}</td>
                     </> :
@@ -151,7 +148,6 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                     </td>
                     <td><Button onClick={()=> setShowUserFlagsModal(true)}>More Details</Button></td>
                     <td></td>
-                    <td>{warned.includes(req.id) ? "Yes" : "No"}</td>
                     <td>{req.banned ? "Yes" : "No" }</td>
                     <td><Form.Check type="switch" checked={reviewed} onChange={(e)=>{
                         setReviewed(e.target.checked)

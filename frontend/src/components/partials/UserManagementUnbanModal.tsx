@@ -15,11 +15,11 @@ interface UnbanModalProps {
     token: string | null
 };
 
-interface FeedbackModalProps {
-    setShow: React.Dispatch<React.SetStateAction<boolean>>;
-    show: boolean;
-    message: string;
-}
+// interface FeedbackModalProps {
+//     setShow: React.Dispatch<React.SetStateAction<boolean>>;
+//     show: boolean;
+//     message: string;
+// }
 
 export const UserManagementUnbanModal = ({
     setShow,
@@ -28,8 +28,7 @@ export const UserManagementUnbanModal = ({
     currentUser,
     token
 }: UnbanModalProps) => {
-    let { data: modalUserData, isLoading: modalUserIsLoading, isError: modalUserIsError } = FindBanDetails(modalUser.id);
-    const [bannedUserData, setBannedUserData] = useState<IBanUser>(modalUserData!);
+    const { data: modalUserData, isLoading: modalUserIsLoading, isError: modalUserIsError } = FindBanDetails(modalUser.id);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
     const unbanUser = async () => {
@@ -37,16 +36,8 @@ export const UserManagementUnbanModal = ({
             setIsSubmitting(true);
             modalUser.banned = false;
             modalUserData!.banUntil = new Date(Date.now())
-            console.log(modalUserData);
-            setBannedUserData(modalUserData!);
-            await updateBan(bannedUserData, token)
-            // await deleteBan(modalUser.id, token)
+            await updateBan(modalUserData!, token)
             await updateUser(modalUser, token, currentUser);
-            // Reassign modalUserData
-            modalUserData = await getMostRecentBan(modalUser.id);
-            setBannedUserData(modalUserData!);
-            console.log(bannedUserData);
-            // console.log(modalUserData);
             handleClose();
         } catch (error) {
             console.log(error);
@@ -99,7 +90,7 @@ export const UserManagementUnbanModal = ({
                         <Card.Body>
                             <h5>Ban Type</h5>
                             <hr />
-                            {bannedUserData?.banType}
+                            {modalUserData?.banType}
                         </Card.Body>
                     </Card>
                     <p />
@@ -107,7 +98,7 @@ export const UserManagementUnbanModal = ({
                         <Card.Body>
                             <h5>Reason</h5>
                             <hr />
-                            {bannedUserData?.banReason}
+                            {modalUserData?.banReason}
                         </Card.Body>
                     </Card>
                     <p />
@@ -115,7 +106,7 @@ export const UserManagementUnbanModal = ({
                         <Card.Body>
                             <h5>Details</h5>
                             <hr />
-                            {bannedUserData?.banMessage},
+                            {modalUserData?.banMessage}
                         </Card.Body>
                     </Card>
                     <p />
@@ -123,7 +114,7 @@ export const UserManagementUnbanModal = ({
                         <Card.Body>
                             <h5>Banned Until</h5>
                             <hr />
-                            {new Date(bannedUserData?.banUntil).toLocaleString()}
+                            {new Date(modalUserData!.banUntil).toLocaleString()}
                         </Card.Body>
                     </Card>
                 </Modal.Body>

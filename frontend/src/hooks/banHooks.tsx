@@ -8,10 +8,7 @@ import {ICommentFlag, IFlag} from "../lib/types/data/flag.type";
 import { IBanUser } from "src/lib/types/data/banUser.type";
 
 export const FindBanDetails = (userId: string) => {
-    return useQuery<IBanUser, IFetchError>(
-        ["banDetails", userId],
-        () => getMostRecentBan(userId)
-    );
+    return useQuery<IBanUser, IFetchError>(["ban", userId], () => getMostRecentBan(userId), {staleTime: 5000});
 };
 
 export const FindBanDetailsWithToken = (token: string | null ) => {

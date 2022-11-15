@@ -1,42 +1,107 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Container, Row, Col, Card, Table } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { UserProfileContext } from "../../../contexts/UserProfile.Context"
 import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea } from "src/lib/types/data/idea.type";
-
 import { IProposalWithAggregations } from "src/lib/types/data/proposal.type";
+import { IBanUser } from "src/lib/types/data/banUser.type";
+import { updateBan } from "src/lib/api/banRoutes";
+
 interface NotificationProps {
-    userIdea: IIdea | undefined;
+    userIdea?: IIdea | undefined;
+    userBanInfo?: IBanUser | undefined;
     // proposals: IProposalWithAggregations[] | undefined;
 }
 
-const Notification: React.FC<NotificationProps> = ({ userIdea }) => {
+const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo }) => {
     const [isDismissed, setIsDismissed] = useState(false);
+    const [notificationType, setNotificationType] = useState("");
     const { user, token } = useContext(UserProfileContext);
-    const dismissNotificationFunc = async (ideaId: number, token: string, userId: string, notification_dismissed: boolean) => {
 
-        const updateData = await updateIdeaNotificationStatus(token, userId, ideaId.toString(), notification_dismissed);
-        setIsDismissed(true)
-
+    // Set the notification type
+    const notiType = (userIdea: IIdea | undefined, userBanInfo: IBanUser | undefined) => {
+        if (userIdea) {
+            setNotificationType("userIdea");
+        } else if (userBanInfo) {
+            setNotificationType("userBanInfo")
+        }
     }
 
-    return (
+    // Render only once
+    useEffect(() => {
+        notiType(userIdea, userBanInfo);
+    })
 
-        <tr >
-            {!isDismissed ? (
-                <div className="d-flex align align-items-center justify-content-between">
-                    <><td>{"Your post named "} <h5>{userIdea?.title}</h5> {" has been removed from the conversations page due to violation of content"}</td>
-                        <div className="col-example text-left">
-                            <Button onClick={async () => await dismissNotificationFunc(userIdea!.id, token!, user!.id, true)}>Dismiss</Button>
-                        </div></>
-                </div>
-            ) : (
-                <div></div>
+    const banType = () => {
+        switch (userBanInfo?.banType) {
+            case "WARNING":
+                return "Warned";
+            case "POST_BAN":
+                return "Banned from posting";
+            case "SYS_BAN":
+                return "Banned from the system";
+        }
+    }
+    
+
+    const dismissIdeaNotification = async (ideaId: number, token: string, userId: string, notification_dismissed: boolean) => {
+        await updateIdeaNotificationStatus(token, userId, ideaId.toString(), notification_dismissed);
+        setIsDismissed(true);
+    }
+
+    const dismissBanNotification = async () => {
+        userBanInfo!.notificationDismissed = true;
+        await updateBan(userBanInfo!, token);
+        setIsDismissed(true);
+    }
+
+    switch (notificationType) {
+        case "userIdea":
+            return (
+                <tr >
+                {!isDismissed ? (
+                    <div className="d-flex align align-items-center justify-content-between">
+                        <td className="col-md">{"Your post named "} <b>{userIdea?.title}</b> {" has been removed from the conversations page due to violation of content"}
+                            <div className={"float-right"}>
+                                <Button onClick={async () => await dismissIdeaNotification(userIdea!.id, token!, user!.id, true)}>Dismiss</Button>
+                            </div>
+                        </td>
+                    </div>
+                ) :
+                    null
+                }
+            </tr>
             )
-
-            }
-        </tr>
-    );
+        case "userBanInfo":
+            return (
+                    <tr>
+                    {!isDismissed ? (
+                        <div className="d-flex align align-items-center justify-content-between">
+                            <td className="col-md">{"You have been "} <b>{banType()}</b> {" because "} {userBanInfo?.banReason} {" until "} <b>{(userBanInfo?.banUntil && new Date(userBanInfo!.banUntil).toLocaleString())}</b>
+                                <div className="float-right">
+                                    <Button onClick={async() => await dismissBanNotification()}>Dismiss</Button>
+                                </div>
+                            </td>
+                        </div>
+                    
+                    ) 
+                    :
+                        null
+        
+                    }
+                    </tr>
+            )
+        default:
+            return (
+                <tr>
+                    <div className="d-flex align align-items-center justify-content-between">
+                        <>
+                            <td>Failed to load notification</td>
+                        </>
+                    </div>
+                </tr>
+            )
+    }
 }
 
 export default Notification;
