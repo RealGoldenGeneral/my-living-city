@@ -38,7 +38,6 @@ import {
 } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 import { MAP_KEY } from "../../lib/constants";
-import { v4 as uuidV4 } from "uuid";
 
 interface SubmitDirectProposalPageContentProps {
   categories: ICategory[] | undefined;
