@@ -38,6 +38,7 @@ import {
 } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 import { MAP_KEY } from "../../lib/constants";
+import { v4 as uuidV4 } from "uuid";
 
 interface SubmitDirectProposalPageContentProps {
   categories: ICategory[] | undefined;
@@ -73,12 +74,14 @@ const SubmitDirectProposalPageContent: React.FC<
   const [extraFeedback, setExtraFeedback] = useState(false);
 
   const toggleExtraFeedback = () => {
+    console.log("This is feedbackList:");
+    console.log(feedbackList);
     setExtraFeedback(!extraFeedback);
   };
 
   const [numberOfFeedback, setNumberOfFeedback] = useState(1);
-  const emptyFeedbackList:string[] = [];  // added
-  const [feedbackList, setFeedbackList] = useState<string[]>(emptyFeedbackList);
+  const emptyFeedbackList:object[] = [];  // added
+  const [feedbackList, setFeedbackList] = useState<object[]>(emptyFeedbackList);
 
   // const toggleNumberOfFeedback = (num: number) => {
   //   //let numberOfFeedback = 0;
@@ -91,28 +94,43 @@ const SubmitDirectProposalPageContent: React.FC<
   //   setNumberOfFeedback(numberOfFeedback + num);
   // };
 
+  const updateFeedback = (feedback:string, index:number) => {
+    const newFeedbackList = [...feedbackList]
+    newFeedbackList[index] = feedback
+    setFeedbackList(newFeedbackList)
+  }
+
   // rename to "addNewFeedback"
-  const addNewFeedback = () => { 
-    //let numberOfFeedback = 0;
+  const addNewFeedback = (item:number) => { 
     if (
       (numberOfFeedback == 5)
     ) {
       return;
     }
-
+    
     //<Form.Control type="text" name="specificFeedback1" onChange={formik.handleChange} placeholder="Extra Feedback"/>
-    const feedback = "";
+    const feedback = item.toString();
     setNumberOfFeedback(numberOfFeedback + 1);
     const newFeedbackList = [...feedbackList, feedback];
     setFeedbackList(newFeedbackList);
+
+    console.log("this is feedbackList in addnewfeedback");
+    console.log(feedbackList);
   };
 
-  const removeFeedback = (index: number) => {
+  const removeFeedback = (value: string) => {
     //check if index less than size-1
+    // console.log("this is index: "); 
+    // console.log(index);
+
     setNumberOfFeedback(numberOfFeedback - 1)
     const newFeedbackList = [...feedbackList]
+    const index = newFeedbackList.indexOf(value)
     newFeedbackList.splice(index, 1)
     setFeedbackList(newFeedbackList);
+
+    console.log("this is feedbackList in removefeedback");
+    console.log(feedbackList);
   }
 
   const handleCommunityChange = (index: number) => {
@@ -242,6 +260,11 @@ const SubmitDirectProposalPageContent: React.FC<
       needFeedback: false,
       needSuggestions: false,
       location: "",
+      // feedback1: undefined,
+      // feedback2: undefined,
+      // feedback3: undefined,
+      // feedback4: undefined,
+      // feedback5: undefined,
     },
     onSubmit: submitHandler,
   });
@@ -626,12 +649,43 @@ const SubmitDirectProposalPageContent: React.FC<
                   <Form.Label>
                     &nbsp;&nbsp;Specific Feedback&nbsp;&nbsp;
                   </Form.Label>
-                  {extraFeedback && feedbackList.map(feedback => {<Form.Control
+                  {extraFeedback && (<Button
+                        color="success"
+                        size="sm"
+                        onClick={() => addNewFeedback(numberOfFeedback)}
+                      >
+                        +
+                      </Button>)}
+                  {extraFeedback && feedbackList.map((feedback, index) => {return <div className="feedback-1">
+                          <br />
+                          <Form.Label
+                            style={{ display: "flex" }}
+                          >
+                            &nbsp;&nbsp;Specific Feedback {parseInt(feedback)}
+                            <Button
+                              style={{ marginLeft: "auto" }}
+                              color="danger"
+                              size="sm"
+                              
+                              onClick={() => removeFeedback(feedback)}
+                            >
+                              -
+                            </Button>
+                          </Form.Label>
+                          <br />
+                          <Form.Control
                             type="text"
                             name="specificFeedback1"
-                            onChange={formik.handleChange}
+                            onChange={(event) => {
+                              updateFeedback(event.target.value, index);
+                              //formik.handleChange
+                            } }
+                            // value={formik.values.feedback[index]}
+                            value={feedback[index]}
                             placeholder="Extra Feedback"
-                          />})}
+                          />
+
+                        </div>})}
                 </div>
               </div>
             </Form.Group>
