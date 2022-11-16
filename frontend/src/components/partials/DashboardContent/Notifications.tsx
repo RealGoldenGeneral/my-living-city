@@ -4,14 +4,12 @@ import { UserProfileContext } from "../../../contexts/UserProfile.Context"
 import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea, IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 import Notification from "./Notification";
-import { IProposalWithAggregations } from "src/lib/types/data/proposal.type";
 import { IBanUser } from "src/lib/types/data/banUser.type";
 import { updateBan } from "src/lib/api/banRoutes";
 
 interface NotificationPageContentProps {
   userIdeas: IIdeaWithAggregations[] | undefined;
   userBanInfo: IBanUser | undefined;
-  // proposals: IProposalWithAggregations[] | undefined;
 }
 
 
@@ -21,28 +19,31 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
   const { user, token } = useContext(UserProfileContext);
 
   const dismissAll = async () => {
+ 
     userIdeas?.map(async (userIdea) => {
       if (!userIdea.active) {
         await updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
+        setIsDismissed(true)
       }
     }
     )
+
     if (userBanInfo) {
       userBanInfo.notificationDismissed = true;
       await updateBan(userBanInfo!, token);
+      
     }
+  
   }
 
   // Check if there are any notifications
   const notifications: JSX.Element[] = [];
+  
   // Check if there is ban info
   if (userBanInfo && !userBanInfo.notificationDismissed)
     notifications.push(<Notification userBanInfo={userBanInfo} />)
   userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => notifications.push(<Notification userIdea={idea} />));
 
-  console.log("Notification Length: " + notifications.length);
-  console.log(notifications)
-  
   return (
     <Container
       className="system"
@@ -75,17 +76,17 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
       </div>
 
       <div style={{ marginTop: "1rem" }}>
-        {
-          <Table >
-            <tbody>
+        { 
+          !isDismissed && <Table >
+            <tbody key={Math.random()}>
               {notifications.map((notification, index) => {
                 return (
                   <>
-                    { notification }
+                    {notification}
                   </>
                 )
               })}
-            </tbody> 
+            </tbody>
           </Table>
         }
       </div>
