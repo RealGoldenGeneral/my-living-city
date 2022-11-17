@@ -21,7 +21,12 @@ proposalRouter.post(
                 needDonations,
                 needFeedback,
                 needSuggestions,
-                location
+                location,
+                feedback1,
+                feedback2,
+                feedback3,
+                feedback4,
+                feedback5
             } = req.body;
             const bannedBoolean = (banned === 'true');
             const needCollaboratorsBoolean = (needCollaborators === 'true');
@@ -46,6 +51,11 @@ proposalRouter.post(
                     needFeedback: needFeedbackBoolean,
                     needSuggestions: needSuggestionsBoolean,
                     location: location,
+                    feedback1,
+                    feedback2,
+                    feedback3,
+                    feedback4,
+                    feedback5
                 }
             });
             console.log("createdProposal", createdProposal);
