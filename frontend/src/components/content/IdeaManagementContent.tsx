@@ -66,7 +66,6 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
             ideaFlags.push(counter);
         }
     }
-    console.log("Type",  new Date().toLocaleDateString())
 
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
@@ -138,12 +137,21 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                                 setBanModalIdeaData(req);
                                 setShowIdeaBanModal(true);
                                 }}>Ban Idea</Dropdown.Item>
+                            {req.reviewed && req.active ?
+                            <Dropdown.Item onClick={()=>{
+                                updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
+                                setActive(req.active=false);
+                                setReviewed(req.reviewed=false);
+                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
+                                }}>Quarantine Idea</Dropdown.Item>
+                            :
                             <Dropdown.Item onClick={()=>{
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
-                                req.active=true;
-                                req.reviewed=true;
+                                setActive(req.active=true);
+                                setReviewed(req.reviewed=true);
                                 updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
-                                }}>Unquarantine Idea</Dropdown.Item>
+                                }}>Remove from Quarantine</Dropdown.Item>
+                            }
                         </NavDropdown>
                         : <>
                         {/* <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>

@@ -31,6 +31,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
     const [banModalProposalData, setBanModalProposalData] = useState<IIdeaWithAggregations>();
     const [showProposalBanModal, setShowProposalBanModal] = useState<boolean>(false);
     const [ban ,setBan] = useState<boolean>(false);
+    const [active, setActive] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
@@ -131,20 +132,29 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                     <td>
                     {req.id.toString() !== hideControls ?
                         <NavDropdown title="Controls" id="nav-dropdown">
-                            <Dropdown.Item onClick={()=>{
+                            {/* <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id.toString());
                                 setBan(req.active);
-                                }}>Edit</Dropdown.Item>
+                                }}>Edit</Dropdown.Item> */}
                             <Dropdown.Item onClick={()=>{
                                 setBanModalProposalData(req);
                                 setShowProposalBanModal(true);
                                 }}>Ban Proposal</Dropdown.Item>
-                            <Dropdown.Item onClick={()=>{
-                                updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
-                                req.active=true;
-                                req.reviewed=true;
-                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
-                                }}>Unquarantine Proposal</Dropdown.Item>
+                            {req.reviewed && req.active ?
+                                <Dropdown.Item onClick={()=>{
+                                    updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
+                                    setActive(req.active=false);
+                                    setReviewed(req.reviewed=false);
+                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
+                                    }}>Quarantine Proposal</Dropdown.Item>
+                                :
+                                <Dropdown.Item onClick={()=>{
+                                    updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
+                                    setActive(req.active=true);
+                                    setReviewed(req.reviewed=true);
+                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
+                                    }}>Remove from Quarantine</Dropdown.Item>
+                            }
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>

@@ -32,6 +32,8 @@ export const PostBanModal = ({
         try {
             setIsSubmitting(true);
             // POST to database
+            post.active = false;
+            post.reviewed = true;
             const banPostInputValues: IBanPostInput = {
                 postId: values.postId,
                 authorId: values.authorId,
