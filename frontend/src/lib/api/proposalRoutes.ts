@@ -78,8 +78,9 @@ export const postCreateProposal = async (
     feedback5: proposal.feedback[4].toString()
   };
 
-  console.log(feedback)
-  console.log(proposal)
+  //console.log(feedback)
+  console.log("Proposal info");
+  console.log(formBody)
 
   const res = await axios({
     method: "post",
