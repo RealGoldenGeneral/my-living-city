@@ -421,6 +421,12 @@ model Proposal {
   feedback4 String? @map("feedback_4")
   feedback5 String? @map("feedback_5")
 
+  feedbackType1 String? @map("feedback_type_1")
+  feedbackType2 String? @map("feedback_type_2")
+  feedbackType3 String? @map("feedback_type_3")
+  feedbackType4 String? @map("feedback_type_4")
+  feedbackType5 String? @map("feedback_type_5")
+
   location       String? @map("location")
   // Relations
   idea           Idea    @relation("proposal", fields: [ideaId], references: [id])
