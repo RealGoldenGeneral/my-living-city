@@ -7,6 +7,7 @@ import Notification from "./Notification";
 import { IBanUser } from "src/lib/types/data/banUser.type";
 import { updateBan } from "src/lib/api/banRoutes";
 import { IComment, ICommentAggregations } from "src/lib/types/data/comment.type";
+import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 
 interface NotificationPageContentProps {
   userIdeas: IIdeaWithAggregations[] | undefined;
@@ -32,11 +33,22 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
       )
     }
 
+    if (userComments) {
+        userComments?.map(async (userComment) => {
+          if (!userComment.active && !userComment.notification_dismissed) {
+            await updateCommentNotificationStatus(token, userComment.authorId, userComment.id.toString(), true)
+          }
+          setIsDismissed(true)
+        })
+      }
+    
+
     if (userBanInfo) {
       userBanInfo!.notificationDismissed = true;
       await updateBan(userBanInfo!, token);
       setIsDismissed(true)
     }
+    
   }
 
   // Check if there are any notifications
@@ -46,8 +58,10 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
   if (userBanInfo && !userBanInfo.notificationDismissed)
     notifications.push(<Notification userBanInfo={userBanInfo} />)
   userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => notifications.push(<Notification userIdea={idea} />));
-  userComments!.filter((comment) => !comment.active && (comment.authorId === user!.id) && !comment.notification_dismissed).map((comment, index) => notifications.push(<Notification userComment={comment} />))
-
+  if (userComments) {
+    userComments!.filter((comment) => !comment.active && (comment.authorId === user!.id) && !comment.notification_dismissed).map((comment, index) => notifications.push(<Notification userComment={comment} />))
+  }
+  
   return (
     <Container
       className="system"
