@@ -100,8 +100,13 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     needFeedback,
     needSuggestions,
     location,
+    feedback1,
+    feedback2,
+    feedback3,
+    feedback4,
+    feedback5
   } = proposalData;
-  // console.log(proposalData);
+  console.log(proposalData);
   // console.log(suggestedIdeas);
 
   const { title: catTitle } = category!;
@@ -494,6 +499,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                         : ""}
                     </p>
                   ) : null}
+
                 </Col>
               </Row>
             </Card.Body>
@@ -1075,6 +1081,58 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                   No suggestions yet, be the first!
                 </p>
               )}
+            </Card.Body>
+          </Card>
+        </div>
+      )}
+
+      {feedback1 && (
+        <div style={{ marginTop: "2rem" }}>
+          <Card>
+            <Card.Header>
+              <div className="d-flex justify-content-between">
+                <h4 className="h4">Specific Feedbacks</h4>
+                {/** create a textbox */}
+
+                <h4 className="text-center my-auto text-muted">
+                  <Button onClick={() => redirectToIdeaSubmit()}>
+                    PLACEHOLDER
+                  </Button>
+                </h4>
+              </div>
+            </Card.Header>
+            <Card.Body>
+            {feedback1 ? (
+                    <p>
+                      <strong>Specific Feedback 1: </strong> {feedback1}
+                    </p>
+                  ) : null}
+
+            {feedback2 ? (
+                    <p>
+                      <strong>Specific Feedback 2: </strong> {feedback2}
+                    </p>
+                  ) : null}
+
+            {feedback3 ? (
+                    <p>
+                      <strong>Specific Feedback 3: </strong> {feedback3}
+                    </p>
+                  ) : null}
+
+            {feedback4 ? (
+                    <p>
+                      <strong>Specific Feedback 4: </strong> {feedback4}
+                    </p>
+                  ) : null}
+
+            {feedback5 ? (
+                    <p>
+                      <strong>Specific Feedback 5: </strong> {feedback5}
+                    </p>
+                  ) : null}
+
+            
             </Card.Body>
           </Card>
         </div>
