@@ -18,22 +18,22 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
   const [isDismissed, setIsDismissed] = useState(false);
   const { user, token } = useContext(UserProfileContext);
 
-  const dismissAll = async () => {
- 
-    userIdeas?.map(async (userIdea) => {
-      if (!userIdea.active) {
-        await updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
-        setIsDismissed(true)
+  const dismissAll = async () => {    
+    if (userIdeas) {
+      userIdeas?.map(async (userIdea) => {
+        if (!userIdea.active && !userIdea.notification_dismissed) {
+          await updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
+          setIsDismissed(true)
+        }
       }
+      )
     }
-    )
 
     if (userBanInfo) {
-      userBanInfo.notificationDismissed = true;
+      userBanInfo!.notificationDismissed = true;
       await updateBan(userBanInfo!, token);
-      
+      setIsDismissed(true)
     }
-  
   }
 
   // Check if there are any notifications

@@ -51,7 +51,6 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo }) =>
         userIdea!.notification_dismissed = true;
         await updateIdeaNotificationStatus(token, userId, ideaId.toString(), notification_dismissed);
         setIsDismissed(true);
-       
     }
 
     const dismissBanNotification = async () => {
@@ -84,7 +83,10 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo }) =>
                 <tr>
                     {!isDismissed ? (
                         <div className="d-flex align align-items-center justify-content-between">
-                            <td className="col-md">{"You have been "} <b>{banType()}</b> {" because "} {userBanInfo?.banReason} {" until "} <b>{(userBanInfo?.banUntil && new Date(userBanInfo!.banUntil).toLocaleString())}</b>
+                            <td className="col-md">
+                                <span>{"You have been "} <b>{banType()}</b> {" because "} <b>{userBanInfo?.banReason}</b> {" until "} <b>{(userBanInfo?.banUntil && new Date(userBanInfo!.banUntil).toLocaleString())}</b>.</span>
+                                <br/>
+                                <span><b>Mod Message:</b> {userBanInfo?.banMessage}</span>
                                 <div className="float-right">
                                     <Button onClick={async () => await dismissBanNotification()}>Dismiss</Button>
                                 </div>

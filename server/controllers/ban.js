@@ -89,7 +89,7 @@ banRouter.get(
                 })
             }
         } catch (error) {
-            console.log(error);
+            console.log(error.stack);
             res.status(400).json({
                 message: `Error occurred when trying to get banned user ${req.params.userId}`,
                 details: {
@@ -178,12 +178,11 @@ banRouter.put(
                 }
             });
             if (!mostRecentUserBan) {
-                res.status(400).json({
+                console.log("Modifying Ban error !mostRecentUserBan: ");
+                return res.status(400).json({
                     message: `${req.params.userId} has no record of being banned.`
                 })
             }
-            console.log(mostRecentUserBan);
-            console.log(req.body);
             const updateBan = await prisma.userBan.update({
                 where: {
                     id: mostRecentUserBan.id
@@ -191,20 +190,20 @@ banRouter.put(
                 data: req.body
             })
             if (!updateBan) {
-                res.status(404).json({ message: "Update on ban is unsuccessful" });
+                console.log("Modifying Ban error !updateBan: ");
+                return res.status(404).json({ message: "Update on ban is unsuccessful" });
             }
-            res.status(200).json(updateBan);
+            return res.status(200).json(updateBan);
         } catch (err) {
-            console.log(err.message)
-            res.status(400).json({
+            console.log("Modifying Ban error catch: ");
+            console.log(err.stack)
+            return res.status(400).json({
                 message: `Error occurred when trying to update ban.`,
                 details: {
                     errorMessage: err.message,
                     errorStack: err.stack
                 }
             });
-        } finally {
-            await prisma.$disconnect();
         }
     }
 )
