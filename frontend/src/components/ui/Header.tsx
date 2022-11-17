@@ -15,7 +15,7 @@ import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { useUserWithJwtVerbose } from "src/hooks/userHooks";
 import { UserProfileContext } from "../../contexts/UserProfile.Context";
 import { searchForLocation } from 'src/lib/api/googleMapQuery';
-import { useGoogleMapSearchLocation } from "src/hooks/googleMapHooks";
+//import { useGoogleMapSearchLocation } from "src/hooks/googleMapHooks";
 import { useSingleSegmentByName } from "src/hooks/segmentHooks";
 import { findSegmentByName } from "src/lib/api/segmentRoutes";
 import {
@@ -35,18 +35,18 @@ export default function Header() {
     jwtAuthToken: token!,
     shouldTrigger: token != null,
   });
-  const { data: googleQuery, isLoading: googleQueryLoading } = useGoogleMapSearchLocation({ lat: data?.geo?.lat, lon: data?.geo?.lon }, (data != null && data.geo != null));
+ // const { data: googleQuery, isLoading: googleQueryLoading } = useGoogleMapSearchLocation({ lat: data?.geo?.lat, lon: data?.geo?.lon }, (data != null && data.geo != null));
   const { data: segData, isLoading: segQueryLoading } = useAllUserSegmentsRefined(token, user?.id || null);
   const { data: banData, isLoading: banQueryLoading} = FindBanDetailsWithToken(token)
   console.log(banData);
 
   // const segData = useSingleSegmentByName({
-  //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country 
+  //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country
   // }, googleQuery.data != null)
   // console.log(segData);
   const [userSegId, setUserSegId] = useState<any>(1);
   const [showWarningModal, setShowWarningModal] = useState<boolean>(!localStorage.getItem('warningModalState'));
-  
+
   // Hook to set localStorage: warningModalState to !null
   useEffect(() => {
     localStorage.setItem('warningModalState', String(showWarningModal));
@@ -185,11 +185,11 @@ export default function Header() {
       </Navbar>
       {banData ? (
         banData.isWarning ?
-        <>  
+        <>
             <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
                 Account has been issued a warning
             </Navbar>
-            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/> 
+            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/>
         </>
             : <BanMessageModal/>
       ) : null
