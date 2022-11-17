@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { Modal, Row, Col, Button, Spinner } from 'react-bootstrap'
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';
-import { FindBanDetailsWithStaleTime } from 'src/hooks/banHooks';
+import { FindBanDetails} from 'src/hooks/banHooks';
 
 interface WarningModalProps {
     show: boolean;
@@ -14,7 +14,7 @@ export const WarningMessageModal = ({
 }: WarningModalProps) => {
     const closeModal = () => setShow(false);
     const { user, logout } = useContext(UserProfileContext);
-    const { data, error, isLoading, isError } = FindBanDetailsWithStaleTime(user!.id);
+    const { data, error, isLoading, isError } = FindBanDetails(user!.id);
 
     if (isError) {
         console.log(error);

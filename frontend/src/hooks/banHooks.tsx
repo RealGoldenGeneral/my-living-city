@@ -6,11 +6,13 @@ import { IBanUser } from "src/lib/types/data/banUser.type";
 import { IBanPost } from "src/lib/types/data/banPost.type";
 
 export const FindBanDetails = (userId: string) => {
-    return useQuery<IBanUser, IFetchError>(["ban", userId], () => getMostRecentUserBan(userId));
+    return useQuery<IBanUser, IFetchError>(
+        ["ban", userId], () => getMostRecentUserBan(userId));
 };
 
 export const FindBanDetailsWithStaleTime = (userId: string) => {
-    return useQuery<IBanUser, IFetchError>(["ban", userId], () => getMostRecentUserBan(userId), { staleTime: 5000 });
+    return useQuery<IBanUser, IFetchError>(
+        ["ban", userId], () => getMostRecentUserBan(userId), { staleTime: 5000 });
 };
 
 export const FindUndismissedPostBans = (userId: string) => {

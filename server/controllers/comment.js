@@ -389,8 +389,6 @@ commentRouter.put(
           errorStack: error.stack,
         }
       });
-    } finally {
-      await prisma.$disconnect();
     }
   }
 )
