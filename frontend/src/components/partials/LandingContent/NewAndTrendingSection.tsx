@@ -224,7 +224,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
                         />
                     :
                         <ProposalTile
-                            proposalData={ {id: allProposals!.filter(obj => { if (obj.ideaId == idea.id) return obj})[0].id, ideaId: idea.id, idea} }
+                            proposalData={ {id: allProposals!.filter(obj => { if (obj.ideaId == idea.id) return obj})[0]?.id, ideaId: idea.id, idea} }
                             showFooter={true}
                             postType={"Proposal"}
                         />

@@ -215,7 +215,8 @@ const SubmitDirectProposalPageContent: React.FC<
         needFeedback: values.needFeedback,
         needSuggestions: values.needSuggestions,
         location: values.location,
-        feedback: values.feedback
+        feedback: values.feedback,
+        feedbackRatingType: values.feedbackRatingType
       };
       console.log("proposalValues", proposalValues);
       const proposal = await postCreateProposal(
