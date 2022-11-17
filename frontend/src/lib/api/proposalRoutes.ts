@@ -60,6 +60,7 @@ export const postCreateProposal = async (
     needFeedback,
     needSuggestions,
     location,
+    feedback
   } = proposal;
 
   let formBody = {
@@ -70,7 +71,15 @@ export const postCreateProposal = async (
     needFeedback: needFeedback.toString(),
     needSuggestions: needSuggestions.toString(),
     location: location.toString(),
+    feedback1: proposal.feedback[0].toString(),
+    feedback2: proposal.feedback[1].toString(),
+    feedback3: proposal.feedback[2].toString(),
+    feedback4: proposal.feedback[3].toString(),
+    feedback5: proposal.feedback[4].toString()
   };
+
+  console.log(feedback)
+  console.log(proposal)
 
   const res = await axios({
     method: "post",
@@ -90,4 +99,5 @@ export const postCreateProposal = async (
   }
   //return response data
   return res.data;
+
 };
