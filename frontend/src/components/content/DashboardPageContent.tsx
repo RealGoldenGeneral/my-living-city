@@ -14,13 +14,17 @@ import { IBanUser } from "../../lib/types/data/banUser.type";
 import { useIdeasHomepage, useUserFollowedIdeas, useUserIdeas } from "../../hooks/ideaHooks";
 import { IUser } from "src/lib/types/data/user.type";
 import { FindBanDetails } from "src/hooks/banHooks";
+import { useAllComments } from "src/hooks/commentHooks";
 
 interface LandingPageContentProps {
   user: IUser
   token: string;
 }
 
+
 const DashboardPageContent: React.FC<LandingPageContentProps> = ({user, token}) => {
+
+  const { data: commentData, isLoading: commentLoading} = useAllComments();
   const {
     data: topIdeasData,
     error: iError,
@@ -61,7 +65,7 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({user, token}) 
     <Container className="landing-page-content">
       <Row as="article" className="featured"></Row>
       <Row as="article" className="system-messages">
-        <Notifications userIdeas={userIdeaData} userBanInfo={userBannedData}/>
+        <Notifications userIdeas={userIdeaData} userBanInfo={userBannedData} userComments={commentData}/>
       </Row>
       <Row as="article" className="new-and-trending">
         <MyPosts userIdeas={userIdeaData!} numPosts={6} isDashboard={true} />

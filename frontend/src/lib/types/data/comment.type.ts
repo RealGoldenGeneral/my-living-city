@@ -60,6 +60,28 @@ export interface IComment {
   quarantined_at: Date;
   idea: IParsedIdea;
   // userSeg: IParsedSegData;
+  notification_dismissed: boolean;
+  author: IParsedCommentAuthor;
+  likes: ICommentLikeDislike[];
+  dislikes: ICommentLikeDislike[];
+  _count: ICommentLikeAndDislikeAggregation;
+}
+
+export interface ICommentAggregations extends IComment {
+  id:        number;
+  ideaId:    number;
+  authorId:  string;
+  content:   string;
+  active:    boolean;
+  bannedComment: boolean;
+  reviewed: boolean;
+  commentFlagNumber: number;
+  createdAt: string;
+  updatedAt: string;
+  quarantined_at: Date;
+  idea: IParsedIdea;
+  // userSeg: IParsedSegData;
+  notification_dismissed: boolean;
   author: IParsedCommentAuthor;
   likes: ICommentLikeDislike[];
   dislikes: ICommentLikeDislike[];

@@ -5,32 +5,37 @@ import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea } from "src/lib/types/data/idea.type";
 import { IBanUser } from "src/lib/types/data/banUser.type";
 import { updateBan } from "src/lib/api/banRoutes";
+import { IComment } from "src/lib/types/data/comment.type";
+import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 
 interface NotificationProps {
     userIdea?: IIdea | undefined;
     userBanInfo?: IBanUser | undefined;
+    userComment?: IComment | undefined;
   
 }
 
-const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo }) => {
+const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, userComment }) => {
     const [isDismissed, setIsDismissed] = useState(false);
     const [notificationType, setNotificationType] = useState("");
     const { user, token } = useContext(UserProfileContext);
     
-
+    console.log("user", user)
     // Set the notification type
-    const notiType = (userIdea: IIdea | undefined, userBanInfo: IBanUser | undefined) => {
+    const notiType = (userIdea: IIdea | undefined, userBanInfo: IBanUser | undefined, userComment: IComment | undefined) => {
         if (userIdea) {
             setNotificationType("userIdea");
         } if (userBanInfo) {
             setNotificationType("userBanInfo")
+        } if (userComment) {
+            setNotificationType("userComment")
         }
     }
 
     console.log("Notificationtype: ", notificationType)
     // Render only once
     useEffect(() => {
-        notiType(userIdea, userBanInfo);
+        notiType(userIdea, userBanInfo, userComment);
         
     }, [])
 
@@ -59,6 +64,13 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo }) =>
         await updateBan(userBanInfo!, token);
         setIsDismissed(true);
         
+    }
+
+    const dismissCommentNotification = async (token: string, userId: string, commentId: number, notification_dismissed: boolean) => {
+        setNotificationType('userComment')
+        userComment!.notification_dismissed = true;
+        await updateCommentNotificationStatus(token, userId, commentId.toString(), notification_dismissed );
+        setIsDismissed(true);
     }
 
     switch (notificationType) {
@@ -100,6 +112,27 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo }) =>
                     }
                 </tr>
             )
+            case "userComment":
+                return (
+                    <tr>
+                        {!isDismissed ? (
+                            <div className="d-flex align align-items-center justify-content-between">
+                                <td className="col-md">
+                                    <span>{"Your comment made to"} <b>{userComment?.content}</b> {" has been removed from the conversations page due to violation of content"}.</span>
+                                
+                                    <div className="float-right">
+                                        <Button onClick={async () => await dismissCommentNotification(token!, user!.id, userComment!.id,  true)}>Dismiss</Button>
+                                    </div>
+                                </td>
+                            </div>
+    
+                        )
+                            :
+                            null
+    
+                        }
+                    </tr>
+                )
         default:
             return (
                 <tr>

@@ -502,6 +502,7 @@ model IdeaComment {
   reviewed       Boolean               @default(false)
   createdAt      DateTime              @default(now()) @map(name: "created_at")
   updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+  notification_dismissed Boolean       @default(false)                          @map("notification_dismissed")
   quarantined_at DateTime              @default(now()) @map(name: "quarantined_at")
 
   // Moderator Fields
