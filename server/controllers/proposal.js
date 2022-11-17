@@ -26,7 +26,12 @@ proposalRouter.post(
                 feedback2,
                 feedback3,
                 feedback4,
-                feedback5
+                feedback5,
+                feedbackType1,
+                feedbackType2,
+                feedbackType3,
+                feedbackType4,
+                feedbackType5
             } = req.body;
             const bannedBoolean = (banned === 'true');
             const needCollaboratorsBoolean = (needCollaborators === 'true');
@@ -55,7 +60,12 @@ proposalRouter.post(
                     feedback2,
                     feedback3,
                     feedback4,
-                    feedback5
+                    feedback5,
+                    feedbackType1,
+                    feedbackType2,
+                    feedbackType3,
+                    feedbackType4,
+                    feedbackType5
                 }
             });
             console.log("createdProposal", createdProposal);
