@@ -31,6 +31,7 @@ export interface IIdea {
   createdAt: string;
   updatedAt: string;
   reviewed: boolean;
+  notification_dismissed: boolean;
 }
 
 // Idea with relationships (Used in Single Idea Page) extends Root base Idea
@@ -92,6 +93,6 @@ export interface IIdeaWithAggregations extends IIdea {
   artsImpact?: string;
   energyImpact?: string;
   manufacturingImpact?: string;
-  notification_dismissed?: boolean;
+  // notification_dismissed?: boolean;
   quarantined_at: Date;
 }

@@ -48,6 +48,7 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo }) =>
 
     const dismissIdeaNotification = async (ideaId: number, token: string, userId: string, notification_dismissed: boolean) => {
         setNotificationType('userIdea')
+        userIdea!.notification_dismissed = true;
         await updateIdeaNotificationStatus(token, userId, ideaId.toString(), notification_dismissed);
         setIsDismissed(true);
        
