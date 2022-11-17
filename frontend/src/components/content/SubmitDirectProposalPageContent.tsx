@@ -38,7 +38,7 @@ import {
 } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 import { MAP_KEY } from "../../lib/constants";
-import {getBanWithToken} from "../../lib/api/banRoutes";
+import {getUserBanWithToken} from "../../lib/api/banRoutes";
 
 interface SubmitDirectProposalPageContentProps {
   categories: ICategory[] | undefined;
@@ -135,7 +135,7 @@ const SubmitDirectProposalPageContent: React.FC<
         superSegmentId: values.superSegmentId,
         state: "PROPOSAL",
       };
-      const banDetails = await getBanWithToken(token);
+      const banDetails = await getUserBanWithToken(token);
       let banned = true;
       if (!user!.banned || banDetails || banDetails.banType === "WARNING") {
         banned = false;

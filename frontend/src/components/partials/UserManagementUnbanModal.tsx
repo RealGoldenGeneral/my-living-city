@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Container, Card, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
-import { FindBanDetails } from 'src/hooks/banHooks';
-import { getMostRecentBan, updateBan } from 'src/lib/api/banRoutes';
+import { FindBanDetailsWithStaleTime } from 'src/hooks/banHooks';
+import { getMostRecentUserBan, updateUserBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { date } from 'yup';
 import { IBanUser } from 'src/lib/types/data/banUser.type';
@@ -28,7 +28,7 @@ export const UserManagementUnbanModal = ({
     currentUser,
     token
 }: UnbanModalProps) => {
-    const { data: modalUserData, isLoading: modalUserIsLoading, isError: modalUserIsError } = FindBanDetails(modalUser.id);
+    const { data: modalUserData, isLoading: modalUserIsLoading, isError: modalUserIsError } = FindBanDetailsWithStaleTime(modalUser.id);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
     const unbanUser = async () => {
@@ -36,7 +36,7 @@ export const UserManagementUnbanModal = ({
             setIsSubmitting(true);
             modalUser.banned = false;
             modalUserData!.banUntil = new Date(Date.now())
-            await updateBan(modalUserData!, token)
+            await updateUserBan(modalUserData!, token)
             await updateUser(modalUser, token, currentUser);
             handleClose();
         } catch (error) {

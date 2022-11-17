@@ -28,16 +28,10 @@ interface UserManagementContentProps {
 }
 
 export const UserManagementContent: React.FC<UserManagementContentProps> = ({users, token, user, flags, commentFlags, ideas, proposals, comments, bans}) => {
-    const warnedUsersArray: string[] = []
-    // bans?.map(o => {
-    //     if (o.isWarning)
-    //         warnedUsersArray.push(o.userId)
-    // })
     const [hideControls, setHideControls] = useState('');
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
-    const [warned, setWarned] = useState<String[]>(warnedUsersArray);
     // const [ban ,setBan] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
     const [showUserFlagsModal, setShowUserFlagsModal] = useState<boolean>(false);
@@ -95,14 +89,13 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
             : null
              }
             {showUserBanModal ?
-            <UserManagementBanModal show={showUserBanModal} setShow={setShowUserBanModal} modalUser={modalUser!} currentUser={user!} token={token} warnedUserIds={warned}/>
+            <UserManagementBanModal show={showUserBanModal} setShow={setShowUserBanModal} modalUser={modalUser!} currentUser={user!} token={token}/>
             : null
             }
             {showUserUnbanModal ?
             <UserManagementUnbanModal show={showUserUnbanModal} setShow={setShowUserUnbanModal} modalUser={modalUser!} currentUser={user!} token={token} />
             : null
             }
-            
 
             <Form>
             <h2 className="mb-4 mt-4">User Management</h2>

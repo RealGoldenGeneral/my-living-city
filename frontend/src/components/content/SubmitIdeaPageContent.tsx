@@ -19,7 +19,7 @@ import {
 } from "src/lib/types/data/segment.type";
 import { UserProfileContext } from "../../contexts/UserProfile.Context";
 import { postCreateIdea } from "../../lib/api/ideaRoutes";
-import { getBanWithToken } from "../../lib/api/banRoutes";
+import { getUserBanWithToken } from "../../lib/api/banRoutes";
 import { ICategory } from "../../lib/types/data/category.type";
 import { ICreateIdeaInput } from "../../lib/types/input/createIdea.input";
 import { IFetchError } from "../../lib/types/types";
@@ -77,7 +77,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
-      const banDetails = await getBanWithToken(token);
+      const banDetails = await getUserBanWithToken(token);
       let banned = true;
       if (!user!.banned || !banDetails || banDetails.banType === "WARNING") {
         banned = false;

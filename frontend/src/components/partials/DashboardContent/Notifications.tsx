@@ -5,7 +5,8 @@ import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea, IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 import Notification from "./Notification";
 import { IBanUser } from "src/lib/types/data/banUser.type";
-import { updateUserBan } from "src/lib/api/banRoutes";
+import { IBanPost } from "src/lib/types/data/banPost.type";
+import { dismissBanPostNotification, updateUserBan } from "src/lib/api/banRoutes";
 import { IComment, ICommentAggregations } from "src/lib/types/data/comment.type";
 import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 
@@ -13,14 +14,16 @@ interface NotificationPageContentProps {
   userIdeas: IIdeaWithAggregations[] | undefined;
   userBanInfo: IBanUser | undefined;
   userComments: ICommentAggregations[] | undefined;
+  userPostBans: IBanPost[] | undefined;
 }
 
 
-const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, userBanInfo, userComments }) => {
+const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, userBanInfo, userComments, userPostBans }) => {
 
   const [isDismissed, setIsDismissed] = useState(false);
   const { user, token } = useContext(UserProfileContext);
-  console.log("Comments: ", userComments)
+
+  console.log(userPostBans);
 
   const dismissAll = async () => {    
     if (userIdeas) {
@@ -43,21 +46,35 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
       }
     
 
-    if (userBanInfo) {
+    if (userBanInfo && user!.banned) {
       userBanInfo!.notificationDismissed = true;
       await updateUserBan(userBanInfo!, token);
       setIsDismissed(true)
     }
-    
+
+    if (userPostBans) {
+      userPostBans?.map(async (userPostBan) => {
+        if (!userPostBan.notificationDismissed) {
+          userPostBan!.notificationDismissed = true;
+          await dismissBanPostNotification(userPostBan!.id, token)
+        }
+      })
+      setIsDismissed(true)
+    }
   }
 
   // Check if there are any notifications
   const notifications: JSX.Element[] = [];
   
   // Check if there is ban info
-  if (userBanInfo && !userBanInfo.notificationDismissed)
+  if (userBanInfo && !userBanInfo.notificationDismissed && user!.banned)
     notifications.push(<Notification userBanInfo={userBanInfo} />)
+
+  if (userPostBans)
+    userPostBans!.filter(bannedPost => !bannedPost.notificationDismissed).map(bannedPost => notifications.push(<Notification userPostBan={bannedPost} />))
+
   userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => notifications.push(<Notification userIdea={idea} />));
+
   if (userComments) {
     userComments!.filter((comment) => !comment.active && (comment.authorId === user!.id) && !comment.notification_dismissed).map((comment, index) => notifications.push(<Notification userComment={comment} />))
   }

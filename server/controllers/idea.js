@@ -712,7 +712,7 @@ ideaRouter.put(
   async (req, res, next) => {
     try {
 
-      const {userId, active, reviewed, quarantined_at} = req.body;
+      const {active, reviewed, quarantined_at} = req.body;
       const {ideaId} = req.params;
       const parsedIdeaId = parseInt(ideaId);
 

@@ -3,7 +3,7 @@ import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
 import { useFormik } from "formik";
 import { IBanUserInput } from 'src/lib/types/input/banUser.input';
-import { postCreateBan } from 'src/lib/api/banRoutes';
+import { postCreateUserBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 import { BAN_USER_TYPES } from 'src/lib/constants';
 
@@ -12,7 +12,6 @@ interface BanModalProps {
     show: boolean;
     modalUser: IUser;
     currentUser: IUser;
-    warnedUserIds: String[];
     token: string | null
 };
 
@@ -22,14 +21,11 @@ interface FeedbackModalProps {
     message: string;
 }
 
-const WARNING_MESSAGE_DURATION = 30;
-
 export const UserManagementBanModal = ({
     setShow,
     show,
     modalUser,
     currentUser,
-    warnedUserIds,
     token
 }: BanModalProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +42,7 @@ export const UserManagementBanModal = ({
                 banReason: values.banReason,
                 banMessage: values.banMessage,
             }
-            await postCreateBan(banInputValues, token);
+            await postCreateUserBan(banInputValues, token);
             await updateUser(modalUser, token, currentUser);
             handleClose();
         } catch (error) {

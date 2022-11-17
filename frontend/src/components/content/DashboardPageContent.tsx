@@ -13,7 +13,7 @@ import LoadingSpinner from "../ui/LoadingSpinner";
 import { IBanUser } from "../../lib/types/data/banUser.type";
 import { useIdeasHomepage, useUserFollowedIdeas, useUserIdeas } from "../../hooks/ideaHooks";
 import { IUser } from "src/lib/types/data/user.type";
-import { FindBanDetails } from "src/hooks/banHooks";
+import { FindBanDetails, FindUndismissedPostBans } from "src/hooks/banHooks";
 import { useAllComments } from "src/hooks/commentHooks";
 
 interface LandingPageContentProps {
@@ -21,10 +21,14 @@ interface LandingPageContentProps {
   token: string;
 }
 
-
 const DashboardPageContent: React.FC<LandingPageContentProps> = ({user, token}) => {
 
-  const { data: commentData, isLoading: commentLoading} = useAllComments();
+  const { 
+    data: commentData,
+    isLoading: commentLoading,
+    error: commentError
+  } = useAllComments();
+
   const {
     data: topIdeasData,
     error: iError,
@@ -32,7 +36,6 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({user, token}) 
     isError: iIsError,
   } = useIdeasHomepage();
 
-  //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
   const {
     data: userIdeaData,
     error: uError,
@@ -40,32 +43,35 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({user, token}) 
   } = useUserIdeas(user.id);
 
   const {
+    data: undismissedPostBansData,
+    error: undismissedPostBansError,
+    isLoading: undismissedPostBansLoading,
+  } = FindUndismissedPostBans(user.id);
+
+  const {
     data: userFollowedIdeaData,
     error: userFollowedError,
     isLoading: userFollowedLoading,
   } = useUserFollowedIdeas(user.id)
 
-  let userBannedData, userBannedDataError, userBannedDataLoading;
-  if (user.banned) {
-    ({
+  const {
       data: userBannedData,
       isError: userBannedDataError,
       isLoading: userBannedDataLoading
-    } = FindBanDetails(user.id));
-  }
+    } = FindBanDetails(user.id);
 
-  if (iLoading || uLoading || userFollowedLoading || userBannedDataLoading) {
+  if (iLoading || uLoading || userFollowedLoading || userBannedDataLoading || commentLoading || undismissedPostBansLoading) {
     return <LoadingSpinner />;
   }
 
-  if (iError || uError || userFollowedError || userBannedDataError) {
+  if (iError || iIsError || uError || userFollowedError || userBannedDataError || commentError || undismissedPostBansError) {
     return <div>Error when fetching necessary data</div>;
   }
   return (
     <Container className="landing-page-content">
       <Row as="article" className="featured"></Row>
       <Row as="article" className="system-messages">
-        <Notifications userIdeas={userIdeaData} userBanInfo={userBannedData} userComments={commentData}/>
+        <Notifications userIdeas={userIdeaData} userBanInfo={userBannedData} userComments={commentData} userPostBans={undismissedPostBansData}/>
       </Row>
       <Row as="article" className="new-and-trending">
         <MyPosts userIdeas={userIdeaData!} numPosts={6} isDashboard={true} />

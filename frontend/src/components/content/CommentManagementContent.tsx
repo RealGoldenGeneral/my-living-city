@@ -27,6 +27,8 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
+    const [banModalCommentData, setBanModalCommentData] = useState<IComment>();
+    const [showCommentBanModal, setShowCommentBanModal] = useState<boolean>(false);
     const [ban ,setBan] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
@@ -133,6 +135,13 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                                 setBan(req.active);
                                 setReviewed(req.reviewed);
                                 }}>Edit</Dropdown.Item>
+                            <Dropdown.Item onClick={()=>{
+                                setBanModalCommentData(req);
+                                setShowCommentBanModal(true);
+                                }}>Ban Comment</Dropdown.Item>
+                            <Dropdown.Item onClick={()=>{
+                                setBanModalCommentData(req);
+                                }}>Unquarantine Comment</Dropdown.Item>
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>

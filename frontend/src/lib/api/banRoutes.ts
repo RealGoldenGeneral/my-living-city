@@ -2,6 +2,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 import { IBanUserInput } from "../types/input/banUser.input";
+import { IBanPostInput } from "../types/input/banPost.input";
 import { IBanUser } from "../types/data/banUser.type";
 
 export const postCreateUserBan = async (
@@ -11,7 +12,7 @@ export const postCreateUserBan = async (
     const jsonBody = JSON.stringify(banData);
     const res = await axios({
         method: "post",
-        url: `${API_BASE_URL}/ban/create`,
+        url: `${API_BASE_URL}/banUser/create`,
         data: jsonBody,
         headers: {
             "Content-Type": "application/json",
@@ -28,12 +29,71 @@ export const postCreateUserBan = async (
     return res.data;
 };
 
+export const postCreatePostBan = async (
+    banData: IBanPostInput,
+    token: string | null
+) => {
+    const jsonBody = JSON.stringify(banData);
+    const res = await axios({
+        method: "post",
+        url: `${API_BASE_URL}/banPost/create`,
+        data: jsonBody,
+        headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+    //if not success, throw error which will stop form reset
+    if (!(res.status == 201 || res.status == 200)) {
+        throw new Error(res.data);
+    }
+    //return response data
+    return res.data;
+};
+
+
+export const postCreateCommentBan = async (
+    banData: IBanPostInput,
+    token: string | null
+) => {
+    const jsonBody = JSON.stringify(banData);
+    const res = await axios({
+        method: "post",
+        url: `${API_BASE_URL}/banComment/create`,
+        data: jsonBody,
+        headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+    //if not success, throw error which will stop form reset
+    if (!(res.status == 201 || res.status == 200)) {
+        throw new Error(res.data);
+    }
+    //return response data
+    return res.data;
+};
+
+export const getUndismissedPostBans = async(
+    userId: string
+) => {
+    const res = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/banPost/getUndismissedNotification/${userId}`,
+    })
+    return res.data;
+}
+
 export const getMostRecentUserBan = async (
     userId: string
 ) => {
     const res = await axios({
         method: "get",
-        url: `${API_BASE_URL}/ban/getMostRecent/${userId}`
+        url: `${API_BASE_URL}/banUser/getMostRecent/${userId}`
     })
     return res.data;
 }
@@ -41,12 +101,12 @@ export const getMostRecentUserBan = async (
 export const getUserBanWithToken = async (
     token: string | null
 ) => {
-    const res = await axios.get(`${API_BASE_URL}/ban/getMostRecentWithToken`, getAxiosJwtRequestOption(token!))
+    const res = await axios.get(`${API_BASE_URL}/banUser/getMostRecentWithToken`, getAxiosJwtRequestOption(token!))
     return res.data;
 }
 
 export const getAllBan = async (): Promise<IBanUser[]> => {
-    const res = await axios.get<IBanUser[]>(`${API_BASE_URL}/ban/getAll`)
+    const res = await axios.get<IBanUser[]>(`${API_BASE_URL}/banUser/getAll`)
     return res.data;
 }
 
@@ -56,8 +116,25 @@ export const updateUserBan = async (
 ) => {
     const res = await axios({
         method: "put",
-        url: `${API_BASE_URL}/ban/update/${banData.userId}`,
+        url: `${API_BASE_URL}/banUser/update/${banData.userId}`,
         data: banData,
+        headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+    return res.data;
+}
+
+export const dismissBanPostNotification = async (
+    banPostId: number,
+    token: string | null
+) => {
+    const res = await axios({
+        method: "put",
+        url: `${API_BASE_URL}/banPost/dismissNotification/${banPostId}`,
         headers: {
             "Content-Type": "application/json",
             "x-auth-token": token,
@@ -74,7 +151,7 @@ export const updateUserBan = async (
 // ) => {
 //     const res = await axios({
 //         method: "delete",
-//         url: `${API_BASE_URL}/ban/delete/${userId}`,
+//         url: `${API_BASE_URL}/banUser/delete/${userId}`,
 //         headers: {
 //             "x-auth-token": token,
 //             "Access-Control-Allow-Origin": "*",
@@ -89,7 +166,7 @@ export const deleteExpiredUserBans = async (
 ) => {
     const res = await axios({
         method: "delete",
-        url: `${API_BASE_URL}/ban/deletePassedBanDate`,
+        url: `${API_BASE_URL}/banUser/deletePassedBanDate`,
         headers: {
             "x-auth-token": token,
             "Access-Control-Allow-Origin": "*",
@@ -102,7 +179,7 @@ export const deleteExpiredUserBans = async (
 export const getExpiredUserBans = async () => {
     const res = await axios({
         method: "get",
-        url: `${API_BASE_URL}/ban/getAllPassedDate`
+        url: `${API_BASE_URL}/banUser/getAllPassedDate`
     });
     return res.data;
 }
@@ -111,7 +188,7 @@ export const unbanUsersWithExpiredBans = async (token: string | null) => {
     //get all ids of users with expired bans
     const userIdsResponse = await axios({
         method: "get",
-        url: `${API_BASE_URL}/ban/getAllPassedDate`
+        url: `${API_BASE_URL}/banUser/getAllPassedDate`
     });
     console.log("These are the user ids: ", userIdsResponse.data);
     //unban all users that have ids returned by expireBans

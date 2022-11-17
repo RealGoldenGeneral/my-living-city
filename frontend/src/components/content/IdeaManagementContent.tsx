@@ -8,6 +8,7 @@ import { IFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
+import { PostBanModal } from '../partials/PostBanModal';
 
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO
@@ -24,7 +25,9 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
-    const [ban ,setBan] = useState<boolean>(false);
+    const [banModalIdeaData, setBanModalIdeaData] = useState<IIdeaWithAggregations>();
+    const [showIdeaBanModal, setShowIdeaBanModal] = useState<boolean>(false);
+    const [active ,setActive] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
@@ -67,6 +70,11 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
 
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            {showIdeaBanModal ?
+            <PostBanModal show={showIdeaBanModal} setShow={setShowIdeaBanModal} post={banModalIdeaData!} token={token}/>
+            : null
+            }
+
             <Form>
             <h2 className="mb-4 mt-4">Idea Management</h2>
             <Table bordered hover size="sm">
@@ -110,7 +118,7 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                         <td></td>
                         <td><Form.Check type="switch" checked={req.active} onChange={(e)=>{
                         req.active = e.target.checked;
-                        setBan(e.target.checked)
+                        setActive(e.target.checked)
                         }} id="ban-switch"/></td>
                         <td><Form.Check type="switch" checked={req.reviewed} onChange={(e)=>{
                         req.reviewed = e.target.checked;
@@ -121,14 +129,24 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                     <td>
                     {req.id.toString() !== hideControls ?
                         <NavDropdown title="Controls" id="nav-dropdown">
-                            <Dropdown.Item onClick={()=>{
+                            {/* <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id.toString());
                                 setBan(req.active);
                                 setReviewed(req.reviewed);
-                                }}>Edit</Dropdown.Item>
+                                }}>Edit</Dropdown.Item> */}
+                            <Dropdown.Item onClick={()=>{
+                                setBanModalIdeaData(req);
+                                setShowIdeaBanModal(true);
+                                }}>Ban Idea</Dropdown.Item>
+                            <Dropdown.Item onClick={()=>{
+                                updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
+                                req.active=true;
+                                req.reviewed=true;
+                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
+                                }}>Unquarantine Idea</Dropdown.Item>
                         </NavDropdown>
                         : <>
-                        <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
+                        {/* <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
                             console.log(req);
@@ -138,7 +156,7 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
                             }
                             updateIdeaStatus(token, user?.id, req.id.toString(), req.active, req.reviewed, new Date());
-                            }}>Save</Button>
+                            }}>Save</Button> */}
                         </>
                     }
                     </td>

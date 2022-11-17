@@ -129,6 +129,7 @@ model UserBan {
 model PostBan {
   id                      Int         @id @default(autoincrement())
   postId                  Int         @map(name: "post_id")
+  authorId                String      @map(name: "author_id")
   banMessage              String?     @map(name: "ban_message")
   bannedBy                String      @map(name: "banned_by")
   createdAt               DateTime    @default(now()) @map(name: "created_at")
@@ -141,6 +142,7 @@ model PostBan {
 model CommentBan {
   id                      Int         @id @default(autoincrement())
   commentId               Int         @map(name: "comment_id")
+  authorId                String      @map(name: "author_id")
   banMessage              String?     @map(name: "ban_message")
   bannedBy                String      @map(name: "banned_by")
   createdAt               DateTime    @default(now()) @map(name: "created_at")
