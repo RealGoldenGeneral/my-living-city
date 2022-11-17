@@ -4,7 +4,7 @@ import { UserProfileContext } from "../../../contexts/UserProfile.Context"
 import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea } from "src/lib/types/data/idea.type";
 import { IBanUser } from "src/lib/types/data/banUser.type";
-import { updateBan } from "src/lib/api/banRoutes";
+import { updateUserBan } from "src/lib/api/banRoutes";
 import { IComment } from "src/lib/types/data/comment.type";
 import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 
@@ -61,7 +61,7 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
     const dismissBanNotification = async () => {
         setNotificationType('userBanInfo')
         userBanInfo!.notificationDismissed = true;
-        await updateBan(userBanInfo!, token);
+        await updateUserBan(userBanInfo!, token);
         setIsDismissed(true);
         
     }

@@ -4,7 +4,7 @@ import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
 import { IBanUserInput } from "../types/input/banUser.input";
 import { IBanUser } from "../types/data/banUser.type";
 
-export const postCreateBan = async (
+export const postCreateUserBan = async (
     banData: IBanUserInput,
     token: string | null
 ) => {
@@ -28,7 +28,7 @@ export const postCreateBan = async (
     return res.data;
 };
 
-export const getMostRecentBan = async (
+export const getMostRecentUserBan = async (
     userId: string
 ) => {
     const res = await axios({
@@ -38,7 +38,7 @@ export const getMostRecentBan = async (
     return res.data;
 }
 
-export const getBanWithToken = async (
+export const getUserBanWithToken = async (
     token: string | null
 ) => {
     const res = await axios.get(`${API_BASE_URL}/ban/getMostRecentWithToken`, getAxiosJwtRequestOption(token!))
@@ -50,7 +50,7 @@ export const getAllBan = async (): Promise<IBanUser[]> => {
     return res.data;
 }
 
-export const updateBan = async (
+export const updateUserBan = async (
     banData: IBanUser,
     token: string | null
 ) => {
@@ -84,7 +84,7 @@ export const updateBan = async (
 //     return res.data;
 // }
 
-export const deleteExpiredBans = async (
+export const deleteExpiredUserBans = async (
     token: string | null
 ) => {
     const res = await axios({
@@ -99,7 +99,7 @@ export const deleteExpiredBans = async (
     return res.data;
 }
 
-export const getExpiredBans = async () => {
+export const getExpiredUserBans = async () => {
     const res = await axios({
         method: "get",
         url: `${API_BASE_URL}/ban/getAllPassedDate`

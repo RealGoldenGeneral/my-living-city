@@ -1,20 +1,20 @@
 import { useQuery } from "react-query";
 import { IFetchError } from "../lib/types/types";
 
-import {getMostRecentBan, getBanWithToken, getAllBan, unbanUsersWithExpiredBans} from "src/lib/api/banRoutes"
+import {getMostRecentUserBan, getUserBanWithToken, getAllBan, unbanUsersWithExpiredBans} from "src/lib/api/banRoutes"
 import {RouteComponentProps} from "react-router-dom";
 import {IUser} from "../lib/types/data/user.type";
 import {ICommentFlag, IFlag} from "../lib/types/data/flag.type";
 import { IBanUser } from "src/lib/types/data/banUser.type";
 
 export const FindBanDetails = (userId: string) => {
-    return useQuery<IBanUser, IFetchError>(["ban", userId], () => getMostRecentBan(userId), {staleTime: 5000});
+    return useQuery<IBanUser, IFetchError>(["ban", userId], () => getMostRecentUserBan(userId), {staleTime: 5000});
 };
 
 export const FindBanDetailsWithToken = (token: string | null ) => {
     return useQuery<IBanUser, IFetchError>(
         ["banDetails", token],
-        () => getBanWithToken(token)
+        () => getUserBanWithToken(token)
     );
 }
 

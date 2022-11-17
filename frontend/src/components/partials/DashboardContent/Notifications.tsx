@@ -5,7 +5,7 @@ import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea, IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 import Notification from "./Notification";
 import { IBanUser } from "src/lib/types/data/banUser.type";
-import { updateBan } from "src/lib/api/banRoutes";
+import { updateUserBan } from "src/lib/api/banRoutes";
 import { IComment, ICommentAggregations } from "src/lib/types/data/comment.type";
 import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 
@@ -45,7 +45,7 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
 
     if (userBanInfo) {
       userBanInfo!.notificationDismissed = true;
-      await updateBan(userBanInfo!, token);
+      await updateUserBan(userBanInfo!, token);
       setIsDismissed(true)
     }
     

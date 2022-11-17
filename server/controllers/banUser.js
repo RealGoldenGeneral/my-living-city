@@ -1,9 +1,9 @@
 const passport = require('passport');
 const express = require('express');
-const banRouter = express.Router();
+const banUserRouter = express.Router();
 const prisma = require('../lib/prismaClient');
 
-banRouter.post(
+banUserRouter.post(
     '/create',
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
@@ -51,7 +51,7 @@ banRouter.post(
     }
 )
 
-banRouter.get(
+banUserRouter.get(
     '/getAll',
     async (req, res) => {
         try {
@@ -69,7 +69,7 @@ banRouter.get(
     }
 )
 
-banRouter.get(
+banUserRouter.get(
     '/get/:userId',
     async (req, res) => {
         try {
@@ -101,7 +101,7 @@ banRouter.get(
     }
 )
 
-banRouter.get(
+banUserRouter.get(
     '/getMostRecent/:userId',
     async (req, res) => {
         try {
@@ -133,7 +133,7 @@ banRouter.get(
     }
 )
 
-banRouter.get(
+banUserRouter.get(
     '/getMostRecentWithToken',
     passport.authenticate('jwt', { session: false }),
     async (req, res) => {
@@ -165,7 +165,7 @@ banRouter.get(
     }
 );
 
-banRouter.put(
+banUserRouter.put(
     '/update/:userId',
     async (req, res) => {
         try {
@@ -234,7 +234,7 @@ banRouter.put(
 //     }
 // )
 
-banRouter.get(
+banUserRouter.get(
     '/getAllPassedDate',
     async (req, res) => {
         try {
@@ -275,7 +275,7 @@ banRouter.get(
 );
 
 // Not sure if necessary anymore
-banRouter.delete(
+banUserRouter.delete(
     '/deletePassedBanDate',
     async (req, res) => {
         try {
@@ -304,4 +304,4 @@ banRouter.delete(
 )
 
 
-module.exports = banRouter;
+module.exports = banUserRouter;
