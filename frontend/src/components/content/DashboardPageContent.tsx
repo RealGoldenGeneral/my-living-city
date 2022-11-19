@@ -10,10 +10,9 @@ import { AdsSectionPage } from "src/pages/AdsSectionPage";
 import Notifications from "../partials/DashboardContent/Notifications";
 import SystemUpdates from "../partials/DashboardContent/SystemUpdates";
 import LoadingSpinner from "../ui/LoadingSpinner";
-import { IBanUser } from "../../lib/types/data/banUser.type";
 import { useIdeasHomepage, useUserFollowedIdeas, useUserIdeas } from "../../hooks/ideaHooks";
 import { IUser } from "src/lib/types/data/user.type";
-import { FindBanDetails, FindUndismissedPostBans } from "src/hooks/banHooks";
+import { FindBanDetails, FindUndismissedPostBans, FindUndismissedCommentBans } from "src/hooks/banHooks";
 import { useAllComments } from "src/hooks/commentHooks";
 
 interface LandingPageContentProps {
@@ -49,6 +48,12 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({user, token}) 
   } = FindUndismissedPostBans(user.id);
 
   const {
+    data: undismissedCommentBansData,
+    isError: undismissedCommentBansError,
+    isLoading: undismissedCommentBansLoading
+  } = FindUndismissedCommentBans(user.id);
+
+  const {
     data: userFollowedIdeaData,
     error: userFollowedError,
     isLoading: userFollowedLoading,
@@ -59,19 +64,20 @@ const DashboardPageContent: React.FC<LandingPageContentProps> = ({user, token}) 
       isError: userBannedDataError,
       isLoading: userBannedDataLoading
     } = FindBanDetails(user.id);
+    
 
-  if (iLoading || uLoading || userFollowedLoading || userBannedDataLoading || commentLoading || undismissedPostBansLoading) {
+  if (iLoading || uLoading || userFollowedLoading || userBannedDataLoading || commentLoading || undismissedPostBansLoading || undismissedCommentBansLoading) {
     return <LoadingSpinner />;
   }
 
-  if (iError || iIsError || uError || userFollowedError || userBannedDataError || commentError || undismissedPostBansError) {
+  if (iError || iIsError || uError || userFollowedError || userBannedDataError || commentError || undismissedPostBansError || undismissedCommentBansError) {
     return <div>Error when fetching necessary data</div>;
   }
   return (
     <Container className="landing-page-content">
       <Row as="article" className="featured"></Row>
       <Row as="article" className="system-messages">
-        <Notifications userIdeas={userIdeaData} userBanInfo={userBannedData} userComments={commentData} userPostBans={undismissedPostBansData}/>
+        <Notifications userIdeas={userIdeaData} userBanInfo={userBannedData} userComments={commentData} userPostBans={undismissedPostBansData} userCommentBans={undismissedCommentBansData}/>
       </Row>
       <Row as="article" className="new-and-trending">
         <MyPosts userIdeas={userIdeaData!} numPosts={6} isDashboard={true} />

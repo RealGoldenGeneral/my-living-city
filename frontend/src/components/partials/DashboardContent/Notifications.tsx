@@ -1,13 +1,18 @@
-import React, { useContext, useEffect, useState, Fragment } from "react";
-import { Button, Container, Row, Col, Card, Table, Tooltip } from "react-bootstrap";
-import { UserProfileContext } from "../../../contexts/UserProfile.Context"
+import React, { useContext, useState } from "react";
+import { Button, Container, Table } from "react-bootstrap";
+import { UserProfileContext } from "../../../contexts/UserProfile.Context";
 import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
-import { IIdea, IIdeaWithAggregations } from "src/lib/types/data/idea.type";
+import { IIdeaWithAggregations } from "src/lib/types/data/idea.type";
 import Notification from "./Notification";
 import { IBanUser } from "src/lib/types/data/banUser.type";
 import { IBanPost } from "src/lib/types/data/banPost.type";
-import { dismissBanPostNotification, updateUserBan } from "src/lib/api/banRoutes";
-import { IComment, ICommentAggregations } from "src/lib/types/data/comment.type";
+import { IBanComment } from "src/lib/types/data/banComment.type";
+import {
+  dismissBanPostNotification,
+  updateUserBan,
+  dismissBanCommentNotification,
+} from "src/lib/api/banRoutes";
+import { ICommentAggregations } from "src/lib/types/data/comment.type";
 import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 
 interface NotificationPageContentProps {
@@ -15,70 +20,113 @@ interface NotificationPageContentProps {
   userBanInfo: IBanUser | undefined;
   userComments: ICommentAggregations[] | undefined;
   userPostBans: IBanPost[] | undefined;
+  userCommentBans: IBanComment[] | undefined;
 }
 
-
-const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, userBanInfo, userComments, userPostBans }) => {
-
+const Notifications: React.FC<NotificationPageContentProps> = ({
+  userIdeas,
+  userBanInfo,
+  userComments,
+  userPostBans,
+  userCommentBans,
+}) => {
   const [isDismissed, setIsDismissed] = useState(false);
   const { user, token } = useContext(UserProfileContext);
 
-  console.log(userPostBans);
-
-  const dismissAll = async () => {    
+  const dismissAll = async () => {
     if (userIdeas) {
       userIdeas?.map(async (userIdea) => {
         if (!userIdea.active && !userIdea.notification_dismissed) {
-          await updateIdeaNotificationStatus(token, userIdea.authorId, userIdea.id.toString(), true);
-          setIsDismissed(true)
+          await updateIdeaNotificationStatus(
+            token,
+            userIdea.authorId,
+            userIdea.id.toString(),
+            true
+          );
+          setIsDismissed(true);
         }
-      }
-      )
+      });
     }
 
     if (userComments) {
-        userComments?.map(async (userComment) => {
-          if (!userComment.active && !userComment.notification_dismissed) {
-            await updateCommentNotificationStatus(token, userComment.authorId, userComment.id.toString(), true)
-          }
-          setIsDismissed(true)
-        })
-      }
-    
+      userComments?.map(async (userComment) => {
+        if (!userComment.active && !userComment.notification_dismissed) {
+          await updateCommentNotificationStatus(
+            token,
+            userComment.authorId,
+            userComment.id.toString(),
+            true
+          );
+        }
+        setIsDismissed(true);
+      });
+    }
 
     if (userBanInfo && user!.banned) {
       userBanInfo!.notificationDismissed = true;
       await updateUserBan(userBanInfo!, token);
-      setIsDismissed(true)
+      setIsDismissed(true);
     }
 
     if (userPostBans) {
       userPostBans?.map(async (userPostBan) => {
         if (!userPostBan.notificationDismissed) {
           userPostBan!.notificationDismissed = true;
-          await dismissBanPostNotification(userPostBan!.id, token)
+          await dismissBanPostNotification(userPostBan!.id, token);
         }
-      })
-      setIsDismissed(true)
+      });
+      setIsDismissed(true);
     }
-  }
+
+    if (userCommentBans) {
+      userCommentBans?.map(async (userCommentBan) => {
+        if (!userCommentBan.notificationDismissed) {
+          userCommentBan!.notificationDismissed = true;
+          await dismissBanCommentNotification(userCommentBan!.id, token);
+        }
+      });
+      setIsDismissed(true);
+    }
+  };
 
   // Check if there are any notifications
   const notifications: JSX.Element[] = [];
-  
+
   // Check if there is ban info
   if (userBanInfo && !userBanInfo.notificationDismissed && user!.banned)
-    notifications.push(<Notification userBanInfo={userBanInfo} />)
+    notifications.push(<Notification userBanInfo={userBanInfo} />);
 
   if (userPostBans)
-    userPostBans!.filter(bannedPost => !bannedPost.notificationDismissed).map(bannedPost => notifications.push(<Notification userPostBan={bannedPost} />))
+    userPostBans!
+      .filter((bannedPost) => !bannedPost.notificationDismissed)
+      .map((bannedPost) =>
+        notifications.push(<Notification userPostBan={bannedPost} />)
+      );
 
-  userIdeas!.filter((idea) => !idea.active && !idea.notification_dismissed).map((idea, index) => notifications.push(<Notification userIdea={idea} />));
+  if (userCommentBans)
+    userCommentBans!
+      .filter((bannedComment) => !bannedComment.notificationDismissed)
+      .map((bannedComment) =>
+        notifications.push(<Notification userCommentBan={bannedComment} />)
+      );
+
+  userIdeas!
+    .filter((idea) => !idea.active && !idea.notification_dismissed)
+    .map((idea, index) => notifications.push(<Notification userIdea={idea} />));
 
   if (userComments) {
-    userComments!.filter((comment) => !comment.active && (comment.authorId === user!.id) && !comment.notification_dismissed).map((comment, index) => notifications.push(<Notification userComment={comment} />))
+    userComments!
+      .filter(
+        (comment) =>
+          !comment.active &&
+          comment.authorId === user!.id &&
+          !comment.notification_dismissed
+      )
+      .map((comment, index) =>
+        notifications.push(<Notification userComment={comment} />)
+      );
   }
-  
+
   return (
     <Container
       className="system"
@@ -111,19 +159,15 @@ const Notifications: React.FC<NotificationPageContentProps> = ({ userIdeas, user
       </div>
 
       <div style={{ marginTop: "1rem" }}>
-        { 
-          !isDismissed && <Table >
+        {!isDismissed && (
+          <Table>
             <tbody key={Math.random()}>
               {notifications.map((notification, index) => {
-                return (
-                  <>
-                    {notification}
-                  </>
-                )
+                return <>{notification}</>;
               })}
             </tbody>
           </Table>
-        }
+        )}
       </div>
     </Container>
   );

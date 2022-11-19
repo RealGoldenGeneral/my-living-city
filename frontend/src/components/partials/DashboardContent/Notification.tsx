@@ -4,25 +4,27 @@ import { UserProfileContext } from "../../../contexts/UserProfile.Context"
 import { updateIdeaNotificationStatus } from "src/lib/api/ideaRoutes";
 import { IIdea } from "src/lib/types/data/idea.type";
 import { IBanUser } from "src/lib/types/data/banUser.type";
-import { dismissBanPostNotification, updateUserBan } from "src/lib/api/banRoutes";
+import { dismissBanPostNotification, updateUserBan, dismissBanCommentNotification } from "src/lib/api/banRoutes";
 import { IComment } from "src/lib/types/data/comment.type";
 import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 import { IBanPost } from "src/lib/types/data/banPost.type";
+import { IBanComment } from "src/lib/types/data/banComment.type";
 
 interface NotificationProps {
     userIdea?: IIdea | undefined;
     userBanInfo?: IBanUser | undefined;
     userComment?: IComment | undefined;
     userPostBan?: IBanPost | undefined;
+    userCommentBan?: IBanComment | undefined;
 }
 
-const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, userComment, userPostBan }) => {
+const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, userComment, userPostBan, userCommentBan }) => {
     const [isDismissed, setIsDismissed] = useState(false);
     const [notificationType, setNotificationType] = useState("");
     const { user, token } = useContext(UserProfileContext);
     
     // Set the notification type
-    const notiType = (userIdea: IIdea | undefined, userBanInfo: IBanUser | undefined, userComment: IComment | undefined, userPostBan: IBanPost | undefined) => {
+    const notiType = (userIdea: IIdea | undefined, userBanInfo: IBanUser | undefined, userComment: IComment | undefined, userPostBan: IBanPost | undefined, userCommentBan: IBanComment | undefined) => {
         if (userIdea) {
             setNotificationType("userIdea");
         } if (userBanInfo) {
@@ -31,12 +33,13 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
             setNotificationType("userComment")
         } if (userPostBan) {
             setNotificationType("userPostBan")
+        } if (userCommentBan) {
+            setNotificationType("userCommentBan")
         }
     }
     // Render only once
     useEffect(() => {
-        notiType(userIdea, userBanInfo, userComment, userPostBan);
-        
+        notiType(userIdea, userBanInfo, userComment, userPostBan, userCommentBan);
     }, [])
 
     const banType = () => {
@@ -69,6 +72,13 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
         setNotificationType('userPostBan')
         userPostBan!.notificationDismissed = true;
         await dismissBanPostNotification(userPostBan!.id, token);
+        setIsDismissed(true); 
+    }
+
+    const dismissCommentBanNotification = async () => {
+        setNotificationType('userCommentBan')
+        userCommentBan!.notificationDismissed = true;
+        await dismissBanCommentNotification(userCommentBan!.id, token);
         setIsDismissed(true); 
     }
 
@@ -157,6 +167,31 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
                                 </span>
                                 <div className="float-right">
                                     <Button onClick={async () => await dismissPostBanNotification()}>Dismiss</Button>
+                                </div>
+                            </div>
+                        </td>
+
+                    )
+                        :
+                        null
+
+                    }
+                </tr>
+            )
+        
+        case "userCommentBan":
+            return (
+                <tr>
+                    {!isDismissed ? (
+                        <td className="col-md">
+                            <div className="d-flex align align-items-center justify-content-between">
+                                <span>
+                                    {"Your comment "}<b>{userCommentBan?.comment?.content}</b> {" has been reviewed and banned by a moderator"}
+                                    <br/><b>Ban Reason:</b> {userCommentBan?.banReason}
+                                    <br/><b>Mod Message:</b> {userCommentBan?.banMessage}
+                                </span>
+                                <div className="float-right">
+                                    <Button onClick={async () => await dismissCommentBanNotification()}>Dismiss</Button>
                                 </div>
                             </div>
                         </td>
