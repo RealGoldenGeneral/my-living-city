@@ -14,7 +14,6 @@ interface NotificationProps {
     userBanInfo?: IBanUser | undefined;
     userComment?: IComment | undefined;
     userPostBan?: IBanPost | undefined;
-  
 }
 
 const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, userComment, userPostBan }) => {
@@ -85,13 +84,16 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
             return (
                 <tr >
                     {!isDismissed ? (
-                        <div className="d-flex align align-items-center justify-content-between">
-                            <td className="col-md">{"Your post named "} <b>{userIdea?.title}</b> {" has been removed from the conversations page due to violation of content"}
+                        <td className="col-md">
+                            <div className="d-flex align align-items-center justify-content-between">
+                                <span>
+                                    {"Your post named "} <b>{userIdea?.title}</b> {" has been removed from the conversations page due to violation of content"}
+                                </span>
                                 <div className={"float-right"}>
                                     <Button onClick={async () => await dismissIdeaNotification(userIdea!.id, token!, user!.id, true)}>Dismiss</Button>
                                 </div>
-                            </td>
-                        </div>
+                            </div>
+                        </td>
                     ) :
                         null
                     }
@@ -101,16 +103,63 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
             return (
                 <tr>
                     {!isDismissed ? (
-                        <div className="d-flex align align-items-center justify-content-between">
-                            <td className="col-md">
-                                <span>{"You have been "} <b>{banType()}</b> {" because of "} <b>{userBanInfo?.banReason}</b> {" until "} <b>{(userBanInfo?.banUntil && new Date(userBanInfo!.banUntil).toLocaleString())}</b>.</span>
-                                <br/>
-                                <span><b>Mod Message:</b> {userBanInfo?.banMessage}</span>
+                        <td className="col-md">
+                            <div className="d-flex align align-items-center justify-content-between">
+                                <span>
+                                    {"You have been "} <b>{banType()}</b> {" until "} <b>{(userBanInfo?.banUntil && new Date(userBanInfo!.banUntil).toLocaleString())}</b>.
+                                    <br/><b>Mod Message:</b> {userBanInfo?.banMessage}
+                                    <br/><b>Ban Reason:</b> {userBanInfo?.banReason}
+                                </span>
                                 <div className="float-right">
                                     <Button onClick={async () => await dismissBanNotification()}>Dismiss</Button>
                                 </div>
-                            </td>
-                        </div>
+                            </div>
+                        </td>
+                    )
+                        :
+                        null
+
+                    }
+                </tr>
+            )
+        case "userComment":
+            return (
+                <tr>
+                    {!isDismissed ? (
+                        <td className="col-md">
+                            <div className="d-flex align align-items-center justify-content-between">
+                                <span>
+                                    {"Your comment "} <b>{userComment?.content}</b> {" has been removed from the conversations page due to violation of content"}.
+                                </span>
+                                <div className="float-right">
+                                    <Button onClick={async () => await dismissCommentNotification(token!, user!.id, userComment!.id,  true)}>Dismiss</Button>
+                                </div>
+                            </div>
+                        </td>
+                    )
+                        :
+                        null
+
+                    }
+                </tr>
+            )
+
+        case "userPostBan":
+            return (
+                <tr>
+                    {!isDismissed ? (
+                        <td className="col-md">
+                            <div className="d-flex align align-items-center justify-content-between">
+                                <span>
+                                    {"Your post "}<b>{userPostBan?.post?.title}</b> {" has been reviewed and banned by a moderator"}
+                                    <br/><b>Ban Reason:</b> {userPostBan?.banReason}
+                                    <br/><b>Mod Message:</b> {userPostBan?.banMessage}
+                                </span>
+                                <div className="float-right">
+                                    <Button onClick={async () => await dismissPostBanNotification()}>Dismiss</Button>
+                                </div>
+                            </div>
+                        </td>
 
                     )
                         :
@@ -119,47 +168,7 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
                     }
                 </tr>
             )
-            case "userComment":
-                return (
-                    <tr>
-                        {!isDismissed ? (
-                            <div className="d-flex align align-items-center justify-content-between">
-                                <td className="col-md">
-                                    <span>{"Your comment "} <b>{userComment?.content}</b> {" has been removed from the conversations page due to violation of content"}.</span>
-                                    <div className="float-right">
-                                        <Button onClick={async () => await dismissCommentNotification(token!, user!.id, userComment!.id,  true)}>Dismiss</Button>
-                                    </div>
-                                </td>
-                            </div>
-    
-                        )
-                            :
-                            null
-    
-                        }
-                    </tr>
-                )
-
-                case "userPostBan":
-                    return (
-                        <tr>
-                            {!isDismissed ? (
-                                <div className="d-flex align align-items-center justify-content-between">
-                                    <td className="col-md">
-                                        <span>{"Your post "}<b>{userPostBan?.post?.title}</b> {" has been reviewed and banned by a moderator because: "} <b>{userPostBan?.banMessage}</b></span>
-                                        <div className="float-right">
-                                            <Button onClick={async () => await dismissPostBanNotification()}>Dismiss</Button>
-                                        </div>
-                                    </td>
-                                </div>
         
-                            )
-                                :
-                                null
-        
-                            }
-                        </tr>
-                    )
         default:
             return (
                 <tr>
