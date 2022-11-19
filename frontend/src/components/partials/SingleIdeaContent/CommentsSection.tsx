@@ -66,11 +66,11 @@ if(ideaComments){
     if (isLoading) buttonText = "Saving Comment";
     return buttonText;
   };
-  const flagFunc = async(commentId: number, token: string, userId: string, ideaActive: boolean) => {
-    const createFlagData = await createCommentFlagUnderIdea(commentId, token!);
-    //const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
-    //const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
-  }
+  // const flagFunc = async(commentId: number, token: string, userId: string, ideaActive: boolean) => {
+  //   const createFlagData = await createCommentFlagUnderIdea(commentId, flagReason, token!);
+  //   //const updateData = await updateIdeaStatus(token, userId, ideaId.toString(), ideaActive, false);
+  //   //const updateFlagData = await updateFalseFlagIdea(parseInt(ideaId.toString()), token!, false);
+  // }
   if (error && isError) {
     return <p>An error occured while fetching comments</p>;
   }

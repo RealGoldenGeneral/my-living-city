@@ -400,6 +400,8 @@ model CommentFlag {
   flagger            User         @relation(fields: [flaggerId], references: [id])
 
   @@map(name: "comment_flag")
+
+  flagReason        String?  @map("flag_reason")
 }
 model Proposal {
   id     Int @id @default(autoincrement())

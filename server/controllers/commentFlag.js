@@ -47,6 +47,7 @@ commentFlagRouter.post(
           data: {
             flaggerId: loggedInUserId,
             commentId: parsedCommentId,
+            flagReason: req.body.flagReason
           }
         });
   

@@ -90,6 +90,7 @@ export const createFlagUnderIdea = async (
 //For commentFlags
 export const createCommentFlagUnderIdea = async (
   commentId: number,
+  flagReason: string,
   token: string,
 ) => {
   if (!commentId || !token) {
@@ -97,6 +98,7 @@ export const createCommentFlagUnderIdea = async (
       "A commentId and valid JWT must be specified to flag."
     );
   }
+  console.log(flagReason)
   const res = await axios({
       method: "post",
       url: `${API_BASE_URL}/commentFlag/create/${commentId}`,
@@ -104,6 +106,7 @@ export const createCommentFlagUnderIdea = async (
         "x-auth-token": token,
         "Access-Control-Allow-Origin": "*",
       },
+      data: {flagReason: flagReason},
       withCredentials: true,
     })
   return res.data;
