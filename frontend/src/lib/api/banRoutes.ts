@@ -1,8 +1,9 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants";
 import { getAxiosJwtRequestOption } from "./axiosRequestOptions";
-import { IBanUserInput } from "../types/input/banUser.input";
+import { IBanUserInput} from "../types/input/banUser.input";
 import { IBanPostInput } from "../types/input/banPost.input";
+import { IBanCommentInput } from "../types/input/banComment.input";
 import { IBanUser } from "../types/data/banUser.type";
 
 export const postCreateUserBan = async (
@@ -55,7 +56,7 @@ export const postCreatePostBan = async (
 
 
 export const postCreateCommentBan = async (
-    banData: IBanPostInput,
+    banData: IBanCommentInput,
     token: string | null
 ) => {
     const jsonBody = JSON.stringify(banData);
@@ -84,6 +85,16 @@ export const getUndismissedPostBans = async(
     const res = await axios({
         method: "get",
         url: `${API_BASE_URL}/banPost/getUndismissedNotification/${userId}`,
+    })
+    return res.data;
+}
+
+export const getUndismissedCommentBans = async(
+    userId: string
+) => {
+    const res = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/banComment/getUndismissedNotification/${userId}`,
     })
     return res.data;
 }
@@ -135,6 +146,23 @@ export const dismissBanPostNotification = async (
     const res = await axios({
         method: "put",
         url: `${API_BASE_URL}/banPost/dismissNotification/${banPostId}`,
+        headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+    return res.data;
+}
+
+export const dismissBanCommentNotification = async (
+    banCommentId: number,
+    token: string | null
+) => {
+    const res = await axios({
+        method: "put",
+        url: `${API_BASE_URL}/banComment/dismissNotification/${banCommentId}`,
         headers: {
             "Content-Type": "application/json",
             "x-auth-token": token,

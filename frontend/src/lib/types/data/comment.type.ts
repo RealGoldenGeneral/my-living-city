@@ -1,3 +1,5 @@
+import { IIdea } from './idea.type';
+
 export interface ICommentLikeAndDislikeAggregation {
   likes: number;
   dislikes: number;

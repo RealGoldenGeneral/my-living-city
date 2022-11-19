@@ -16,8 +16,8 @@ banPostRouter.post(
                 });
             }
 
-            const commentAlreadyBanned = await prisma.postBan.findFirst({ where: { postId: req.body.postId } });
-            if (commentAlreadyBanned) {
+            const postAlreadyBanned = await prisma.postBan.findFirst({ where: { postId: req.body.postId } });
+            if (postAlreadyBanned) {
                 return res.status(400).json({
                     message: `This post is already banned.`,
                     details: {
