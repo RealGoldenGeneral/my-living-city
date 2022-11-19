@@ -30,6 +30,7 @@ banPostRouter.post(
                 data: {
                     postId: req.body.postId,
                     authorId: req.body.authorId,
+                    banReason: req.body.banReason,
                     banMessage: req.body.banMessage,
                     bannedBy: id,
                 }

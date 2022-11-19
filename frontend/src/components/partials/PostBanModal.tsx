@@ -37,6 +37,7 @@ export const PostBanModal = ({
             const banPostInputValues: IBanPostInput = {
                 postId: values.postId,
                 authorId: values.authorId,
+                banReason: values.banReason,
                 banMessage: values.banMessage,
             }
             await postCreatePostBan(banPostInputValues, token);
@@ -53,6 +54,7 @@ export const PostBanModal = ({
         initialValues: {
             postId: post.id,
             authorId: post.authorId,
+            banReason: "",
             banMessage: "",
         },
         onSubmit: submitHandler
@@ -98,7 +100,24 @@ export const PostBanModal = ({
                             </Col>
                         </Row>
                         <p />
-
+                        <Form.Label>
+                            Ban Reason
+                        </Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="banReason"
+                            onChange={formik.handleChange}
+                            value={formik.values.banReason}
+                            required
+                        >
+                            <option selected value=''>Select Ban Reason...</option>
+                            <option>Posting abuse or non-conforming content</option>
+                            <option>Breach of user agreement</option>
+                            <option>Incomplete Submission</option>
+                            <option>Off Topic</option>
+                            <option>Other</option>
+                        </Form.Control>
+                        <br />
                         <Form.Label>Ban Details</Form.Label>
                         <Form.Control
                             as="textarea"
