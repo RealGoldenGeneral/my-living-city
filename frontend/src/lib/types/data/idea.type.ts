@@ -71,6 +71,7 @@ export interface IIdeaWithAggregations extends IIdea {
   description: string;
   state: IdeaState;
   active: boolean;
+  banned: boolean;
   reviewed: boolean;
   createdAt: string;
   updatedAt: string;

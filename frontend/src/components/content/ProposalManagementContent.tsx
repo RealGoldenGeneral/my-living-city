@@ -145,14 +145,14 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                                     updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
                                     setActive(req.active=false);
                                     setReviewed(req.reviewed=false);
-                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
+                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
                                     }}>Quarantine Proposal</Dropdown.Item>
                                 :
                                 <Dropdown.Item onClick={()=>{
                                     updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
                                     setActive(req.active=true);
                                     setReviewed(req.reviewed=true);
-                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date());
+                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
                                     }}>Remove from Quarantine</Dropdown.Item>
                             }
                         </NavDropdown>
@@ -166,7 +166,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                             } else{
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
                             }
-                            updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, new Date);
+                            updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
                             }}>Save</Button>
                         </>
                     }

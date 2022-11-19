@@ -142,14 +142,14 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
                                 setActive(req.active=false);
                                 setReviewed(req.reviewed=false);
-                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.quarantined_at);
+                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
                                 }}>Quarantine Idea</Dropdown.Item>
                             :
                             <Dropdown.Item onClick={()=>{
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
                                 setActive(req.active=true);
                                 setReviewed(req.reviewed=true);
-                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.quarantined_at);
+                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
                                 }}>Remove from Quarantine</Dropdown.Item>
                             }
                         </NavDropdown>

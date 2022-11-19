@@ -32,6 +32,7 @@ export const PostBanModal = ({
         try {
             setIsSubmitting(true);
             // POST to database
+            post.banned = true;
             post.active = false;
             post.reviewed = true;
             const banPostInputValues: IBanPostInput = {
@@ -41,7 +42,7 @@ export const PostBanModal = ({
                 banMessage: values.banMessage,
             }
             await postCreatePostBan(banPostInputValues, token);
-            await updateIdeaStatus(token, post.id.toString(), false, true, new Date());
+            await updateIdeaStatus(token, post.id.toString(), post.active, post.reviewed, post.banned, post.quarantined_at);
             handleClose();
         } catch (error) {
             console.log(error)

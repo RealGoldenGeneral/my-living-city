@@ -200,7 +200,7 @@ export const isIdeaFollowedByUser = async (token: string|null, userId: string|nu
   })
   return res.data;
 }
-export const updateIdeaStatus = async(token: String | null, ideaId: string|null, active: boolean|null, reviewed: boolean|null, quarantined_at: Date) => {
+export const updateIdeaStatus = async(token: String | null, ideaId: string|null, active: boolean|null, reviewed: boolean|null, banned: boolean|null, quarantined_at: Date) => {
   const res = await axios({
     method: "put",
     url: `${API_BASE_URL}/idea/updateState/${ideaId}`,
@@ -208,7 +208,7 @@ export const updateIdeaStatus = async(token: String | null, ideaId: string|null,
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    data: {ideaId: ideaId, active: active, reviewed: reviewed, quarantined_at: quarantined_at},
+    data: {ideaId: ideaId, active: active, reviewed: reviewed, banned: banned, quarantined_at: quarantined_at},
     withCredentials: true,
   })
   return res.data;
