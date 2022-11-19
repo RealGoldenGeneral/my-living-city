@@ -310,16 +310,17 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     handleClose();
     await flagFunc(ideaId, token, userId, ideaActive, flagReason, quarantined_at);
   }
-  if(!active){
-    return (
-      <div>Proposal Is Currently Inactive</div>
-    )
-  }
 
   const submitOtherFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleCloseOther();
     await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
     console.log(otherFlagReason);
+  }
+
+  if(!active){
+    return (
+      <div>Proposal Is Currently Inactive</div>
+    )
   }
 
   return (
@@ -1095,9 +1096,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 {/** create a textbox */}
 
                 <h4 className="text-center my-auto text-muted">
-                  <Button onClick={() => redirectToIdeaSubmit()}>
-                    PLACEHOLDER
-                  </Button>
                 </h4>
               </div>
             </Card.Header>
