@@ -816,7 +816,8 @@ userRouter.put(
 				'MUNICIPAL',
 				'WORKER',
 				'ASSOCIATE',
-				'DEVELOPER'
+				'DEVELOPER',
+				'COMMUNITY'
 			];
 
 			if(theUser.userType==='MOD'){
