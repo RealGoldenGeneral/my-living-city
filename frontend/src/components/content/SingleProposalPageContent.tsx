@@ -558,14 +558,14 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     <strong>Proposer Info:</strong> {proposal_role}<br />
                     {expandedProposorInfo && <b onClick={reduceTextProposor}>{readLess}</b>}
                   </p>}
-                  {requirements.length > 100 && !expandedGoal ? (
+                  {description.length > 100 && !expandedGoal ? (
                     <p>
-                      <strong>Requirements:</strong> {proposalText}<br />
+                      <strong>Proposal info:</strong> {proposalText}<br />
                       {<b onClick={expandTextGoal}>{readMore}</b>}
                     </p>
 
                   ) : <p>
-                    <strong>Requirements:</strong> {requirements} <br />
+                    <strong>Proposal Info:</strong> {description} <br />
                     {expandedGoal && <b onClick={reduceTextGoal}>{readLess}</b>}
                   </p>}
                   {proposal_benefits.length > 100 && !expandedBenefits ? (
@@ -578,14 +578,14 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     {expandedBenefits && <b onClick={reduceTextBenefits}>{readLess}</b>}
                   </p>}
 
-                  {description.length > 100 && !expanded ? (
+                  {requirements.length > 100 && !expanded ? (
                     <p>
                       <strong>Requirements:</strong> {descriptionText}<br />
                       <b id="more-text" onClick={expandText}>{readMore}</b>
                     </p>
 
                   ) : <p>
-                    <strong>Requirements:</strong> {description} <br />
+                    <strong>Requirements:</strong> {requirements} <br />
                     {expanded && <b id="more-text" onClick={reduceText}>{readLess}</b>}
                   </p>}
 

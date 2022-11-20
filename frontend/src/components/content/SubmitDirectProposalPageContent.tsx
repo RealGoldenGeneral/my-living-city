@@ -403,7 +403,7 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group> */}
             <Form.Group>
-              <Form.Label>*Proposer info (Describe you, your organization and what you bring to the table to help make this proposal happen).</Form.Label>
+              <Form.Label>Proposer info (Describe you, your organization, and what you bring to the table to help make this proposal happen).</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -413,7 +413,7 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*Describe your Proposal (What is the goal, what does it look like, how it will work).</Form.Label>
+              <Form.Label>Describe your Proposal (What is the goal, what does it look like, how it will work).</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -423,7 +423,7 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*Community Benefits  (Describe how it will improve and benefit the community).</Form.Label>
+              <Form.Label>Community Benefits  (Describe how it will improve and benefit the community).</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -433,7 +433,7 @@ const SubmitDirectProposalPageContent: React.FC<
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>*Requirements (Describe what will be needed to make this a reality: number of people, ressources, land use agreement, municipal agreement ect…).</Form.Label>
+              <Form.Label>Requirements (Describe what will be needed to make this a reality: number of people, resources, land use agreement, municipal agreement etc…).</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
