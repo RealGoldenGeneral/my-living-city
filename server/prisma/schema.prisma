@@ -51,6 +51,14 @@ enum AdType {
   @@map(name: "ad_type")
 }
 
+enum BanUserType {
+  WARNING
+  POST_BAN
+  SYS_BAN
+
+  @@map(name: "ban_user_type")
+}
+
 // model UserRole {
 //   // keys
 //   id        Int      @id @default(autoincrement())
@@ -102,16 +110,51 @@ model UserAddress {
 
   @@map(name: "user_address")
 }
-model Ban {
-  id         Int   @id @default(autoincrement())
-  userId     String?  @unique @map(name: "user_id")
-  user       User?    @relation(fields: [userId], references: [id])
-  banDate    DateTime @default(now()) @map(name: "ban_date")
-  banUntil   DateTime @map(name: "banned_until")
-  banMessage String?  @map(name: "ban_message")
-  banReason  String?  @map(name: "ban_reason")
-  isWarning  Boolean? @map(name: "is_warning")
+
+model UserBan {
+  id                      Int         @id @default(autoincrement())
+  userId                  String      @map(name: "user_id")
+  banType                 BanUserType @default(WARNING) @map(name: "ban_type")
+  banReason               String      @map(name: "ban_reason")
+  banMessage              String?     @map(name: "ban_message")
+  bannedBy                String      @map(name: "banned_by")
+  createdAt               DateTime    @default(now()) @map(name: "created_at")
+  banUntil                DateTime    @default(now()) @map(name: "banned_until")
+  notificationDismissed   Boolean     @default(false) @map(name: "notification_dismissed")
+  user                    User        @relation(fields: [userId], references: [id])
+
+  @@map(name: "ban_user")
 }
+
+model PostBan {
+  id                      Int         @id @default(autoincrement())
+  postId                  Int         @map(name: "post_id")
+  authorId                String      @map(name: "author_id")
+  banReason               String      @map(name: "ban_reason")
+  banMessage              String?     @map(name: "ban_message")
+  bannedBy                String      @map(name: "banned_by")
+  createdAt               DateTime    @default(now()) @map(name: "created_at")
+  notificationDismissed   Boolean     @default(false) @map(name: "notification_dismissed")
+  post                    Idea        @relation(fields: [postId], references: [id])
+
+  @@map(name: "ban_post")
+}
+
+model CommentBan {
+  id                      Int         @id @default(autoincrement())
+  commentId               Int         @map(name: "comment_id")
+  authorId                String      @map(name: "author_id")
+  banReason               String      @map(name: "ban_reason")
+  banMessage              String?     @map(name: "ban_message")
+  bannedBy                String      @map(name: "banned_by")
+  createdAt               DateTime    @default(now()) @map(name: "created_at")
+  notificationDismissed   Boolean     @default(false) @map(name: "notification_dismissed")
+  comment                 IdeaComment @relation(fields: [commentId], references: [id])
+
+  @@map(name: "ban_comment")
+}
+
+
 model User {
   // Keys
   id       String   @id @default(cuid())
@@ -143,7 +186,7 @@ model User {
   commentFlags    CommentFlag[]
   championedIdeas Idea[]         @relation("ideaChampion")
   stripe          UserStripe?
-  bans                Ban[]
+  userBans            UserBan[]
   //championedIdeas     Idea[]                @relation("championedIdeas")
   ideaRatings         IdeaRating[]
   ideaComments        IdeaComment[]
@@ -340,6 +383,9 @@ model Idea {
   // Values
   title               String
   description         String
+  proposal_role       String    @default("")
+  requirements        String    @default("")
+  proposal_benefits   String    @default("")
   userType            String    @default("Resident")
   communityImpact     String?   @map("community_impact")
   natureImpact        String?   @map("nature_impact")
@@ -360,6 +406,7 @@ model Idea {
   comments        IdeaComment[]
   ratings         IdeaRating[]
   flags           IdeaFlag[]
+  PostBan         PostBan[]
   proposalInfo    Proposal?     @relation("proposal")
   projectInfo     Project?
   address         IdeaAddress?
@@ -486,6 +533,7 @@ model IdeaComment {
   reviewed       Boolean               @default(false)
   createdAt      DateTime              @default(now()) @map(name: "created_at")
   updatedAt      DateTime              @default(now()) @updatedAt @map(name: "updated_at")
+  notification_dismissed Boolean       @default(false)                          @map("notification_dismissed")
   quarantined_at DateTime              @default(now()) @map(name: "quarantined_at")
 
   // Moderator Fields
@@ -497,6 +545,7 @@ model IdeaComment {
   userSeg        UserSegments          @relation(fields: [userSegId], references: [id])
   likes          UserCommentLikes[]
   commentFlags   CommentFlag[]
+  commentBans    CommentBan[]
   dislikes       UserCommentDislikes[]
 
   @@map(name: "idea_comment")

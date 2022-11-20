@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { Button, Container, Card, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
-import { FindBanDetails } from 'src/hooks/banHooks';
-import { deleteBan } from 'src/lib/api/banRoutes';
+import { FindBanDetailsWithStaleTime } from 'src/hooks/banHooks';
+import { getMostRecentUserBan, updateUserBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
+import { date } from 'yup';
+import { IBanUser } from 'src/lib/types/data/banUser.type';
 
 interface UnbanModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,11 +15,11 @@ interface UnbanModalProps {
     token: string | null
 };
 
-interface FeedbackModalProps {
-    setShow: React.Dispatch<React.SetStateAction<boolean>>;
-    show: boolean;
-    message: string;
-}
+// interface FeedbackModalProps {
+//     setShow: React.Dispatch<React.SetStateAction<boolean>>;
+//     show: boolean;
+//     message: string;
+// }
 
 export const UserManagementUnbanModal = ({
     setShow,
@@ -26,14 +28,15 @@ export const UserManagementUnbanModal = ({
     currentUser,
     token
 }: UnbanModalProps) => {
-    const { data: modalUserData, error, isLoading, isError } = FindBanDetails(modalUser.id);
+    const { data: modalUserData, isLoading: modalUserIsLoading, isError: modalUserIsError } = FindBanDetailsWithStaleTime(modalUser.id);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
     const unbanUser = async () => {
         try {
             setIsSubmitting(true);
             modalUser.banned = false;
-            await deleteBan(modalUser.id, token)
+            modalUserData!.banUntil = new Date(Date.now())
+            await updateUserBan(modalUserData!, token)
             await updateUser(modalUser, token, currentUser);
             handleClose();
         } catch (error) {
@@ -43,8 +46,7 @@ export const UserManagementUnbanModal = ({
         }
     }
 
-    if (isError) {
-        console.log(error);
+    if (modalUserIsError) {
         return (
             <div className="wrapper">
                 <p>
@@ -54,7 +56,7 @@ export const UserManagementUnbanModal = ({
         );
     }
 
-    if (isLoading) {
+    if (modalUserIsLoading) {
         return (
             <Modal
                 show={show}
@@ -86,24 +88,32 @@ export const UserManagementUnbanModal = ({
                 <Modal.Body>
                     <Card>
                         <Card.Body>
+                            <h5>Ban Type</h5>
+                            <hr />
+                            {modalUserData?.banType}
+                        </Card.Body>
+                    </Card>
+                    <p />
+                    <Card>
+                        <Card.Body>
                             <h5>Reason</h5>
-                            <hr/>
+                            <hr />
                             {modalUserData?.banReason}
                         </Card.Body>
                     </Card>
-                    <p/>
+                    <p />
                     <Card>
                         <Card.Body>
                             <h5>Details</h5>
-                            <hr/>
+                            <hr />
                             {modalUserData?.banMessage}
                         </Card.Body>
                     </Card>
-                    <p/>
+                    <p />
                     <Card>
                         <Card.Body>
                             <h5>Banned Until</h5>
-                            <hr/>
+                            <hr />
                             {new Date(modalUserData!.banUntil).toLocaleString()}
                         </Card.Body>
                     </Card>

@@ -67,7 +67,9 @@ const main = async () => {
 	const commentFlagRouter = require('./controllers/commentFlag');
 	const threshholdRouter = require('./controllers/threshhold');
 	const accountRouter = require('./webhooks/account');
-	const banRouter = require('./controllers/ban.js');
+	const banUserRouter = require('./controllers/banUser.js');
+	const banPostRouter = require('./controllers/banPost.js');
+	const banCommentRouter = require('./controllers/banComment.js');
 
 
 	const apiRouter = express.Router();
@@ -102,7 +104,9 @@ const main = async () => {
 	apiRouter.use('/flag', ideaFlagRouter);
 	apiRouter.use('/commentFlag', commentFlagRouter);
 	apiRouter.use('/threshhold', threshholdRouter);
-	apiRouter.use('/ban', banRouter);
+	apiRouter.use('/banUser', banUserRouter);
+	apiRouter.use('/banPost', banPostRouter);
+	apiRouter.use('/banComment', banCommentRouter);
 
 	// Listen to server
 	app.listen(PORT, console.log(`Server running on PORT:${PORT}\n\n`));

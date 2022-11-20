@@ -2,16 +2,16 @@ import React, { useState } from 'react'
 import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
 import { useFormik } from "formik";
-import { IBanDetails } from 'src/lib/types/input/banUser.input';
-import { postCreateBan } from 'src/lib/api/banRoutes';
+import { IBanUserInput } from 'src/lib/types/input/banUser.input';
+import { postCreateUserBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
+import { BAN_USER_TYPES } from 'src/lib/constants';
 
 interface BanModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     show: boolean;
     modalUser: IUser;
     currentUser: IUser;
-    warnedUserIds: String[];
     token: string | null
 };
 
@@ -21,38 +21,28 @@ interface FeedbackModalProps {
     message: string;
 }
 
-const WARNING_MESSAGE_DURATION = 30;
-
 export const UserManagementBanModal = ({
     setShow,
     show,
     modalUser,
     currentUser,
-    warnedUserIds,
     token
 }: BanModalProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
-    const submitHandler = async (values: IBanDetails) => {
+    const submitHandler = async (values: IBanUserInput) => {
         try {
             setIsSubmitting(true);
             modalUser.banned = true;
-            // Check if ban is a Warning
-            if (values.banUntil === 0) {
-                values.banUntil = WARNING_MESSAGE_DURATION;
-                values.isWarning = true;
-                modalUser.banned = false;
-                warnedUserIds.push(modalUser.id);
-            }
             // POST to database
-            const banInputValues: IBanDetails = {
+            const banInputValues: IBanUserInput = {
                 userId: values.userId,
-                banUntil: values.banUntil,
+                banType: values.banType,
+                banDuration: values.banDuration,
                 banReason: values.banReason,
                 banMessage: values.banMessage,
-                isWarning: values.isWarning
             }
-            await postCreateBan(banInputValues, token);
+            await postCreateUserBan(banInputValues, token);
             await updateUser(modalUser, token, currentUser);
             handleClose();
         } catch (error) {
@@ -62,13 +52,13 @@ export const UserManagementBanModal = ({
         }
     }
 
-    const formik = useFormik<IBanDetails>({
+    const formik = useFormik<IBanUserInput>({
         initialValues: {
             userId: modalUser.id,
-            banUntil: 0,
+            banType: BAN_USER_TYPES.WARNING,
+            banDuration: 0,
             banReason: "",
             banMessage: "",
-            isWarning: false
         },
         onSubmit: submitHandler
     });
@@ -95,15 +85,32 @@ export const UserManagementBanModal = ({
                 <Form onSubmit={formik.handleSubmit}>
                     <Modal.Body>
                         <Form.Label>
+                            Ban Type
+                        </Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="banType"
+                            onChange={formik.handleChange}
+                            value={formik.values.banType}
+                        >
+                            <option value={BAN_USER_TYPES.WARNING}>Warning</option>
+                            <option value={BAN_USER_TYPES.POST_BAN}>Post Ban</option>
+                            <option value={BAN_USER_TYPES.SYS_BAN}>System Ban</option>
+                        </Form.Control>
+                        <br />
+                        <Form.Label>
                             Ban Duration
                         </Form.Label>
                         <Form.Control
                             as="select"
-                            name="banUntil"
+                            name="banDuration"
                             onChange={formik.handleChange}
-                            value={formik.values.banUntil}
+                            value={formik.values.banDuration}
+                            required
                         >
-                            <option value={0}>Warning Message (30 Days)</option>
+                            <option selected value=''>Select Ban Duration...</option>
+                            <option value={7}>7 Days</option>
+                            <option value={14}>14 Days</option>
                             <option value={30}>30 Days</option>
                             <option value={60}>60 Days</option>
                             <option value={90}>3 Months</option>
@@ -122,10 +129,12 @@ export const UserManagementBanModal = ({
                             value={formik.values.banReason}
                             required
                         >
-                            <option selected disabled value=''>Select Ban Reason...</option>
+                            <option selected value=''>Select Ban Reason...</option>
                             <option>Abuse of flagging privileges</option>
                             <option>Posting abuse or non-conforming content</option>
                             <option>Breach of user agreement</option>
+                            <option>Incomplete Submission</option>
+                            <option>Off Topic</option>
                             <option>Other</option>
                         </Form.Control>
                         <br />

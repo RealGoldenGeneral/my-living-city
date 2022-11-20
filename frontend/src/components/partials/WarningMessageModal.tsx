@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { Modal, Row, Col, Button, Spinner } from 'react-bootstrap'
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';
-import { FindBanDetails } from 'src/hooks/banHooks';
+import { FindBanDetails} from 'src/hooks/banHooks';
 
 interface WarningModalProps {
     show: boolean;
@@ -79,7 +79,7 @@ export const WarningMessageModal = ({
                 <Row>
                     <Col></Col>
                     <Col md={"auto"}>
-                        <b>Reason: </b>{data!.banReason}
+                        <b>Reason: </b>{data?.banReason}
                         <p />
                     </Col>
                     <Col></Col>
@@ -88,7 +88,7 @@ export const WarningMessageModal = ({
                 <Row>
                     <Col></Col>
                     <Col md={"auto"}>
-                        <b>Details: </b>{data!.banMessage}
+                        <b>Details: </b>{data?.banMessage}
                         <p />
                     </Col>
                     <Col></Col>
@@ -97,7 +97,7 @@ export const WarningMessageModal = ({
                 <Row>
                     <Col></Col>
                     <Col md={"auto"}>
-                        Repeated offenses before <b>{new Date(data!.banUntil).toLocaleString()}</b> will result in a ban.
+                        Repeated offenses before <b>{data?.banUntil && new Date(data!.banUntil).toLocaleString()}</b> will result in a ban.
                         <p />
                     </Col>
                     <Col></Col>

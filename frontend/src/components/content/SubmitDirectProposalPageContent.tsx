@@ -38,6 +38,7 @@ import {
 } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 import { MAP_KEY } from "../../lib/constants";
+import {getUserBanWithToken} from "../../lib/api/banRoutes";
 
 interface SubmitDirectProposalPageContentProps {
   categories: ICategory[] | undefined;
@@ -185,6 +186,9 @@ const SubmitDirectProposalPageContent: React.FC<
         title: values.title,
         userType: values.userType,
         description: values.description,
+        proposal_role: values.proposal_role,
+        requirements: values.requirements,
+        proposal_benefits: values.proposal_benefits,
         artsImpact: values.artsImpact,
         communityImpact: values.communityImpact,
         energyImpact: values.energyImpact,
@@ -205,8 +209,14 @@ const SubmitDirectProposalPageContent: React.FC<
         subSegmentId: values.subSegmentId,
         superSegmentId: values.superSegmentId,
         state: "PROPOSAL",
+       
       };
-      const idea = await postCreateIdea(ideaValues, user!.banned, token);
+      const banDetails = await getUserBanWithToken(token);
+      let banned = true;
+      if (!user!.banned || banDetails || banDetails.banType === "WARNING") {
+        banned = false;
+      }
+      const idea = await postCreateIdea(ideaValues, banned, token);
       const proposalValues = {
         ideaId: idea.id,
         needCollaborators: values.needCollaborators,
@@ -258,6 +268,9 @@ const SubmitDirectProposalPageContent: React.FC<
       title: "",
       userType: segData ? segData[0].userType : "Resident",
       description: "",
+      proposal_role: "",
+      requirements: "",
+      proposal_benefits: "",
       artsImpact: "",
       communityImpact: "",
       energyImpact: "",
@@ -379,7 +392,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 placeholder="Enter the title of your proposal"
               />
             </Form.Group>
-            <Form.Group>
+            {/* <Form.Group>
               <Form.Label>*Describe your proposal</Form.Label>
               <Form.Control
                 as="textarea"
@@ -387,6 +400,46 @@ const SubmitDirectProposalPageContent: React.FC<
                 name="description"
                 onChange={formik.handleChange}
                 value={formik.values.description}
+              />
+            </Form.Group> */}
+            <Form.Group>
+              <Form.Label>*Proposer info (Describe you, your organization and what you bring to the table to help make this proposal happen).</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="proposal_role"
+                onChange={formik.handleChange}
+                value={formik.values.proposal_role}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*Describe your Proposal (What is the goal, what does it look like, how it will work).</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="description"
+                onChange={formik.handleChange}
+                value={formik.values.description}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*Community Benefits  (Describe how it will improve and benefit the community).</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="proposal_benefits"
+                onChange={formik.handleChange}
+                value={formik.values.proposal_benefits}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>*Requirements (Describe what will be needed to make this a reality: number of people, ressources, land use agreement, municipal agreement ect…).</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="requirements"
+                onChange={formik.handleChange}
+                value={formik.values.requirements}
               />
             </Form.Group>
             <Form.Group>
@@ -670,6 +723,8 @@ const SubmitDirectProposalPageContent: React.FC<
                     &nbsp;&nbsp;Specific Feedback&nbsp;&nbsp;
                   </Form.Label>
                   {extraFeedback && (
+                    
+
                       <Button
                         color="success"
                         size="sm"

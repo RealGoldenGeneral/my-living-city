@@ -72,6 +72,9 @@ export const postCreateIdea = async (
     categoryId,
     title,
     description,
+    proposal_role,
+    requirements,
+    proposal_benefits,
     superSegmentId,
     segmentId,
     subSegmentId,
@@ -101,12 +104,19 @@ export const postCreateIdea = async (
     throw new Error("Your session has expired. Please relogin and try again.");
   }
 
+  if (banned) {
+    throw new Error("You cannot post while banned.");
+  }
+
   let formBody = new FormData();
 
   formBody.append("categoryId", categoryId.toString());
 
   formBody.append("title", title);
 
+  formBody.append("proposal_role", proposal_role);
+  formBody.append("requirements", requirements);
+  formBody.append("proposal_benefits", proposal_benefits);
   formBody.append("description", description);
 
   if (segmentId) {
@@ -183,7 +193,7 @@ export const postCreateIdea = async (
   return res.data;
 };
 
-export const isIdeaFollowedByUser = async (token: string|null, userId: string|null, ideaId: string|null) => {
+export const isIdeaFollowedByUser = async (token: string | null, userId: string | null, ideaId: string | null) => {
   const res = await axios({
     method: "post",
     url: `${API_BASE_URL}/idea/isFollowed`,
@@ -191,12 +201,12 @@ export const isIdeaFollowedByUser = async (token: string|null, userId: string|nu
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    data: {userId: userId, ideaId: ideaId},
+    data: { userId: userId, ideaId: ideaId },
     withCredentials: true,
   })
   return res.data;
 }
-export const updateIdeaStatus = async(token: String | null, userId: string|undefined, ideaId: string|null, active: boolean|null, reviewed: boolean|null, quarantined_at: Date) => {
+export const updateIdeaStatus = async(token: String | null, ideaId: string|null, active: boolean|null, reviewed: boolean|null, banned: boolean|null, quarantined_at: Date) => {
   const res = await axios({
     method: "put",
     url: `${API_BASE_URL}/idea/updateState/${ideaId}`,
@@ -204,13 +214,13 @@ export const updateIdeaStatus = async(token: String | null, userId: string|undef
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    data: {userId: userId, ideaId: ideaId, active: active, reviewed: reviewed, quarantined_at: quarantined_at},
+    data: {ideaId: ideaId, active: active, reviewed: reviewed, banned: banned, quarantined_at: quarantined_at},
     withCredentials: true,
   })
   return res.data;
 }
 export const updateIdeaNotificationStatus = async(token: String | null, userId: string|undefined, ideaId: string|null, notification_dismissed: boolean|null) => {
-  notification_dismissed = true
+
   const res = await axios({
     method: "put",
     url: `${API_BASE_URL}/idea/updateNotificationState/${ideaId}`,
@@ -218,8 +228,8 @@ export const updateIdeaNotificationStatus = async(token: String | null, userId: 
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    
-    data: {userId: userId, ideaId: ideaId, notification_dismissed},
+
+    data: { userId: userId, ideaId: ideaId, notification_dismissed },
     withCredentials: true,
   })
   return res.data;
@@ -233,7 +243,7 @@ export const followIdeaByUser = async (token: string, userId: string, ideaId: st
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    data: {userId: userId, ideaId: ideaId},
+    data: { userId: userId, ideaId: ideaId },
     withCredentials: true,
   })
   return res.data;
@@ -247,7 +257,7 @@ export const unfollowIdeaByUser = async (token: string, userId: string, ideaId: 
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    data: {userId: userId, ideaId: ideaId},
+    data: { userId: userId, ideaId: ideaId },
     withCredentials: true,
   })
   return res.data;

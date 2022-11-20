@@ -1,7 +1,7 @@
 import { ICategory } from "./category.type";
 import { IAddress } from "./address.type";
 import { IGeo } from "./geo.type";
-import {IProposal, IProposalWithAggregations} from "./proposal.type";
+import { IProposal, IProposalWithAggregations } from "./proposal.type";
 import { IProject } from "./project.type";
 import { IRating } from "./rating.type";
 import { IComment } from "./comment.type";
@@ -20,6 +20,9 @@ export interface IIdea {
   subSegmentId?: number; //
   title: string;
   description: string;
+  proposal_role: string;
+  requirements: string;
+  proposal_benefits: string;
   imagePath: string;
   communityImpact?: string;
   natureImpact?: string;
@@ -28,9 +31,11 @@ export interface IIdea {
   manufacturingImpact?: string;
   state: IdeaState;
   active: boolean;
+  banned: boolean;
   createdAt: string;
   updatedAt: string;
   reviewed: boolean;
+  notification_dismissed: boolean;
 }
 
 // Idea with relationships (Used in Single Idea Page) extends Root base Idea
@@ -70,6 +75,7 @@ export interface IIdeaWithAggregations extends IIdea {
   description: string;
   state: IdeaState;
   active: boolean;
+  banned: boolean;
   reviewed: boolean;
   createdAt: string;
   updatedAt: string;
@@ -92,6 +98,6 @@ export interface IIdeaWithAggregations extends IIdea {
   artsImpact?: string;
   energyImpact?: string;
   manufacturingImpact?: string;
-  notification_dismissed?: boolean;
+  // notification_dismissed?: boolean;
   quarantined_at: Date;
 }

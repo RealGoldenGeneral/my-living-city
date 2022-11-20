@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Container, Card, Modal, Row } from 'react-bootstrap';
 import { IUser } from 'src/lib/types/data/user.type';
-import { FindBanDetails } from 'src/hooks/banHooks';
-import { deleteBan, updateBan } from 'src/lib/api/banRoutes';
+import { FindBanDetailsWithStaleTime } from 'src/hooks/banHooks';
+import { updateUserBan } from 'src/lib/api/banRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
 
 interface ModifyWarningModalProps {
@@ -28,7 +28,7 @@ export const UserManagementModifyWarningModal = ({
     warnedUserIds,
     token
 }: ModifyWarningModalProps) => {
-    const { data: modalUserBanData, error, isLoading, isError } = FindBanDetails(modalUser.id);
+    const { data: modalUserBanData, error, isLoading, isError } = FindBanDetailsWithStaleTime(modalUser.id);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
     const removeWarningUser = async () => {
@@ -36,7 +36,7 @@ export const UserManagementModifyWarningModal = ({
             let warnedUserIdIndex = warnedUserIds.indexOf(modalUser.id);
             warnedUserIds.splice(warnedUserIdIndex, 1);
             setIsSubmitting(true);
-            await deleteBan(modalUser.id, token)
+            // await deleteBan(modalUser.id, token)
             handleClose();
         } catch (error) {
             console.log(error);
@@ -51,9 +51,8 @@ export const UserManagementModifyWarningModal = ({
             warnedUserIds.splice(warnedUserIdIndex, 1);
             setIsSubmitting(true);
             modalUser.banned = true;
-            modalUserBanData!.isWarning = false;
             await updateUser(modalUser, token, currentUser);
-            await updateBan(modalUserBanData!, token)
+            await updateUserBan(modalUserBanData!, token)
             handleClose();
         } catch (error) {
             console.log(error);

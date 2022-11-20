@@ -81,6 +81,8 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   const parsedDate = new Date(createdAt);
 
+  
+
   // Social Media share for this Idea page
   // const shareUrl = 'http://github.com';
   // const shareUrl = 'https://app.mylivingcity.org'
@@ -176,13 +178,14 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     console.log(reason)
     await createFlagUnderIdea(ideaId, reason, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
-    await updateIdeaStatus(token, userId, ideaId.toString(), !thresholdExceeded, false, quarantined_at);
+    await updateIdeaStatus(token, ideaId.toString(), !thresholdExceeded, false, false, quarantined_at);
   }
 
   const selectReasonHandler = (eventKey: string) => {
     handleShow();
     setFlagReason(eventKey!)
   }
+
 
   const selectOtherReasonHandler = (eventKey: string) => {
     handleShowOther();
@@ -366,7 +369,16 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     Status: <span>{state}</span>
                   </h4>
                   <br />
-                  <p>{description}</p>
+                  {title ? (
+                    <p>
+                      <strong>Idea title:</strong> {title}
+                    </p>
+                  ) : null}
+                  {description ? (
+                    <p>
+                      <strong>Idea description:</strong> {description}
+                    </p>
+                  ) : null}
                   {communityImpact ? (
                     <p>
                       <strong>Community and Place:</strong> {communityImpact}

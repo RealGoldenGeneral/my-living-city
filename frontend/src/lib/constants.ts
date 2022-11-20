@@ -76,3 +76,9 @@ export const ROUTES = {
   COMMUNITY_DASHBOARD: "/community-dashboard/:segId",
   MOD_MANAGEMENT: "/mod/management",
 };
+
+export enum BAN_USER_TYPES {
+  WARNING = "WARNING",
+  POST_BAN = "POST_BAN",
+  SYS_BAN = "SYS_BAN",
+}

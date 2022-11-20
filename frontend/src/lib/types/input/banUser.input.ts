@@ -1,7 +1,9 @@
-export interface IBanDetails {
+import { BAN_USER_TYPES } from "src/lib/constants";
+
+export interface IBanUserInput {
     userId: string;
-    banUntil: number;
+    banType: BAN_USER_TYPES;
+    banDuration: number;
     banReason: string;
     banMessage: string;
-    isWarning: boolean;
 }

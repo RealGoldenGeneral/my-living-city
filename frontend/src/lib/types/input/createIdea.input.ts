@@ -6,6 +6,9 @@ export interface ICreateIdeaInput {
   userType: string;
   title: string;
   description: string;
+  proposal_role: string;
+  proposal_benefits: string;
+  requirements: string;
   communityImpact?: string;
   natureImpact?: string;
   artsImpact?: string;

@@ -1,11 +1,11 @@
 import { useContext } from 'react'
 import { Modal, Row, Col, Button, Spinner } from 'react-bootstrap'
 import { UserProfileContext } from 'src/contexts/UserProfile.Context';
-import { FindBanDetails } from 'src/hooks/banHooks';
+import { FindBanDetailsWithStaleTime } from 'src/hooks/banHooks';
 
 export const BanMessageModal = () => {
     const { user, logout } = useContext(UserProfileContext);
-    const { data, error, isLoading, isError } = FindBanDetails(user!.id);
+    const { data, error, isLoading, isError } = FindBanDetailsWithStaleTime(user!.id);
 
     if (isError) {
         console.log(error);

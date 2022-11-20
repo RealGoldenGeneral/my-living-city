@@ -104,7 +104,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
   const createCommentFlagAndCheckThreshold = async(commentId: number, token: string, userId: string, reason: string, quarantined_at: Date) => {
     await createCommentFlagUnderIdea(commentId, reason, token!);
     const thresholdExceeded = await compareCommentFlagsWithThreshold(commentId, token!);
-    await updateCommentStatus(token, userId, commentId.toString(), !thresholdExceeded, false, quarantined_at);
+    await updateCommentStatus(token, commentId.toString(), !thresholdExceeded, false, false, quarantined_at);
   }
 
   const selectReasonHandler = (eventKey: string) => {
@@ -160,7 +160,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
               <IdeaCommentDislike commentData={commentData} />
               {/* {!reviewed ? (
               <Button onClick={
-                async () => await createCommentFlagAndCheckThreshold(id, token!, user!.id, new Date())
+                async () => await createCommentFlagAndCheckThreshold(id, token!, new Date())
               }>Flag</Button>
               ) : null} */}
               {!reviewed ? (
