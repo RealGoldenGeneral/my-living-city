@@ -480,7 +480,7 @@ ideaRouter.get(
           i.author_id as "authorId",
           i.category_id as "categoryId",
           i.title,
-          i.requirements
+         
           i.description,
           i.notification_dismissed,
           i.segment_id,
