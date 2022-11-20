@@ -116,7 +116,7 @@ banUserRouter.get(
             if (userBan) {
                 res.status(200).json(userBan)
             } else {
-                res.status(400).json({
+                res.status(200).json({
                     message: `The user with that listed ID (${req.params.userId}) has never been banned.`
                 })
             }

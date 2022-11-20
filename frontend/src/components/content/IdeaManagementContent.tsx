@@ -9,6 +9,7 @@ import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 import { PostBanModal } from '../partials/PostBanModal';
+import { PostUnbanModal } from '../partials/PostUnbanModal';
 
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO
@@ -27,8 +28,9 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
     const [id, setId] = useState('');
     const [banModalIdeaData, setBanModalIdeaData] = useState<IIdeaWithAggregations>();
     const [showIdeaBanModal, setShowIdeaBanModal] = useState<boolean>(false);
-    const [active ,setActive] = useState<boolean>(false);
-    const [reviewed, setReviewed] = useState<boolean>(false);
+    const [showIdeaUnbanModal, setShowIdeaUnbanModal] = useState<boolean>(false);
+    const [active ,setActive] = useState<boolean>();
+    const [reviewed, setReviewed] = useState<boolean>();
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
         setEmail(email);
@@ -67,13 +69,18 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
         }
     }
 
+    console.log(ideas);
+
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
             {showIdeaBanModal ?
             <PostBanModal show={showIdeaBanModal} setShow={setShowIdeaBanModal} post={banModalIdeaData!} token={token}/>
             : null
             }
-
+            {showIdeaUnbanModal ?
+            <PostUnbanModal show={showIdeaUnbanModal} setShow={setShowIdeaUnbanModal} post={banModalIdeaData!} token={token}/>
+            : null
+            }
             <Form>
             <h2 className="mb-4 mt-4">Idea Management</h2>
             <Table bordered hover size="sm">
@@ -133,25 +140,37 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                                 setBan(req.active);
                                 setReviewed(req.reviewed);
                                 }}>Edit</Dropdown.Item> */}
-                            <Dropdown.Item onClick={()=>{
-                                setBanModalIdeaData(req);
-                                setShowIdeaBanModal(true);
-                                }}>Ban Idea</Dropdown.Item>
-                            {req.reviewed && req.active ?
-                            <Dropdown.Item onClick={()=>{
-                                updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
-                                setActive(req.active=false);
-                                setReviewed(req.reviewed=false);
-                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
-                                }}>Quarantine Idea</Dropdown.Item>
-                            :
-                            <Dropdown.Item onClick={()=>{
-                                updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
-                                setActive(req.active=true);
-                                setReviewed(req.reviewed=true);
-                                updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
-                                }}>Remove from Quarantine</Dropdown.Item>
-                            }
+                            {req.banned ? 
+                                <Dropdown.Item onClick={()=>{
+                                    setBanModalIdeaData(req);
+                                    setShowIdeaUnbanModal(true);
+                                    }}>Unban Idea
+                                </Dropdown.Item> :
+                                <>
+                                    <Dropdown.Item onClick={()=>{
+                                        setBanModalIdeaData(req);
+                                        setShowIdeaBanModal(true);
+                                        }}>Ban Idea
+                                    </Dropdown.Item>
+                                    {req.reviewed && req.active ?
+                                        <Dropdown.Item onClick={()=>{
+                                            updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
+                                            setActive(req.active=false);
+                                            setReviewed(req.reviewed=false);
+                                            updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
+                                            }}>Quarantine Idea
+                                        </Dropdown.Item>
+                                    :
+                                        <Dropdown.Item onClick={()=>{
+                                            updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
+                                            setActive(req.active=true);
+                                            setReviewed(req.reviewed=true);
+                                            updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
+                                            }}>Remove from Quarantine
+                                        </Dropdown.Item>
+                                        }
+                                </>
+                                }
                         </NavDropdown>
                         : <>
                         {/* <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>

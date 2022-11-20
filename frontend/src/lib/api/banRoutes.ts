@@ -116,6 +116,26 @@ export const getUserBanWithToken = async (
     return res.data;
 }
 
+export const getPostBan = async (
+    postId: number
+) => {
+    const res = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/banPost/getByPostId/${postId}`
+    })
+    return res.data;
+}
+
+export const getCommentBan = async (
+    commentId: number
+) => {
+    const res = await axios({
+        method: "get",
+        url: `${API_BASE_URL}/banComment/getByCommentId/${commentId}`
+    })
+    return res.data;
+}
+
 export const getAllBan = async (): Promise<IBanUser[]> => {
     const res = await axios.get<IBanUser[]>(`${API_BASE_URL}/banUser/getAll`)
     return res.data;
@@ -195,6 +215,38 @@ export const deleteExpiredUserBans = async (
     const res = await axios({
         method: "delete",
         url: `${API_BASE_URL}/banUser/deletePassedBanDate`,
+        headers: {
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+    return res.data;
+}
+
+export const deletePostBan = async (
+    banPostId: number,
+    token: string | null
+) => {
+    const res = await axios({
+        method: "delete",
+        url: `${API_BASE_URL}/banPost/delete/${banPostId}`,
+        headers: {
+            "x-auth-token": token,
+            "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true
+    });
+    return res.data;
+}
+
+export const deleteCommentBan = async (
+    banCommentId: number,
+    token: string | null
+) => {
+    const res = await axios({
+        method: "delete",
+        url: `${API_BASE_URL}/banComment/delete/${banCommentId}`,
         headers: {
             "x-auth-token": token,
             "Access-Control-Allow-Origin": "*",

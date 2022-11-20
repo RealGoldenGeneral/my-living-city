@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
+import { deletePostBan } from 'src/lib/api/banRoutes';
 import { updateFalseFlagIdea } from 'src/lib/api/flagRoutes';
 import { updateIdeaStatus } from 'src/lib/api/ideaRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
@@ -9,6 +10,7 @@ import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { PostBanModal } from '../partials/PostBanModal';
+import { PostUnbanModal } from '../partials/PostUnbanModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO 
@@ -30,6 +32,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
     const [id, setId] = useState('');
     const [banModalProposalData, setBanModalProposalData] = useState<IIdeaWithAggregations>();
     const [showProposalBanModal, setShowProposalBanModal] = useState<boolean>(false);
+    const [showProposalUnbanModal, setShowProposalUnbanModal] = useState<boolean>(false);
     const [ban ,setBan] = useState<boolean>(false);
     const [active, setActive] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
@@ -74,6 +77,10 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
             {showProposalBanModal ?
             <PostBanModal show={showProposalBanModal} setShow={setShowProposalBanModal} post={banModalProposalData!} token={token}/>
+            : null
+            }
+            {showProposalUnbanModal ?
+            <PostUnbanModal show={showProposalUnbanModal} setShow={setShowProposalUnbanModal} post={banModalProposalData!} token={token}/>
             : null
             }
 
@@ -136,6 +143,12 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                                 setHideControls(req.id.toString());
                                 setBan(req.active);
                                 }}>Edit</Dropdown.Item> */}
+                            {req.banned ? 
+                                <Dropdown.Item onClick={()=>{
+                                    setBanModalProposalData(req);
+                                    setShowProposalUnbanModal(true);
+                                }}>Unban Proposal</Dropdown.Item> :
+                            <>
                             <Dropdown.Item onClick={()=>{
                                 setBanModalProposalData(req);
                                 setShowProposalBanModal(true);
@@ -154,6 +167,8 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                                     setReviewed(req.reviewed=true);
                                     updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
                                     }}>Remove from Quarantine</Dropdown.Item>
+}
+                            </>
                             }
                         </NavDropdown>
                         : <>

@@ -80,6 +80,30 @@ banPostRouter.get(
     }
 )
 
+banPostRouter.get(
+    '/getByPostId/:banPostId',
+    async (req, res) => {
+        try {
+            const foundBan = await prisma.postBan.findFirst({ where: { postId: parseInt(req.params.banPostId) } });
+            if (!foundBan) {
+                return res.status(400).json({
+                    message: `The ban (${req.params.banPostId}) does not exist.`,
+                });
+            }
+            res.status(200).send(foundBan);
+        } catch (error) {
+            console.log(error.message);
+            res.status(400).json({
+                message: `Error occurred when trying to get banned post`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
 banPostRouter.put(
     '/dismissNotification/:banPostId',
     passport.authenticate('jwt', { session: false }),
@@ -103,6 +127,36 @@ banPostRouter.put(
             console.log(error.message);
             res.status(400).json({
                 message: `Error occurred when trying to dismiss notification`,
+                details: {
+                    errorMessage: error.message,
+                    errorStack: error.stack,
+                }
+            });
+        }
+    }
+)
+
+banPostRouter.delete(
+    '/delete/:banPostId',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+        try {
+            const foundBan = await prisma.postBan.findFirst({ where: { postId: parseInt(req.params.banPostId) } });
+            if (!foundBan) {
+                return res.status(400).json({
+                    message: `The ban (${req.params.banPostId}) does not exist.`,
+                });
+            }
+            const deletedBan = await prisma.postBan.delete({ where: { id: foundBan.id } });
+            res.status(200).json({
+                message: `Successfully deleted ban: ${req.params.banPostId}`,
+                deletedBan
+            });
+        } catch (error) {
+            console.log(error.stack);
+            console.log(error.message);
+            res.status(400).json({
+                message: `Error occurred when trying to delete ban`,
                 details: {
                     errorMessage: error.message,
                     errorStack: error.stack,

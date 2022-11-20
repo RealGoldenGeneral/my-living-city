@@ -28,6 +28,7 @@ export interface IIdea {
   manufacturingImpact?: string;
   state: IdeaState;
   active: boolean;
+  banned: boolean;
   createdAt: string;
   updatedAt: string;
   reviewed: boolean;

@@ -375,6 +375,7 @@ ideaRouter.post(
         coalesce(userStreetAddress.street_address, '') as "streetAddress",
         i.state,
         i.active,
+        i.banned,
         i.reviewed,
         i.updated_at as "updatedAt",
         i.created_at as "createdAt"
