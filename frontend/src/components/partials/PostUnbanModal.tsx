@@ -1,42 +1,39 @@
 import React, { useState } from 'react'
 import { Button, Container, Card, Modal, Row } from 'react-bootstrap';
-import { IUser } from 'src/lib/types/data/user.type';
-import { FindBanDetailsWithStaleTime } from 'src/hooks/banHooks';
-import { updateUserBan } from 'src/lib/api/banRoutes';
-import { updateUser } from 'src/lib/api/userRoutes';
+import { FindPostBanDetailsWithStaleTime } from 'src/hooks/banHooks';
+import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
+import { updateIdeaStatus } from 'src/lib/api/ideaRoutes';
+import { deletePostBan } from 'src/lib/api/banRoutes';
 
-interface ModifyWarningModalProps {
+interface UnbanModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     show: boolean;
-    modalUser: IUser;
-    currentUser: IUser;
-    warnedUserIds: String[];
+    post: IIdeaWithAggregations;
     token: string | null
 };
 
-interface FeedbackModalProps {
-    setShow: React.Dispatch<React.SetStateAction<boolean>>;
-    show: boolean;
-    message: string;
-}
+// interface FeedbackModalProps {
+//     setShow: React.Dispatch<React.SetStateAction<boolean>>;
+//     show: boolean;
+//     message: string;
+// }
 
-export const UserManagementModifyWarningModal = ({
+export const PostUnbanModal = ({
     setShow,
     show,
-    modalUser,
-    currentUser,
-    warnedUserIds,
+    post,
     token
-}: ModifyWarningModalProps) => {
-    const { data: modalUserBanData, error, isLoading, isError } = FindBanDetailsWithStaleTime(modalUser.id);
+}: UnbanModalProps) => {
+    const { data: modalPostBanData, isLoading: modalPostBanIsLoading, isError: modalPostBanIsError } = FindPostBanDetailsWithStaleTime(post.id);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
-    const removeWarningUser = async () => {
+    const unbanPost = async () => {
         try {
-            let warnedUserIdIndex = warnedUserIds.indexOf(modalUser.id);
-            warnedUserIds.splice(warnedUserIdIndex, 1);
             setIsSubmitting(true);
-            // await deleteBan(modalUser.id, token)
+            post.banned = false;
+            post.reviewed = false;
+            updateIdeaStatus(token, post.id.toString(), post.active, post.reviewed, post.banned, post.quarantined_at);
+            deletePostBan(post.id, token);
             handleClose();
         } catch (error) {
             console.log(error);
@@ -45,34 +42,17 @@ export const UserManagementModifyWarningModal = ({
         }
     }
 
-    const banUser = async () => {
-        try {
-            let warnedUserIdIndex = warnedUserIds.indexOf(modalUser.id);
-            warnedUserIds.splice(warnedUserIdIndex, 1);
-            setIsSubmitting(true);
-            modalUser.banned = true;
-            await updateUser(modalUser, token, currentUser);
-            await updateUserBan(modalUserBanData!, token)
-            handleClose();
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    }
-
-    if (isError) {
-        console.log(error);
+    if (modalPostBanIsError) {
         return (
             <div className="wrapper">
                 <p>
-                    Error occured while trying to retrieve warning details. Please try again later.
+                    Error occured while trying to retrieve ban details. Please try again later.
                 </p>
             </div>
         );
     }
 
-    if (isLoading) {
+    if (modalPostBanIsLoading) {
         return (
             <Modal
                 show={show}
@@ -95,7 +75,7 @@ export const UserManagementModifyWarningModal = ({
                 <Modal.Header closeButton>
                     <Container>
                         <Row className='justify-content-center'>
-                            <Modal.Title>Modify Warning for User: {modalUser.email}</Modal.Title>
+                            <Modal.Title>Unban Post: {post.title}</Modal.Title>
                         </Row>
                         <Row className='text-center'>
                         </Row>
@@ -106,7 +86,7 @@ export const UserManagementModifyWarningModal = ({
                         <Card.Body>
                             <h5>Reason</h5>
                             <hr />
-                            {modalUserBanData?.banReason}
+                            {modalPostBanData?.banReason}
                         </Card.Body>
                     </Card>
                     <p />
@@ -114,15 +94,7 @@ export const UserManagementModifyWarningModal = ({
                         <Card.Body>
                             <h5>Details</h5>
                             <hr />
-                            {modalUserBanData?.banMessage}
-                        </Card.Body>
-                    </Card>
-                    <p />
-                    <Card>
-                        <Card.Body>
-                            <h5>Warned Until</h5>
-                            <hr />
-                            {new Date(modalUserBanData!.banUntil).toLocaleString()}
+                            {modalPostBanData?.banMessage}
                         </Card.Body>
                     </Card>
                 </Modal.Body>
@@ -130,17 +102,9 @@ export const UserManagementModifyWarningModal = ({
                     <div className='w-100 d-flex justify-content-end'>
                         <Button
                             className='mr-3'
-                            variant="danger"
-                            onClick={banUser}
+                            onClick={unbanPost}
                             disabled={isSubmitting ? true : false}
-                        >Ban
-                        </Button>
-                        <Button
-                            className='mr-3'
-                            variant="warning"
-                            onClick={removeWarningUser}
-                            disabled={isSubmitting ? true : false}
-                        >Remove Warning
+                        >Unban
                         </Button>
                         <Button
                             className='mr-3'

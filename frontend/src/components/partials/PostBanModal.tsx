@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
-import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
+import { Button, Container, Form, Modal, Row, Col } from 'react-bootstrap';
+import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import { useFormik } from "formik";
-import { IBanUserInput } from 'src/lib/types/input/banUser.input';
-import { postCreateUserBan } from 'src/lib/api/banRoutes';
-import { updateUser } from 'src/lib/api/userRoutes';
-import { BAN_USER_TYPES } from 'src/lib/constants';
+import { IBanPostInput } from 'src/lib/types/input/banPost.input';
+import { postCreatePostBan } from 'src/lib/api/banRoutes';
+import { updateIdeaStatus } from 'src/lib/api/ideaRoutes';
 
 interface BanModalProps {
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     show: boolean;
-    modalUser: IUser;
-    currentUser: IUser;
+    post: IIdeaWithAggregations;
     token: string | null
 };
 
@@ -21,29 +20,29 @@ interface FeedbackModalProps {
     message: string;
 }
 
-export const UserManagementBanModal = ({
+export const PostBanModal = ({
     setShow,
     show,
-    modalUser,
-    currentUser,
+    post,
     token
 }: BanModalProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleClose = () => setShow(false);
-    const submitHandler = async (values: IBanUserInput) => {
+    const submitHandler = async (values: IBanPostInput) => {
         try {
             setIsSubmitting(true);
-            modalUser.banned = true;
             // POST to database
-            const banInputValues: IBanUserInput = {
-                userId: values.userId,
-                banType: values.banType,
-                banDuration: values.banDuration,
+            post.banned = true;
+            post.active = false;
+            post.reviewed = true;
+            const banPostInputValues: IBanPostInput = {
+                postId: values.postId,
+                authorId: values.authorId,
                 banReason: values.banReason,
                 banMessage: values.banMessage,
             }
-            await postCreateUserBan(banInputValues, token);
-            await updateUser(modalUser, token, currentUser);
+            await postCreatePostBan(banPostInputValues, token);
+            await updateIdeaStatus(token, post.id.toString(), post.active, post.reviewed, post.banned, post.quarantined_at);
             handleClose();
         } catch (error) {
             console.log(error)
@@ -52,11 +51,10 @@ export const UserManagementBanModal = ({
         }
     }
 
-    const formik = useFormik<IBanUserInput>({
+    const formik = useFormik<IBanPostInput>({
         initialValues: {
-            userId: modalUser.id,
-            banType: BAN_USER_TYPES.WARNING,
-            banDuration: 0,
+            postId: post.id,
+            authorId: post.authorId,
             banReason: "",
             banMessage: "",
         },
@@ -76,7 +74,7 @@ export const UserManagementBanModal = ({
                 <Modal.Header closeButton>
                     <Container>
                         <Row className='justify-content-center'>
-                            <Modal.Title>Ban User: {modalUser.email}</Modal.Title>
+                            <Modal.Title>Ban Post: {post.title}</Modal.Title>
                         </Row>
                         <Row className='text-center'>
                         </Row>
@@ -84,41 +82,25 @@ export const UserManagementBanModal = ({
                 </Modal.Header>
                 <Form onSubmit={formik.handleSubmit}>
                     <Modal.Body>
-                        <Form.Label>
-                            Ban Type
-                        </Form.Label>
-                        <Form.Control
-                            as="select"
-                            name="banType"
-                            onChange={formik.handleChange}
-                            value={formik.values.banType}
-                        >
-                            <option value={BAN_USER_TYPES.WARNING}>Warning</option>
-                            <option value={BAN_USER_TYPES.POST_BAN}>Post Ban</option>
-                            <option value={BAN_USER_TYPES.SYS_BAN}>System Ban</option>
-                        </Form.Control>
-                        <br />
-                        <Form.Label>
-                            Ban Duration
-                        </Form.Label>
-                        <Form.Control
-                            as="select"
-                            name="banDuration"
-                            onChange={formik.handleChange}
-                            value={formik.values.banDuration}
-                            required
-                        >
-                            <option selected value=''>Select Ban Duration...</option>
-                            <option value={7}>7 Days</option>
-                            <option value={14}>14 Days</option>
-                            <option value={30}>30 Days</option>
-                            <option value={60}>60 Days</option>
-                            <option value={90}>3 Months</option>
-                            <option value={180}>6 Months</option>
-                            <option value={365}>1 Year</option>
-                            <option value={99999}>Indefinitely</option>
-                        </Form.Control>
-                        <br />
+                        <Row>
+                            <Col md={"auto"}>
+                                <b>Post Title: </b>{post.title}
+                                <p />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md={"auto"}>
+                                <b>Post Description: </b>{post.description}
+                                <p />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md={"auto"}>
+                                <b>Post Author Name: </b>{post.firstName}
+                                <p />
+                            </Col>
+                        </Row>
+                        <p />
                         <Form.Label>
                             Ban Reason
                         </Form.Label>
@@ -130,7 +112,6 @@ export const UserManagementBanModal = ({
                             required
                         >
                             <option selected value=''>Select Ban Reason...</option>
-                            <option>Abuse of flagging privileges</option>
                             <option>Posting abuse or non-conforming content</option>
                             <option>Breach of user agreement</option>
                             <option>Incomplete Submission</option>
@@ -138,12 +119,12 @@ export const UserManagementBanModal = ({
                             <option>Other</option>
                         </Form.Control>
                         <br />
-                        <Form.Label>Ban Additional Details</Form.Label>
+                        <Form.Label>Ban Details</Form.Label>
                         <Form.Control
                             as="textarea"
                             rows={5}
                             name="banMessage"
-                            placeholder="Additional Details for Ban"
+                            placeholder="Details for Ban"
                             onChange={formik.handleChange}
                             value={formik.values.banMessage}
                             required

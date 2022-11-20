@@ -38,6 +38,7 @@ import {
 } from "src/lib/api/proposalRoutes";
 import SimpleMap from "../map/SimpleMap";
 import { MAP_KEY } from "../../lib/constants";
+import {getUserBanWithToken} from "../../lib/api/banRoutes";
 
 interface SubmitDirectProposalPageContentProps {
   categories: ICategory[] | undefined;
@@ -138,7 +139,12 @@ const SubmitDirectProposalPageContent: React.FC<
         state: "PROPOSAL",
        
       };
-      const idea = await postCreateIdea(ideaValues, user!.banned, token);
+      const banDetails = await getUserBanWithToken(token);
+      let banned = true;
+      if (!user!.banned || banDetails || banDetails.banType === "WARNING") {
+        banned = false;
+      }
+      const idea = await postCreateIdea(ideaValues, banned, token);
       const proposalValues = {
         ideaId: idea.id,
         needCollaborators: values.needCollaborators,
@@ -643,7 +649,7 @@ const SubmitDirectProposalPageContent: React.FC<
                   {extraFeedback && (
                     <>
 
-                      {/* Remove Button 
+                      {/* Remove Button
                       <Button
                         color="danger"
                         size="sm"
@@ -671,7 +677,7 @@ const SubmitDirectProposalPageContent: React.FC<
                               style={{ marginLeft: "auto" }}
                               color="danger"
                               size="sm"
-                              
+
                               onClick={() => toggleNumberOfFeedback(-1)}
                             >
                               -
@@ -706,7 +712,7 @@ const SubmitDirectProposalPageContent: React.FC<
                           </Form.Label>
                           <br />
                           <Form.Control
-                          
+
                             type="text"
                             name="specificFeedback1"
                             onChange={formik.handleChange}
@@ -770,7 +776,7 @@ const SubmitDirectProposalPageContent: React.FC<
                         <div className="feedback-5">
                           <br />
                           <Form.Label
-                          
+
                           style={{ display: "flex" }}
                           >
                             &nbsp;&nbsp;Specific Feedback #5

@@ -9,6 +9,12 @@ export const getAllComments = async (): Promise<IComment[]> => {
   return res.data;
 };
 
+// export const getUserComments = async (userId: string) => {
+//   const res = await axios.get<any>(`${API_BASE_URL}/comment/getall/${userId}`);
+//   console.log(res.data)
+//   return res.data;
+// };
+
 export const getCommentsUnderIdea = async (
   ideaId: string,
   token: string | null | undefined
@@ -62,7 +68,7 @@ export const createCommentUnderIdea = async (
   return res.data;
 };
 
-export const updateCommentStatus = async(token: String | null, userId: string|undefined, commentId: string|null, active: boolean|null, reviewed: boolean|null, quarantined_at: Date) => {
+export const updateCommentStatus = async(token: String | null, commentId: string|null, active: boolean|null, reviewed: boolean|null, banned: boolean|null, quarantined_at: Date) => {
   const res = await axios({
     method: "put",
     url: `${API_BASE_URL}/comment/updateState/${commentId}`,
@@ -70,7 +76,23 @@ export const updateCommentStatus = async(token: String | null, userId: string|un
       "x-auth-token": token,
       "Access-Control-Allow-Origin": "*",
     },
-    data: {userId: userId, commentId: commentId, active: active, reviewed: reviewed, quarantined_at },
+    data: {commentId: commentId, active: active, reviewed: reviewed, banned: banned, quarantined_at },
+    withCredentials: true,
+  })
+  return res.data;
+}
+
+export const updateCommentNotificationStatus = async(token: String | null, userId: string|undefined, commentId: string|null, notification_dismissed: boolean) => {
+  console.log("Notification dismissed: ", notification_dismissed)
+  console.log("CommentId: ", commentId)
+  const res = await axios({
+    method: "put",
+    url: `${API_BASE_URL}/comment/updateNotificationState/${commentId}`,
+    headers: {
+      "x-auth-token": token,
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: {userId: userId, commentId: commentId, notification_dismissed },
     withCredentials: true,
   })
   return res.data;

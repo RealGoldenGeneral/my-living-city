@@ -35,18 +35,18 @@ export default function Header() {
     jwtAuthToken: token!,
     shouldTrigger: token != null,
   });
-  const { data: googleQuery, isLoading: googleQueryLoading } = useGoogleMapSearchLocation({ lat: data?.geo?.lat, lon: data?.geo?.lon }, (data != null && data.geo != null));
+  // const { data: googleQuery, isLoading: googleQueryLoading } = useGoogleMapSearchLocation({ lat: data?.geo?.lat, lon: data?.geo?.lon }, (data != null && data.geo != null));
   const { data: segData, isLoading: segQueryLoading } = useAllUserSegmentsRefined(token, user?.id || null);
   const { data: banData, isLoading: banQueryLoading} = FindBanDetailsWithToken(token)
   console.log(banData);
 
   // const segData = useSingleSegmentByName({
-  //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country 
+  //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country
   // }, googleQuery.data != null)
   // console.log(segData);
   const [userSegId, setUserSegId] = useState<any>(1);
   const [showWarningModal, setShowWarningModal] = useState<boolean>(!localStorage.getItem('warningModalState'));
-  
+
   // Hook to set localStorage: warningModalState to !null
   useEffect(() => {
     localStorage.setItem('warningModalState', String(showWarningModal));
@@ -121,78 +121,85 @@ export default function Header() {
           <Nav className="ml-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/ideas">Conversations</Nav.Link>
+              {(user) ? (
+                <>
+                  {((banData && banData.banType === "WARNING") || !user.banned) && (
+                    <NavDropdown title="Submit" id="nav-dropdown">
+                      <Nav.Link href="/submit">Submit Idea</Nav.Link>
 
-            {user ? (
-              <>
-                {(user.banned == false) && (
-                  <NavDropdown title="Submit" id="nav-dropdown">
-                    <Nav.Link href="/submit">Submit Idea</Nav.Link>
+                      {((user.userType === "BUSINESS" || user.userType === "MUNICIPAL" || user.userType === "COMMUNITY") && user.banned == false) && (
 
-                    {((user.userType === "BUSINESS" || user.userType === "MUNICIPAL" || user.userType === "COMMUNITY") && user.banned == false) && (
-
-                      <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
-                    )}
-                  </NavDropdown>
-                )}
-
+                        <Nav.Link href="/submit-direct-proposal">Submit Proposal</Nav.Link>
+                      )}
+                    </NavDropdown>
+                  )}
 
 
-                <Nav.Link href="/profile">Profile</Nav.Link>
 
-                {user.userType === "ADMIN" && (
-                  <NavDropdown title="Admin Tools" id="nav-dropdown">
-                    <Nav.Link href="/advertisement/all">Ad Manager</Nav.Link>
-                    <Nav.Link href="/segment/management">Segments</Nav.Link>
-                    <Nav.Link href="/user/management">Users</Nav.Link>
-                  </NavDropdown>
-                )}
-                {(user.userType === "BUSINESS" || user.userType === "COMMUNITY") && (
-                  <Nav.Link href="/advertisement/user">My Ads</Nav.Link>
-                )}
-                {user.userType === "SEG_ADMIN" && (
-                  <NavDropdown title="Seg-Admin Tools" id="nav-dropdown">
-                    <Nav.Link href="/segment/management">Segments</Nav.Link>
-                  </NavDropdown>
-                )}
-                {user.userType === "MOD" && (
-                  <NavDropdown title="Mod Tools" id="nav-dropdown">
-                    <Nav.Link href="/mod/management">Mod Management</Nav.Link>
-                    {/*Nav.Link href="/moderator/queue" */}
-                    {/*Nav.Link href="/moderator/management" */}
-                    {/*Nav.Link href="/moderator/management" */}
-                  </NavDropdown>
-                )}
-                {(user.userType === "RESIDENTIAL" || user.userType === "COMMUNITY" || user.userType === "BUSINESS") && (
-                  <NavDropdown
-                    title="Dashboard"
-                    id="dashboard-dropdown">
-                    <Nav.Link href="/dashboard">My Dashboard</Nav.Link>
-                    <Nav.Link href={`/community-dashboard/${userSegId}`}>Community Dashboard</Nav.Link>
-                  </NavDropdown>
-                )}
+                  <Nav.Link href="/profile">Profile</Nav.Link>
 
-                {/* <Nav.Link href="/dashboard">Dashboard</Nav.Link> */}
-                <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
-                  Help
-                </Nav.Link>
-                <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
-              </>
-            ) : (
-              <Nav.Link href="/login">Login</Nav.Link>
-            )}
+                  {user.userType === "ADMIN" && (
+                    <NavDropdown title="Admin Tools" id="nav-dropdown">
+                      <Nav.Link href="/advertisement/all">Ad Manager</Nav.Link>
+                      <Nav.Link href="/segment/management">Segments</Nav.Link>
+                      <Nav.Link href="/user/management">Users</Nav.Link>
+                    </NavDropdown>
+                  )}
+                  {(user.userType === "BUSINESS" || user.userType === "COMMUNITY") && (
+                    <Nav.Link href="/advertisement/user">My Ads</Nav.Link>
+                  )}
+                  {user.userType === "SEG_ADMIN" && (
+                    <NavDropdown title="Seg-Admin Tools" id="nav-dropdown">
+                      <Nav.Link href="/segment/management">Segments</Nav.Link>
+                    </NavDropdown>
+                  )}
+                  {user.userType === "MOD" && (
+                    <NavDropdown title="Mod Tools" id="nav-dropdown">
+                      <Nav.Link href="/mod/management">Mod Management</Nav.Link>
+                      {/*Nav.Link href="/moderator/queue" */}
+                      {/*Nav.Link href="/moderator/management" */}
+                      {/*Nav.Link href="/moderator/management" */}
+                    </NavDropdown>
+                  )}
+                  {(user.userType === "RESIDENTIAL" || user.userType === "COMMUNITY" || user.userType === "BUSINESS") && (
+                    <NavDropdown
+                      title="Dashboard"
+                      id="dashboard-dropdown">
+                      <Nav.Link href="/dashboard">My Dashboard</Nav.Link>
+                      <Nav.Link href={`/community-dashboard/${userSegId}`}>Community Dashboard</Nav.Link>
+                    </NavDropdown>
+                  )}
+
+                  {/* <Nav.Link href="/dashboard">Dashboard</Nav.Link> */}
+                  <Nav.Link href="https://mylivingcity.org/community-discussion-platform-help-pages/">
+                    Help
+                  </Nav.Link>
+                  <Nav.Link onClick={() => logout()}>Log out</Nav.Link>
+                </>
+              ) : (
+                <Nav.Link href="/login">Login</Nav.Link>
+              )}
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      {banData ? (
-        banData.isWarning ?
-        <>  
+      { user && user.banned && banData && banData.banType === "SYS_BAN" ? <BanMessageModal/> : null }
+      { user && user.banned && banData && banData.banType == "POST_BAN" ?
+          <>
             <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
-                Account has been issued a warning
+              Account has been banned from posting
             </Navbar>
-            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/> 
+            <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/>
+          </>
+          : null
+      }
+      { user && user.banned && banData && banData.banType == "WARNING" ?
+        <>
+          <Navbar className="bg-warning text-dark justify-content-center" expand="sm">
+            Account has been issued a warning
+          </Navbar>
+          <WarningMessageModal show={showWarningModal} setShow={setShowWarningModal}/>
         </>
-            : <BanMessageModal/>
-      ) : null
+        : null
       }
     </div>
   );

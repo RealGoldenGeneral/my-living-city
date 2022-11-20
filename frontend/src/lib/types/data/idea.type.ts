@@ -31,9 +31,11 @@ export interface IIdea {
   manufacturingImpact?: string;
   state: IdeaState;
   active: boolean;
+  banned: boolean;
   createdAt: string;
   updatedAt: string;
   reviewed: boolean;
+  notification_dismissed: boolean;
 }
 
 // Idea with relationships (Used in Single Idea Page) extends Root base Idea
@@ -73,6 +75,7 @@ export interface IIdeaWithAggregations extends IIdea {
   description: string;
   state: IdeaState;
   active: boolean;
+  banned: boolean;
   reviewed: boolean;
   createdAt: string;
   updatedAt: string;
@@ -95,6 +98,6 @@ export interface IIdeaWithAggregations extends IIdea {
   artsImpact?: string;
   energyImpact?: string;
   manufacturingImpact?: string;
-  notification_dismissed?: boolean;
+  // notification_dismissed?: boolean;
   quarantined_at: Date;
 }

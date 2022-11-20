@@ -8,6 +8,8 @@ import { IComment } from 'src/lib/types/data/comment.type';
 import { ICommentFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
+import { CommentBanModal } from '../partials/CommentBanModal';
+import { CommentUnbanModal } from '../partials/CommentUnbanModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO 
@@ -27,7 +29,13 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
+    const [banModalCommentData, setBanModalCommentData] = useState<IComment>();
+    const [banModalAuthorName, setBanModalAuthorName] = useState('');
+    const [banModalPostLink, setBanModalPostLink] = useState('');
+    const [showCommentBanModal, setShowCommentBanModal] = useState<boolean>(false);
+    const [showCommentUnbanModal, setShowCommentUnbanModal] = useState<boolean>(false);
     const [ban ,setBan] = useState<boolean>(false);
+    const [active, setActive] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
@@ -72,6 +80,16 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
     const ideaURL = '/ideas/';
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            {showCommentBanModal ?
+                <CommentBanModal show={showCommentBanModal} setShow={setShowCommentBanModal} comment={banModalCommentData!} authorName={banModalAuthorName} postLink={banModalPostLink} token={token}/>
+                :
+                null
+            }
+            {showCommentUnbanModal ?
+                <CommentUnbanModal show={showCommentUnbanModal} setShow={setShowCommentUnbanModal} comment={banModalCommentData!} token={token}/>
+                :
+                null
+            }
             <Form>
             <h2 className="mb-4 mt-4">Comment Management</h2>
             <Table bordered hover size="sm">
@@ -128,11 +146,44 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                     <td>
                     {req.id.toString() !== hideControls ?
                         <NavDropdown title="Controls" id="nav-dropdown">
-                            <Dropdown.Item onClick={()=>{
+                            {/* <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id.toString());
                                 setBan(req.active);
                                 setReviewed(req.reviewed);
-                                }}>Edit</Dropdown.Item>
+                                }}>Edit</Dropdown.Item> */}
+                            {req.bannedComment ?    
+                                <Dropdown.Item onClick={()=>{
+                                    setBanModalCommentData(req);
+                                    setShowCommentUnbanModal(true);
+                                    }}>Unban Comment
+                                </Dropdown.Item> :
+                                <>
+                                    <Dropdown.Item onClick={()=>{
+                                        setBanModalCommentData(req);
+                                        setBanModalPostLink(ideaURL + req.ideaId);
+                                        setBanModalAuthorName(userName[index].toString());
+                                        setShowCommentBanModal(true);
+                                        }}>Ban Comment
+                                    </Dropdown.Item>
+                                    {req.reviewed && req.active ?
+                                        <Dropdown.Item onClick={()=>{
+                                            updateFalseFlagComment(parseInt(req.id.toString()), token!, false);
+                                            setActive(req.active=false);
+                                            setReviewed(req.reviewed=false);
+                                            updateCommentStatus(token, req.id.toString(), req.active, req.reviewed, req.bannedComment, req.quarantined_at);
+                                            }}>Quarantine Idea
+                                        </Dropdown.Item>
+                                    :
+                                        <Dropdown.Item onClick={()=>{
+                                            updateFalseFlagComment(parseInt(req.id.toString()), token!, true);
+                                            setActive(req.active=true);
+                                            setReviewed(req.reviewed=true);
+                                            updateCommentStatus(token, req.id.toString(), req.active, req.reviewed, req.bannedComment, req.quarantined_at);
+                                            }}>Remove from Quarantine
+                                        </Dropdown.Item>
+                                    }
+                                </>
+                                }
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
@@ -144,7 +195,7 @@ export const CommentManagementContent: React.FC<CommentManagementContentProps> =
                             }else{
                                 updateFalseFlagComment(parseInt(req.id.toString()), token!, false);
                             }
-                            updateCommentStatus(token, user?.id, req.id.toString(), req.active, req.reviewed, new Date());
+                            updateCommentStatus(token, req.id.toString(), req.active, req.reviewed, false, req.quarantined_at);
                             }}>Save</Button>
                         </>
                     }

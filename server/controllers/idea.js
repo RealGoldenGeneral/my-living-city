@@ -384,6 +384,7 @@ ideaRouter.post(
         coalesce(userStreetAddress.street_address, '') as "streetAddress",
         i.state,
         i.active,
+        i.banned,
         i.reviewed,
         i.updated_at as "updatedAt",
         i.created_at as "createdAt"
@@ -722,7 +723,7 @@ ideaRouter.put(
   async (req, res, next) => {
     try {
 
-      const {userId, active, reviewed, quarantined_at} = req.body;
+      const {active, reviewed, banned, quarantined_at} = req.body;
       const {ideaId} = req.params;
       const parsedIdeaId = parseInt(ideaId);
 
@@ -745,6 +746,7 @@ ideaRouter.put(
         data: {
           active: active,
           reviewed: reviewed,
+          banned: banned,
           quarantined_at: quarantined_at,
         },
       });
@@ -812,8 +814,6 @@ ideaRouter.put(
           errorStack: error.stack,
         }
       });
-    } finally {
-      await prisma.$disconnect();
     }
   }
 )

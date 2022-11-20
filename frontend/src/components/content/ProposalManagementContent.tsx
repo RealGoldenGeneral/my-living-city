@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Table, Dropdown, Container, Button, Form, NavDropdown } from 'react-bootstrap';
+import { deletePostBan } from 'src/lib/api/banRoutes';
 import { updateFalseFlagIdea } from 'src/lib/api/flagRoutes';
 import { updateIdeaStatus } from 'src/lib/api/ideaRoutes';
 import { updateUser } from 'src/lib/api/userRoutes';
@@ -8,6 +9,8 @@ import { IFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
 import { IUser } from 'src/lib/types/data/user.type';
+import { PostBanModal } from '../partials/PostBanModal';
+import { PostUnbanModal } from '../partials/PostUnbanModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO 
@@ -27,7 +30,11 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
     const [showUserSegmentCard, setShowUserSegmentCard] = useState(false);
     const [email, setEmail] = useState('');
     const [id, setId] = useState('');
+    const [banModalProposalData, setBanModalProposalData] = useState<IIdeaWithAggregations>();
+    const [showProposalBanModal, setShowProposalBanModal] = useState<boolean>(false);
+    const [showProposalUnbanModal, setShowProposalUnbanModal] = useState<boolean>(false);
     const [ban ,setBan] = useState<boolean>(false);
+    const [active, setActive] = useState<boolean>(false);
     const [reviewed, setReviewed] = useState<boolean>(false);
     const UserSegmentHandler = (email: string, id: string) => {
         setShowUserSegmentCard(true);
@@ -68,6 +75,15 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
     }
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
+            {showProposalBanModal ?
+            <PostBanModal show={showProposalBanModal} setShow={setShowProposalBanModal} post={banModalProposalData!} token={token}/>
+            : null
+            }
+            {showProposalUnbanModal ?
+            <PostUnbanModal show={showProposalUnbanModal} setShow={setShowProposalUnbanModal} post={banModalProposalData!} token={token}/>
+            : null
+            }
+
             <Form>
             <h2 className="mb-4 mt-4">Proposal Management</h2>
             <Table bordered hover size="sm">
@@ -123,10 +139,37 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                     <td>
                     {req.id.toString() !== hideControls ?
                         <NavDropdown title="Controls" id="nav-dropdown">
-                            <Dropdown.Item onClick={()=>{
+                            {/* <Dropdown.Item onClick={()=>{
                                 setHideControls(req.id.toString());
                                 setBan(req.active);
-                                }}>Edit</Dropdown.Item>
+                                }}>Edit</Dropdown.Item> */}
+                            {req.banned ? 
+                                <Dropdown.Item onClick={()=>{
+                                    setBanModalProposalData(req);
+                                    setShowProposalUnbanModal(true);
+                                }}>Unban Proposal</Dropdown.Item> :
+                            <>
+                            <Dropdown.Item onClick={()=>{
+                                setBanModalProposalData(req);
+                                setShowProposalBanModal(true);
+                                }}>Ban Proposal</Dropdown.Item>
+                            {req.reviewed && req.active ?
+                                <Dropdown.Item onClick={()=>{
+                                    updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
+                                    setActive(req.active=false);
+                                    setReviewed(req.reviewed=false);
+                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
+                                    }}>Quarantine Proposal</Dropdown.Item>
+                                :
+                                <Dropdown.Item onClick={()=>{
+                                    updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
+                                    setActive(req.active=true);
+                                    setReviewed(req.reviewed=true);
+                                    updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
+                                    }}>Remove from Quarantine</Dropdown.Item>
+}
+                            </>
+                            }
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
@@ -138,7 +181,7 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                             } else{
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, false);
                             }
-                            updateIdeaStatus(token, user?.id, req.id.toString(), req.active, req.reviewed, new Date);
+                            updateIdeaStatus(token, req.id.toString(), req.active, req.reviewed, req.banned, req.quarantined_at);
                             }}>Save</Button>
                         </>
                     }

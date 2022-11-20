@@ -19,6 +19,14 @@ export interface LoginResponse {
   user: IUser;
   token: string;
 }
+export const getUserById = async (userId: string | null) => {
+  const res = await axios({
+    method: "get",
+    url: `${API_BASE_URL}/user/get/${userId}`
+  })
+  return res.data;
+}
+
 export const getAllUsers = async (token: string | null) => {
   const res = await axios.get(`${API_BASE_URL}/user/getAll`,getAxiosJwtRequestOption(token!));
   return res.data;
