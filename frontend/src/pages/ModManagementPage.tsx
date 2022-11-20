@@ -67,6 +67,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
   let propIdeaData: IIdeaWithAggregations[] = []
   let quarantineIdea: IIdeaWithAggregations[] = [];
   let quarantineComment: IComment[] = [];
+  let allProposals: IIdeaWithAggregations[] = [];
   let quarantineProposal: IIdeaWithAggregations[] = [];
   let quarantineUser: IUser[] = [];
   let flaggedUser: number[] = [];
@@ -177,6 +178,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
 
   if (ideaData && userData && proposalData && commentData && flagData) {
     quarantineIdea = ideaData.filter((idea, index) => (idea.state === 'IDEA' && idea.reviewed === false && idea.active === false) || (metThreshholdIdea(idea) && idea.state === 'IDEA' && idea.reviewed === false));
+    allProposals = ideaData.filter((idea, index) => (idea.state === 'PROPOSAL'));
     quarantineProposal = ideaData.filter((idea, index) => (idea.state === 'PROPOSAL' && idea.reviewed === false && idea.active === false) || (metThreshholdIdea(idea) && idea.state === 'PROPOSAL' && idea.reviewed === false));
     console.log("quarantined proposals: ", quarantineProposal)
     quarantineIdea = quarantineIdea.sort(sortQuarantinedIdeas)
@@ -365,7 +367,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <Button style={{ border: 'none', width: 200, textAlign: 'left', height: 40, backgroundColor: '#F1F2F2', color: 'black' }} onClick={() => loadState("comment")}>Comment View</Button>
         </div>
         <div style={{ width: '80%', marginLeft: '22%' }}>
-          <ProposalManagementContent users={userData!} token={token} user={user} proposals={quarantineProposal!} ideas={propIdeaData!} flags={flagData} />
+          <ProposalManagementContent users={userData!} token={token} user={user} proposals={allProposals!} ideas={propIdeaData!} flags={flagData} />
         </div>
       </div>
     );
