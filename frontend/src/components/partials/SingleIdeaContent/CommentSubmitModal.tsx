@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Container, Form, Modal, Row } from 'react-bootstrap';
 import IdeaCommentTile from 'src/components/tiles/IdeaComment/IdeaCommentTile';
+import { getUserBanWithToken } from "../../../lib/api/banRoutes";
 import { ICreateCommentInput } from 'src/lib/types/input/createComment.input';
 import { IComment } from '../../../lib/types/data/comment.type';
 
@@ -12,6 +13,7 @@ interface CommentSubmitModalProps {
   show: boolean;
   comments?: IComment[];
   banned?: boolean;
+  token: string | null;
   setShowCommentSubmitError: any;
 }
 
@@ -24,15 +26,21 @@ const CommentSubmitModal = ({
   show,
   comments,
   banned,
+  token
 }: CommentSubmitModalProps) => {
   const handleClose = () => setShow(false);
   const [commentText, setCommentText] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const submitHandler = (values: ICreateCommentInput) => {
-    console.log(banned, 'banned');
+  const submitHandler = async (values: ICreateCommentInput) => {
+    //console.log(banned, 'banned');
+    const banDetails = await getUserBanWithToken(token);
+    let isBanned = true;
+    if (banned || !banDetails || banDetails.banType === "WARNING") {
+      isBanned = false;
+    }
     setError(null);
     try{
-      if(banned === true){
+      if(isBanned === true){
         setShowCommentSubmitError(true);
         setError('You are banned');
         alert("You are banned!");
@@ -45,7 +53,7 @@ const CommentSubmitModal = ({
     }finally{
       handleClose();
     }
-    
+
   };
 
   return (

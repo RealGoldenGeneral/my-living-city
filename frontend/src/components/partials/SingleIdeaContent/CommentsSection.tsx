@@ -90,6 +90,7 @@ if(ideaComments){
         shouldButtonBeDisabled={shouldButtonBeDisabled}
         submitComment={submitComment}
         banned={user?.banned}
+        token={token}
         setShowCommentSubmitError={setShowCommentSubmitError}
       />
       <div className="comments-wrapper my-3">
@@ -100,7 +101,7 @@ if(ideaComments){
         ) : (
           ideaComments &&
           ideaComments.map((comment) => (
-            <Row key={comment.id}>      
+            <Row key={comment.id}>
               <IdeaCommentTile commentData={comment} />
             </Row>
           ))
