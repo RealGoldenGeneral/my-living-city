@@ -5,10 +5,12 @@ services:
     build: ./server
     ports:
       - 3001:3001
-    depends_on: 
+    depends_on:
       - postgres
     links:
       - postgres
+    command:
+      - sudo npm install -g --unsafe-perm=true --allow-root
     volumes:
       - ./server/config:/usr/src/app/server/config
       - ./server/controllers:/usr/src/app/server/controllers
