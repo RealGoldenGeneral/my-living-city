@@ -209,11 +209,11 @@ const SubmitDirectProposalPageContent: React.FC<
         subSegmentId: values.subSegmentId,
         superSegmentId: values.superSegmentId,
         state: "PROPOSAL",
-       
+
       };
       const banDetails = await getUserBanWithToken(token);
       let banned = true;
-      if (!user!.banned || banDetails || banDetails.banType === "WARNING") {
+      if (!user!.banned || !banDetails || banDetails.banType === "WARNING") {
         banned = false;
       }
       const idea = await postCreateIdea(ideaValues, banned, token);
@@ -723,7 +723,7 @@ const SubmitDirectProposalPageContent: React.FC<
                     &nbsp;&nbsp;Specific Feedback&nbsp;&nbsp;
                   </Form.Label>
                   {extraFeedback && (
-                    
+
 
                       <Button
                         color="success"
