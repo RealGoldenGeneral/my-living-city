@@ -17,8 +17,7 @@ RUN npm install
 COPY . ./
 
 # give rwx perms to ideaImage folder
-#RUN chmod 777 /uploads/ideaImage
-RUN ls
+RUN chmod 777 ./uploads/ideaImage
 
 # Environment Vars are now set in Dokku manually to prevent leaking secrets
 # COPY .env.production .env
