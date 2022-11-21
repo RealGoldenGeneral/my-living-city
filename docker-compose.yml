@@ -9,8 +9,6 @@ services:
       - postgres
     links:
       - postgres
-    command:
-      - sudo npm install -g --unsafe-perm=true --allow-root
     volumes:
       - ./server/config:/usr/src/app/server/config
       - ./server/controllers:/usr/src/app/server/controllers
