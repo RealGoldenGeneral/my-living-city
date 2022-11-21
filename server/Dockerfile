@@ -14,7 +14,7 @@ COPY package*.json ./
 RUN npm install
 
 # Install dependencies
-RUN sudo npm install -g --unsafe-perm=true --allow-root
+RUN npm install -g --unsafe-perm=true --allow-root
 
 # Copies rest of source code into container
 COPY . ./
