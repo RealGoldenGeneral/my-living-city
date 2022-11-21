@@ -36,20 +36,18 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
     const [successModal, setSuccessModal] = useState(false);
     const handleClose = () => setSuccessModal(false);
 
-    // const [success,setSuccess] = useState<String>('');
-  
     const { token } = useContext(UserProfileContext);
 
     const currentUrl = window.location.search;
     const search = new URLSearchParams(currentUrl);
-    //console.log(currentUrl);
+    
     const id = search.get('id');
-    console.log(id);
+   
 
     //submit handler which calls api posting component to post form data of user input
     const submitHandler = async (values: CreateAdvertisementInput) => {
       try {
-        console.log(values);
+        
         // Set loading and error state
         setError(null);
         setIsLoading(true);
@@ -57,7 +55,7 @@ const EditAdsPageContent: React.FC<EditAdsPageContentProps> = ({adsData}) => {
         setTimeout(() => console.log("timeout"), 5000);
         //api component call
         const res = await updateAdvertisement(values, token, id);
-        console.log(res);
+        
 
         setSuccessModal(true);
         // setSuccess('You submitted your advertisement successfully');

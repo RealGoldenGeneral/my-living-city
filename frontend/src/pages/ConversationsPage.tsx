@@ -22,7 +22,7 @@ export default function ConversationsPage() {
 
 
   if (iError || pError) {
-    console.log(iError);
+  
     return (
       <div className="wrapper">
         <h2>Error</h2>

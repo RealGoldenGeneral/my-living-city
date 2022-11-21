@@ -21,7 +21,7 @@ export default function MyPostsPage() {
   const stringifiedUser = localStorage.getItem("logged-user");
   const loggedInUser = JSON.parse(stringifiedUser!);
 
-  console.log(loggedInUser.id);
+
 
   //CHANGES_NEEDED: Find way to wait for user id to be loaded before useUserIdeas
   const {

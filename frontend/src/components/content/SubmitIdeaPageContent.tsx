@@ -73,7 +73,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
       // Set loading and error state
-      console.log(values);
+   
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -83,7 +83,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
         banned = false;
       }
       const res = await postCreateIdea(values, banned, token);
-      console.log(res);
+   
 
       setError(null);
       history.push("/ideas/" + res.id);
@@ -102,11 +102,8 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
   const urlParams = new URLSearchParams(queryString);
   const supportedProposal = urlParams.get("supportedProposal");
   const parsedProposalId = parseInt(supportedProposal!);
-  console.log("supportedProposal: ");
-  console.log(supportedProposal);
 
-  // console.log(segment);
-  // console.log(subSegment);
+
   const formik = useFormik<ICreateIdeaInput>({
     initialValues: {
       // TODO: CatId when chosen is a string value
@@ -222,7 +219,7 @@ const SubmitIdeaPageContent: React.FC<SubmitIdeaPageContentProps> = ({
                 withPreview={true}
                 onChange={(picture) => {
                   formik.setFieldValue("imagePath", picture);
-                  console.log(picture);
+                
                 }}
                 imgExtension={[".jpg", ".jpeg", ".png", ".webp"]}
                 buttonText="Select Idea Image"

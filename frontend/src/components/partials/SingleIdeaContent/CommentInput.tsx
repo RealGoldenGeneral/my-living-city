@@ -55,7 +55,7 @@ const CommentInput = (props: CommentInputProps) => {
   }
 
   useEffect(() => {
-    console.log(isLoading, isError, isSuccess);
+   
   }, [isLoading, isError, isSuccess])
 
   return (

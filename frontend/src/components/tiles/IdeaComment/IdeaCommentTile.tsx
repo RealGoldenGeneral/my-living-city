@@ -25,8 +25,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
   const [otherFlagReason, setOtherFlagReason] = useState("");
   function getOtherFlagReason(val: any) {
     setOtherFlagReason("OTHER: " + val.target.value)
-    console.log(val.target.value)
-    console.log(otherFlagReason)
+
   }
 
   const handleClose = () => setShow(false);
@@ -119,7 +118,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
 
   const submitFlagReasonHandler = async (commentId: number, token: string, userId: string, quarantined_at: Date) => {
     handleClose();
-    console.log(flagReason)
+    
     await createCommentFlagAndCheckThreshold(id, token!, user!.id, flagReason, new Date())
   }
 
@@ -127,7 +126,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
     handleCloseOther();
     // await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
     await createCommentFlagAndCheckThreshold(id, token!, user!.id, otherFlagReason, new Date())
-    console.log(otherFlagReason);
+  
   }
 
   return (

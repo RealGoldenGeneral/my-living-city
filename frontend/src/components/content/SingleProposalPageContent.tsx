@@ -172,8 +172,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     feedback4,
     feedback5
   } = proposalData;
-  console.log(proposalData);
-  // console.log(suggestedIdeas);
+ 
+
 
   const { title: catTitle } = category!;
 
@@ -225,8 +225,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const [otherFlagReason, setOtherFlagReason] = useState("");
   function getOtherFlagReason(val: any) {
     setOtherFlagReason("OTHER: " + val.target.value)
-    // console.log(val.target.value)
-    // console.log(otherFlagReason)
+  
   }
 
   const handleClose = () => setShow(false);
@@ -238,7 +237,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const collaboratorSubmitHandler = async (values: any) => {
     try {
       // Set loading and error state
-      console.log("values", values);
+      
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -248,7 +247,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         user!.banned,
         token
       );
-      console.log("Here" + res);
+  
       setError(null);
       formikCollaborator.resetForm();
       window.location.reload();
@@ -265,7 +264,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const volunteerSubmitHandler = async (values: any) => {
     try {
       // Set loading and error state
-      console.log("values", values);
+   
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -275,7 +274,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         user!.banned,
         token
       );
-      console.log("Here" + res);
+    
       setError(null);
       formikVolunteer.resetForm();
       window.location.reload();
@@ -291,7 +290,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const donorSubmitHandler = async (values: any) => {
     try {
       // Set loading and error state
-      console.log("values", values);
+     
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -301,7 +300,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
         user!.banned,
         token
       );
-      console.log("Here" + res);
+    
       setError(null);
       formikDonor.resetForm();
       window.location.reload();
@@ -345,8 +344,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const [followingPost, setFollowingPost] = useState(false);
 
   const addIdeaToUserFollowList = () => {
-    console.log("addIdeaToUserFollowList");
-    console.log("proposalData", proposalData);
+    
     setFollowingPost(!followingPost);
   };
 
@@ -355,7 +353,6 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     isPostAuthor = author!.id === user!.id;
   }
 
-  console.log("isPostAuthor", isPostAuthor);
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string, quarantined_at: Date) => {
     await createFlagUnderIdea(ideaId, reason, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
@@ -385,7 +382,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const submitOtherFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleCloseOther();
     await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
-    console.log(otherFlagReason);
+    
   }
 
   if(!active){

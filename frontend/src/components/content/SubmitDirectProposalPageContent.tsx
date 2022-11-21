@@ -99,9 +99,8 @@ const SubmitDirectProposalPageContent: React.FC<
     newFeedbackList[index] = feedback;
     setFeedbackList(newFeedbackList);
 
-    //console.log(newFeedbackList);
     formik.values.feedback![index] = feedback;
-    console.log(formik.values.feedback);
+    
   }
 
   // rename to "addNewFeedback"
@@ -118,14 +117,12 @@ const SubmitDirectProposalPageContent: React.FC<
     const newFeedbackList = [...feedbackList, feedback];
     setFeedbackList(newFeedbackList);
 
-    console.log("this is feedbackList in addnewfeedback");
-    console.log(feedbackList);
+   
   };
 
   const removeFeedback = (index: number) => {
     //check if index less than size-1
-    // console.log("this is index: ");
-    // console.log(index);
+  
 
     setNumberOfFeedback(numberOfFeedback - 1)
     const newFeedbackList = [...feedbackList]
@@ -176,7 +173,7 @@ const SubmitDirectProposalPageContent: React.FC<
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
       // Set loading and error state
-      console.log(values);
+      
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -228,14 +225,13 @@ const SubmitDirectProposalPageContent: React.FC<
         feedback: values.feedback,
         feedbackRatingType: values.feedbackRatingType
       };
-      console.log("proposalValues", proposalValues);
+      
       const proposal = await postCreateProposal(
         proposalValues,
         user!.banned,
         token
       );
-      console.log(idea);
-      console.log(proposal);
+ 
       setError(null);
       history.push("/proposals/" + proposal.id);
       formik.resetForm();
@@ -321,12 +317,12 @@ const SubmitDirectProposalPageContent: React.FC<
       .then((response) => response.json())
       .then((data) => {
         let address = data.results[0].formatted_address;
-        console.log(address);
+       
         formik.setFieldValue("location", address);
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log("error", error);
+        
         setIsLoading(false);
       });
   }
@@ -450,7 +446,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 withPreview={true}
                 onChange={(picture) => {
                   formik.setFieldValue("imagePath", picture);
-                  console.log(picture);
+                 
                 }}
                 imgExtension={[".jpg", ".jpeg", ".png", ".webp"]}
                 buttonText="Select Proposal Image"
@@ -771,7 +767,7 @@ const SubmitDirectProposalPageContent: React.FC<
                                 {
                                   formik.values.feedbackRatingType![index] = "YESNO";
                                   updateFeedbackType("YESNO", index);
-                                  console.log(formik.values.feedbackRatingType!);
+                                  
                                 }
                               }
                           />
@@ -786,7 +782,7 @@ const SubmitDirectProposalPageContent: React.FC<
                                 {
                                   formik.values.feedbackRatingType![index] = "RATING";
                                   updateFeedbackType("RATING", index);
-                                  console.log(formik.values.feedbackRatingType!);
+                                  
                                 }
                               }
                           />

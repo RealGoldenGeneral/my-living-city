@@ -21,8 +21,7 @@ const ProposalTile: React.FC<proposalTileProps> = ({
   postType,
 }) => {
   const { idea, id } = proposalData;
-  console.log("proposalData", proposalData);
-  console.log("idea", idea);
+
 
   const oneWeek = 604800000;
   const postDate = new Date(idea.updatedAt);

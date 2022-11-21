@@ -43,7 +43,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
     //submit handler which calls api posting component to post form data of user input
     const submitHandler = async (values: CreateAdvertisementInput) => {
       try {
-        console.log(values);
+        
         // Set loading and error state
         setError(null);
         setIsLoading(true);
@@ -51,7 +51,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
         setTimeout(() => console.log("timeout"), 5000);
         //api component call
         const res = await postCreateAdvertisement(values, token);
-        console.log(res);
+       
         // setSuccess('You submitted your advertisement successfully');
         setSuccessModal(true);
         // setTimeout(()=> setSuccess(''),5000);
@@ -120,7 +120,7 @@ const SubmitAdvertisementPageContent: React.FC<SubmitAdvertisementPageContentPro
               <Form.Label>Segment</Form.Label>
               <Form.Control as="select" name="adPosition" onChange={handleChange} value={values.adPosition}>
                 {segmentOptions && segmentOptions.map((segment, i) => {
-                  if (i === 0) {values.adPosition = segment.name; console.log("called")}
+                  if (i === 0) {values.adPosition = segment.name; }
                   return <option key={i} value={capitalizeFirstLetterEachWord(segment.name)}>{capitalizeFirstLetterEachWord(segment.name)}</option>
                 })}
               </Form.Control>

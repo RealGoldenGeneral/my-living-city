@@ -31,7 +31,7 @@ export const postUserSegmentRequest = async (requestData: IUserSegmentRequest[],
         })
     }
     axios.all([request1, request2, request3]).then(axios.spread((...responses)=>{
-        console.log(responses);
+        
     })).catch(errors => {
         console.log(errors);
     })
@@ -42,7 +42,7 @@ export const postUserSegmentRequest = async (requestData: IUserSegmentRequest[],
     //     headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": token},
     //     withCredentials: true
     // })
-    // console.log(res.data);
+ 
     // return res.data;
 }
 export const deleteUserSegmentById = async (id: string, token: string) => {

@@ -72,13 +72,13 @@ export const useCreateRatingMutation = (
           )
         }
 
-        console.log(previousRatings);
+       
 
         return previousRatings;
       },
       onError: (err, variables, context: any) => {
         if (context) {
-          console.log("Error Context", context)
+       
           queryClient.setQueryData<IRating[]>(previousRatingsKey, context);
         }
       },

@@ -22,9 +22,9 @@ export const RequestSegmentModal: React.FC<RequestSegmentModalProps> = ({showMod
         segDetailsArray[index] = segDetails;
         setSegmentRequests(segDetailsArray);
     }
-    console.log(segmentRequests);
+
     function submitHandler(values: IRequestSegment){
-        //console.log(values);
+        
         refactorSegRequests(index, values);
         setShowModal(false);
         if(values.segmentName !== ""){

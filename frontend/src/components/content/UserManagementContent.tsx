@@ -177,7 +177,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
-                            console.log(req);
+                            
                             updateUser(req, token, user);
                             }}>Save</Button>
                         </>

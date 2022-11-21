@@ -16,8 +16,6 @@ interface CommunityDashboardContentProps {
 
 const CommunityDashboardContent: React.FC<CommunityDashboardContentProps> = ({userData, data, segmenData, topIdeas} : CommunityDashboardContentProps) => {
 
-    console.log("I am printing user data");
-    console.log(userData);
     return (
         <Container className="user-profile-content w-100">
             <Row className='mb-4 mt-4 justify-content-left'>

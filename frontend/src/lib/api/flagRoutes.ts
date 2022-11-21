@@ -98,7 +98,7 @@ export const createCommentFlagUnderIdea = async (
       "A commentId and valid JWT must be specified to flag."
     );
   }
-  console.log(flagReason)
+
   const res = await axios({
       method: "post",
       url: `${API_BASE_URL}/commentFlag/create/${commentId}`,

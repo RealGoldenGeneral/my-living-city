@@ -85,9 +85,7 @@ export const postCreateProposal = async (
 
   };
 
-  //console.log(feedback)
-  console.log("Proposal info");
-  console.log(formBody)
+
 
   const res = await axios({
     method: "post",

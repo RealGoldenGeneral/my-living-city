@@ -69,8 +69,6 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
         }
     }
 
-    console.log(ideas);
-
         return (
             <Container style={{maxWidth: '80%', marginLeft: 50}}>
             {showIdeaBanModal ?
@@ -176,7 +174,6 @@ export const IdeaManagementContent: React.FC<IdeaManagementContentProps> = ({use
                         {/* <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
-                            console.log(req);
                             if(req.active === true && req.reviewed === true){
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
                             }else{

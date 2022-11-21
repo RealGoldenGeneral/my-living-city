@@ -108,10 +108,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   };
 
   const shouldDisplayChampionButton = (): boolean => {
-    console.log(!ideaData.champion);
-    console.log(!!ideaData.isChampionable);
-    console.log(ideaData.champion);
-    console.log(ideaData.isChampionable);
+  
 
     return !ideaData.champion && !!ideaData.isChampionable;
   };
@@ -131,17 +128,9 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const [otherFlagReason, setOtherFlagReason] = useState("");
   function getOtherFlagReason(val: any) {
     setOtherFlagReason("OTHER: " + val.target.value)
-    // console.log(val.target.value)
-    // console.log(otherFlagReason)
+    
   }
-  // onInput = ({target:{otherFlagReason}}) => setOtherFlagReason(otherFlagReason),
-  // onFormSubmit = e => {
-  //   e.preventDefault()
-  //   console.log(otherFlagReason)
-  //   setOtherFlagReason()
-  // }
-
-  // const handleShowFlagButton = () => setShowFlagButton("display: 'block'");
+ 
   const handleHideFlagButton = () => setShowFlagButton(false);
 
   const handleClose = () => setShow(false);
@@ -158,7 +147,6 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
   }, [isFollowingPostLoading, isFollowingPost])
 
   const handleFollowUnfollow = async () => {
-    console.log("handleFollowUnfollow");
     let res;
     if (user && token) {
       if (followingPost) {
@@ -175,7 +163,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     )
   }
   const flagFunc = async(ideaId: number, token: string, userId: string, ideaActive: boolean, reason: string, quarantined_at: Date) => {
-    console.log(reason)
+  
     await createFlagUnderIdea(ideaId, reason, token!);
     const thresholdExceeded = await compareIdeaFlagsWithThreshold(ideaId, token!);
     await updateIdeaStatus(token, ideaId.toString(), !thresholdExceeded, false, false, quarantined_at);
@@ -202,7 +190,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
     handleCloseOther();
     handleHideFlagButton();
     await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
-    console.log(otherFlagReason);
+   
   }
 
   return (

@@ -19,9 +19,7 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({
   AllAdvertisement,
   token,
 }) => {
-  // console.log(AllAdvertisement);
-  // const [adsId, setAdsId] = useState<number>();
-  // console.log(adsId);
+ 
 
   async function handleDelete(adsId: number) {
     try {
@@ -31,16 +29,6 @@ const AllAdsPageContent: React.FC<AllAdsPageContentProps> = ({
       console.log(err);
     }
   }
-
-  console.log(AllAdvertisement);
-
-  // async function handleEdit(adsId: number) {
-  //   try {
-  //     await getAdvertisementById(adsId);
-  //   } catch(err) {
-  //     console.log(err);
-  //   }
-  // }
 
   return (
     <Container className="all-ads-page-content w-100">

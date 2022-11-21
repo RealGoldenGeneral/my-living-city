@@ -11,7 +11,8 @@ export const getAllComments = async (): Promise<IComment[]> => {
 
 // export const getUserComments = async (userId: string) => {
 //   const res = await axios.get<any>(`${API_BASE_URL}/comment/getall/${userId}`);
-//   console.log(res.data)
+
+
 //   return res.data;
 // };
 
@@ -30,7 +31,7 @@ export const getCommentsUnderIdea = async (
     `${API_BASE_URL}/comment/getall/${ideaId ? ideaId : "7"}`,
     getAxiosJwtRequestOption(token!)
   );
-  console.log(res.data);
+
   return res.data;
 };
 
@@ -83,8 +84,8 @@ export const updateCommentStatus = async(token: String | null, commentId: string
 }
 
 export const updateCommentNotificationStatus = async(token: String | null, userId: string|undefined, commentId: string|null, notification_dismissed: boolean) => {
-  console.log("Notification dismissed: ", notification_dismissed)
-  console.log("CommentId: ", commentId)
+
+  
   const res = await axios({
     method: "put",
     url: `${API_BASE_URL}/comment/updateNotificationState/${commentId}`,

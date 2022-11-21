@@ -44,7 +44,6 @@ export const ShowSubSegments: React.FC<ShowSubSegmentsProps> = ({
   token,
 }) => {
   // const {data} = useAllSubSegmentsWithId(String(segId!));
-  console.log(segId);
   const [hideControls, setHideControls] = useState("");
   const [showNewSubSeg, setShowNewSubSeg] = useState(false);
   const [error, setError] = useState<IFetchError | null>(null);

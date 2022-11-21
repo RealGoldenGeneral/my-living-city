@@ -9,7 +9,7 @@ import { IAdvertisement } from "../types/data/advertisement.type";
 export const postCreateAdvertisement = async (advertisementData:CreateAdvertisementInput, token: string | null) =>{
     const {adType,adTitle,adPosition, duration,externalLink, published,imagePath} = advertisementData;
 
-    //console.log(advertisementData);
+   
     //if adType is not predifined value or missing 
     if(!adType||!(adType==='BASIC'||adType==='EXTRA')){
         throw new Error("You must choose a advertisement type, or something is wrong when accepting adType data.")
@@ -86,10 +86,10 @@ export const getAdvertisementByOwnerId = async (ownerId: any) => {
 
 // PUT Update/Replace specific advertisement info
 export const updateAdvertisement = async (adsData: any, token:any, id: any) =>{
-    console.log(adsData);
+   
     // const{id}=adsData;
     const parsedPayload = {...adsData};
-    console.log(token);
+   
     const res = await axios({
         method: "put",
         url: `${API_BASE_URL}/advertisement/update/${id}`,
@@ -106,11 +106,9 @@ export const updateAdvertisement = async (adsData: any, token:any, id: any) =>{
 
 // DELETE specific advertisement info
 export const deleteAdvertisement = async (token: any, id: any) =>{
-    // console.log(adsData);
-    // const{id}=adsData;
+
     // const parsedPayload = {...adsData};
-    console.log(token);
-    console.log(id);
+   
     const res = await axios({
         method: "delete",
         url: `${API_BASE_URL}/advertisement/delete/${id}`,

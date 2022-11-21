@@ -32,8 +32,7 @@ export const getAllUsers = async (token: string | null) => {
   return res.data;
 }
 export const updateUser = async (userData: IUser, token: string | null, user: IUser | null) => {
-  console.log(userData);
-  console.log(token);
+
   let userType = user?.userType
   const res = await axios({
     method: "put",
@@ -190,7 +189,7 @@ if (userType === USER_TYPES.IN_PROGRESS || userType === USER_TYPES.BUSINESS || u
 } 
 
 Promise.all([request, request2, request3, request4, request5, request6, ...request7]).then((...responses)=>{
-  console.log(responses);
+  
 })
 const {token, user} = request.data;
 storeUserAndTokenInLocalStorage(token, user);

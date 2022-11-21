@@ -41,14 +41,14 @@ export const postAllIdeasWithBreakdown = async (take?: number) => {
     reqBody
   );
 
-  console.log("All ideas", res.data)
+
 
   return res.data
 };
 
 export const getUserIdeas = async (userId: string) => {
   const res = await axios.get<any>(`${API_BASE_URL}/idea/getall/${userId}`);
-  console.log(res.data)
+ 
   return res.data;
 };
 
@@ -56,7 +56,7 @@ export const getSingleIdea = async (ideaId: string) => {
   const res = await axios.get<IIdeaWithRelationship>(
     `${API_BASE_URL}/idea/get/${ideaId}`
   );
-  console.log(res.data);
+
   return res.data;
 };
 
@@ -170,8 +170,7 @@ export const postCreateIdea = async (
     formBody.append("state", state);
   }
 
-  console.log("formBody");
-  console.log(formBody);
+ 
 
   const res = await axios({
     method: "post",

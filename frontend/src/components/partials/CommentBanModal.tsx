@@ -66,7 +66,7 @@ export const CommentBanModal = ({
         onSubmit: submitHandler
     });
 
-    console.log(comment.id);
+
 
     return (
         <>

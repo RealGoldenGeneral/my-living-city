@@ -27,7 +27,7 @@ const ChampionSubmit = (props: ChampionSubmitProps) => {
   }, [isError])
 
   const submitHandler = () => {
-    console.log("Submit Champion request");
+ 
     submitChampionRequestMutation();
   }
 

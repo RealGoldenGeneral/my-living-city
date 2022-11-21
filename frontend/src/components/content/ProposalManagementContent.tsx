@@ -175,7 +175,6 @@ export const ProposalManagementContent: React.FC<ProposalManagementContentProps>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
                         <Button size="sm" onClick={()=>{
                             setHideControls('');
-                            console.log(req);
                             if(req.active === true && req.reviewed === true){
                                 updateFalseFlagIdea(parseInt(req.id.toString()), token!, true);
                             } else{

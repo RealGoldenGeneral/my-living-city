@@ -62,13 +62,10 @@ export const useCommentLikeMutation = (
           queryClient.setQueryData<IComment[]>(previousCommentsKey, editedComments);
         }
 
-        console.log("Edited Previous comments", previousComments);
         return previousComments
       },
       onError: (err, variables, context: any) => {
-        console.log('LIKE MUTATION')
-        console.error('error', err)
-        console.log('context', context)
+  
         if (context) {
           queryClient.setQueryData<IComment[]>(previousCommentsKey, context);
         }
@@ -151,9 +148,7 @@ export const useCommentDislikeMutation = (
         return previousComments;
       },
       onError: (err, variables, context: any) => {
-        console.log('DISLIKE MUTATION')
-        console.error('error', err)
-        console.log('context', context)
+
         if (context) {
           queryClient.setQueryData<IComment[]>(previousCommentsKey, context);
         }

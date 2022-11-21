@@ -270,7 +270,7 @@ export const unbanUsersWithExpiredBans = async (token: string | null) => {
         method: "get",
         url: `${API_BASE_URL}/banUser/getAllPassedDate`
     });
-    console.log("These are the user ids: ", userIdsResponse.data);
+  
     //unban all users that have ids returned by expireBans
     await axios({
         method: "patch",

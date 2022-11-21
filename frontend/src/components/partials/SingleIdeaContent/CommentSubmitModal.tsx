@@ -32,7 +32,7 @@ const CommentSubmitModal = ({
   const [commentText, setCommentText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const submitHandler = async (values: ICreateCommentInput) => {
-    //console.log(banned, 'banned');
+   
     const banDetails = await getUserBanWithToken(token);
     let isBanned = true;
     if (!banned || !banDetails || banDetails.banType === "WARNING") {

@@ -17,12 +17,11 @@ const EditAdsPage: React.FC<EditAdsPageProps> = ({}) => {
 
   const currentUrl = window.location.search;
   const search = new URLSearchParams(currentUrl);
-  //console.log(currentUrl);
+
   const id = search.get('id');
-  console.log(id);
 
   const { data, isLoading, error, isError } = useSingleAdvertisement(id);
-  // console.log(data);
+
   
   if (isLoading) {
     <div className="wrapper">

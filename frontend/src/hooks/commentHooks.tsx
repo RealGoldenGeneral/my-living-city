@@ -131,7 +131,8 @@ export const useCreateCommentMutation = (
             ]
           )
         }
-        console.log("Previous Comments", previousComments);
+    
+
         return previousComments
       },
       onError: (err, variables, context: any) => {
@@ -161,8 +162,7 @@ export const useCreateCommentMutation = (
   }, [ error ]);
 
   const submitComment = (newComment: ICreateCommentInput) => {
-    // console.log("submit");
-    // console.log(newComment);
+
     createCommentMutation.mutate(newComment);
   }
 

@@ -58,7 +58,7 @@ const SingleProposalPage = (props: any) => {
   // const subSegmentData = useSingleSubSegmentBySubSegmentId(data?.subSegmentId!);
 
   if (proposalIsError) {
-    console.log(proposalIsError);
+  
     return (
       <div className="wrapper">
         <p>
@@ -78,7 +78,7 @@ const SingleProposalPage = (props: any) => {
   }
 
   if (isError) {
-    console.log(isError);
+ 
     return (
       <div className="wrapper">
         <p>

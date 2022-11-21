@@ -20,7 +20,7 @@ interface RatingsSectionProps {
 
 const RatingsSection: React.FC<RatingsSectionProps> = ({ ideaId }) => {
   const { user } = useContext(UserProfileContext);
-  console.log("ideaId", ideaId);
+ 
   const {
     data: ratings,
     isLoading,

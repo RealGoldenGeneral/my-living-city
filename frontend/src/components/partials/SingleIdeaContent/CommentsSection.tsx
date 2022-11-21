@@ -14,7 +14,7 @@ import CommentSubmitModal from "./CommentSubmitModal";
 import { createCommentFlagUnderIdea, updateFalseFlagComment, getAllCommentFlags} from "src/lib/api/flagRoutes";
 const CommentsSection = (ideaIdProp: any) => {
   const { ideaId } = ideaIdProp;
-  console.log(ideaId);
+
 
   const { token, user, isUserAuthenticated } = useContext(UserProfileContext);
   const [showModal, setShowModal] = useState<boolean>(false);

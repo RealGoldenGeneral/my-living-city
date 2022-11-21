@@ -36,7 +36,7 @@ export const postCreateCollabotator = async (
     contactInfo: contactInfo.toString(),
   };
 
-  console.log("collaboratorData", collaboratorData);
+
 
   const res = await axios({
     method: "post",
@@ -81,7 +81,7 @@ export const postCreateVolunteer = async (
     contactInfo: contactInfo.toString(),
   };
 
-  console.log("volunteerData", volunteerData);
+ 
 
   const res = await axios({
     method: "post",
@@ -124,7 +124,7 @@ export const postCreateDonor = async (
     contactInfo: contactInfo.toString(),
   };
 
-  console.log("donorValues: ", donorData);
+ 
 
   const res = await axios({
     method: "post",

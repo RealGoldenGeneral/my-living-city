@@ -71,7 +71,6 @@ export const RegisterPageContent: React.FC<RegisterPageContentProps> = ({}) => {
         });
         
         data.push(region);
-        console.log(`Reach data: ${JSON.stringify(data)}`);
         setReachData(data);
     }
 
@@ -144,7 +143,7 @@ return (
                 onSubmit={async(values,helpers)=>{
                     // const {email, password, confirmPassword} = values;
                     try {
-                        console.log(`Sign up values: ${values}`);
+                        
                         setIsLoading(true);
                         await postRegisterUser(values, segmentRequests, avatar);
                         if (userType === USER_TYPES.RESIDENTIAL) {window.location.href = ROUTES.LANDING};

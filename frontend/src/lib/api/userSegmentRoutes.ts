@@ -34,13 +34,13 @@ export const postUserSegmentInfo = async (registerData: IRegisterInput, token:st
         headers: {"Access-Control-Allow-Origin": "*", "x-auth-token": token},
         withCredentials: true
     })
-    console.log(res.data);
+  
     return res.data;
 }
 export const getMyUserSegmentInfo = async (token: string | null, userId: string | null) => {
-    console.log(userId);
+  
     const req = await axios.get(`${API_BASE_URL}/userSegment/getUserSegment/${userId}`,getAxiosJwtRequestOption(token!));
-    console.log(req);
+    
     return req.data;
 }
 
@@ -58,7 +58,7 @@ export const getUserWorkSegmentInfo = async (token: string | null) => {
     const one = await axios.get(`${API_BASE_URL}/userSegment/workSegment`,getAxiosJwtRequestOption(token!));
     const two = await axios.get(`${API_BASE_URL}/userSegment/workSubSegment`,getAxiosJwtRequestOption(token!));
     const segData = axios.all([one, two]).then(axios.spread((...responses)=>{
-        console.log(responses);
+       
         const segment = responses[0].data;
         let subSegment = null;
         if(responses[0].status === 200){
@@ -75,7 +75,7 @@ export const getUserSchoolSegmentInfo = async (token: string | null) => {
     const one = await axios.get(`${API_BASE_URL}/userSegment/schoolSegment`,getAxiosJwtRequestOption(token!));
     const two = await axios.get(`${API_BASE_URL}/userSegment/schoolSubSegment`,getAxiosJwtRequestOption(token!));
     const segData = axios.all([one, two]).then(axios.spread((...responses)=>{
-        console.log(responses);
+ 
         const segment = responses[0].data;
         const subSegment = responses[1].data;
         return {segment: segment, subSegment: subSegment};
@@ -94,7 +94,7 @@ export const getUserSchoolSegmentInfo = async (token: string | null) => {
 //     // const res2 = getUserWorkSegmentInfo(token);
 //     // const res3 = getUserSchoolSegmentInfo(token);
 //     const segData = axios.all([one, two, three, four, five, six]).then(axios.spread((...responses)=>{
-//         console.log(responses);
+
 //         const output = {} as any;
 //         const homeSeg = responses[0].data;
 //         const homeSub = responses[1].data;

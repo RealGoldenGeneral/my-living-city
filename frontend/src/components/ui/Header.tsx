@@ -38,12 +38,12 @@ export default function Header() {
   // const { data: googleQuery, isLoading: googleQueryLoading } = useGoogleMapSearchLocation({ lat: data?.geo?.lat, lon: data?.geo?.lon }, (data != null && data.geo != null));
   const { data: segData, isLoading: segQueryLoading } = useAllUserSegmentsRefined(token, user?.id || null);
   const { data: banData, isLoading: banQueryLoading} = FindBanDetailsWithToken(token)
-  console.log(banData);
+ 
 
   // const segData = useSingleSegmentByName({
   //   segName:googleQuery.data.city, province:googleQuery.data.province, country:googleQuery.data.country
   // }, googleQuery.data != null)
-  // console.log(segData);
+
   const [userSegId, setUserSegId] = useState<any>(1);
   const [showWarningModal, setShowWarningModal] = useState<boolean>(!localStorage.getItem('warningModalState'));
 
@@ -58,7 +58,7 @@ export default function Header() {
   //       const segmentData = await findSegmentByName({
   //         segName: googleQuery.city, province: googleQuery.province, country: googleQuery.country,
   //       })
-  //       console.log(segmentData);
+
   //       //setUserSegId(segmentData.segId);
   //     }
   //   }
@@ -67,8 +67,7 @@ export default function Header() {
 
   useEffect(() => {
     if (segQueryLoading === false && segData != null && segData !== undefined) {
-      console.log("I set the segid!!!");
-      console.log(segData);
+  
       setUserSegId(segData[0].id);
     }
   }, [segData, segQueryLoading])

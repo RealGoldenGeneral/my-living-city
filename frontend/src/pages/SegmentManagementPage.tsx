@@ -10,9 +10,9 @@ export default function SegmentManagementPage() {
 
     const { data, isLoading } = useAllSegments();
     const { token,user } = useContext(UserProfileContext);
-    console.log(user);
+   
     const segReq = useAllSegmentRequests(token);
-    console.log(segReq.data);
+    
     if (isLoading || segReq.isLoading) {
       return (
         <div className="wrapper">

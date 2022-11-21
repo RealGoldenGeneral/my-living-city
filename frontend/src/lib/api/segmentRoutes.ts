@@ -26,8 +26,7 @@ export const getAllSubSegmentsWithId = async (segId: any) => {
 }
 export const createSegment = async (segData: any, token:any) =>{
   const parsedPayload = {...segData};
-  console.log(segData);
-  console.log(token);
+
   const res = await axios({
       method: "post",
       url: `${API_BASE_URL}/segment/create`,
@@ -42,8 +41,8 @@ export const createSegment = async (segData: any, token:any) =>{
 }
 export const createSubSegment = async (segData: any, token:any) =>{
   const parsedPayload = {...segData};
-  console.log(segData);
-  console.log(token);
+
+
   const res = await axios({
       method: "post",
       url: `${API_BASE_URL}/subSegment/create`,
@@ -57,10 +56,10 @@ export const createSubSegment = async (segData: any, token:any) =>{
   return res.data;
 }
 export const updateSegment = async (segData: any, token:any) =>{
-  console.log(segData);
+ 
   const{segId}=segData;
   const parsedPayload = {...segData};
-  console.log(token);
+
   const res = await axios({
       method: "post",
       url: `${API_BASE_URL}/segment/update/${segId}`,
@@ -84,8 +83,7 @@ export const updateSubSegment = async (segData: any, token:any) =>{
   }
   const{id}=segData;
   const parsedPayload = {...segData};
-  console.log(segData);
-  // console.log(token);
+ 
   const res = await axios({
       method: "put",
       url: `${API_BASE_URL}/subSegment/update/${id}`,

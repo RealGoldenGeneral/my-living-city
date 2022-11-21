@@ -39,7 +39,7 @@ export const searchForLocation = async (coords: any) =>{
             headers: {"Access-Control-Allow-Origin": "*"},
             withCredentials: false
         });
-        console.log(detailRes);
+       
         const {country,province,city, city2} = detailRes.data;
         if(country.length===0|| (city.length === 0 && city2.length === 0)||province.length===0){
             throw new Error("Location search doesn't give enough information")

@@ -15,7 +15,7 @@ const AllAdsPage: React.FC<AllAdsPageProps> = ({}) => {
   const { token } = useContext(UserProfileContext);
 
   const { data, isLoading} = useAdvertisements();
-  //console.log(data);
+
   
   if (isLoading) {
     <div className="wrapper">

@@ -41,7 +41,7 @@ const SingleIdeaPage: React.FC<SingleIdeaPageProps> = (props) => {
   // const subSegmentData = useSingleSubSegmentBySubSegmentId(data?.subSegmentId!);
 
   if (isError) {
-    console.log(error);
+   
     return (
       <div className="wrapper">
         <p>

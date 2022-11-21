@@ -180,7 +180,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
     quarantineIdea = ideaData.filter((idea, index) => (idea.state === 'IDEA' && idea.reviewed === false && idea.active === false) || (metThreshholdIdea(idea) && idea.state === 'IDEA' && idea.reviewed === false));
     allProposals = ideaData.filter((idea, index) => (idea.state === 'PROPOSAL'));
     quarantineProposal = ideaData.filter((idea, index) => (idea.state === 'PROPOSAL' && idea.reviewed === false && idea.active === false) || (metThreshholdIdea(idea) && idea.state === 'PROPOSAL' && idea.reviewed === false));
-    console.log("quarantined proposals: ", quarantineProposal)
+
     quarantineIdea = quarantineIdea.sort(sortQuarantinedIdeas)
     quarantineProposal = quarantineProposal.sort(sortQuarantinedIdeas)
     quarantineComment = commentData.filter((comment, index) => (comment.reviewed === false && comment.active === false) || (metThresholdComment(comment) && comment.reviewed === false));
@@ -193,19 +193,11 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
     agedQuarantinedIdeas = quarantineIdea.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000 * 60 * 60 * 24)) > parseInt(filteredDay)))
     agedQuarantinedProposals = quarantineProposal.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000 * 60 * 60 * 24)) > parseInt(filteredDayProposal)))
     agedQuarantinedComments = quarantineComment.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000 * 60 * 60 * 24)) > parseInt(filteredDayComment)))
-    // testing purposes; quarantined ideas sitting for 30 seconds
-    //agedQuarantinedIdeas = quarantineIdea.filter((idea) => ((Math.ceil((new Date()).getTime() - new Date((idea.quarantined_at!)).getTime()) / (1000)) > parseInt(filteredDay)))
  
-    // let currentTime = (new Date()).getTime()
-    // let quarantineDate = new Date((quarantineIdea[0].quarantined_at!)).getTime()
-    // let diff = Math.abs(quarantineDate - currentTime)
 
-    // let diffSeconds = Math.ceil(diff / (1000))
-   
 
     if (agedQuarantinedIdeas.length > 0) {
-      console.log("This is new Date((agedQuarantinedIdeas[0].quarantined_at!)).getTime()", new Date((agedQuarantinedIdeas[0].quarantined_at!)).getTime())
-      console.log("This is current time: ", new Date().getTime())
+      
     }
 
   }
@@ -215,23 +207,20 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
 
   // extract number from label
   const handleSelect = (eventKey: string) => {
-    console.log("This is eventKey: " + eventKey);
-    console.log("This is type of eventKey: ", typeof eventKey);
+  
     setfilteredIdeas(quarantineIdea)
     setfilteredDay(eventKey);
   }
 
   const handleSelectProposal = (eventKey: string) => {
-    console.log("This is eventKey: " + eventKey);
-    console.log("This is type of eventKey: ", typeof eventKey);
+   
     setfilteredProposals(quarantineProposal)
     setfilteredDayProposal(eventKey);
   }
 
   
   const handleSelectComment = (eventKey: string) => {
-    console.log("This is eventKey: " + eventKey);
-    console.log("This is type of eventKey: ", typeof eventKey);
+
     setfilteredComments(quarantineComment)
     setfilteredDayComment(eventKey);
   }

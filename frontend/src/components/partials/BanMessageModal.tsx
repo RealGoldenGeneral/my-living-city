@@ -8,7 +8,7 @@ export const BanMessageModal = () => {
     const { data, error, isLoading, isError } = FindBanDetailsWithStaleTime(user!.id);
 
     if (isError) {
-        console.log(error);
+       
         return (
             <div className="wrapper">
                 <p>

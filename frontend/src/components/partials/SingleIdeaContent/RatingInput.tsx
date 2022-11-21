@@ -28,7 +28,7 @@ const RatingInput = ({
     userSubmittedRating ?? 0
   );
 
-  console.log("ideaId", ideaId);
+  
 
   // =================== SUBMITTING RATING MUTATION ==========================
   const { submitRatingMutation, isLoading, isError, error, isSuccess } =
