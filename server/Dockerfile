@@ -13,11 +13,11 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Install dependencies
-RUN npm install -g --unsafe-perm=true --allow-root
-
 # Copies rest of source code into container
 COPY . ./
+
+# Give
+RUN chmod 777 /uploads/ideaImage
 
 # Environment Vars are now set in Dokku manually to prevent leaking secrets
 # COPY .env.production .env
