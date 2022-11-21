@@ -35,7 +35,7 @@ const CommentSubmitModal = ({
     //console.log(banned, 'banned');
     const banDetails = await getUserBanWithToken(token);
     let isBanned = true;
-    if (banned || !banDetails || banDetails.banType === "WARNING") {
+    if (!banned || !banDetails || banDetails.banType === "WARNING") {
       isBanned = false;
     }
     setError(null);
