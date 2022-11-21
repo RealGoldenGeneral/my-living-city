@@ -37,6 +37,12 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
     seg: [],
     status: [],
   });
+
+  let topIdeasPages
+  if(topIdeas) {
+    topIdeasPages = Math.ceil(topIdeas!.length / 3)
+  }
+  
   const [isCategoriesOpen, setCategoriesOpen] = useState<boolean>(true);
   const [isImpactOpen, setImpactOpen] = useState<boolean>(false);
   const [isSuperSegOpen, setSuperSegOpen] = useState<boolean>(false);
@@ -203,7 +209,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
       )}
 
       <Carousel controls={true} interval={null} slide={true} fade={false}>
-        {[...Array(4)].map((x, i) => (
+        {[...Array(topIdeasPages)].map((x, i) => (
           <Carousel.Item key={i}>
             {topIdeas && allProposals
               ? topIdeas.slice(i * 3, i * 3 + 3).map((idea) => {

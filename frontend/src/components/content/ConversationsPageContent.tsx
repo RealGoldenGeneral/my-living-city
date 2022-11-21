@@ -13,11 +13,14 @@ interface ConversationsPageContentProps {
 
 // sorting and parsing ideas here
 
+
 const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
   ideas,
   proposals,
 }) => {
 
+  let ideaTotalPages = Math.ceil(ideas!.length / 3)
+  let proposalTotalPages = Math.ceil(proposals!.length / 3)
   return (
     <Container className="conversations-page-content">
       <style>
@@ -48,11 +51,11 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       <h3 style={{ paddingTop: "1rem" }}>Proposals</h3>
       <hr />
       { proposals && proposals.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
-        {[...Array(4)].map((x, i) => (
-          <Carousel.Item key={i}>
+        {[...Array(proposalTotalPages)].map((x, i) => (
+          <Carousel.Item key={i} >
             {proposals
               ? proposals.slice(i * 3, i * 3 + 3).map((proposal) => {
-                return proposal ? 
+                return proposal && 
                 (
                   <Col
                     key={proposal.id}
@@ -66,7 +69,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
                       
                     />
                   </Col>
-                ) : null})
+                ) })
               : [...Array(12)].map((x, i) => (
                   <Col
                     key={i}
@@ -90,7 +93,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       <h3 style={{ paddingTop: "1rem" }}>Ideas</h3>
       <hr />
       {ideas && ideas.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
-        {[...Array(4)].map((x, i) => (
+        {[...Array(ideaTotalPages)].map((x, i) => (
           <Carousel.Item key={i} id='slick'>
             {ideas
               ? ideas.slice(i * 3, i * 3 + 3).map((idea) => {
