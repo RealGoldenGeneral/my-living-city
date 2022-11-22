@@ -20,7 +20,10 @@ const MyPosts: React.FC<MyPostsProps> = ({
     parsedPosts = parsedPosts.slice(0, numPosts);
   }
 
- 
+  let userIdeaPages
+  if (userIdeas) {
+    userIdeaPages = Math.ceil(userIdeas.length / 3)
+  }
   return (
     <Container
       className="container"
@@ -80,7 +83,7 @@ const MyPosts: React.FC<MyPostsProps> = ({
       <h2 className="pb-1 border-bottom display-6">My Posts</h2>
       
       {userIdeas && userIdeas.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
-        {[...Array(4)].map((x, i) => (
+        {[...Array(userIdeaPages)].map((x, i) => (
           <Carousel.Item key={i} id='slick'>
             {userIdeas
               ? userIdeas.slice(i * 3, i * 3 + 3).map((idea) => {
