@@ -100,7 +100,7 @@ const SubmitDirectProposalPageContent: React.FC<
     setFeedbackList(newFeedbackList);
 
     formik.values.feedback![index] = feedback;
-    
+
   }
 
   // rename to "addNewFeedback"
@@ -117,12 +117,12 @@ const SubmitDirectProposalPageContent: React.FC<
     const newFeedbackList = [...feedbackList, feedback];
     setFeedbackList(newFeedbackList);
 
-   
+
   };
 
   const removeFeedback = (index: number) => {
     //check if index less than size-1
-  
+
 
     setNumberOfFeedback(numberOfFeedback - 1)
     const newFeedbackList = [...feedbackList]
@@ -173,7 +173,7 @@ const SubmitDirectProposalPageContent: React.FC<
   const submitHandler = async (values: ICreateIdeaInput) => {
     try {
       // Set loading and error state
-      
+
       setError(null);
       setIsLoading(true);
       setTimeout(() => console.log("timeout"), 5000);
@@ -206,6 +206,7 @@ const SubmitDirectProposalPageContent: React.FC<
         subSegmentId: values.subSegmentId,
         superSegmentId: values.superSegmentId,
         state: "PROPOSAL",
+        imagePath: values.imagePath
 
       };
       const banDetails = await getUserBanWithToken(token);
@@ -225,13 +226,13 @@ const SubmitDirectProposalPageContent: React.FC<
         feedback: values.feedback,
         feedbackRatingType: values.feedbackRatingType
       };
-      
+
       const proposal = await postCreateProposal(
         proposalValues,
         user!.banned,
         token
       );
- 
+
       setError(null);
       history.push("/proposals/" + proposal.id);
       formik.resetForm();
@@ -317,12 +318,12 @@ const SubmitDirectProposalPageContent: React.FC<
       .then((response) => response.json())
       .then((data) => {
         let address = data.results[0].formatted_address;
-       
+
         formik.setFieldValue("location", address);
         setIsLoading(false);
       })
       .catch((error) => {
-        
+
         setIsLoading(false);
       });
   }
@@ -446,7 +447,7 @@ const SubmitDirectProposalPageContent: React.FC<
                 withPreview={true}
                 onChange={(picture) => {
                   formik.setFieldValue("imagePath", picture);
-                 
+
                 }}
                 imgExtension={[".jpg", ".jpeg", ".png", ".webp"]}
                 buttonText="Select Proposal Image"
@@ -767,7 +768,7 @@ const SubmitDirectProposalPageContent: React.FC<
                                 {
                                   formik.values.feedbackRatingType![index] = "YESNO";
                                   updateFeedbackType("YESNO", index);
-                                  
+
                                 }
                               }
                           />
@@ -782,7 +783,7 @@ const SubmitDirectProposalPageContent: React.FC<
                                 {
                                   formik.values.feedbackRatingType![index] = "RATING";
                                   updateFeedbackType("RATING", index);
-                                  
+
                                 }
                               }
                           />
