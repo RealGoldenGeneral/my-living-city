@@ -219,6 +219,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
   const [modalShowVolunteer, setModalShowVolunteer] = useState(false);
   const [modalShowDonor, setModalShowDonor] = useState(false);
 
+  const [showFlagButton, setShowFlagButton] = useState(true);
   const [show, setShow] = useState(false);
   const [showOther, setShowOther] = useState(false);
   const [flagReason, setFlagReason] = useState("");
@@ -227,6 +228,8 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
     setOtherFlagReason("OTHER: " + val.target.value)
   
   }
+
+  const handleHideFlagButton = () => setShowFlagButton(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -371,8 +374,10 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleClose();
+    handleHideFlagButton();
     await flagFunc(ideaId, token, userId, ideaActive, flagReason, quarantined_at);
   }
+
   if (!active) {
     return (
       <div>Proposal Is Currently Inactive</div>
@@ -381,6 +386,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   const submitOtherFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleCloseOther();
+    handleHideFlagButton();
     await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
     
   }
@@ -424,7 +430,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
               <div className="d-flex justify-content-between">
                 <h1 className="h1">{capitalizeString(title)}</h1>
                 <div className="p-2 justify-content-end">
-                  <ButtonGroup className="mr-2">
+                {showFlagButton ? (<ButtonGroup className="mr-2">
                   {!reviewed ? (
                         <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
                         <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
@@ -436,6 +442,7 @@ const SingleProposalPageContent: React.FC<SingleIdeaPageContentProps> = ({
                       </DropdownButton>
                       ) : null}
                   </ButtonGroup>
+                  ) : null}
                   <ButtonGroup className="mr-2">
                     {user && token ? <Button
                       // style={{ height: "3rem"}}

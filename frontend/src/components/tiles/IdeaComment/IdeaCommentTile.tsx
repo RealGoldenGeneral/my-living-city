@@ -19,6 +19,7 @@ interface IdeaCommentTileProps {
 
 const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
 
+  const [showFlagButton, setShowFlagButton] = useState(true);
   const [show, setShow] = useState(false);
   const [showOther, setShowOther] = useState(false);
   const [flagReason, setFlagReason] = useState("");
@@ -27,6 +28,8 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
     setOtherFlagReason("OTHER: " + val.target.value)
 
   }
+
+  const handleHideFlagButton = () => setShowFlagButton(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -118,13 +121,14 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
 
   const submitFlagReasonHandler = async (commentId: number, token: string, userId: string, quarantined_at: Date) => {
     handleClose();
-    
+    handleHideFlagButton();
     await createCommentFlagAndCheckThreshold(id, token!, user!.id, flagReason, new Date())
   }
 
   const submitOtherFlagReasonHandler = async (commentId: number, token: string, userId: string, quarantined_at: Date) => {
     handleCloseOther();
     // await flagFunc(ideaId, token, userId, ideaActive, otherFlagReason, quarantined_at);
+    handleHideFlagButton();
     await createCommentFlagAndCheckThreshold(id, token!, user!.id, otherFlagReason, new Date())
   
   }
@@ -164,14 +168,14 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
               ) : null} */}
               {!reviewed ? (
               <ButtonGroup className="mr-2">
-                    <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
+                    {showFlagButton ? (<DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
                     <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
                     <Dropdown.Item eventKey= "Submission in Wrong Community" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Submission in Wrong Community</Dropdown.Item>
                     <Dropdown.Item eventKey= "Spam/Unsolicited Advertisement" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Spam/Unsolicited Advertisement</Dropdown.Item>
                     <Dropdown.Item eventKey= "Unrelated to Discussion (Off Topic)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Unrelated to Discussion (Off Topic)</Dropdown.Item>
                     <Dropdown.Item eventKey= "Incomplete Submission (Requires Additional Details)" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Incomplete Submission (Requires Additional Details)</Dropdown.Item>
                     <Dropdown.Item eventKey= "Other" onSelect={(eventKey) => selectOtherReasonHandler(eventKey!)}>Other</Dropdown.Item>
-                  </DropdownButton>
+                  </DropdownButton>) : null}
               </ButtonGroup>
               ) : null}
             </div>

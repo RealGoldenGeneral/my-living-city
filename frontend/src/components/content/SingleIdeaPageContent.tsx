@@ -182,7 +182,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
 
   const submitFlagReasonHandler = async (ideaId: number, token: string, userId: string, ideaActive: boolean, quarantined_at: Date) => {
     handleClose();
-    // handleHideFlagButton();
+    handleHideFlagButton();
     await flagFunc(ideaId, token, userId, ideaActive, flagReason, quarantined_at);
   }
 
@@ -209,7 +209,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                 <h1 className="h1 p-2 flex-grow-1">{capitalizeString(title)}</h1>
                 <div className="p-2 justify-content-end" >
                   {/* <div id="flagButtonDiv" style={{display: showFlagButton ? 'block' : 'none'}}> */}
-                  <ButtonGroup className="mr-2" style={{display: showFlagButton ? '' : 'none'}}>
+                  {showFlagButton ? (<ButtonGroup className="mr-2">
                   {!reviewed ? (
                     <DropdownButton id="dropdown-basic-button d-flex" style={{ fontSize: "16px", font: "16px sans-serif" }} title="Flag">
                       <Dropdown.Item eventKey= "Abusive or Inappropriate Language" onSelect={(eventKey) => selectReasonHandler(eventKey!)}>Abusive or Inappropriate Language</Dropdown.Item>
@@ -221,6 +221,7 @@ const SingleIdeaPageContent: React.FC<SingleIdeaPageContentProps> = ({
                     </DropdownButton>
                     ) : null}
                   </ButtonGroup>
+                  ) : null}
                   {/* </div> */}
                   
                     <ButtonGroup className="mr-2">
