@@ -15,7 +15,7 @@ import { values } from 'lodash';
 import '../../scss/content/_createAds.scss'
 import { ISegment } from 'src/lib/types/data/segment.type';
 
-
+//TODO: need to include segment property in formik (may not have server route yet) 2022/11/24
 
 interface SubmitAdvertisementPageContentProps {
     segmentOptions: ISegment[] | undefined;
