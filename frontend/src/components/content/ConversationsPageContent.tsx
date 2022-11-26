@@ -97,7 +97,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
           <Carousel.Item key={i} id='slick'>
             {ideas
               ? ideas.slice(i * 3, i * 3 + 3).map((idea) => {
-                return idea ? 
+                return idea && idea.active ? 
                 (
                   <Col
                     key={idea.id}
