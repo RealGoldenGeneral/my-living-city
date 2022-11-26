@@ -19,8 +19,8 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
   proposals,
 }) => {
 
-  let ideaTotalPages = Math.ceil(ideas!.length / 3)
-  let proposalTotalPages = Math.ceil(proposals!.length / 3)
+  let ideaTotalPages = Math.ceil(ideas!.length / 6)
+  let proposalTotalPages = Math.ceil(proposals!.length / 6)
   return (
     <Container className="conversations-page-content">
       <style>
@@ -54,7 +54,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
         {[...Array(proposalTotalPages)].map((x, i) => (
           <Carousel.Item key={i} >
             {proposals
-              ? proposals.slice(i * 3, i * 3 + 3).map((proposal) => {
+              ? proposals.slice(i * 6, i * 6 + 6).map((proposal) => {
                 return proposal && 
                 (
                   <Col
@@ -96,7 +96,7 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
         {[...Array(ideaTotalPages)].map((x, i) => (
           <Carousel.Item key={i} id='slick'>
             {ideas
-              ? ideas.slice(i * 3, i * 3 + 3).map((idea) => {
+              ? ideas.slice(i * 6, i * 6 + 6).map((idea) => {
                 return idea && idea.active ? 
                 (
                   <Col
