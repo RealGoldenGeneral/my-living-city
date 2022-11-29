@@ -19,6 +19,8 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
   proposals,
 }) => {
 
+  let filteredIdeasWithNoProposals = ideas?.filter((idea) => idea.state !== 'PROPOSAL');
+
   let ideaTotalPages = Math.ceil(ideas!.length / 6)
   let proposalTotalPages = Math.ceil(proposals!.length / 6)
   return (
@@ -53,18 +55,18 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       { proposals && proposals.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
         {[...Array(proposalTotalPages)].map((x, i) => (
           <Carousel.Item key={i} >
-            {proposals
-              ? proposals.slice(i * 6, i * 6 + 6).map((proposal) => {
-                return proposal && 
+            {ideas && proposals
+              ? ideas.slice(i * 6, i * 6 + 6).map((idea) => {
+                return idea && 
                 (
                   <Col
-                    key={proposal.id}
+                    key={idea.id}
                     md={6}
                     lg={4}
                     className="pt-3 align-items-stretch"
                   >
                     <ProposalTile
-                      proposalData={proposal}
+                      proposalData={{id: proposals!.filter(obj => { if (obj.ideaId == idea.id) return obj})[0]?.id, ideaId: idea.id, idea}}
                       showFooter={true}
                       
                     />
@@ -92,11 +94,11 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
 
       <h3 style={{ paddingTop: "1rem" }}>Ideas</h3>
       <hr />
-      {ideas && ideas.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
+      {filteredIdeasWithNoProposals && filteredIdeasWithNoProposals.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
         {[...Array(ideaTotalPages)].map((x, i) => (
           <Carousel.Item key={i} id='slick'>
-            {ideas
-              ? ideas.slice(i * 6, i * 6 + 6).map((idea) => {
+            {filteredIdeasWithNoProposals
+              ? filteredIdeasWithNoProposals.slice(i * 6, i * 6 + 6).map((idea) => {
                 return idea && idea.active ? 
                 (
                   <Col

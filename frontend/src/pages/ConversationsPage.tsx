@@ -57,7 +57,7 @@ export default function ConversationsPage() {
  
     <>
       <div className="wrapper">
-        { <ConversationsPageContent ideas={iData?.filter((idea) => idea.state !== 'PROPOSAL')} proposals={pData} />}
+        { <ConversationsPageContent ideas={iData} proposals={pData} />}
       </div>
     </>
   );
