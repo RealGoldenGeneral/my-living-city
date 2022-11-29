@@ -97,7 +97,7 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
                         <td className="col-md">
                             <div className="d-flex align align-items-center justify-content-between">
                                 <span>
-                                    {"Your post named "} <b>{userIdea?.title}</b> {" has been removed from the conversations page due to violation of content"}
+                                    {"Your post named "} <b>{userIdea?.title}</b> {" has been quanrantined pending moderator review."}
                                 </span>
                                 <div className={"float-right"}>
                                     <Button onClick={async () => await dismissIdeaNotification(userIdea!.id, token!, user!.id, true)}>Dismiss</Button>
