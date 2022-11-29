@@ -185,6 +185,7 @@ const NewAndTrendingSection: React.FC<NewAndTrendingProps> = ({
         }
         .carousel-item.active, .carousel-item-next, .carousel-item-prev {
           display: flex;
+          flex-wrap: wrap;
         }
         .container {
           padding-left: 0;
