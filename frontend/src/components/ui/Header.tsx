@@ -24,9 +24,9 @@ import {
 } from "src/hooks/userSegmentHooks";
 import { getUserSubscriptionStatus } from 'src/lib/api/userRoutes'
 import LoadingSpinner from "./LoadingSpinner";
-import { BanMessageModal } from "../partials/BanMessageModal";
+import { BanMessageModal } from "../modal/BanMessageModal";
 import { FindBanDetailsWithToken } from "src/hooks/banHooks";
-import { WarningMessageModal } from "../partials/WarningMessageModal";
+import { WarningMessageModal } from "../modal/WarningMessageModal";
 
 export default function Header() {
   const [stripeStatus, setStripeStatus] = useState("");

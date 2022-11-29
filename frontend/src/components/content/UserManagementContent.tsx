@@ -9,9 +9,9 @@ import { IProposalWithAggregations } from 'src/lib/types/data/proposal.type';
 import { IUser } from 'src/lib/types/data/user.type';
 import UserFlagsModal from '../partials/SingleIdeaContent/UserFlagsModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
-import { UserManagementBanModal } from '../partials/UserManagementBanModal';
-import { UserManagementUnbanModal } from '../partials/UserManagementUnbanModal';
-import { UserManagementModifyWarningModal } from '../partials/UserManagementModifyWarningModal';
+import { UserManagementBanModal } from '../modal/UserManagementBanModal';
+import { UserManagementUnbanModal } from '../modal/UserManagementUnbanModal';
+import { UserManagementModifyWarningModal } from '../modal/UserManagementModifyWarningModal';
 import { IBanUser } from 'src/lib/types/data/banUser.type';
 
 

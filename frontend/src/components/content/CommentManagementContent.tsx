@@ -8,8 +8,8 @@ import { IComment } from 'src/lib/types/data/comment.type';
 import { ICommentFlag } from 'src/lib/types/data/flag.type';
 import { IIdeaWithAggregations } from 'src/lib/types/data/idea.type';
 import { IUser } from 'src/lib/types/data/user.type';
-import { CommentBanModal } from '../partials/CommentBanModal';
-import { CommentUnbanModal } from '../partials/CommentUnbanModal';
+import { CommentBanModal } from '../modal/CommentBanModal';
+import { CommentUnbanModal } from '../modal/CommentUnbanModal';
 import { UserSegmentInfoCard } from '../partials/UserSegmentInfoCard';
 
 // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO // THIS IS STILL TO DO 

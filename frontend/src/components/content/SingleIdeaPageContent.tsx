@@ -39,7 +39,6 @@ import Modal from 'react-bootstrap/Modal';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 
-import ModalExample from "src/components/modal/Modal";
 import Form from 'react-bootstrap/Form';
 import { Hidden } from "@mui/material";
 
