@@ -19,9 +19,10 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
   proposals,
 }) => {
 
-  let filteredIdeasWithNoProposals = ideas?.filter((idea) => idea.state !== 'PROPOSAL');
+  let filteredIdeasWithNoProposals = ideas!.filter((idea) => idea.state !== 'PROPOSAL');
+  let filteredIdeasOfProposals = ideas?.filter((idea) => idea.state === 'PROPOSAL');
 
-  let ideaTotalPages = Math.ceil(ideas!.length / 6)
+  let ideaTotalPages = Math.ceil(filteredIdeasWithNoProposals!.length / 6)
   let proposalTotalPages = Math.ceil(proposals!.length / 6)
   return (
     <Container className="conversations-page-content">
@@ -55,8 +56,8 @@ const ConversationsPageContent: React.FC<ConversationsPageContentProps> = ({
       { proposals && proposals.length > 0 ? (<Carousel controls={true} interval={null} slide={true} fade={false}>
         {[...Array(proposalTotalPages)].map((x, i) => (
           <Carousel.Item key={i} >
-            {ideas && proposals
-              ? ideas.slice(i * 6, i * 6 + 6).map((idea) => {
+            {filteredIdeasOfProposals && proposals
+              ? filteredIdeasOfProposals.slice(i * 6, i * 6 + 6).map((idea) => {
                 return idea && 
                 (
                   <Col
