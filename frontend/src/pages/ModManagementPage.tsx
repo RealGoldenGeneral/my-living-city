@@ -225,6 +225,17 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
     setfilteredDayComment(eventKey);
   }
 
+  const changeThreshold = async () => {
+    try {
+      await updateThreshhold(newThreshold, token!)
+    } catch (err) {
+      console.log(err);
+    } finally {
+      window.location.reload();
+    }
+
+  }
+
   if (pageState === "quarantine") {
     return (
       <div>
@@ -245,7 +256,7 @@ const ModManagementPage: React.FC<ModManagementProps> = ({ }) => {
           <div style={{ float: 'right', marginRight: '17.7%' }}>
             <p style={{ textAlign: 'right', fontSize: 18, fontWeight: 'bold' }} className='ml-10 mr-2 display-6 mb-2'>Current Threshhold: {threshhold.toString()}</p>
             <input type="number" onChange={(val) => changeThresholdData(val)} style={{ textAlign: 'left', right: "0" }} className='ml-10 mr-2 display-6' />
-            <Button onClick={() => updateThreshhold(newThreshold, token!)}>Update</Button>
+            <Button onClick={changeThreshold}>Update</Button>
           </div>
           <br></br>
           <UserManagementContent users={quarantineUser!} token={token} user={user} flags={flagData} commentFlags={commentFlagData} ideas={ideaData} proposals={proposalData} comments={commentData} bans={banData}/>
