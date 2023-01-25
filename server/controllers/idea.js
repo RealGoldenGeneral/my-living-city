@@ -141,7 +141,7 @@ ideaRouter.post(
             error += 'Sub segment id must be valid.';
             errorMessage += 'Creating an idea must explicitly be supplied with a valid "subSegmentId" field.';
             errorStack += '"subSegmentId" must be provided with a valid id found in the database.';
-          } else if (subSegmentId == homeSubSegmentId || subSegmentId == workSubSegmentId || subSegmentId == schoolSegmentId) {
+          } else if (subSegmentId == homeSubSegmentId || subSegmentId == workSubSegmentId || subSegmentId == schoolSubSegmentId) {
             segmentId = theSubSegment.segId;
 
             const theSegment = await prisma.segments.findUnique({ where: { segId: segmentId } });
