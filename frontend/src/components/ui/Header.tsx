@@ -85,14 +85,14 @@ export default function Header() {
     }
   }, [user])
 
-  // Here Items are not coming Inline
-  //   if (segQueryLoading) {
-  //     return (
-  //       <div className="wrapper">
-  //         <LoadingSpinner />
-  //       </div>
-  //     );
-  // }
+  // TODO Redo how information is gathered for Community Dashboard, and remove reliance on params in url.
+    if (segQueryLoading) {
+      return (
+        <div className="wrapper">
+          <LoadingSpinner />
+        </div>
+      );
+  }
 
   return (
     <div className="outer-header">
