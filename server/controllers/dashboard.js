@@ -1,13 +1,20 @@
-
+const passport = require('passport');
 const express = require('express');
 const prisma = require('../lib/prismaClient');
 const dashboardRouter = express.Router();
 
 dashboardRouter.get(
-  '/test',
+  '/',
+  passport.authenticate('jwt',{session:true}),
   async (req, res, next) => {
     try {
-      const test = await prisma.quarantine_Notifications.findMany();
+      const { id } = req.user;
+      const test = await prisma.quarantine_Notifications.findMany({
+        where: {
+          user_id: id
+        }
+      });
+      console.log(test);
       res.send(test);
     }
     catch (error) {

@@ -715,6 +715,7 @@ model Quarantine_Notifications {
   id        Int      @id @default(autoincrement())
   userId    String
   ideaId    Int
+  seen      Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
   user      User     @relation(fields: [userId], references: [id])
   idea      Idea     @relation(fields: [ideaId], references: [id])
