@@ -5,13 +5,14 @@ const dashboardRouter = express.Router();
 
 dashboardRouter.get(
   '/',
-  passport.authenticate('jwt',{session:true}),
+  // passport.authenticate('jwt',{session:true}),
   async (req, res, next) => {
     try {
-      const { id } = req.user;
+      // const { id } = req.user;
       const test = await prisma.quarantine_Notifications.findMany({
         where: {
-          user_id: id
+          // user_id: id
+          seen: false
         }
       });
       console.log(test);
