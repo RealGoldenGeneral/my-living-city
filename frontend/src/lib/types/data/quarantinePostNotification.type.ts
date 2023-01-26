@@ -4,4 +4,5 @@ export interface IQuarantineNotification {
   ideaId: number;
   createdAt: Date;
   seen: boolean;
+  ideaTitle: string;
 }

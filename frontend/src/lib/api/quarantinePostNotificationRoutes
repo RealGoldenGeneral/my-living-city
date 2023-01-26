@@ -1,0 +1,12 @@
+import axios from 'axios';
+import { API_BASE_URL } from '../constants';
+
+export const dismissQuarantineNotification = async (
+  notificationId: string,
+  userId: string
+) => {
+  const response = await axios.put(
+    `${API_BASE_URL}/quarantine/notifications/${notificationId}/dismiss/${userId}`
+  );
+  return response.data;
+}
