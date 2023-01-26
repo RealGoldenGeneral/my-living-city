@@ -214,6 +214,38 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
                     }
                 </tr>
             )
+        case "userQuarantineNotification":
+            return (
+                <tr>
+                    {!isDismissed ? (
+                        <td className="col-md">
+                            <div className="d-flex align align-items-center justify-content-between">
+                                <span>
+                                    {"Your post "}<b>{userQuarantineNotification?.id}</b> {" has been reviewed and released from quarantine by a moderator"}
+                                </span>
+                                <span>
+                                    {"Your comment "}<b>{userQuarantineNotification?.createdAt}</b> {" has been reviewed and released from quarantine by a moderator"}
+                                </span>
+                                <span>
+                                    {"Your comment "}<b>{userQuarantineNotification?.ideaId}</b> {" has been reviewed and released from quarantine by a moderator"}
+                                </span>
+                                <span>
+                                    {"Your comment "}<b>{userQuarantineNotification?.userId}</b> {" has been reviewed and released from quarantine by a moderator"}
+                                </span>
+                                <span>
+                                    {"Your comment "}<b>{userQuarantineNotification?.seen ? "true" : "false"}</b> {" has been reviewed and released from quarantine by a moderator"}
+                                </span>
+                                <div className="float-right">
+                                    <Button onClick={async () => await dismissQuarantineNotification()}>Dismiss</Button>
+                                </div>
+                            </div>
+                        </td>
+
+                    ) : null}
+                </tr>
+            )
+
+
         
         default:
             return (
