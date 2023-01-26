@@ -4,7 +4,7 @@ const prisma = require('../lib/prismaClient');
 const dashboardRouter = express.Router();
 
 dashboardRouter.get(
-  '/',
+  '/getAllNotifications',
   // passport.authenticate('jwt',{session:true}),
   async (req, res, next) => {
     try {
