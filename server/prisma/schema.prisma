@@ -425,6 +425,7 @@ model Idea {
 
   @@map(name: "idea")
   Quarantine_Notifications Quarantine_Notifications[]
+  @@unique([id, title])
 }
 
 model IdeaFlag {
@@ -715,10 +716,11 @@ model Quarantine_Notifications {
   id        Int      @id @default(autoincrement())
   userId    String
   ideaId    Int
+  ideaTitle String
   seen      Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
   user      User     @relation(fields: [userId], references: [id])
-  idea      Idea     @relation(fields: [ideaId], references: [id])
+  idea      Idea     @relation(fields: [ideaId, ideaTitle], references: [id, title])
 
   @@unique([userId, ideaId], name: "user_idea_quarantine_unique")
   @@map(name: "quarantine_notifications")
