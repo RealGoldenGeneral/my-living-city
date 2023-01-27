@@ -739,6 +739,25 @@ ideaRouter.put(
         });
       }
 
+      console.log("reviewed: " + reviewed);
+      console.log("active: " + active);
+      console.log("parsedIdeaId: " + parsedIdeaId);
+      console.log("foundIdea.authorId: " + foundIdea.authorId);
+      console.log("foundIdea.title: " + foundIdea.title);
+      try {
+        if (reviewed == true && active == true) {
+          await prisma.quarantine_Notifications.create({
+            data: {
+              ideaId: parsedIdeaId * 1,
+              userId: foundIdea.authorId,
+              ideaTitle: foundIdea.title,
+            }
+          });
+        }
+      } catch (error) {
+        console.log("Error while creating quarantine notification: " + error);
+      }
+
       const updateIdea = await prisma.idea.update({
         where: {
           id: parsedIdeaId,
@@ -755,6 +774,8 @@ ideaRouter.put(
         message: "Idea succesfully updated",
         idea: updateIdea,
       });
+
+
 
     } catch (error) {
       res.status(400).json({

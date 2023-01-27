@@ -722,6 +722,6 @@ model Quarantine_Notifications {
   user      User     @relation(fields: [userId], references: [id])
   idea      Idea     @relation(fields: [ideaId, ideaTitle], references: [id, title])
 
-  @@unique([userId, ideaId], name: "user_idea_quarantine_unique")
+  @@unique([id, userId, ideaId], name: "user_idea_quarantine_unique")
   @@map(name: "quarantine_notifications")
 }
