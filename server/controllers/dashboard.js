@@ -30,4 +30,33 @@ dashboardRouter.get(
   }
 )
 
+dashboardRouter.put(
+  '/dismiss/:notificationId',
+  async (req, res, next) => {
+    try {
+      const { notificationId } = req.params;
+      const test = await prisma.quarantine_Notifications.update({
+        where: {
+          id: notificationId * 1
+        },
+        data: {
+          seen: true
+        }
+      });
+      console.log(test);
+      res.send(test);
+    }
+    catch (error) {
+      res.status(400).json({
+        message: error.message,
+        details: {
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      });
+    }
+  }
+)
+
+
 module.exports = dashboardRouter;

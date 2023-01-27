@@ -10,6 +10,7 @@ import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 import { IBanPost } from "src/lib/types/data/banPost.type";
 import { IBanComment } from "src/lib/types/data/banComment.type";
 import { IQuarantineNotification } from "src/lib/types/data/quarantinePostNotification.type";
+import { dismissQuarantineNotification } from "src/lib/api/quarantinePostNotificationRoutes";
 
 interface NotificationProps {
     userIdea?: IIdea | undefined;
@@ -93,10 +94,10 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
         setIsDismissed(true);
     }
 
-    const dismissQuarantineNotification = async () => {
+    const dismissPostQuarantineNotification = async () => {
         setNotificationType('userQuarantineNotification')
         userQuarantineNotification!.seen = true;
-        await updateIdeaNotificationStatus(token!, user!.id, userQuarantineNotification!.id.toString(), true);
+        await dismissQuarantineNotification(userQuarantineNotification!.id, token);
         setIsDismissed(true);
     }
 
@@ -225,7 +226,7 @@ const Notification: React.FC<NotificationProps> = ({ userIdea, userBanInfo, user
                                     <br />{"Day unquarantined: "}<b>{(userQuarantineNotification?.createdAt)?.toString().replace('Z','').replace('T','').substring(0, 10)}</b>
                                 </span>
                                 <div className="float-right">
-                                    <Button onClick={async () => await dismissQuarantineNotification()}>Dismiss</Button>
+                                    <Button onClick={async () => await dismissPostQuarantineNotification()}>Dismiss</Button>
                                 </div>
                             </div>
                         </td>

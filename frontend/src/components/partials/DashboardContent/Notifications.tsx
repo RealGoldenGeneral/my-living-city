@@ -15,6 +15,7 @@ import {
 import { ICommentAggregations } from "src/lib/types/data/comment.type";
 import { updateCommentNotificationStatus } from "src/lib/api/commentRoutes";
 import { IQuarantineNotification } from "src/lib/types/data/quarantinePostNotification.type";
+import { dismissQuarantineNotification } from "src/lib/api/quarantinePostNotificationRoutes";
 
 interface NotificationPageContentProps {
   userIdeas: IIdeaWithAggregations[] | undefined;
@@ -95,10 +96,7 @@ const Notifications: React.FC<NotificationPageContentProps> = ({
       userQuarantineNotifications?.map(async (quarantineNotification) => {
         if (!quarantineNotification.seen) {
           quarantineNotification!.seen = true;
-          await dismissBanCommentNotification(
-            quarantineNotification!.id,
-            token
-          );
+          await dismissQuarantineNotification(quarantineNotification!.id, token);
         }
       });
       setIsDismissed(true);
