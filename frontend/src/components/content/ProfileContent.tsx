@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Col, Container, Row, Card, Image, ListGroup, ListGroupItem, Button, Form, Table, NavDropdown, Dropdown} from 'react-bootstrap';
 import { postUserSegmentRequest } from 'src/lib/api/userSegmentRequestRoutes';
-import { API_BASE_URL } from 'src/lib/constants';
+import { API_BASE_URL, USER_TYPES } from 'src/lib/constants';
 import { IUser } from '../../lib/types/data/user.type';
 import { capitalizeString } from '../../lib/utilityFunctions';
 import { RequestSegmentModal } from '../partials/RequestSegmentModal';
@@ -95,9 +95,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
           </Row>
         </Card>
       </Row>
+      {(user.userType == USER_TYPES.BUSINESS || user.userType == USER_TYPES.COMMUNITY) ? (
       <Row className='mb-4 mt-4 justify-content-center'>
         <h2 className="pb-2 pt-2 display-6">Public Profile</h2>
       </Row>
+      ) : null}
+      {(user.userType == USER_TYPES.BUSINESS || user.userType == USER_TYPES.COMMUNITY) ? (
       <Row>
         <Card style={{ width: '80rem'}}>
           <Card.Body className="my-5">
@@ -237,6 +240,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({ user, token }) => {
           </Card.Body>
         </Card>
       </Row>
+      ) : null}
     </Container>
   );
 }
