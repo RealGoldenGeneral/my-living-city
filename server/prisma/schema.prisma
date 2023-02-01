@@ -112,17 +112,16 @@ model UserAddress {
 }
 
 model UserBan {
-  id                    Int           @id @default(autoincrement())
-  userId                String        @map(name: "user_id")
-  banType               BanUserType   @default(WARNING) @map(name: "ban_type")
-  banReason             String        @map(name: "ban_reason")
-  banMessage            String?       @map(name: "ban_message")
-  bannedBy              String        @map(name: "banned_by")
-  createdAt             DateTime      @default(now()) @map(name: "created_at")
-  banUntil              DateTime      @default(now()) @map(name: "banned_until")
-  notificationDismissed Boolean       @default(false) @map(name: "notification_dismissed")
-  user                  User          @relation(fields: [userId], references: [id])
-  Ban_History           Ban_History[]
+  id                    Int         @id @default(autoincrement())
+  userId                String      @map(name: "user_id")
+  banType               BanUserType @default(WARNING) @map(name: "ban_type")
+  banReason             String      @map(name: "ban_reason")
+  banMessage            String?     @map(name: "ban_message")
+  bannedBy              String      @map(name: "banned_by")
+  createdAt             DateTime    @default(now()) @map(name: "created_at")
+  banUntil              DateTime    @default(now()) @map(name: "banned_until")
+  notificationDismissed Boolean     @default(false) @map(name: "notification_dismissed")
+  user                  User        @relation(fields: [userId], references: [id])
 
   @@map(name: "ban_user")
 }
@@ -202,6 +201,7 @@ model User {
   segmentRequest           segmentRequest[]
   userSegments             UserSegments?
   Quarantine_Notifications Quarantine_Notifications[]
+  Ban_History              Ban_History[]
 
   @@map(name: "user")
 }
@@ -735,18 +735,19 @@ enum BanType {
 }
 
 model Ban_History {
-  id        Int      @id @default(autoincrement())
-  banId     Int
-  userId    String
-  type      BanType
-  reason    String
-  ideaId    Int?
-  commentId Int?
-  modId     String
-  message   String
-  createdAt DateTime @default(now()) @map("created_at")
+  id              Int       @id @default(autoincrement())
+  userId          String
+  type            BanType
+  reason          String
+  userBanType     String?
+  userBannedUntil DateTime?
+  ideaId          Int?
+  commentId       Int?
+  modId           String
+  message         String
+  createdAt       DateTime  @default(now()) @map("created_at")
 
-  user UserBan? @relation(fields: [banId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@map(name: "ban_history")
 }

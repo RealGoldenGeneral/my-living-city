@@ -172,6 +172,7 @@ export const UserManagementContent: React.FC<UserManagementContentProps> = ({use
                                     setShowUserBanModal(true);
                                 }}>Ban User</Dropdown.Item>
                             }
+                            <Dropdown.Item onClick={() => console.log("Ban History here")} >Ban History</Dropdown.Item>
                         </NavDropdown>
                         : <>
                         <Button size="sm" variant="outline-danger" className="mr-2 mb-2" onClick={()=>setHideControls('')}>Cancel</Button>
