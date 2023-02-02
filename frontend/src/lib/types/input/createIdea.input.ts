@@ -30,5 +30,12 @@ export interface ICreateIdeaInput {
   needFeedback?: boolean;
   location?: string;
   feedback?: string[];
-  feedbackRatingType?: string[]; //YESNO or
+  feedbackRatingType?: string[]; //YESNO or RATING
+  feedbackYes?: number[];
+  feedbackNo?: number[];
+  feedbackOnes?: number[];
+  feedbackTwos?: number[];
+  feedbackThrees?: number[];
+  feedbackFours?: number[];
+  feedbackRating?: number[];
 }

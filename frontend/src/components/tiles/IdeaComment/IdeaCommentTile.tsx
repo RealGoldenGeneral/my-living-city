@@ -152,7 +152,7 @@ const IdeaCommentTile = ({ commentData }: IdeaCommentTileProps) => {
             </span>
           </div>
           <div className="mt-2">
-            {content}
+            <p className='h3'>{content}</p>
           </div>
           <div>
             Likes and Dislikes: {likes} / {dislikes}

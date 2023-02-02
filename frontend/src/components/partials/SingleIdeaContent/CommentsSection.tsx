@@ -102,7 +102,7 @@ if(ideaComments){
           ideaComments &&
           ideaComments.map((comment) => (
             <Row key={comment.id}>
-              <IdeaCommentTile commentData={comment} />
+              <IdeaCommentTile commentData={comment}/>
             </Row>
           ))
         )}
